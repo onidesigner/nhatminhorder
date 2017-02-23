@@ -19,4 +19,9 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
+Route::get('/nhan-vien', 'UserController@getUsers');
+Route::get('/sua-nhan-vien/{id}', 'UserController@getUser');
+Route::post('/sua-nhan-vien/{id}', 'UserController@updateUser');
 
+Route::get('/404', 'NotFoundController@index');
+Route::get('/403', 'NotPermissionController@index');
