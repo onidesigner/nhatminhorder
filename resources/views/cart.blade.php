@@ -54,7 +54,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <strong>{{$data['statistic']['total_shops']}}</strong> shop / <strong>{{$data['statistic']['total_items']}}</strong> sản phẩm / <strong>{{$data['statistic']['total_amount']}}</strong>đ tiền hàng
+            <strong>{{$data['statistic']['total_shops']}}</strong> shop / <strong>{{$data['statistic']['total_items']}}</strong> sản phẩm / <strong><span class="_autoNumeric">{{$data['statistic']['total_amount']}}</span></strong>đ tiền hàng
         </div>
     </div>
 
@@ -135,20 +135,24 @@
 
                                 </td>
 
-                                <td>{{$item->price_vnd}}đ / ¥{{$item->price_promotion}}</td>
+                                <td><span class="_autoNumeric">{{$item->price_vnd}}</span>đ / ¥{{$item->price_promotion}}</td>
                                 <td>
-                                    <input data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" style="width: 80px" type="number" name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
+                                    <input
+                                            data-shop-id="{{$shop->shop_id}}"
+                                            data-item-id="{{$item->id}}" style="width: 80px"
+                                            type="number"
+                                            name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
                                 </td>
-                                <td>{{$item->total_amount_item_vnd}}đ / ¥{{$item->total_amount_item}}</td>
+                                <td><span class="_autoNumeric">{{$item->total_amount_item_vnd}}</span>đ / ¥{{$item->total_amount_item}}</td>
 
                             </tr>
 
                             @endforeach
                             <tr>
                                 <td class="text-right" colspan="5">
-                                    Tong tien hang: {{$shop->total_amount_items}}đ + Phi tam tinh
+                                    Tong tien hang: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phi tam tinh
                                     <a href="javascript:void(0)" title="" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Mua hang: 1000<br/>Kiem hang: 1000<br />Van chuyen TQ - VD: 1000<br/>Tong: 50000<br /><a href=''>>>>Bieu phi dich vu</a>"><i class="fa fa-question"></i></a>
-                                    : {{$shop->fee_temp}}đ = Tong: {{$shop->total_amount_finish}}đ
+                                    : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tong: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
                                     &nbsp;
                                     <a href="{{ url('dat-coc')  }}" class="btn btn-danger text-uppercase">Dat coc</a>
                                 </td>
@@ -167,7 +171,7 @@
 @endsection
 
 @section('js_bottom')
-@parent
+    @parent
     <script>
         $(document).ready(function(){
 
@@ -178,8 +182,6 @@
             var self = this;
             bootbox.confirm("Ban co chac muon xoa shop nay?", function(result){
                 if(result){
-//                    console.log(result);
-//                    console.log($(self));
                     var shop_id = $(self).data('shop-id');
                     $.ajax({
                         url: "{{ url('cart/shop') }}",
@@ -194,6 +196,10 @@
                                     message: response.message,
                                     size: 'small'
                                 });
+                            }
+
+                            if(response.success){
+                                window.location.reload();
                             }
                         },
                         error: function () {
@@ -229,6 +235,10 @@
                                     message: response.message,
                                     size: 'small'
                                 });
+                            }
+
+                            if(response.success){
+                                window.location.reload();
                             }
                         },
                         error: function () {

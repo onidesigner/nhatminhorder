@@ -240,6 +240,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
 
         'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class
+
     ],
 
 ];

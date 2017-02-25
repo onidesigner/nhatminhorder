@@ -38,7 +38,7 @@ chrome.storage.sync.get({
     //============================================================
 
     isTranslate = items.is_translate;
-    add_to_cart_url = service_host+'api/cart';
+    add_to_cart_url = service_host+'cart';
     cart_url = service_host+'checkout.html';
     link_detail_cart = service_host + "gio-hang";
     add_to_favorite_url = service_host + "i/favoriteLink/saveLink";

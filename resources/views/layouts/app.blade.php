@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     @section('css_top')
+
     <link rel="stylesheet" type="text/css" href="{{ asset('css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/flat-admin.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/nprogress.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @show
 
@@ -106,23 +108,59 @@
 
 </div>
 
+<input type="hidden" class="_autoNumericTemp" value="" />
+
 @section('css_bottom')
 @show
 
 @section('js_bottom')
 <script type="text/javascript" src="{{ asset('js/vendor.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
+<script src="{{ asset('js/autoNumeric.min.js')  }}"></script>
+<script src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
 
 <script>
-    $(document).ready(function(){
-        if($('[data-toggle="tooltip"]').length){
+    $(document).ready(function() {
+        if ($('[data-toggle="tooltip"]').length) {
             $('[data-toggle="tooltip"]').tooltip();
         }
 
-        if($('[data-toggle="popover"]').length){
+        if ($('[data-toggle="popover"]').length) {
             $('[data-toggle="popover"]').popover();
         }
+
+        $('._autoNumericTemp').autoNumeric({aPad: false, mDec: 3, vMax: 9999999999999.99, aSep: '.', aDec: ','});
+        if ($('._autoNumeric').length) {
+            $('._autoNumeric').each(function (i) {
+                var tagName = $(this).prop("tagName").toLowerCase();
+                if (tagName == 'input') {
+                    $(this).autoNumeric({aPad: false, mDec: 3, vMax: 9999999999999.99, aSep: '.', aDec: ','});
+                } else {
+                    var value = $(this).text().trim();
+                    $(this).text(formatNumber(value));
+                }
+            })
+        }
+
+        function formatNumber(value) {
+            $('._autoNumericTemp').autoNumeric('set', value);
+            return $('._autoNumericTemp').val();
+        }
+
+        $(document).ajaxStop(function(){
+            NProgress.done();
+        });
+
+        $.ajaxSetup({
+            beforeSend:function(){
+                NProgress.start();
+            },
+            complete:function(){
+
+            }
+        });
+
     });
 </script>
 

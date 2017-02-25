@@ -61,7 +61,6 @@ class CartController extends Controller
         endif;
 
         $user_id = Auth::user()->id;
-        $user_id = 100;
         $item_id = $request->get('item_id');
         $shop_id = $request->get('shop_id');
 
@@ -107,7 +106,6 @@ class CartController extends Controller
 
         $shop_id = $request->get('shop_id');
         $user_id = Auth::user()->id;
-//        $user_id = 100;
         DB::beginTransaction();
 
         try {
@@ -135,7 +133,6 @@ class CartController extends Controller
 
         $service = $request->get('service');
         $user_id = Auth::user()->id;
-        $user_id = 100;
         $shop_id = $request->get('shop_id');
         $checked = $request->get('checked');
         $service_string = DB::table('carts')->select('services')->where(['user_id' => $user_id, 'shop_id' => $shop_id])->first()->services;
@@ -175,7 +172,6 @@ class CartController extends Controller
         endif;
 
         $user_id = Auth::user()->id;
-        $user_id = 100;
         $data = $request->get('data');
         $shop_id = $request->get('shop_id');
         $item_id = $request->get('item_id');
@@ -201,7 +197,6 @@ class CartController extends Controller
      */
     public function showCart(){
         $user_id = Auth::user()->id;
-        $user_id = 100;
         $data = [];
         $carts = DB::table('carts')->where('user_id', $user_id)->orderBy('updated_at', 'desc')->get()->toArray();
         $cart_items = DB::table('cart_items')->where('user_id', $user_id)->orderBy('updated_at', 'desc')->get()->toArray();

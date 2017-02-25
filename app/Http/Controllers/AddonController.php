@@ -17,6 +17,7 @@ class AddonController extends Controller
     }
 
     public function addCart(Request $request){
+        die(Auth::user()->id);
         $params = Request::all();
         if(Cart::addCart($params)):
 

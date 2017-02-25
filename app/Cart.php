@@ -43,7 +43,7 @@ class Cart extends Model
 
         try {
             $params['site'] = strtolower($params['site']);
-            $user_id = 100;
+            $user_id = 1;//fixdata
             $now = date('Y-m-d H:i:s');
 
             //check exists shop with user
