@@ -4,7 +4,14 @@ $menus = [
     [
         'url' => $app->make('url')->to('home'),
         'icon' => 'fa-home',
-        'title' => 'Trang chu'
+        'title' => 'Trang chu',
+        'use' => ['customer', 'crane']
+    ],
+    [
+        'url' => $app->make('url')->to('gio-hang'),
+        'icon' => 'fa-shopping-cart',
+        'title' => 'Gio Hang',
+        'use' => ['customer']
     ],
     [
         'url' => '#',

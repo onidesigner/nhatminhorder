@@ -1,0 +1,52 @@
+var service_host,
+    seudo_host,
+    add_to_cart_url,
+    cart_url,
+    exchange_rate_url,
+    translate_url,
+    catalog_scalar_url,
+    isTranslate;
+
+chrome.storage.sync.get({
+    domain: 'http://seudo.vn/',
+    is_translate: true
+}, function(items) {
+    isTranslate = items.is_translate;
+    service_host = items.domain;
+    add_to_cart_url = service_host+'cart/add_cart_v2';
+    cart_url = service_host+'checkout.html';
+    exchange_rate_url = service_host + 'cart/GetExchangeRate';
+    translate_url = service_host + 'goodies_util/translate';
+
+    var css_url = '';
+    switch (items.domain){
+        case 'http://cn.seudo.vn/':
+            catalog_scalar_url = 'http://cnlogistic.seudo.vn/api/catalog/scalar';
+            css_url = 'css/cn_main.css';
+            break;
+        default :
+            css_url = 'css/main.css';
+            catalog_scalar_url = 'http://logistic.seudo.vn/api/catalog/scalar';
+            break;
+    }
+
+    if(css_url){
+        var NewStyles = document.createElement("link");
+        NewStyles.rel = "stylesheet";
+        NewStyles.type = "text/css";
+        NewStyles.href = chrome.extension.getURL(css_url);
+        document.head.appendChild(NewStyles);
+    }
+});
+
+var isUsingSetting = false;
+var link_detail_cart = "http://seudo.vn/gio-hang";
+var translate_keyword_url =  "";
+var version_tool = "4.11.42";
+var exchange_rate;
+var button_add_to_cart_url = "http://seudo.vn/assets/images/add_on/icon-bkv1-small.png";
+
+var link_store_review_guidelines = "http://hotro.seudo.vn/huong-dan-cach-thuc-danh-gia-uy-tin-nha-cung-cap/";//SEUDO
+
+/**** CẤU HÌNH NOTIFY ***/
+var web_service_url = "http://localhost/seudo/www_html/customer/";

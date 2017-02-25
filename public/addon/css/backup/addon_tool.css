@@ -1,0 +1,333 @@
+
+.seu-note-book{
+    display: none;
+}
+.div-block-price-book * {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #111;
+}
+.div-block-price-book {
+    box-shadow: 0 0 4px #999;
+    background: none repeat scroll 0 0 #fefefe;
+    bottom: 10px;
+    overflow: auto;
+    position: fixed;
+    right: 10px;
+    width: 325px;
+    z-index: 999999999;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    list-style: none;
+}
+.div-block-price-book .add-book .note-img{
+    float: left;
+    width: 100%;
+    height: 50px;
+    background: url("http://seudo.vn/assets/images/add_on/not_translate.png") no-repeat ;
+}
+.div-block-price-book .add-book{
+    float: left;
+    width: 100%;
+}
+.div-block-price-book .add-book .add-button{
+    float: left;
+    width: 100%;
+    margin-top: 10px;
+}
+.div-block-price-book .seu-note-book .note-imgv2{
+    float: left;
+    width: 100%;
+    height: 50px;
+    background: url("http://seudo.vn/assets/images/add_on/exception_tool.png") no-repeat ;
+}
+.div-block-price-book .note-item{
+    float: left;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 3px;
+}
+.div-block-price-book .note-item span{
+    float: left;
+    width: 75px;
+}
+
+.div-block-price-book .note-item p input{
+    width: 100%;
+    padding: 3px 5px;
+}
+.div-block-price-book .note-text{
+    float: left;
+    width: 100%;
+    margin-top: 5px;
+}
+.div-block-price-book .note-text p{
+    margin-bottom: 5px;
+}
+.div-block-price-book .note-text textarea{
+    min-height: 45px;
+    width: 100%;
+    padding-top: 3px;
+    padding-left: 5px;
+}
+
+._loading{
+    background: none repeat scroll 0 0 #111111;
+    height: 100%;
+    opacity: 0.6;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2147483647;
+    text-align: center;
+}
+
+._loading div.content{
+    margin-top: 10%;
+    width: 100%;
+}
+
+._addToCart{
+    background: url("http://seudo.vn/assets/images/add_on/icon-bkv1.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    display: inline-block;
+    height: 42px;
+    width: 150px;
+    float: left;
+}
+
+._addToCart:hover{
+    background: url("http://seudo.vn/assets/images/add_on/icon-bkv2.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    float: left;
+}
+
+
+/* begin Static bottom navbar */
+.fl{
+    float: left;
+}
+
+.frm-tool{
+    z-index: 99999999;
+    background: none repeat scroll 0 0 #f8f8f8;
+    border-left-color: #ccc;
+    border-right-color: #ccc;
+    border-top: 1px solid #bababa;
+    bottom: 0;
+    box-shadow: 0 0 10px rgb(153, 153, 153);
+    float: left;
+    margin: 0;
+    min-height: 30px;
+    /*padding: 10px 10px 20px;*/
+    position: fixed;
+    right: 0;
+    width: 100%;
+}
+
+.frm-tool ._close_tool{
+    position: absolute;
+    top: -15px;
+    right: 45px;
+    text-decoration: none;
+    color: #000;
+    border-bottom: 15px solid #e7e7e7;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    height: 0;
+    width: 30px;
+    text-align: center;
+    z-index: 1;
+}
+
+.frm-tool ._close_tool img{
+    padding-top: 2px;
+}
+
+.frm-tool .frm-title{
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-top: 2px;
+    padding-left: 10px;
+    color: rgb(232, 3, 3);
+    font-size: 15px;
+}
+
+.frm-tool .lbl{
+    float: left;
+    clear: both;
+}
+
+.frm-tool .content_tool{
+    float: left;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.frm-tool ul{
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    display: inline;
+}
+
+.frm-tool ul li{
+    margin: 0;
+    float: left;
+    padding: 0 10px;
+}
+
+.frm-tool .form-select{
+    width: 170px;
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #555;
+    display: block;
+    height: 28px;
+    padding: 6px 12px;
+    border-radius: 0;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.frm-tool .form-input{
+    width: 170px;
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid #ccc;
+    color: #555;
+    display: block;
+    font-size: 12px;
+    height: 28px;
+    line-height: 1.42857;
+    padding: 0 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.frm-tool .form-textarea{
+    border: 1px solid #ccc;
+    height: 18px;
+    margin: 0;
+    width: 170px;
+    padding: 5px 12px;
+    color: #555;
+}
+
+.frm-tool .btn-default{
+    background: url("http://seudo.vn/assets/images/add_on/icon-bkv1-small.png") 0 0 no-repeat scroll transparent;
+    border: medium none;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 11px;
+    margin-right: 10px;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 110px;
+    height: 30px;
+    background-size: 103px 30px;
+}
+
+.frm-tool .btn-default:hover{
+
+}
+
+.frm-tool .btn-shopping{
+    background: url("http://seudo.vn/assets/images/add_on/icon-bkv1-small.png") 0 0 no-repeat scroll rgba(0, 0, 0, 0);
+    display: inline-block;
+    height: 28px;
+    width: 100px;
+    float: left;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.frm-tool .btn-cart{
+    background: url("http://seudo.vn/assets/images/add_on/cart28x28.png") 0 0 no-repeat scroll rgba(0, 0, 0, 0);
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+    float: left;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.font-red {
+    color: #ff0000;
+}
+
+.hidden{
+    display: none;
+}
+
+.frm-tool .translate{
+    padding-top: 4px;
+}
+
+.frm-tool .translate input{
+    margin-right: 5px;
+}
+
+.frm-tool .link-cart{
+    text-decoration: none;
+    padding-top: 5px;
+    background: transparent;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.frm-tool .link-cart:hover{
+    text-decoration: underline;
+}
+
+
+.div-block-price-book .minimize{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.pos-relative{
+    position: relative;
+}
+
+.pos-absolute{
+    position: absolute;
+}
+
+.category-other{
+    left: 8px;
+    position: absolute;
+    top: -90px;
+}
+
+.arrow_box {
+    box-shadow: 0 0 4px rgb(153, 153, 153);
+    border-radius:2px;
+    padding:5px 10px 10px 10px;
+    position: relative;
+    background: #F8F8F8;
+    border: 1px solid #e7e7e7;
+}
+
+.arrow_box:after, .arrow_box:before {
+    top: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none;
+}
+
+.arrow_box:after {
+    border-color: rgba(248, 248, 248, 0); border-top-color: #F8F8F8; border-width: 15px; margin-left: -15px;
+}
+
+.arrow_box:before {
+    border-color: rgba(231, 231, 231, 0); border-top-color: #e7e7e7; border-width: 16px; margin-left: -16px;
+}
+
+.frm-tool-ct{
+    border-top: 1px solid #fff;
+    float: right;
+    padding: 10px 40px 20px;
+}
+

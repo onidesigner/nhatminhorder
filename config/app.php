@@ -163,7 +163,15 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        /**
+         * Using form
+         */
         Collective\Html\HtmlServiceProvider::class,
+
+        /**
+         * Transform PHP Vars to JavaScript
+         */
+        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -230,6 +238,8 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+
+        'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class
     ],
 
 ];

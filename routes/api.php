@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/exchange', 'AddonController@getExchange');
+Route::post('/cart', 'AddonController@addCart');

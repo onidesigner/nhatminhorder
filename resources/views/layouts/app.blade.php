@@ -11,14 +11,37 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @show
 
+    @include('footer_var_view')
+
     @section('js_top')
     @show
 </head>
 <body>
 
+
 <div class="app app-default">
+    {{--<div class="row">--}}
+        {{--<div class="col-xs-12">--}}
+            {{--<div class="___loading" style="height: 100px; width:100%; position: fixed; top: 0; left:0; z-index: 9999999999; display: none'">--}}
+                {{--<div class="loader-container text-center">--}}
+                    {{--<div class="icon">--}}
+                        {{--<div class="sk-wave">--}}
+                            {{--<div class="sk-rect sk-rect1"></div>--}}
+                            {{--<div class="sk-rect sk-rect2"></div>--}}
+                            {{--<div class="sk-rect sk-rect3"></div>--}}
+                            {{--<div class="sk-rect sk-rect4"></div>--}}
+                            {{--<div class="sk-rect sk-rect5"></div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<div class="title">Dang tai du lieu, cho xiu nhe!</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
 
     <aside class="app-sidebar" id="sidebar">
+
+
         <div class="sidebar-header">
             <a class="sidebar-brand" href="#"><span class="highlight">NhatMinh</span> 247</a>
             <button type="button" class="sidebar-toggle">
@@ -58,7 +81,7 @@
             </div>
         </nav>
 
-        @include('layouts/help-actions')
+        {{--@include('layouts/help-actions')--}}
 
         <div class="row">
             <div class="col-xs-12 text-right">
@@ -88,7 +111,21 @@
 
 @section('js_bottom')
 <script type="text/javascript" src="{{ asset('js/vendor.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+
+<script>
+    $(document).ready(function(){
+        if($('[data-toggle="tooltip"]').length){
+            $('[data-toggle="tooltip"]').tooltip();
+        }
+
+        if($('[data-toggle="popover"]').length){
+            $('[data-toggle="popover"]').popover();
+        }
+    });
+</script>
+
 @show
 
 </body>
