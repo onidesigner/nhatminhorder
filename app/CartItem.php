@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class CartItem extends Model
 {
-    protected static $table_name = 'cart_items';
+    protected $table_name = 'cart_items';
 
     /**
      * @author vanhs
@@ -19,7 +19,7 @@ class CartItem extends Model
      * @return bool
      */
     public static function checkExistsCartItemWithItemAndProperty($shop_id, $user_id, $item_id, $property){
-        $row = DB::table(self::$table_name)->select('id')
+        $row = DB::table('cart_items')->select('id')
             ->where('property_md5', self::genPropertyMd5($item_id, $property))
             ->where('shop_id', $shop_id)
             ->where('user_id', $user_id)

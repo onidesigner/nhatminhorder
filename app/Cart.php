@@ -11,7 +11,7 @@ use App\CartItem;
 
 class Cart extends Model
 {
-    protected static $table_name = 'carts';
+    protected $table_name = 'carts';
 
     /**
      * @author vanhs
@@ -21,7 +21,7 @@ class Cart extends Model
      * @return bool
      */
     public static function checkExistsShopWithUser($shop_id, $user_id){
-        $row = DB::table(self::$table_name)->select('id', 'shop_id')
+        $row = DB::table('carts')->select('id', 'shop_id')
             ->where('user_id', $user_id)
             ->where('shop_id', $shop_id)
             ->first();
@@ -60,7 +60,7 @@ class Cart extends Model
                     'updated_at' => $now
                 ];
 
-                $insert_id_cart = DB::table(self::$table_name)->insertGetId($data_insert_cart);
+                $insert_id_cart = DB::table('carts')->insertGetId($data_insert_cart);
             else:
                 DB::table('carts')
                     ->where(['shop_id' => $params['shop_id'], 'user_id' => $user_id])

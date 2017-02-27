@@ -35,6 +35,14 @@ Route::get('/sua-nhan-vien/{id}', 'UserController@getUser');
 Route::post('/sua-nhan-vien/{id}', 'UserController@updateUser');
 #endregion
 
-Route::get('/404', 'NotFoundController@index');
-Route::get('/403', 'NotPermissionController@index');
+#region quan ly dia chi nhan hang
+//Route::get('/locations/provinces', 'LocationController@getAllProvinces');
+//Route::get('/locations/districts', 'LocationController@getAllDistricts');
+Route::post('/user/address', 'UserAddressController@addNewUserAddress');
+Route::put('/user/address/delete', 'UserAddressController@deleteUserAddress');
+Route::put('/user/address/default', 'UserAddressController@setDefaultUserAddress');
+#endregion
+
+Route::get('/404', 'OtherController@renderPageNotFound');
+Route::get('/403', 'OtherController@renderPageNotPermission');
 

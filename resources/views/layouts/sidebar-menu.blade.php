@@ -7,12 +7,12 @@ $menus = [
         'title' => 'Trang chu',
         'use' => ['customer', 'crane']
     ],
-    [
-        'url' => $app->make('url')->to('gio-hang'),
-        'icon' => 'fa-shopping-cart',
-        'title' => 'Gio Hang',
-        'use' => ['customer']
-    ],
+//    [
+//        'url' => $app->make('url')->to('gio-hang'),
+//        'icon' => 'fa-shopping-cart',
+//        'title' => 'Gio Hang',
+//        'use' => ['customer']
+//    ],
     [
         'url' => '#',
         'icon' => 'fa-heartbeat',

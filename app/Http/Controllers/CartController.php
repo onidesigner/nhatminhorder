@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\User;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Service;
 use JavaScript;
+use App\Location;
 
 class CartController extends Controller
 {
@@ -45,8 +47,6 @@ class CartController extends Controller
 
         return Response::json(array('success' => true));
     }
-
-
 
     /**
      * @author vanhs
@@ -185,9 +185,21 @@ class CartController extends Controller
     }
 
     public function deposit(){
-        return view('deposit', [
+        $user_id = Auth::user()->id;
+        $user_address = new UserAddress();
+
+        $location = new Location();
+
+        $data = [
             'page_title' => 'Dat coc',
-        ]);
+            'user_address' => $user_address->findByUserId($user_id),
+            'all_provinces' => $location->getAllProvinces(),
+            'all_districts' => $location->getAllDistricts()
+        ];
+
+        JavaScript::put($data);
+
+        return view('deposit', $data);
     }
 
     /**

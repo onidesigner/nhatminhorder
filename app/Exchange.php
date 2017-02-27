@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 class Exchange extends Model
 {
+    protected $table = 'exchange';
+
     const STATUS_ACTIVE = 'ACTIVE';
     const STATUS_DISABLED = 'DISABLED';
 
