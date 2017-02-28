@@ -20,6 +20,11 @@
 </head>
 <body>
 
+{{--@include('partials/comment', [--}}
+    {{--'object_id' => 100,--}}
+    {{--'object_type' => App\Comment::TYPE_OBJECT_ORDER,--}}
+    {{--'scope' => App\Comment::TYPE_EXTERNAL--}}
+{{--])--}}
 
 <div class="app app-default">
     {{--<div class="row">--}}
@@ -201,6 +206,7 @@
 <script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
 <script src="{{ asset('js/autoNumeric.min.js')  }}"></script>
 <script src="{{ asset('js/nprogress.js')  }}"></script>
+<script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
 
 <script>
@@ -251,7 +257,7 @@
         /**
          * created_by: vanhs
          * created_time: 04:27 22/06/2015
-         * @returns {{}}
+         * desc: Ham lay toan bo du lieu tu form, kieu object
         */
         $.fn.serializeObject = function() {
             var o = {};
@@ -274,12 +280,10 @@
             return o;
         };
 
-
         /**
          * created_by: vanhs
          * created_time: 04:27 22/06/2015
-         *
-         * @param data
+         * desc: Ham do du lieu vao form, du lieu truyen vao la 1 object
          */
         $.fn.setFormData = function(data) {
             try{

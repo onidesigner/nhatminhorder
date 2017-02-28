@@ -43,6 +43,11 @@ Route::put('/user/address/delete', 'UserAddressController@deleteUserAddress');
 Route::put('/user/address/default', 'UserAddressController@setDefaultUserAddress');
 #endregion
 
+#region comment
+Route::post('/comment', 'CommentController@addNewComment');
+Route::get('/comment', 'CommentController@getComment');
+#endregion
+
 Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
 
