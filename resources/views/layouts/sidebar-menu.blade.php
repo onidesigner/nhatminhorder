@@ -2,7 +2,7 @@
 
 $menus = [
     [
-        'url' => $app->make('url')->to('home'),
+        'url' => url('home'),
         'icon' => 'fa-home',
         'title' => 'Trang chu',
         'use' => ['customer', 'crane']
@@ -29,7 +29,7 @@ $menus = [
         ]
     ],
     [
-        'url' => $app->make('url')->to('nhan-vien'),
+        'url' => url('nhan-vien'),
         'icon' => 'fa-user',
         'title' => 'Nhan Vien'
     ],
@@ -46,7 +46,17 @@ $menus = [
     [
         'url' => '#',
         'icon' => 'fa-gear',
-        'title' => 'Hệ thống'
+        'title' => 'Hệ thống',
+        'children' => [
+            [
+                'url' => url('setting/roles'),
+                'title' => 'Nhom & phan quyen'
+            ],
+            [
+                'url' => url('setting'),
+                'title' => 'Cau hinh chung'
+            ]
+        ]
     ]
 ];
 

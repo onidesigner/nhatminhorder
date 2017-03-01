@@ -9,4 +9,6 @@ class OrderService extends Model
     protected $table = 'order_service';
 
 
+
+
 }

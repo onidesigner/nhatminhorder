@@ -69,7 +69,7 @@ class User extends Authenticatable
         $times = 0;
         do {
             $char_part = $consonants[array_rand($consonants)] . $vowel[array_rand($vowel)];
-            $number_part = ModelUtil::getLuckyNumber(4);
+            $number_part = Util::getLuckyNumber(4);
             $code = "{$char_part}{$number_part}";
 
             $check = DB::table('users')->where('code', $code)->value('code');

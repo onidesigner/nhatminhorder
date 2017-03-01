@@ -48,6 +48,20 @@ Route::post('/comment', 'CommentController@addNewComment');
 Route::get('/comment', 'CommentController@getComment');
 #endregion
 
+#region he thong
+Route::get('/setting', 'SystemConfigController@getList');
+Route::post('/setting', 'SystemConfigController@update');
+
+Route::get('/setting/roles', 'SystemConfigController@roles');
+Route::get('/setting/role/{id}', 'SystemConfigController@roleDetail');
+Route::post('/setting/role/update/{id}', 'SystemConfigController@updateRole');
+Route::post('/setting/role', 'SystemConfigController@addRole');
+Route::post('/setting/role/permission', 'SystemConfigController@savePermission');
+Route::post('/setting/role/user', 'SystemConfigController@updateUserRole');
+Route::put('/setting/role/delete', 'SystemConfigController@deleteRole');
+
+#endregion
+
 Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
 

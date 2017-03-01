@@ -1,3 +1,13 @@
 .sidebar-nav{
     padding: 0!important;
 }
+
+.panel-nhatminh{
+    border-color: #29c75f!important;
+}
+
+.panel-nhatminh .panel-heading{
+    background: #29c75f!important;
+    color: #fff!important;;
+    border-bottom-color: #29c75f!important;;
+}
