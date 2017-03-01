@@ -62,6 +62,11 @@ Route::put('/setting/role/delete', 'SystemConfigController@deleteRole');
 
 #endregion
 
+#region chuc nang nhap/xuat kho cua giang
+Route::get('warehouse','ExportWarehouseController@index');
+Route::post('actionWarehouse', 'ExportWarehouseController@actionWarehouse');
+#endregion
+
 Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
 

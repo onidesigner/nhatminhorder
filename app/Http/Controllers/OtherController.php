@@ -8,14 +8,14 @@ class OtherController extends Controller
 {
     public function renderPageNotFound()
     {
-        return view('not-found', [
+        return view('not_found', [
             'page_title' => 'Page 404'
         ]);
     }
 
     public function renderPageNotPermission()
     {
-        return view('not-permission', [
+        return view('not_permission', [
             'page_title' => 'Page 403'
         ]);
     }

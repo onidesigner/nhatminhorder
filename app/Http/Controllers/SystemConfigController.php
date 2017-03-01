@@ -266,7 +266,7 @@ class SystemConfigController extends Controller
             'data_inserted' => $data_inserted,
             'save' => $request->get('save')
         ];
-        return view('system-config', $data);
+        return view('system_config', $data);
     }
 
     public function update(Request $request){

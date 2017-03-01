@@ -47,7 +47,7 @@ class UserController extends Controller
             return redirect('404');
         endif;
 
-        return view('user-detail', [
+        return view('user_detail', [
             'page_title' => "Sua thong tin nhan vien [" . $user['email'] . "]",
             'section_list' => User::$section_list,
             'status_list' => User::$status_list,
