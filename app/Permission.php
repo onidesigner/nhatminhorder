@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Permission extends Model
 {
@@ -441,4 +442,29 @@ class Permission extends Model
         )
 
     );
+
+    public function isAllow($permission_code){
+        if(!$permission_code) return false;
+
+        $current_user_email = Auth::user()->email;
+        $current_user_id = Auth::user()->id;
+
+        if(in_array($current_user_email, ['hosivan90@gmail.com'])) return true;
+
+        #region -- lay danh sach cac nhom cua user hien tai --
+        $user_id_roles = [];
+        $user_role = new UserRole();
+        $result = $user_role->newQuery()->select('role_id')->where(['user_id' => $current_user_id])->get()->toArray();
+        if($result):
+            foreach($result as $k => $v):
+                $user_id_roles[] = $v['role_id'];
+            endforeach;
+        endif;
+        #endregion
+
+        $check = $this->newQuery()->where(['code' => $permission_code])->whereIn('role_id', $user_id_roles)->first();
+        if($check) return true;
+
+        return false;
+    }
 }

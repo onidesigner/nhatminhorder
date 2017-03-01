@@ -26,7 +26,7 @@
                             <p>
                                 Tim thay ({{$users['total']}}) nhan vien
                             </p>
-                            <table class="table table-striped table-bordered table-hover">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>ID</th>

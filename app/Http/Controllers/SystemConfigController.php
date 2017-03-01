@@ -124,6 +124,11 @@ class SystemConfigController extends Controller
     }
 
     public function roleDetail(Request $request){
+
+//        $permission = new Permission();
+//        $check = $permission->isAllow(Permission::PERMISSION_USER_VIEW_LIST);
+//        var_dump($check);
+
         if(Auth::user()->section == User::SECTION_CUSTOMER):
             redirect('403');
         endif;
