@@ -78,4 +78,22 @@ class User extends Authenticatable
 
         return $code;
     }
+
+    public function updateAccountBalance($amount, $user_id){
+        try{
+            DB::beginTransaction();
+
+            $this->newQuery()->where([
+                'id' => $user_id,
+            ])->update([
+                'account_balance' => DB::raw("account_balance+{$amount}")
+            ]);
+
+            DB::commit();
+            return true;
+        }catch(\Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
 }

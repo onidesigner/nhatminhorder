@@ -11,6 +11,9 @@
 
                 <div class="card-body"><div class="row">
                         <div class="col-md-8">
+
+                            <h3>{{$page_title}}</h3>
+
                             <a class="btn btn-danger text-uppercase pull-right" data-toggle="modal" href='#modal-id'>Tao nhom</a>
                             <div class="modal fade" id="modal-id">
                                 <div class="modal-dialog">
@@ -41,7 +44,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <table class="table">
                                 <thead>

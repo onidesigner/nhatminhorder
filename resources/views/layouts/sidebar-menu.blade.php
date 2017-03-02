@@ -41,7 +41,17 @@ $menus = [
     [
         'url' => '#',
         'icon' => 'fa-money',
-        'title' => 'Tài chính'
+        'title' => 'Tài chính',
+        'children' => [
+            [
+                'url' => url('transactions'),
+                'title' => 'Lich su giao dich'
+            ],
+            [
+                'url' => url('transaction/adjustment'),
+                'title' => 'Tao dieu chinh tai chinh'
+            ]
+        ]
     ],
     [
         'url' => '#',

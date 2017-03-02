@@ -89,11 +89,14 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
-                        <li class="navbar-title">Dashboard</li>
-                        <li class="navbar-search hidden-sm">
-                            <input id="search" type="text" placeholder="Search.." autocomplete="off">
-                            <button class="btn-search"><i class="fa fa-search"></i></button>
+                        <li class="navbar-title">
+                            Ti gia: 3.500 <sup>d</sup> | So du: <?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup>
+
                         </li>
+                        {{--<li class="navbar-search hidden-sm">--}}
+                            {{--<input id="search" type="text" placeholder="Search.." autocomplete="off">--}}
+                            {{--<button class="btn-search"><i class="fa fa-search"></i></button>--}}
+                        {{--</li>--}}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown notification">

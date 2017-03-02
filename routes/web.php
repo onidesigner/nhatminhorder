@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('nhatminh247');
 });
 
 Auth::routes();
@@ -60,6 +60,12 @@ Route::post('/setting/role/permission', 'SystemConfigController@savePermission')
 Route::post('/setting/role/user', 'SystemConfigController@updateUserRole');
 Route::put('/setting/role/delete', 'SystemConfigController@deleteRole');
 
+#endregion
+
+#region -- giao dich --
+Route::get('transactions', 'UserTransactionController@getTransactions');
+Route::get('transaction/adjustment', 'UserTransactionController@renderTransactionAdjustment');
+Route::post('transaction/adjustment', 'UserTransactionController@createTransactionAdjustment');
 #endregion
 
 #region chuc nang nhap/xuat kho cua giang
