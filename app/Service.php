@@ -32,4 +32,35 @@ class Service extends Model
     public static function getServiceName($code) {
         return (isset(self::$_serviceNaming[$code]))? self::$_serviceNaming[$code] : 'Khác';
     }
+
+    public function findOneByCode($code){
+        if($code) return null;
+
+        $result = $this->newQuery()->where([
+            'status' => self::STATUS_ACTIVE,
+            'code' => $code
+        ])->first();
+        if($result) return $result;
+
+        return null;
+    }
+
+    /**
+     * @desc Lay phi co dinh doi voi tung dich vu
+     * @param $code
+     * @return mixed
+     */
+    public function getFixedFeeWithServiceCode($code){
+        $fee = 0;
+        $result = $this->newQuery()->where([
+            'status' => self::STATUS_ACTIVE,
+            'code' => $code
+        ])->first();
+
+        if($result):
+            $fee = $result->fixed_fee;
+        endif;
+
+        return $fee;
+    }
 }

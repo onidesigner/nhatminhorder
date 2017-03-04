@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            @include('partials/breadcrumb',
+                            @include('partials/__breadcrumb',
                                 [
                                     'urls' => [
                                         ['name' => 'Trang chu', 'link' => $app->make('url')->to('home')],
@@ -43,7 +43,9 @@
                                         <tr>
                                             <td>{{$user['id']}}</td>
                                             <td>
-                                                [{{ App\User::getSectionName($user['section'])  }}] {{$user['name']}}
+                                                [{{ App\User::getSectionName($user['section'])  }}]
+
+                                                <a href="{{ url('nhan-vien', $user['id'])  }}">{{$user['name']}}</a>
                                             </td>
                                             <td>{{ App\User::getStatusName($user['status'])  }}</td>
                                             <td>

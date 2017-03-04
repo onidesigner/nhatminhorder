@@ -357,7 +357,7 @@ var CommonTool = function() {
             //}
 
             //Luon gui qua background
-            chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'POST', callback: 'afterAddToCart' });
+            chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'GET', callback: 'afterAddToCart' });
 
         }, this.timeOut * 1000);
         this.timeOut++;

@@ -87,7 +87,7 @@
 
                         <div class="card-body">
 
-            @include('partials/permissions', ['can_edit' => 1])
+            @include('partials/__permissions', ['can_edit' => 1])
                         </div>
                     </div>
 

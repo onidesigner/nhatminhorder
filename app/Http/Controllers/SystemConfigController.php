@@ -195,7 +195,7 @@ class SystemConfigController extends Controller
             'permissions_role' => $permissions_role_list,
             'permissions' => Permission::$permissions
         ];
-        return view('role-detail', $data);
+        return view('role_detail', $data);
     }
 
     public function addRole(Request $request){

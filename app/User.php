@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
+use App\UserMobile;
 
 class User extends Authenticatable
 {
@@ -30,6 +31,8 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+    public $max_mobiles = 3;
+
     const STATUS_ACTIVE = 'ACTIVE';
     const STATUS_INACTIVE = 'INACTIVE';
 
@@ -45,7 +48,6 @@ class User extends Authenticatable
         self::SECTION_CRANE => 'Quản trị viên',
         self::SECTION_CUSTOMER => 'Khách hàng',
     ];
-
 
     protected static function statusList(){
         return self::$status_list;
@@ -95,5 +97,36 @@ class User extends Authenticatable
             DB::rollback();
             return false;
         }
+    }
+
+    public function findByMobiles(){
+        return UserMobile::where(['user_id' => $this->id])->get();
+    }
+
+    public function addMobile($mobile){
+        return UserMobile::insert([
+            'user_id' => $this->id,
+            'mobile' => $mobile,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    public function deleteMobile($mobile){
+        return UserMobile::where([
+            'user_id' => $this->id,
+            'mobile' => $mobile
+        ])->delete();
+    }
+
+    public function checkExistsMobile($mobile){
+        return UserMobile::where([
+            'mobile' => $mobile
+        ])->first();
+    }
+
+    public function checkMaxMobile(){
+        return UserMobile::where([
+            'user_id' => $this->id
+        ])->count() >= $this->max_mobiles;
     }
 }

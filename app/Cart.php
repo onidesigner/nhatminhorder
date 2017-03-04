@@ -75,11 +75,14 @@ class Cart extends Model
                 $params['data_value']
             );
 
+            $exchange = new Exchange();
+            $exchange_rate = $exchange->getExchange();
+
             if(!$exist_cart_item_with_property):
                 $data_insert_item = $params;
                 $data_insert_item['cart_id'] = $insert_id_cart;
                 $data_insert_item['user_id'] = $user_id;
-                $data_insert_item['price_vnd'] = $data_insert_item['price_promotion'] * Exchange::getExchange();
+                $data_insert_item['price_vnd'] = $data_insert_item['price_promotion'] * $exchange_rate;
                 $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], $params['data_value']);
                 $data_insert_item['created_at'] = $now;
                 unset($data_insert_item['version']);

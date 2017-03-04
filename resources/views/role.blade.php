@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-md-4">
 
-                            @include('partials/permissions', ['can_edit' => 0])
+                            @include('partials/__permissions', ['can_edit' => 0])
 
                         </div>
                     </div>

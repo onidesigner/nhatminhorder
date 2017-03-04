@@ -20,7 +20,7 @@
 </head>
 <body>
 
-{{--@include('partials/comment', [--}}
+{{--@include('partials/__comment', [--}}
     {{--'object_id' => 100,--}}
     {{--'object_type' => App\Comment::TYPE_OBJECT_ORDER,--}}
     {{--'scope' => App\Comment::TYPE_EXTERNAL--}}

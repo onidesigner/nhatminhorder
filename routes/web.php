@@ -20,6 +20,8 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 #region quan ly gio hang
+Route::get('/cart', 'AddonController@addCart');
+
 Route::get('/gio-hang', 'CartController@showCart');
 Route::get('/dat-coc', 'CartController@deposit');
 Route::post('/cart/quantity', 'CartController@updateQuantity');
@@ -31,8 +33,11 @@ Route::delete('/cart/shop', 'CartController@deleteShop');
 
 #region quan ly nhan vien
 Route::get('/nhan-vien', 'UserController@getUsers');
+Route::get('/nhan-vien/{id}', 'UserController@detailUser');
 Route::get('/sua-nhan-vien/{id}', 'UserController@getUser');
 Route::post('/sua-nhan-vien/{id}', 'UserController@updateUser');
+Route::post('/user/phone', 'UserController@addUserPhone');
+Route::put('/user/phone', 'UserController@deleteUserPhone');
 #endregion
 
 #region quan ly dia chi nhan hang

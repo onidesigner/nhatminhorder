@@ -15,6 +15,8 @@
 
                     <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">TAO GIAO DICH</a>
 
+                    @include()
+
                     <table class="table">
                         <thead>
                         <tr>
