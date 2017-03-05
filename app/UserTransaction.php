@@ -76,7 +76,7 @@ class UserTransaction extends Model
      * @desc Tao ma giao dich, quy tac [ngay] [thang] [nam] [gio] [phut] [giay] [so ngau nhien 1000 - 9999]
      * @return string
      */
-    public function generateTransactionCode() {
+    public static function generateTransactionCode() {
         $now = new \DateTime();
 
         $day_part = $now->format("YmdHis");
@@ -86,8 +86,7 @@ class UserTransaction extends Model
             $random_part = $rnd;
             $code = $day_part.$random_part;
 
-            $existed = $this->newQuery()
-                ->select('id')
+            $existed = self::select('id')
                 ->where(['transaction_code' => $code])
                 ->first();
         }
@@ -128,28 +127,6 @@ class UserTransaction extends Model
     }
 
     public function createTransaction($data_insert){
-
-//        $data_insert = [
-//            'user_id' => 0,//giao dich nay gan voi user nao
-//            'state' => self::STATE_PENDING,//trang thai giao dich
-//            'transaction_code' => $this->generateTransactionCode(),//ma giao dich
-//            'transaction_type' => '',//loai giao dich
-//            'amount' => '',//so tien giao dich
-//            'ending_balance' => '',//so du tai khoan khach, sau khi giao dich nay duoc tao ra
-//            'cancel_by' => '',
-//            'reject_by' => '',
-//            'complete_by' => '',
-//            'created_by' => '',
-//            'object_id' => '',
-//            'object_type' => '',
-//            'transaction_detail' => '',
-//            'transaction_note' => '',
-//            'checksum' => '',
-//            'external_id' => '',
-//            'expired_time' => '',
-//            'closed_time' => '',
-//            'created_at' => ''
-//        ];
         try{
             DB::beginTransaction();
 

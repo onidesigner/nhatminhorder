@@ -12,7 +12,7 @@
                 <div class="card-body">
 
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <h3>{{$page_title}}</h3>
 
                             <br>

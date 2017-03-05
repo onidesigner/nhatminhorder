@@ -39,7 +39,7 @@ class UserTransactionController extends Controller
 
             #region -- begin validate --
             if(Auth::user()->section == User::SECTION_CUSTOMER):
-                return Response::json(['success' => true]);
+                return Response::json(['success' => false, 'message' => 'Khong the tao giao dich!']);
             endif;
 
             $rules = [
@@ -129,7 +129,7 @@ class UserTransactionController extends Controller
 
             $user_transaction = new UserTransaction();
 
-            $code = $user_transaction->generateTransactionCode();
+            $code = UserTransaction::generateTransactionCode();
 
             switch ($data_insert['transaction_type']):
                 case UserTransaction::TRANSACTION_TYPE_ADJUSTMENT:

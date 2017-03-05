@@ -59,114 +59,130 @@
     </div>
 
 
-    @foreach($data['shops'] as $shop)
+    @if(!empty($data['shops']))
+        @foreach($data['shops'] as $shop)
 
 
 
-    <div class="row _shop" data-shop-id="{{$shop->shop_id}}">
-        <div class="col-xs-12">
-            <div class="card ">
-                <div class="card-header" style="position: relative">
-                    <a href="javascript:void(0)" class="_delete-shop" data-shop-id="{{$shop->shop_id}}" data-toggle="tooltip" title="Xoa shop">
-                        <i class="fa fa-trash-o"></i>
-                    </a>
-                    &nbsp;
-                    &nbsp;
-                    @if($shop->site == 'tmall')
-                    <span class="label label-danger">tmall</span>&nbsp;
-                    @endif
+        <div class="row _shop" data-shop-id="{{$shop->shop_id}}">
+            <div class="col-xs-12">
+                <div class="card ">
+                    <div class="card-header" style="position: relative">
+                        <a href="javascript:void(0)" class="_delete-shop" data-shop-id="{{$shop->shop_id}}" data-toggle="tooltip" title="Xoa shop">
+                            <i class="fa fa-trash-o"></i>
+                        </a>
+                        &nbsp;
+                        &nbsp;
+                        @if($shop->site == 'tmall')
+                        <span class="label label-danger">tmall</span>&nbsp;
+                        @endif
 
-                    @if($shop->site == '1688')
-                        <span class="label label-success">1688</span>&nbsp;
-                    @endif
+                        @if($shop->site == '1688')
+                            <span class="label label-success">1688</span>&nbsp;
+                        @endif
 
-                    @if($shop->site == 'taobao')
-                        <span class="label label-warning">taobao</span>&nbsp;
-                    @endif
+                        @if($shop->site == 'taobao')
+                            <span class="label label-warning">taobao</span>&nbsp;
+                        @endif
 
-                    {{$shop->shop_name}}
+                        {{$shop->shop_name}}
 
-                    <div style="position: absolute;
-    top: 18px;
-    right: 20px;">
-                        @foreach($data['services'] as $service)
-                            <div class="checkbox checkbox-inline">
-                                <input @if(in_array($service['code'], $shop->services)) checked @endif type="checkbox" value="{{$service['code']}}" class="_chk-service" data-shop-id="{{$shop->shop_id}}" id="checkbox_{{$service['code']}}_{{$shop->id}}">
-                                <label for="checkbox_{{$service['code']}}_{{$shop->id}}">
-                                    {{$service['title']}}
-                                </label>
-                            </div>
-                        @endforeach
-
-
-                    </div>
-                </div>
-                <div class="card-body no-padding">
-                    <div class="table-responsive">
-                        <table class="table card-table">
-                            <thead>
-                            <tr>
-                                <th width="5%"></th>
-                                <th width="50%">San pham</th>
-                                <th width="15%">Don gia</th>
-                                <th width="15%" class="">SL</th>
-                                <th width="15%">Tien hang</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            @foreach($shop->items as $item)
-                            <tr>
-                                <td>
-                                    <a class="_delete-item" data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" href="javascript:void(0)" data-toggle="tooltip" title="Xoa san pham">
-                                        <i class="fa fa-trash-o"></i>
-                                    </a>
-                                </td>
-                                <td>
-                                    <img style="margin-right: 10px;" src="{{ urldecode($item->image_model) }}" class="pull-left" width="50px" />
-                                    <a href="{{$item->link_origin}}" target="_blank">
-                                        {{$item->title_origin}}
-                                    </a>
-                                    <br />
-                                    <small>{{$item->property}}</small>
-                                    <br>
-                                    <input data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" placeholder="Ghi chu san pham..." style="width: 250px; padding: 0 5px;" type="text" class="_comment" value="{{$item->comment}}" />
-
-                                </td>
-
-                                <td><span class="_autoNumeric">{{$item->price_vnd}}</span>đ / ¥{{$item->price_promotion}}</td>
-                                <td>
-                                    <input
-                                            data-shop-id="{{$shop->shop_id}}"
-                                            data-item-id="{{$item->id}}" style="width: 80px"
-                                            type="number"
-                                            name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
-                                </td>
-                                <td><span class="_autoNumeric">{{$item->total_amount_item_vnd}}</span>đ / ¥{{$item->total_amount_item}}</td>
-
-                            </tr>
-
+                        <div style="position: absolute;
+        top: 18px;
+        right: 20px;">
+                            @foreach($data['services'] as $service)
+                                <div class="checkbox checkbox-inline">
+                                    <input @if(in_array($service['code'], $shop->services)) checked @endif type="checkbox" value="{{$service['code']}}" class="_chk-service" data-shop-id="{{$shop->shop_id}}" id="checkbox_{{$service['code']}}_{{$shop->id}}">
+                                    <label for="checkbox_{{$service['code']}}_{{$shop->id}}">
+                                        {{$service['title']}}
+                                    </label>
+                                </div>
                             @endforeach
-                            <tr>
-                                <td class="text-right" colspan="5">
-                                    Tong tien hang: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phi tam tinh
-                                    <a href="javascript:void(0)" title="" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Mua hang: 1000<br/>Kiem hang: 1000<br />Van chuyen TQ - VD: 1000<br/>Tong: 50000<br /><a href=''>>>>Bieu phi dich vu</a>"><i class="fa fa-question"></i></a>
-                                    : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tong: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
-                                    &nbsp;
-                                    <a href="{{ url('dat-coc')  }}" class="btn btn-danger text-uppercase">Dat coc</a>
-                                </td>
-                            </tr>
 
-                            </tbody>
-                        </table>
+
+                        </div>
+                    </div>
+                    <div class="card-body no-padding">
+                        <div class="table-responsive">
+                            <table class="table card-table">
+                                <thead>
+                                <tr>
+                                    <th width="5%"></th>
+                                    <th width="50%">San pham</th>
+                                    <th width="15%">Don gia</th>
+                                    <th width="15%" class="">SL</th>
+                                    <th width="15%">Tien hang</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                @foreach($shop->items as $item)
+                                <tr>
+                                    <td>
+                                        <a class="_delete-item" data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" href="javascript:void(0)" data-toggle="tooltip" title="Xoa san pham">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <img style="margin-right: 10px;" src="{{ urldecode($item->image_model) }}" class="pull-left" width="50px" />
+                                        <a href="{{$item->link_origin}}" target="_blank">
+                                            {{$item->title_origin}}
+                                        </a>
+                                        <br />
+                                        <small>{{$item->property}}</small>
+                                        <br>
+                                        <input data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" placeholder="Ghi chu san pham..." style="width: 250px; padding: 0 5px;" type="text" class="_comment" value="{{$item->comment}}" />
+
+                                    </td>
+
+                                    <td><span class="_autoNumeric">{{$item->price_vnd}}</span>đ / ¥{{$item->price_promotion}}</td>
+                                    <td>
+                                        <input
+                                                data-shop-id="{{$shop->shop_id}}"
+                                                data-item-id="{{$item->id}}" style="width: 80px"
+                                                type="number"
+                                                name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
+                                    </td>
+                                    <td><span class="_autoNumeric">{{$item->total_amount_item_vnd}}</span>đ / ¥{{$item->total_amount_item}}</td>
+
+                                </tr>
+
+                                @endforeach
+                                <tr>
+                                    <td class="text-right" colspan="5">
+                                        Tong tien hang: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phi tam tinh
+                                        <a href="javascript:void(0)" title="" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Mua hang: 1000<br/>Kiem hang: 1000<br />Van chuyen TQ - VD: 1000<br/>Tong: 50000<br /><a href=''>>>>Bieu phi dich vu</a>"><i class="fa fa-question"></i></a>
+                                        : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tong: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
+                                        &nbsp;
+
+                                        <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Dat coc</a>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @endforeach
+        @endforeach
+    @else
+
+        <div class="row">
+
+            <div class="col-sm-12">
+                <div class="card ">
+                    <div class="card-header" style="position: relative">
+                        <h4>Gio hang hien dang trong!</h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    @endif
 
 @endsection
 

@@ -71,7 +71,9 @@
 
                                 ?>
 
-                            <div class="media">
+                            <div class="media _user-address"
+                                 data-is-default="{{ $user_address_item->is_default }}"
+                                 data-id="{{$user_address_item->id}}">
                                 @if($user_address_item->is_default)
                                     <div class="media-left">
                                         <span class="label label-danger">MAC DINH</span>
@@ -159,6 +161,84 @@
                         </div>
                         <div class="col-md-6">
 
+                            <h3>Danh sách shop kết đơn ({{count($shops)}})</h3>
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Shop</th>
+                                    <th>SL / Link</th>
+                                    <th>Tien hang</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                @if(count($shops))
+
+                                    @foreach($shops as $shop)
+                                    <tr class="_shop-item" data-json="{{ json_encode($shop)  }}">
+                                        <td>
+                                        <?php
+                                            $avatar = urldecode($shop->avatar);
+                                        ?>
+                                            <img style="width: 50px;
+    margin-right: 15px; float: left;" src="{{ $avatar }}" alt="">
+                                            <div>
+                                                <span class="text-uppercase">[{{$shop->site}}]</span> <strong>{{$shop->shop_name}}</strong>
+                                            </div>
+                                        </td>
+                                        <td>{{ $shop->total_quantity  }} / {{ $shop->total_link  }}</td>
+                                        <td>{{ $shop->total_amount  }} <sup>d</sup></td>
+                                    </tr>
+
+                                    @endforeach
+                                @endif
+
+
+                                </tbody>
+                            </table>
+
+                            <ul>
+                                <li>
+                                    Tong tien hang: {{$total_amount_shop}} <sup>d</sup>
+                                </li>
+                                <li>
+                                    Dat coc ({{$deposit_percent}}%): {{$deposit_amount}} <sup>d</sup>
+                                </li>
+                                <li>
+                                    So du hien tai: {{ Auth::user()->account_balance  }} <sup>d</sup>
+                                </li>
+                            </ul>
+
+
+                            @if(Auth::user()->account_balance >= $deposit_amount)
+
+                                <br>
+                                <br>
+
+
+                                <form action="">
+                                    <div class="col-sm-6 col-xs-12"><input placeholder="Nhap mat khau de dat coc" type="password" class="form-control _input-password" autofocus></div>
+                                    <br>
+                                    <div class="col-sm-12">
+                                        <input type="button" class="btn btn-danger btn-sm _action-deposit" value="DAT COC">
+                                    </div>
+
+                                </form>
+
+                            @else
+
+                                <p class="text-danger">
+                                    Hien so tien trong tai khoan khong du de dat coc. <br>
+                                    Hien ban con thieu {{  abs(Auth::user()->account_balance - $deposit_amount) }} <sup>d</sup> <br>
+                                    Vui long nap tien vao tai khoan de tien hanh dat coc don. <br>
+                                    Can giup do, lien he hotline 1988 02344. Xin cam on
+                                </p>
+
+                            @endif
+
+
+
                         </div>
                     </div>
                 </div>
@@ -173,6 +253,53 @@
     @parent
     <script>
         $(document).ready(function(){
+
+            $(document).on('click', '._action-deposit', function () {
+                 var $that = $(this);
+
+
+
+                 var password = $('._input-password').val();
+
+                 var address_id = $('._user-address[data-is-default=1]').data('id');
+
+                 if(!$('._user-address').length){
+                     bootbox.alert('Hien tai ban chua co dia chi nhan hang!');
+                     return false;
+                 }
+
+                 if(!address_id){
+                     bootbox.alert('Vui long thiet lap 1 dia chi nhan hang lam mac dinh!');
+                     return false;
+                 }
+
+                $that.prop('disabled', true);
+
+                 $.ajax({
+                   url: "{{ url('cart/deposit')  }}",
+                   method: 'post',
+                   data: {
+                       password: password,
+                       shop_id: nhatminh247.shop_id,
+                       address_id: address_id,
+                       _token: "{{csrf_token()}}"
+                   },
+                   success:function(response) {
+                       if(!response.success){
+
+                           $that.prop('disabled', false);
+                           bootbox.alert(response.message);
+                           $('._input-password').focus();
+                       }else{
+                           bootbox.alert(response.message);
+                       }
+
+                   },
+                   error: function(){
+                       $that.prop('disabled', false);
+                   }
+                 });
+            });
 
             $(document).on("change", "#province_id", function(event){
                 var province_id = $(this).val();

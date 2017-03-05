@@ -2,23 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\CartItem;
+use App\Exchange;
 use App\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use App\Service;
+use App\Cart;
 use JavaScript;
 use App\Location;
 
 class CartController extends Controller
 {
     protected $user = null;
+
+    public $cart = null;
+
     public function __construct()
     {
         $this->user = Auth::user();
         $this->middleware('auth');
+
+        $this->cart = new Cart();
     }
 
     /**
@@ -184,17 +193,131 @@ class CartController extends Controller
         return Response::json(array('success' => true));
     }
 
-    public function deposit(){
+    public function depositOrder(Request $request){
+        $user_id = Auth::user()->id;
+        $password = $request->get('password');
+        $shop_id = $request->get('shop_id');
+        $address_id = $request->get('address_id');
+
+
+        if(Auth::user()->section == User::SECTION_CRANE):
+            return Response::json(['success' => false, 'message' => 'Khong the dat coc.']);
+        endif;
+
+        if(!count($shop_id)):
+            return Response::json(['success' => false, 'message' => 'Khong ton tai shop.']);
+        endif;
+
+        $check_exists_address = UserAddress::select('id')->where([
+            'user_id' => $user_id
+        ])->count();
+
+        if(!$check_exists_address):
+            return Response::json(['success' => false, 'message' => 'Ban chua thiet lap dia chi nhan hang.']);
+        endif;
+
+        $check_exists_address_default = UserAddress::select('id')->where([
+            'user_id' => $user_id,
+            'is_default' => 1
+        ])->count();
+
+        if(!$check_exists_address_default):
+            return Response::json(['success' => false, 'message' => 'Ban chua thiet lap dia chi nhan hang mac dinh.']);
+        endif;
+
+        $user_address = UserAddress::find($address_id);
+        if(!$user_address):
+            return Response::json(['success' => false, 'message' => 'Dia chi nhan hang khong hop le.']);
+        endif;
+
+        $pass = Auth::user()->password;
+        if(!$password || !Hash::check($password, $pass)):
+            return Response::json(['success' => false, 'message' => 'Mat khau khong hop le.']);
+        endif;
+
+        $exchange_rate = Exchange::getExchange();
+
+        $total_shop_amount = 0;
+        #region lay ra tong so tien hang theo danh sach shop
+        $cart_items = CartItem::select('*')
+        ->where([
+            'user_id' => $user_id
+        ])
+        ->whereIn('shop_id', $shop_id)
+        ->get();
+        if($cart_items):
+            foreach($cart_items as $cart_item):
+                $amount = $cart_item->getPriceCalculator();
+                $quantity = $cart_item->quantity;
+                $total_shop_amount += $amount * $quantity * $exchange_rate;
+            endforeach;
+        endif;
+        #endregion
+
+        $user_account_balance = Auth::user()->account_balance;
+        $deposit_amount = $this->cart->getDepositAmount($total_shop_amount);
+
+        if(!($user_account_balance >= $deposit_amount)):
+            return Response::json(['success' => false, 'message' => 'Tai khoan khong de tien de thuc hien dat coc.']);
+        endif;
+
+        $this->cart->depositOrder($user_id, $shop_id, $address_id, $deposit_amount);
+
+        return Response::json(['success' => true, 'message' => 'Dat coc don thanh cong.']);
+    }
+
+    public function deposit(Request $request){
         $user_id = Auth::user()->id;
         $user_address = new UserAddress();
-
         $location = new Location();
+        $exchange_rate = Exchange::getExchange();
+
+        $shops = [];
+        $shop_id = $request->get('shop_id');
+        $shop_id_list = $shop_id ? explode(',', $shop_id) : [];
+        if(count($shop_id_list)):
+            $shops = Cart::where([
+                'user_id' => $user_id,
+            ])->whereIn('shop_id', $shop_id_list)
+            ->get();
+        endif;
+        $total_amount_shop = 0;
+
+        foreach($shops as $shop):
+            $items = $shop->getItems();
+
+            $total_quantity = 0;
+            $total_amount = 0;
+            $total_link = 0;
+
+            foreach($items as $item):
+                $total_link++;
+                $total_quantity += $item->quantity;
+                $total_amount += $item->getPriceCalculator() * $item->quantity * $exchange_rate;
+
+            endforeach;
+
+            $shop->items = $items;
+
+            $shop->total_quantity = $total_quantity;
+            $shop->total_amount = $total_amount;
+            $shop->total_link = $total_link;
+
+            $total_amount_shop += $total_amount;
+        endforeach;
+
+        $deposit_amount = $this->cart->getDepositAmount($total_amount_shop);
 
         $data = [
             'page_title' => 'Dat coc',
             'user_address' => $user_address->findByUserId($user_id),
             'all_provinces' => $location->getAllProvinces(),
-            'all_districts' => $location->getAllDistricts()
+            'all_districts' => $location->getAllDistricts(),
+            'shops' => $shops,
+            'shop_id' => $shop_id_list,
+            'total_amount_shop' => $total_amount_shop,
+            'deposit_percent' => $this->cart->getDepositPercent(),
+            'deposit_amount' => $deposit_amount
         ];
 
         JavaScript::put($data);

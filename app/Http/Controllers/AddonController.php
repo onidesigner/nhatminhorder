@@ -30,7 +30,6 @@ class AddonController extends Controller
      * @return int
      */
     public function getExchange(){
-        $exchange = new Exchange();
-        return $exchange->getExchange();
+        return Exchange::getExchange();
     }
 }

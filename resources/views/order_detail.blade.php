@@ -6,13 +6,22 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-sm-8 col-xs-12">
             <div class="card">
 
                 <div class="card-body">
-                    page blank
+                    {{$page_title}}
                 </div>
             </div>
+        </div>
+
+        <div class="col-sm-4 col-xs-12">
+
+            @include('partials/__comment', [
+                'object_id' => $order_id,
+                'object_type' => App\Comment::TYPE_OBJECT_ORDER,
+                'scope' => App\Comment::TYPE_EXTERNAL
+            ])
         </div>
     </div>
 

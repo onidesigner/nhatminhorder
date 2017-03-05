@@ -19,13 +19,13 @@ $menus = [
         'title' => 'Vận Hành',
         'children' => [
             [
-                'url' => '',
+                'url' => url('order'),
                 'title' => 'Đơn hàng & Kiện hàng'
             ],
-            [
-                'url' => '',
-                'title' => 'Mua hàng & Thanh toán'
-            ]
+//            [
+//                'url' => '',
+//                'title' => 'Mua hàng & Thanh toán'
+//            ]
         ]
     ],
     [

@@ -15,8 +15,6 @@
 
                     <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">TAO GIAO DICH</a>
 
-                    @include()
-
                     <table class="table">
                         <thead>
                         <tr>
@@ -37,6 +35,9 @@
                         <?php
                         $user = App\User::find($transaction->user_id);
                         $order = App\Order::find($transaction->object_id);
+
+                        if(!$user) $user = new App\User();
+                        if(!$order) $order = new App\Order();
                         ?>
                         <tr>
                             <td>

@@ -29,8 +29,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        /*
 
         $factoryMethodInstance = new ServiceFactoryMethod();
+
+        $order_id = 19;
 
         //============phi mua hang===========
         $service = $factoryMethodInstance->makeService([
@@ -38,12 +41,11 @@ class HomeController extends Controller
             'total_amount' => 6000,
             'apply_time' => '2017-09-01 00:00:00'
         ]);
-        /** @var AbstractService $service */
         var_dump('phi mua hang');
         var_dump($service->calculatorFee());
 
         //============phi kiem hang===========
-        $order = Order::find(516223);
+        $order = Order::find($order_id);
         $total_quantity_items_normal = $order->getItemNormalQuantity();
         $total_quantity_items_assess = $order->getItemAssessQuantity();
 
@@ -53,12 +55,11 @@ class HomeController extends Controller
             'total_quantity_items_assess' => $total_quantity_items_assess,
             'apply_time' => '2017-09-01 00:00:00'
         ]);
-        /** @var AbstractService $service */
         var_dump('phi kiem hang');
         var_dump($service->calculatorFee());
 
         //============phi van chuyen TQ-VN===========
-        $order = Order::find(516223);
+        $order = Order::find($order_id);
         $destination_warehouse = $order->destination_warehouse;
         $destination_warehouse = 'BT-SG';
 
@@ -69,7 +70,6 @@ class HomeController extends Controller
             'destination_warehouse' => $destination_warehouse,
             'apply_time' => '2017-09-01 00:00:00'
         ]);
-        /** @var AbstractService $service */
         var_dump('phi van chuyen TQ - VN');
         var_dump($service->calculatorFee());
 
@@ -82,11 +82,10 @@ class HomeController extends Controller
             'calculator_by' => 'MANUAL',//MANUAL hoac EQUIVALENT
             'apply_time' => '2017-09-01 00:00:00'
         ]);
-        /** @var AbstractService $service */
         var_dump('phi dong go');
         var_dump($service->calculatorFee());
 
-//        die();
+        */
 
         return view('home', [
             'page_title' => 'Home'

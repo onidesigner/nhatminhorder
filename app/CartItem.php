@@ -40,4 +40,12 @@ class CartItem extends Model
     public static function genPropertyMd5($item_id, $property){
         return md5(sprintf('%s_%s', trim($item_id), trim($property)));
     }
+
+    public function getPriceCalculator(){
+        if($this->price_origin > $this->price_promotion):
+            return $this->price_promotion;
+        endif;
+
+        return $this->price_origin;
+    }
 }

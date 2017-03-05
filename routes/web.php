@@ -29,6 +29,7 @@ Route::post('/cart/shop/service', 'CartController@updateService');
 Route::post('/cart/item/comment', 'CartController@actionUpdate');
 Route::delete('/cart/item', 'CartController@deleteItem');
 Route::delete('/cart/shop', 'CartController@deleteShop');
+Route::post('/cart/deposit', 'CartController@depositOrder');
 #endregion
 
 #region quan ly nhan vien
@@ -46,6 +47,11 @@ Route::put('/user/phone', 'UserController@deleteUserPhone');
 Route::post('/user/address', 'UserAddressController@addNewUserAddress');
 Route::put('/user/address/delete', 'UserAddressController@deleteUserAddress');
 Route::put('/user/address/default', 'UserAddressController@setDefaultUserAddress');
+#endregion
+
+#region quan ly don hang
+Route::get('/order', 'OrderController@getOrders');
+Route::get('/order/{id}', 'OrderController@getOrder');
 #endregion
 
 #region comment
