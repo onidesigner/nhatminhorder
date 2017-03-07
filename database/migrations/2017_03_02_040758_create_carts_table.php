@@ -15,15 +15,15 @@ class CreateCartsTable extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('shop_id');
-            $table->string('shop_name', 50);
-            $table->string('shop_link', 100);
-            $table->string('avatar', 100);
-            $table->string('site', 50);
-            $table->string('services', 100);
-            $table->string('comment', 255);
-            $table->string('comment_private', 255);
+            $table->integer('user_id')->nullable()->default(0);
+            $table->string('shop_id', 50)->nullable();
+            $table->string('shop_name', 50)->nullable();
+            $table->string('shop_link', 100)->nullable();
+            $table->string('avatar', 100)->nullable();
+            $table->string('site', 50)->nullable();
+            $table->string('services', 100)->nullable();
+            $table->string('comment', 255)->nullable();
+            $table->string('comment_private', 255)->nullable();
             $table->timestamps();
         });
     }

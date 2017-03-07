@@ -90,7 +90,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li class="navbar-title">
-                            Ti gia: 3.500 <sup>d</sup> | So du: <?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup>
+                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup> | Số dư: <?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup>
 
                         </li>
                         {{--<li class="navbar-search hidden-sm">--}}

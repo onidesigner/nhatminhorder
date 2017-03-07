@@ -12,15 +12,15 @@ class Role extends Model
     const STATE_INACTIVE = 'INACTIVE';
 
     public static  $stateList = [
-        self::STATE_ACTIVE => 'Kich hoat',
-        self::STATE_INACTIVE => 'Ngung kich hoat'
+        self::STATE_ACTIVE => 'Kích hoạt ',
+        self::STATE_INACTIVE => 'Ngừng kích hoạt '
     ];
+
 
     public static function getStateName($name){
         if(!empty(self::$stateList[$name])):
-            return     self::$stateList[$name];
+            return self::$stateList[$name];
         endif;
-
         return '';
     }
 }

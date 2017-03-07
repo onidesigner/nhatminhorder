@@ -390,8 +390,8 @@ class CartController extends Controller
 
         //fixdata
         $data['services'] = [
-            ['title' => 'Kiem Hang', 'code' => 'CHECKING'],
-            ['title' => 'Dong Go', 'code' => 'WOOD_CRATING']
+            ['title' => 'Kiểm hàng', 'code' => Service::TYPE_CHECKING],
+            ['title' => 'Đóng gỗ', 'code' => Service::TYPE_WOOD_CRATING]
         ];
 
         $data['statistic'] = [

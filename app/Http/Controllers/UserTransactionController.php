@@ -16,6 +16,12 @@ class UserTransactionController extends Controller
 {
     protected $table = 'user_transaction';
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+    }
+
     public function getTransactions(){
         $per_page = 20;
         $user_transaction = new UserTransaction();

@@ -35,7 +35,7 @@ class Exchange extends Model
         ])->first();
 
         if($row):
-            return $row->value;
+            $value = $row->value;
         endif;
 
         return $value;

@@ -20,9 +20,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 #region quan ly gio hang
-Route::get('/cart', 'AddonController@addCart');
+Route::get('/cart/add', 'AddonController@addCart');
 
-Route::get('/gio-hang', 'CartController@showCart');
+Route::get('/cart', 'CartController@showCart');
 Route::get('/dat-coc', 'CartController@deposit');
 Route::post('/cart/quantity', 'CartController@updateQuantity');
 Route::post('/cart/shop/service', 'CartController@updateService');

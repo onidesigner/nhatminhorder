@@ -44,6 +44,10 @@ class User extends Authenticatable
         self::STATUS_INACTIVE => 'Ngừng kích hoạt'
     ];
 
+    public static $god = [
+        'hosivan90@gmail.com'
+    ];
+
     public static $section_list = [
         self::SECTION_CRANE => 'Quản trị viên',
         self::SECTION_CUSTOMER => 'Khách hàng',
@@ -129,4 +133,19 @@ class User extends Authenticatable
             'user_id' => $this->id
         ])->count() >= $this->max_mobiles;
     }
+
+
+    public function address(){
+        return $this->hasMany('App\UserAddress', 'order_id');
+    }
+
+    public function mobile(){
+        return $this->hasMany('App\UserMobile', 'order_id');
+    }
+
+    public function role(){
+        return $this->hasMany('App\UserRole', 'user_id');
+    }
+
+    
 }

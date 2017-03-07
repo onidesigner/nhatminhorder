@@ -13,8 +13,8 @@
                         <a href="#step1" id="step1-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">
                             <div class="icon fa fa-shopping-cart"></div>
                             <div class="heading">
-                                <div class="title">Gio Hang</div>
-                                <div class="description">Buoc 1</div>
+                                <div class="title">Giỏ hàng </div>
+                                <div class="description">Bước 1 </div>
                             </div>
                         </a>
                     </li>
@@ -23,8 +23,8 @@
                         <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-credit-card"></div>
                             <div class="heading">
-                                <div class="title">Dat coc & Thanh toan</div>
-                                <div class="description">Buoc 2</div>
+                                <div class="title">Đặt cọc & Thanh toán </div>
+                                <div class="description">Bước 2</div>
                             </div>
                         </a>
                     </li>
@@ -32,8 +32,8 @@
                         <a href="#step2" role="tab" id="step2-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-truck"></div>
                             <div class="heading">
-                                <div class="title">NM247 tiep nhan & xu ly</div>
-                                <div class="description">Buoc 3</div>
+                                <div class="title">NM247 tiếp nhận & xử lý </div>
+                                <div class="description">Bước 3</div>
                             </div>
                         </a>
                     </li>
@@ -41,8 +41,8 @@
                         <a href="#step4" role="tab" id="step4-tab" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-check"></div>
                             <div class="heading">
-                                <div class="title">Nhan hang</div>
-                                <div class="description">Buoc 4</div>
+                                <div class="title">Nhận hàng </div>
+                                <div class="description">Bước 4</div>
                             </div>
                         </a>
                     </li>
@@ -68,7 +68,7 @@
             <div class="col-xs-12">
                 <div class="card ">
                     <div class="card-header" style="position: relative">
-                        <a href="javascript:void(0)" class="_delete-shop" data-shop-id="{{$shop->shop_id}}" data-toggle="tooltip" title="Xoa shop">
+                        <a href="javascript:void(0)" class="_delete-shop" data-shop-id="{{$shop->shop_id}}" data-toggle="tooltip" title="Xoá shop ">
                             <i class="fa fa-trash-o"></i>
                         </a>
                         &nbsp;
@@ -108,19 +108,19 @@
                                 <thead>
                                 <tr>
                                     <th width="5%"></th>
-                                    <th width="50%">San pham</th>
-                                    <th width="15%">Don gia</th>
+                                    <th width="50%">Sản phẩm </th>
+                                    <th width="15%">Đơn giá </th>
                                     <th width="15%" class="">SL</th>
-                                    <th width="15%">Tien hang</th>
+                                    <th width="15%">Tiền hàng </th>
 
                                 </tr>
                                 </thead>
                                 <tbody>
 
                                 @foreach($shop->items as $item)
-                                <tr>
+                                <tr class="_shop-item" data-shop-id="{{$shop->shop_id}}" data-shop-item-id="{{$item->id}}">
                                     <td>
-                                        <a class="_delete-item" data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" href="javascript:void(0)" data-toggle="tooltip" title="Xoa san pham">
+                                        <a class="_delete-item" data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" href="javascript:void(0)" data-toggle="tooltip" title="Xoá sản phẩm ">
                                             <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>
@@ -132,7 +132,7 @@
                                         <br />
                                         <small>{{$item->property}}</small>
                                         <br>
-                                        <input data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" placeholder="Ghi chu san pham..." style="width: 250px; padding: 0 5px;" type="text" class="_comment" value="{{$item->comment}}" />
+                                        <input data-shop-id="{{$shop->shop_id}}" data-item-id="{{$item->id}}" placeholder="Ghi chú sản phẩm..." style="width: 250px; padding: 0 5px;" type="text" class="_comment" value="{{$item->comment}}" />
 
                                     </td>
 
@@ -151,12 +151,12 @@
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="5">
-                                        Tong tien hang: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phi tam tinh
+                                        Tổng tiền hàng: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phí tạm tính
                                         <a href="javascript:void(0)" title="" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Mua hang: 1000<br/>Kiem hang: 1000<br />Van chuyen TQ - VD: 1000<br/>Tong: 50000<br /><a href=''>>>>Bieu phi dich vu</a>"><i class="fa fa-question"></i></a>
-                                        : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tong: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
+                                        : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tổng: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
                                         &nbsp;
 
-                                        <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Dat coc</a>
+                                        <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
                                     </td>
                                 </tr>
 
@@ -196,7 +196,7 @@
         $(document).on('click', '._delete-shop', function(){
 
             var self = this;
-            bootbox.confirm("Ban co chac muon xoa shop nay?", function(result){
+            bootbox.confirm("Bạn có chắc muốn xoá shop này?", function(result){
                 if(result){
                     var shop_id = $(self).data('shop-id');
                     $.ajax({
@@ -215,7 +215,7 @@
                             }
 
                             if(response.success){
-                                window.location.reload();
+                                $('._shop[data-shop-id="' + shop_id + '"]').remove();
                             }
                         },
                         error: function () {
@@ -231,38 +231,41 @@
         $(document).on('click', '._delete-item', function(){
 
             var self = this;
-            bootbox.confirm("Ban co chac muon xoa san pham nay?", function(result) {
-                if (result) {
 
-                    var shop_id = $(self).data('shop-id');
-                    var item_id = $(self).data('item-id');
 
-                    $.ajax({
-                        url: "{{ url('cart/item') }}",
-                        method: 'delete',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            shop_id:shop_id,
-                            item_id:item_id
-                        },
-                        success: function(response){
-                            if(!response.success && response.message){
-                                bootbox.alert({
-                                    message: response.message,
-                                    size: 'small'
-                                });
-                            }
+            var shop_id = $(self).data('shop-id');
+            var item_id = $(self).data('item-id');
 
-                            if(response.success){
-                                window.location.reload();
-                            }
-                        },
-                        error: function () {
+            $.ajax({
+                url: "{{ url('cart/item') }}",
+                method: 'delete',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    shop_id:shop_id,
+                    item_id:item_id
+                },
+                success: function(response){
+                    if(!response.success && response.message){
+                        bootbox.alert({
+                            message: response.message,
+                            size: 'small'
+                        });
+                    }
 
+                    if(response.success){
+                        $('._shop-item[data-shop-id="' + shop_id + '"][data-shop-item-id="' + item_id + '"]').remove();
+
+                        if( !$('._shop-item[data-shop-id="' + shop_id + '"]').length ){
+                            $('._shop[data-shop-id="' + shop_id + '"]').remove();
                         }
-                    })
+
+
+                    }
+                },
+                error: function () {
+
                 }
-            });
+            })
 
 
         });

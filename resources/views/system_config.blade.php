@@ -40,7 +40,7 @@
                                     <button type="submit" class="btn btn-primary">Save</button>
 
                                     @if($save == 'success')
-                                        <span class="label label-success">Cap nhat thanh cong!</span>
+                                        <span class="label label-success">Cật nhật thành công!</span>
                                     @endif
                                 </div>
                             </div>

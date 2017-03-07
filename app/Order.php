@@ -103,4 +103,24 @@ class Order extends Model
         return $total;
     }
 
+    public function original_bill(){
+        return $this->hasMany('App\OrderOriginalBill', 'order_id');
+    }
+
+    public function freight_bill(){
+        return $this->hasMany('App\OrderFreightBill', 'order_id');
+    }
+
+    public function item(){
+        return $this->hasMany('App\OrderItem', 'order_id');
+    }
+
+    public function service(){
+        return $this->hasMany('App\OrderService', 'order_id');
+    }
+
+    public function package(){
+        return $this->hasMany('App\Package', 'order_id');
+    }
+
 }

@@ -225,7 +225,7 @@ class Cart extends Model
 
         try {
             $params['site'] = strtolower($params['site']);
-            $user_id = 1;//fixdata
+            $user_id = Auth::user()->id;
             $now = date('Y-m-d H:i:s');
 
             //check exists shop with user
@@ -287,5 +287,9 @@ class Cart extends Model
             return false;
         }
 
+    }
+
+    public function cart_item(){
+        return $this->hasMany('App\CartItem', 'cart_id');
     }
 }

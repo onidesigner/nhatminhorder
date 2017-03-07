@@ -16,13 +16,13 @@
 
         <div class="col-sm-6">
             <div class="panel panel-danger panel-nhatminh">
-                <div class="panel-heading">Chinh sua thong tin nhom {{$role->name}}</div>
+                <div class="panel-heading">{{$page_title}}</div>
                 <div class="panel-body">
 
 
                     <form action="{{ url('setting/role/update', $role_id)  }}" method="post">
-                        <input value="{{ $role->label  }}" type="text" class="form-control" autofocus name="label" placeholder="Ten nhom">
-                        <textarea name="description" rows="3" class="form-control" placeholder="Mo ta nhom">{{$role->description}}</textarea>
+                        <input value="{{ $role->label  }}" type="text" class="form-control" autofocus name="label" placeholder="Tên nhóm">
+                        <textarea name="description" rows="3" class="form-control" placeholder="Mô tả nhóm">{{$role->description}}</textarea>
                         <select style="margin-bottom: 15px;" name="state" class="form-control" id="">
                             @foreach(App\Role::$stateList as $key => $value)
                                 <option @if($key == $role->state) selected @endif value="{{$key}}">{{$value}}</option>
@@ -32,14 +32,14 @@
                         <input type="hidden" name="role_id" value="{{$role_id}}">
                         {{ csrf_field() }}
 
-                        <button type="submit" class="btn btn-danger" id="_save-role">Save changes</button>
+                        <button type="submit" class="btn btn-danger" id="_save-role">Cập nhật</button>
                     </form>
                 </div>
             </div>
 
 
             <div class="panel panel-danger panel-nhatminh">
-                <div class="panel-heading">Thanh vien thuoc nhom ({{ count($users_in_role)  }})</div>
+                <div class="panel-heading">Thành viên thuộc nhóm ({{ count($users_in_role)  }})</div>
                 <div class="panel-body">
 
                     @if(!empty($users_in_role))
@@ -47,7 +47,7 @@
                             @foreach($users_in_role as $kk => $vv)
                                 <li>
 
-                                    <a data-toggle="tooltip" title="Xoa user ra khoi nhom" data-role-id="{{$role_id}}" data-user-id="{{$vv['id']}}" href="javascript:void(0)" data-action="remove" class="_change-user-role"><i class="fa fa-minus"></i></a>
+                                    <a data-toggle="tooltip" title="Xoá thành viên ra khỏi nhóm" data-role-id="{{$role_id}}" data-user-id="{{$vv['id']}}" href="javascript:void(0)" data-action="remove" class="_change-user-role"><i class="fa fa-minus"></i></a>
                                     &nbsp;&nbsp;&nbsp;
                                     <strong>{{ $vv['email']  }}</strong> ({{ $vv['name']  }})
 
@@ -61,14 +61,14 @@
             </div>
 
             <div class="panel panel-danger panel-nhatminh" style="">
-                <div class="panel-heading" style="">Thanh vien khong thuoc nhom ({{ count($users_not_in_role)  }})</div>
+                <div class="panel-heading" style="">Thành viên không thuộc nhóm ({{ count($users_not_in_role)  }})</div>
                 <div class="panel-body">
 
                     @if(!empty($users_not_in_role))
                         <ul style="list-style: none">
                             @foreach($users_not_in_role as $kkk => $vvv)
                                 <li>
-                                    <a data-toggle="tooltip" title="Them user vao nhom" data-role-id="{{$role_id}}" data-user-id="{{$vvv['id']}}" href="javascript:void(0)" data-action="add" class="_change-user-role"><i class="fa fa-plus"></i></a>
+                                    <a data-toggle="tooltip" title="Thêm thành viên vào nhóm" data-role-id="{{$role_id}}" data-user-id="{{$vvv['id']}}" href="javascript:void(0)" data-action="add" class="_change-user-role"><i class="fa fa-plus"></i></a>
                                     &nbsp;&nbsp;&nbsp;
                                     <strong>{{ $vvv['email']  }}</strong> ({{ $vvv['name']  }})
 
@@ -101,7 +101,6 @@
         $(document).ready(function(){
 
             $(document).on('click', '._change-user-role', function(e){
-                var $that = $(this);
 
                 $.ajax({
                     url: "{{ url('setting/role/user') }}",
@@ -113,16 +112,14 @@
                         _token:"{{ csrf_token() }}"
                     },
                     success: function(response){
-                        if(!response.success && response.message){
+
+                        if(response.success){
+                            window.location.reload();
+                        }else{
                             bootbox.alert({
                                 message: response.message,
                                 size: 'small'
                             });
-                        }
-
-                        if(response.success){
-
-                            window.location.reload();
                         }
 
                     },
@@ -149,16 +146,11 @@
                         _token:"{{ csrf_token() }}"
                     },
                     success: function(response){
-                        if(!response.success && response.message){
-                            bootbox.alert({
-                                message: response.message,
-                                size: 'small'
-                            });
-                        }
 
-                        if(response.success){
-
-                        }
+                        bootbox.alert({
+                            message: response.message,
+                            size: 'small'
+                        });
 
                         $that.prop('disabled', false);
                     },

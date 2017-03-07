@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Log;
 
 class ExportWarehouseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+    }
+
     /**
      * load lần đầu vào trang
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

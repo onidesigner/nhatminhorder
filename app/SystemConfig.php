@@ -10,15 +10,15 @@ class SystemConfig extends Model
 
     protected $system_config_data = [
         [
-            'field_name' => 'Ten website',
+            'field_name' => 'Field 1',
             'key' => 'website_name'
         ],
         [
-            'field_name' => 'Ten website 1',
+            'field_name' => 'Field 2',
             'key' => 'website_name1'
         ],
         [
-            'field_name' => 'Ten website 2',
+            'field_name' => 'Field 3',
             'key' => 'website_name2'
         ]
     ];
@@ -33,8 +33,6 @@ class SystemConfig extends Model
 
             $this->newQuery()->insert($data_insert);
         endif;
-
-
 
         return true;
     }

@@ -6,10 +6,16 @@ use App\Library\ServiceFee\AbstractService;
 use App\Library\ServiceFee\Buying;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Service;
+use App\OrderFreightBill;
 use App\Order;
+use App\User;
+use App\Role;
+use App\UserRole;
+use App\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +35,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $user_id = Auth::user()->id;
+
         /*
 
         $factoryMethodInstance = new ServiceFactoryMethod();
@@ -86,6 +94,19 @@ class HomeController extends Controller
         var_dump($service->calculatorFee());
 
         */
+
+        // Store a piece of data in the session...
+
+//        $order_freight_bill = Order::find(3)->freight_bill;
+//        $order_original_bill = Order::find(3)->original_bill;
+//
+//        $role = User::find(2)->role;
+//
+
+//        $user_permission = Cache::get("user_permission_{$user_id}");
+//        var_dump($user_permission);
+
+//        die('hello');
 
         return view('home', [
             'page_title' => 'Home'

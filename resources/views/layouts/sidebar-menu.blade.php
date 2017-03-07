@@ -4,7 +4,7 @@ $menus = [
     [
         'url' => url('home'),
         'icon' => 'fa-home',
-        'title' => 'Trang chu',
+        'title' => 'Trang chủ',
         'use' => ['customer', 'crane']
     ],
 //    [
@@ -31,7 +31,7 @@ $menus = [
     [
         'url' => url('nhan-vien'),
         'icon' => 'fa-user',
-        'title' => 'Nhan Vien'
+        'title' => 'Nhân viên '
     ],
 //            [
 //                'url' => '#',
@@ -45,11 +45,11 @@ $menus = [
         'children' => [
             [
                 'url' => url('transactions'),
-                'title' => 'Lich su giao dich'
+                'title' => 'Lịch sử giao dịch '
             ],
             [
                 'url' => url('transaction/adjustment'),
-                'title' => 'Tao dieu chinh tai chinh'
+                'title' => 'Tạo điều chỉnh tài chính '
             ]
         ]
     ],
@@ -60,11 +60,11 @@ $menus = [
         'children' => [
             [
                 'url' => url('setting/roles'),
-                'title' => 'Nhom & phan quyen'
+                'title' => 'Nhóm & phân quyền '
             ],
             [
                 'url' => url('setting'),
-                'title' => 'Cau hinh chung'
+                'title' => 'Cấu hình chung '
             ]
         ]
     ]

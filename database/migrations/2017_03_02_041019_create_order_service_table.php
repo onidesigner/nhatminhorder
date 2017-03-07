@@ -18,7 +18,6 @@ class CreateOrderServiceTable extends Migration
             $table->integer('order_id');
             $table->integer('service_id');
             $table->string('service_code', 100);
-            $table->string('service_code', 100);
             $table->double('unit_price', 20, 2);
             $table->double('quantity', 20, 2);
             $table->double('fixed_fee', 20, 2);

@@ -11,6 +11,7 @@ use App\User;
 class CommentController extends Controller
 {
     public $user_id = null;
+
     public function __construct()
     {
         $this->middleware('auth');

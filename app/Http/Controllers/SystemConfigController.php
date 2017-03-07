@@ -9,6 +9,7 @@ use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use App\Role;
 use App\User;
 use Illuminate\Support\Facades\Response;
@@ -18,100 +19,146 @@ use Illuminate\Support\Facades\Validator;
 class SystemConfigController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * @author vanhs
+     * @desc Them/bo thanh vien vao nhom
+     * @param Request $request
+     * @return mixed
+     */
     public function updateUserRole(Request $request){
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            return Response::json(['success' => true]);
+        $can_view = Permission::isAllow(Permission::PERMISSION_VIEW_ROLE);
+        if(!$can_view):
+            return Response::json(['success' => false, 'message' => 'not permission']);
         endif;
 
-        $role = Role::find($request->get('role_id'));
         $user_id = $request->get('user_id');
         $role_id = $request->get('role_id');
 
+        $role = Role::find($role_id);
+
         if(!$role):
-            return Response::json(['success' => true]);
+            return Response::json(['success' => false, 'message' => 'role not found']);
         endif;
 
-        $user_role = new UserRole();
 
-        $action = $request->get('action');
-        switch ($action):
-            case "add":
+        try{
+            DB::beginTransaction();
 
-                $check_exists = $user_role->newQuery()
-                    ->where(['user_id' => $user_id, 'role_id' => $role_id])
-                    ->first();
+            $action = $request->get('action');
 
-                if(!$check_exists):
-                    $user_role->newQuery()->insert([
+            switch ($action):
+                case "add":
+
+                    $check_exists = UserRole::where(['user_id' => $user_id, 'role_id' => $role_id])
+                        ->first();
+
+                    if(!$check_exists):
+                        UserRole::insert([
+                            'user_id' => $user_id,
+                            'role_id' => $role_id,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ]);
+                    endif;
+
+
+                    break;
+                case "remove":
+                    UserRole::where([
                         'user_id' => $user_id,
-                        'role_id' => $role_id,
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-                endif;
+                        'role_id' => $role_id
+                    ])->delete();
+
+                    break;
+            endswitch;
+
+            DB::commit();
+            return Response::json(['success' => true, 'message' => 'update success']);
+        }catch(\Exception $e){
+            DB::rollback();
+            return Response::json(['success' => false, 'message' => 'can not change user']);
+        }
 
 
-                break;
-            case "remove":
-                $user_role->newQuery()->where([
-                    'user_id' => $user_id,
-                    'role_id' => $role_id
-                ])->delete();
-
-                break;
-        endswitch;
-
-        return Response::json(['success' => true]);
     }
 
+    /**
+     * @author vanhs
+     * @desc Luu thong tin quyen
+     * @param Request $request
+     * @return mixed
+     */
     public function savePermission(Request $request){
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            return Response::json(['success' => true]);
+        $can_view = Permission::isAllow(Permission::PERMISSION_VIEW_ROLE);
+        if(!$can_view):
+            return Response::json(['success' => false, 'message' => 'not permission']);
         endif;
 
-        $role = Role::find($request->get('role_id'));
+        $role_id = $request->get('role_id');
+
+        $role = Role::find($role_id);
 
         if(!$role):
-            return Response::json(['success' => true]);
+            return Response::json(['success' => false, 'message' => 'role not found']);
         endif;
 
         $permission_data = [];
-
         $permission_params = $request->get('permission');
+        if(!$permission_params) $permission_params = [];
+
         foreach($permission_params as $permission_param):
             $permission_data[] = [
-                'role_id' =>  $request->get('role_id'),
+                'role_id' =>  $role_id,
                 'code' => $permission_param,
                 'created_at' => date('Y-m-d H:i:s')
             ] ;
         endforeach;
 
-        $permission = new Permission();
-        $permission->newQuery()->where(['role_id' => $request->get('role_id')])->delete();
+        try{
+            DB::beginTransaction();
 
-        if(count($permission_data)):
-            $permission->newQuery()->insert($permission_data);
-        endif;
+            Permission::where(['role_id' => $request->get('role_id')])->delete();
 
-        return Response::json(['success' => true]);
+            if(count($permission_data)):
+                Permission::insert($permission_data);
+            endif;
+
+            DB::commit();
+
+            return Response::json(['success' => true, 'message' => 'save success']);
+        }catch(\Exception $e){
+            DB::rollback();
+            return Response::json(['success' => false, 'message' => 'save not success']);
+        }
     }
 
+    /**
+     * @author vanhs
+     * @desc Chinh sua thong tin nhom quyen
+     * @param Request $request
+     * @return Redirect
+     */
     public function updateRole(Request $request){
+
+        $can_view = Permission::isAllow(Permission::PERMISSION_VIEW_ROLE);
+        if(!$can_view):
+            return redirect('403');
+        endif;
+
         $data = $request->all();
         $role_id = $data['role_id'];
-
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            return Response::json(['success' => true]);
-        endif;
 
         $role = Role::find($request->get('role_id'));
 
         if(!$role):
-            return Response::json(['success' => true]);
+            return redirect('404');
         endif;
 
-        $role = new Role();
-
-        $role->newQuery()->where([
+        Role::where([
             'id' => $role_id
         ])->update([
             'label' => $data['label'],
@@ -123,30 +170,31 @@ class SystemConfigController extends Controller
         return redirect("setting/role/$role_id");
     }
 
+    /**
+     * @author vanhs
+     * @desc Lay cac thong tin can thiet de hien thi trang chi tiet nhom
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|Redirect|\Illuminate\View\View
+     */
     public function roleDetail(Request $request){
 
-//        $permission = new Permission();
-//        $check = $permission->isAllow(Permission::PERMISSION_USER_VIEW_LIST);
-//        var_dump($check);
-
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            redirect('403');
+        $can_view = Permission::isAllow(Permission::PERMISSION_VIEW_ROLE);
+        if(!$can_view):
+            return redirect('403');;
         endif;
 
         $id = $request->route('id');
+
         $role = Role::find($id);
 
         if(!$role):
-            redirect('404');
+            return redirect('404');
         endif;
 
         $role_name = $role->label;
 
-        $user_role = new UserRole();
-        $user = new User();
-
         #region -- danh sach cac user thuoc role nay
-        $users_in_role_array = $user_role->newQuery()->select('user_id')->where([
+        $users_in_role_array = UserRole::select('user_id')->where([
             'role_id' => $id
         ])->get()->toArray();
 
@@ -158,7 +206,7 @@ class SystemConfigController extends Controller
         endif;
         $users_ids_in_role[] = 0;
 
-        $users_in_role = $user->newQuery()->select('*')->where([
+        $users_in_role = User::select('*')->where([
             'section' => User::SECTION_CRANE,
             'status' => User::STATUS_ACTIVE,
         ])->whereIn('id', $users_ids_in_role)->get()->toArray();
@@ -166,15 +214,14 @@ class SystemConfigController extends Controller
         #endregion
 
         #region -- danh sach cac user khong thuoc ve role nay --
-        $users_not_in_role = $user->newQuery()->select('*')->where([
+        $users_not_in_role = User::select('*')->where([
             'section' => User::SECTION_CRANE,
             'status' => User::STATUS_ACTIVE,
         ])->whereNotIn('id', $users_ids_in_role)->get()->toArray();
         #endregion
 
         #region -- danh sach cac quyen thuoc role nay --
-        $permission = new Permission();
-        $permissions_role = $permission->newQuery()->select('code')->where([
+        $permissions_role = Permission::select('code')->where([
             'role_id' => $id
         ])->get()->toArray();
 
@@ -187,7 +234,7 @@ class SystemConfigController extends Controller
         #endregion
 
         $data = [
-            'page_title' => sprintf("Chi tiet nhom [%s]", $role_name),
+            'page_title' => sprintf("Chi tiết nhóm [%s]", $role_name),
             'role' => $role,
             'role_id' => $id,
             'users_not_in_role' => $users_not_in_role,
@@ -198,48 +245,78 @@ class SystemConfigController extends Controller
         return view('role_detail', $data);
     }
 
+    /**
+     * @author vanhs
+     * @desc Tao moi mot nhom quyen
+     * @param Request $request
+     * @return mixed
+     */
     public function addRole(Request $request){
         $data_insert = $request->all();
         $data_insert['created_at'] = date('Y-m-d H:i:s');
 
         unset($data_insert['_token']);
 
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            return Response::json(['success' => true]);
+        $can_insert = Permission::isAllow(Permission::PERMISSION_CREATE_ROLE);
+        if(!$can_insert):
+            return Response::json(['success' => false, 'message' => 'not permission']);
         endif;
 
         $validator = Validator::make($data_insert, [
             'label' => 'required'
         ]);
-
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return Response::json(array('success' => false, 'message' => implode('<br>', $errors) ));
         }
 
-        $role = new Role();
-        $role->newQuery()->insert($data_insert);
+        Role::insert($data_insert);
 
-        return Response::json(['success' => true]);
+        return Response::json(['success' => true, 'message' => 'insert success']);
     }
 
+    /**
+     * @author vanhs
+     * @desc Xoa nhom quyen
+     * @param Request $request
+     * @return mixed
+     */
     public function deleteRole(Request $request){
         $id = $request->get('id');
 
-        if(Auth::user()->section == User::SECTION_CUSTOMER):
-            return Response::json(['success' => true]);
+        $can_delete = Permission::isAllow(Permission::PERMISSION_DELETE_ROLE);
+        if(!$can_delete):
+            return Response::json(['success' => false, 'message' => 'not permission']);
         endif;
 
-        Role::find($id)->delete();
+        try{
+            DB::beginTransaction();
 
-        return Response::json(['success' => true]);
+            Role::find($id)->delete();
+
+            UserRole::where([
+                'role_id' => $id
+            ])->delete();
+
+            Permission::where([
+                'role_id' => $id
+            ])->delete();
+
+            DB::commit();
+
+            return Response::json(['success' => true, 'message' => 'delete success']);
+        }catch(\Exception $e){
+            DB::rollback();
+            return Response::json(['success' => false, 'message' => 'delete not success']);
+        }
+
     }
 
     public function roles(){
         $role = new Role();
         $roles = $role->newQuery()->orderBy('created_at', 'desc')->get()->toArray();
         $data = [
-            'page_title' => "Nhom & phan quyen",
+            'page_title' => "Nhóm & phân quyền ",
             'roles' => $roles,
             'permissions' => Permission::$permissions
         ];
@@ -261,7 +338,7 @@ class SystemConfigController extends Controller
 //        var_dump($data_inserted);
 
         $data = [
-            'page_title' => "Cau hinh chung he thong",
+            'page_title' => "Cấu hình chung hệ thống ",
             'data' => $system_config->showTable(),
             'data_inserted' => $data_inserted,
             'save' => $request->get('save')
@@ -283,7 +360,8 @@ class SystemConfigController extends Controller
 
             $data_insert[] = [
                 'config_key' => $key,
-                'config_value' => $data_send_item ? $data_send_item : ''
+                'config_value' => $data_send_item ? $data_send_item : '',
+                'created_at' => date('Y-m-d H:i:s')
             ];
         endforeach;
 
