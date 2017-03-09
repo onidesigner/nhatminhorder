@@ -8,7 +8,12 @@
 
     <div class="row">
         <div class="col-xs-12">
-            This is home page!
+            <div class="card">
+                <div class="card-body">
+                    <h3>Bảng điều khiển!</h3>
+                </div>
+            </div>
+
         </div>
     </div>
 

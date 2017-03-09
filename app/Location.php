@@ -9,16 +9,19 @@ class Location extends Model
 {
     protected $table = 'locations';
 
+    const TYPE_DISTRICT = 'DISTRICT';
+    const TYPE_STATE = 'STATE';
+
     public function getAllProvinces(){
         return $this->newQuery()->addSelect('*')
-            ->where(['type' => 'STATE', 'status' => 0])
+            ->where(['type' => self::TYPE_STATE, 'status' => 0])
             ->orderBy('logistic_code', 'asc')
             ->get();
     }
 
     public function getAllDistricts(){
         return $this->newQuery()->addSelect('*')
-            ->where(['type' => 'DISTRICT', 'status' => 0])
+            ->where(['type' => self::TYPE_DISTRICT, 'status' => 0])
             ->orderBy('logistic_code', 'asc')
             ->get();
     }

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+{{--@extends('layouts.app_blank')--}}
 
 @section('page_title')
     {{$page_title}}
@@ -13,38 +14,45 @@
 
                     <h3>{{$page_title}}</h3>
 
-                    <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">TAO GIAO DICH</a>
+                    @if($can_create_transaction)
+                        <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">
+                            TẠO GIAO DỊCH</a>
+                    @endif
 
                     <table class="table">
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Khach</th>
-                            <th>Ma GD</th>
-                            <th>Loai</th>
-                            <th>Trang thai</th>
-                            <th>Don hang</th>
-                            <th>Thoi gian</th>
-                            <th>Gia tri</th>
-                            <th>So du cuoi</th>
+                            <th>Khách </th>
+                            <th>Mã GD</th>
+                            <th>Loại </th>
+                            <th>Trạng thái </th>
+                            <th>Đối tượng</th>
+                            <th>Thời gian </th>
+                            <th>Giá trị </th>
+                            <th>Số dư cuối </th>
                         </tr>
                         </thead>
                         <tbody>
 
                         @foreach($transactions as $transaction)
                         <?php
-                        $user = App\User::find($transaction->user_id);
-                        $order = App\Order::find($transaction->object_id);
 
-                        if(!$user) $user = new App\User();
-                        if(!$order) $order = new App\Order();
+                            $user = App\User::find($transaction->user_id);
+                            $order = App\Order::find($transaction->object_id);
+
+                            if(!$user) $user = new App\User();
+                            if(!$order) $order = new App\Order();
                         ?>
                         <tr>
                             <td>
-                                <a href="">{{$transaction->id}}</a>
+                                {{$transaction->id}}
                             </td>
                             <td>
-                                <a href=""><strong>{{$user->email}}</strong></a><br>
+                                <a href="{{ url('nhan-vien', $user->id)  }}">
+                                    <strong>{{$user->email}}</strong>
+                                </a><br>
+
                                 <small>{{$user->name}}</small>
 
                                 <code>{{$user->code}}</code>

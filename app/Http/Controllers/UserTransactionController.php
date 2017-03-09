@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Permission;
 use App\UserTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +23,19 @@ class UserTransactionController extends Controller
 
     }
 
+    /**
+     * @author vanhs
+     * @desc Danh sach giao dich
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getTransactions(){
+        $can_view = Permission::isAllow(Permission::PERMISSION_TRANSACTION_VIEW);
+        if(!$can_view):
+            return redirect('403');
+        endif;
+
+        $can_create_transaction = Permission::isAllow(Permission::PERMISSION_TRANSACTION_CREATE);
+
         $per_page = 20;
         $user_transaction = new UserTransaction();
         $transactions = $user_transaction->newQuery()
@@ -30,9 +43,145 @@ class UserTransactionController extends Controller
             ->paginate($per_page);
 
         return view('transactions', [
-            'page_title' => 'Lich su giao dich',
+            'page_title' => 'Lịch sử giao dịch ',
+            'can_create_transaction' => $can_create_transaction,
             'transactions' => $transactions
         ]);
+    }
+
+
+    /**
+     * @author vanhs
+     * @desc Kiem tra cac dieu kien dau vao khi tao giao dich
+     * @param $data_insert
+     * @return mixed
+     */
+    private function __validateBeforeCreateTransactionAdjustment($data_insert){
+        $can_create_transaction = Permission::isAllow(Permission::PERMISSION_TRANSACTION_CREATE);
+        if(!$can_create_transaction):
+            return ['success' => false, 'message' => 'not permission'];
+        endif;
+
+        $rules = [
+            'transaction_type' => 'required',
+            'amount' => 'required|has_amount_value',
+            'transaction_note' => 'required'
+        ];
+
+        switch ($data_insert['transaction_type']):
+
+            case UserTransaction::TRANSACTION_TYPE_ADJUSTMENT:
+                $rules['user_id'] = 'required|user_exists';
+                $rules['transaction_adjustment_type'] = 'required';
+                break;
+
+            case UserTransaction::TRANSACTION_TYPE_PAYMENT:
+            case UserTransaction::TRANSACTION_TYPE_REFUND:
+
+                $rules['object_type'] = 'required';
+                switch ($data_insert['object_type']){
+                    case UserTransaction::OBJECT_TYPE_ORDER:
+                        $rules['order_code'] = 'required|order_exists';
+                        break;
+                }
+
+                break;
+
+            case UserTransaction::TRANSACTION_TYPE_GIFT:
+                $rules['user_id'] = 'required|user_exists';
+                break;
+            default:
+                break;
+        endswitch;
+
+        $messages = [
+            'transaction_type.required' => 'Loại giao dịch không để trống !',
+            'amount.required' => 'Số tiền không để trống !',
+            'transaction_note.required' => 'Lý do không để trống !',
+            'user_id.required' => 'Vui lòng chọn khách hàng !',
+            'transaction_adjustment_type.required' => 'Vui lòng chọn loại điều chỉnh !',
+            'object_type.required' => 'Vui lòng chọn đối tượng !',
+            'amount.has_amount_value' => 'Số tiền không hợp lệ !',
+            'user_id.user_exists' => 'Tài khoản khách hàng không hợp lệ !',
+            'order_code.order_exists' => 'Đơn hàng không hợp lệ !',
+            'order_code.required' => 'Mã đơn hàng không để trống !',
+        ];
+
+        Validator::extend('has_amount_value', function ($attribute, $value, $parameters, $validator) {
+            return $value > 0;
+        });
+
+        Validator::extend('user_exists', function ($attribute, $value, $parameters, $validator) {
+            $exists = User::select('id')
+                ->where([
+                    'id' => $value,
+                    'status' => User::STATUS_ACTIVE,
+                    'section' => User::SECTION_CUSTOMER
+                ])
+                ->first();
+            if($exists):
+                return true;
+            endif;
+            return false;
+        });
+
+        Validator::extend('order_exists', function ($attribute, $value, $parameters, $validator) {
+            $exists = Order::select('id')
+                ->where([
+                    'code' => $value
+                ])
+                ->first();
+            if($exists):
+                return true;
+            endif;
+            return false;
+        });
+
+        $validator = Validator::make($data_insert, $rules, $messages);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return array('success' => false, 'message' => implode('<br>', $errors) );
+        }
+
+        return ['success' => true];
+    }
+
+    /**
+     * @author vanhs
+     * @desc Tao giao dich: luu thong tin vao bang user_transaction, cap nhat tai chinh khach
+     * @param User $user
+     * @param $state
+     * @param $amount
+     * @param $transaction_type
+     * @param $transaction_detail
+     * @param $transaction_note
+     * @param string $order_id
+     * @param $object_type
+     */
+    private function __createTransaction(User $user, $state, $amount, $transaction_type,
+                                         $transaction_detail, $transaction_note,
+                                         $order_id = '', $object_type= ''){
+        $code = UserTransaction::generateTransactionCode();
+
+        $ending_balance = $user->account_balance + $amount;
+
+        UserTransaction::insert([
+            'ending_balance' => $ending_balance,
+            'user_id' => $user->id,
+            'state' => $state,
+            'object_id' => $order_id,
+            'object_type' => $object_type,
+            'transaction_code' => $code,
+            'transaction_type' => $transaction_type,
+            'amount' => $amount,
+            'created_by' => Auth::user()->id,
+            'transaction_detail' => $transaction_detail,
+            'transaction_note' => $transaction_note,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        $user->updateAccountBalance($amount, $user->id);
     }
 
     public function createTransactionAdjustment(Request $request){
@@ -43,99 +192,10 @@ class UserTransactionController extends Controller
 
             unset($data_insert['_token']);
 
-            #region -- begin validate --
-            if(Auth::user()->section == User::SECTION_CUSTOMER):
-                return Response::json(['success' => false, 'message' => 'Khong the tao giao dich!']);
+            $validate_data = $this->__validateBeforeCreateTransactionAdjustment($data_insert);
+            if(!$validate_data['success']):
+                return Response::json(array('success' => false, 'message' => $validate_data['message'] ));
             endif;
-
-            $rules = [
-                'transaction_type' => 'required',
-                'amount' => 'required|has_amount_value',
-                'transaction_note' => 'required'
-            ];
-
-            switch ($data_insert['transaction_type']):
-
-                case UserTransaction::TRANSACTION_TYPE_ADJUSTMENT:
-                    $rules['user_id'] = 'required|user_exists';
-                    $rules['transaction_adjustment_type'] = 'required';
-                    break;
-                case UserTransaction::TRANSACTION_TYPE_PAYMENT:
-                case UserTransaction::TRANSACTION_TYPE_REFUND:
-
-                    $rules['object_type'] = 'required';
-                    switch ($data_insert['object_type']):
-                        case UserTransaction::OBJECT_TYPE_ORDER:
-                            $rules['order_code'] = 'required|order_exists';
-                            break;
-                    endswitch;
-
-                    break;
-                case UserTransaction::TRANSACTION_TYPE_GIFT:
-                    $rules['user_id'] = 'required|user_exists';
-                    break;
-
-                default:
-
-                    break;
-            endswitch;
-
-            $messages = [
-                'transaction_type.required' => 'Loai giao dich khong de trong!',
-                'amount.required' => 'So tien khong de trong!',
-                'transaction_note.required' => 'Ly do khong de trong!',
-                'user_id.required' => 'Vui long chon khach hang!',
-                'transaction_adjustment_type.required' => 'Vui long chon loai dieu chinh!',
-                'object_type.required' => 'Vui long chon doi tuong!',
-                'amount.has_amount_value' => 'So tien khong hop le!',
-                'user_id.user_exists' => 'Tai khoan khach hang khong hop le!',
-                'order_code.order_exists' => 'Don hang khong hop le!',
-                'order_code.required' => 'Ma don hang khong de trong!',
-            ];
-
-            Validator::extend('has_amount_value', function ($attribute, $value, $parameters, $validator) {
-                return $value > 0;
-            });
-
-            Validator::extend('user_exists', function ($attribute, $value, $parameters, $validator) {
-                $user = new User();
-                $exists = $user->newQuery()->select('id')
-                    ->where([
-                        'id' => $value,
-                        'status' => User::STATUS_ACTIVE,
-                        'section' => User::SECTION_CUSTOMER
-                    ])
-                    ->first();
-                if($exists):
-                    return true;
-                endif;
-                return false;
-            });
-
-            Validator::extend('order_exists', function ($attribute, $value, $parameters, $validator) {
-                $order = new Order();
-                $exists = $order->newQuery()->select('id')
-                    ->where([
-                        'code' => $value
-                    ])
-                    ->first();
-                if($exists):
-                    return true;
-                endif;
-                return false;
-            });
-
-            $validator = Validator::make($data_insert, $rules, $messages);
-
-            if ($validator->fails()) {
-                $errors = $validator->errors()->all();
-                return Response::json(array('success' => false, 'message' => implode('<br>', $errors) ));
-            }
-            #endregion
-
-            $user_transaction = new UserTransaction();
-
-            $code = UserTransaction::generateTransactionCode();
 
             switch ($data_insert['transaction_type']):
                 case UserTransaction::TRANSACTION_TYPE_ADJUSTMENT:
@@ -146,40 +206,19 @@ class UserTransactionController extends Controller
 
                     $user = User::find($data_insert['user_id']);
 
-                    $user_transaction->newQuery()->insert([
-                        'ending_balance' => $user->account_balance,
-                        'user_id' => $data_insert['user_id'],
-                        'state' => UserTransaction::STATE_COMPLETED,
-                        'transaction_code' => $code,
-                        'transaction_type' => $data_insert['transaction_type'],
-                        'amount' => $data_insert['amount'],
-                        'created_by' => Auth::user()->id,
-                        'transaction_detail' => $data_insert['transaction_note'],
-                        'transaction_note' => $data_insert['transaction_note'],
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-
-                    $user->updateAccountBalance($data_insert['amount'], $data_insert['user_id']);
+                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
+                        $data_insert['transaction_type'], $data_insert['transaction_note'],
+                        $data_insert['transaction_note']);
 
                     break;
 
                 case UserTransaction::TRANSACTION_TYPE_GIFT:
+
                     $user = User::find($data_insert['user_id']);
 
-                    $user_transaction->newQuery()->insert([
-                        'ending_balance' => $user->account_balance,
-                        'user_id' => $data_insert['user_id'],
-                        'state' => UserTransaction::STATE_COMPLETED,
-                        'transaction_code' => $code,
-                        'transaction_type' => $data_insert['transaction_type'],
-                        'amount' => $data_insert['amount'],
-                        'created_by' => Auth::user()->id,
-                        'transaction_detail' => $data_insert['transaction_note'],
-                        'transaction_note' => $data_insert['transaction_note'],
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-
-                    $user->updateAccountBalance($data_insert['amount'], $data_insert['user_id']);
+                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
+                        $data_insert['transaction_type'], $data_insert['transaction_note'],
+                        $data_insert['transaction_note']);
 
                     break;
 
@@ -191,37 +230,24 @@ class UserTransactionController extends Controller
                     endif;
 
                     $object = null;
-                    $object_type = null;
+                    $object_id = null;
+                    $object_type = $data_insert['object_type'];
                     switch ($data_insert['object_type']):
                         case UserTransaction::OBJECT_TYPE_ORDER:
-                            $object_type = UserTransaction::OBJECT_TYPE_ORDER;
-                            $order = new Order();
-                            $object = $order->newQuery()->select('*')
+                            $object = Order::select('*')
                                 ->where([
                                     'code' => $data_insert['order_code']
                                 ])
                                 ->first();
+                            $object_id = $object->code;
                             break;
                     endswitch;
 
                     $user = User::find($object->buyer_id);
 
-                    $user_transaction->newQuery()->insert([
-                        'ending_balance' => $user->account_balance,
-                        'user_id' => $object->buyer_id,
-                        'object_id' => $object->id,
-                        'object_type' => $object_type,
-                        'state' => UserTransaction::STATE_COMPLETED,
-                        'transaction_code' => $code,
-                        'transaction_type' => $data_insert['transaction_type'],
-                        'amount' => $data_insert['amount'],
-                        'created_by' => Auth::user()->id,
-                        'transaction_detail' => json_encode($object),
-                        'transaction_note' => $data_insert['transaction_note'],
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-
-                    $user->updateAccountBalance($data_insert['amount'], $object->buyer_id);
+                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
+                        $data_insert['transaction_type'], json_encode($object),
+                        $data_insert['transaction_note'], $object_id, $object_type);
 
                     break;
 
@@ -229,10 +255,10 @@ class UserTransactionController extends Controller
 
             DB::commit();
 
-            return Response::json(['success' => true, 'message' => 'Tao giao dich thanh cong!']);
+            return Response::json(['success' => true, 'message' => 'insert success!']);
         }catch(\Exception $e){
             DB::rollback();
-            return Response::json(['success' => false, 'message' => 'Tao giao dich khong thanh cong!']);
+            return Response::json(['success' => false, 'message' => 'insert fail!' . $e->getMessage()]);
         }
     }
 
@@ -244,7 +270,7 @@ class UserTransactionController extends Controller
         ])->orderBy('name', 'asc')->get()->toArray();
 
         return view('transaction_adjustment', [
-            'page_title' => 'Tao dieu chinh tai chinh',
+            'page_title' => 'Tạo giao dịch điều chỉnh tài chính ',
             'users_customer' => $users_customer
         ]);
     }

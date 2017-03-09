@@ -59,8 +59,9 @@ class Order extends Model
      */
     public function getItemInOrder()
     {
-        $order_item = new OrderItem();
-        return $order_item->getItemsInOrder($this->id);
+        return OrderItem::where([
+            'order_id' => $this->id
+        ])->get();
     }
 
     /**
@@ -103,6 +104,20 @@ class Order extends Model
         return $total;
     }
 
+    public function has_origin_bill($original_bill){
+        return OrderOriginalBill::where([
+            'original_bill' => $original_bill,
+            'order_id' => $this->id
+        ])->count();
+    }
+
+    public function has_freight_bill($freight_bill){
+        return OrderFreightBill::where([
+            'order_id' => $this->id,
+            'freight_bill' => $freight_bill
+        ])->count();
+    }
+
     public function original_bill(){
         return $this->hasMany('App\OrderOriginalBill', 'order_id');
     }
@@ -123,4 +138,40 @@ class Order extends Model
         return $this->hasMany('App\Package', 'order_id');
     }
 
+    /**
+     * @author vanhs
+     * @desc Tao ma don hang
+     * @param $user
+     * @return string
+     * @throws \Exception
+     */
+    public static function createCode($user)
+    {
+        if(!$user):
+            throw new \Exception('User not found!');
+        endif;
+        $user_code = $user->code;
+
+        //fail safe: if user deposit without user code, create one
+        if (!$user_code) {
+            $user_code = User::genCustomerCode();
+            User::where(['id' => $user->id])->update([
+                'updated_at' => date('Y-m-d H:i:s'),
+                'code' => $user_code
+            ]);
+        }
+
+        //remove shipping address province's code
+        $current_order_no = self::select('id')->where([
+            'user_id' => $user->id,
+            'DATE(`created_time`)' => date('Y-m-d')
+        ])->count();
+
+        $serial_part = str_pad($current_order_no + 1, 1, '0', STR_PAD_LEFT);
+        $time_part = date('d');
+
+        $working_month_sequence = Util::getWorkingMonthSequence();
+
+        return "{$user_code}_{$working_month_sequence}{$time_part}{$serial_part}";
+    }
 }

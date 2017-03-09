@@ -885,7 +885,7 @@ var AddonTool = function(){
             category_id : category_id,
             tool: "Addon",
             version: version_tool,
-            is_translate: object.isTranslatePage()
+            is_translate: object.isTranslatePage() ? 1 : 0
         };
 
         this.common_tool.sendAjaxToCart(add_to_cart_url,data);
@@ -3342,7 +3342,7 @@ var alibaba = function (cart_url,add_cart_url) {
                 category_id : category_id,
                 tool: "Addon",
                 version: version_tool,
-                is_translate: this.isTranslatePage()
+                is_translate: this.isTranslatePage() ? 1 : 0
             };
         } catch (e) {
             throw Error(e.message + "Error function getDataSend()");
@@ -4154,16 +4154,16 @@ var Action = {
 
             var common_tool = new CommonTool();
             common_tool.removeDisabledButtonCart();
-            // if(request.response.html){
-            //     $('body').append(request.response.html);
-            // }else{
-            //     $('body').append(request.response);
-            // }
-
-            if(request.response.success){
-
-                alert('Them san pham vao gio hang thanh cong.');
+            if(request.response.html){
+                $('body').append(request.response.html);
+            }else{
+                $('body').append(request.response);
             }
+
+            // if(request.response.success){
+            //
+            //     alert('Them san pham vao gio hang thanh cong.');
+            // }
         }else{
             alert("Không kết nối được tới máy chủ, xin quý khách thử lại sau");
             return;

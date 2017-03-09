@@ -1,4 +1,5 @@
 @extends('layouts.app')
+{{--@extends('layouts.app_blank')--}}
 
 @section('page_title')
     {{$page_title}}
@@ -20,7 +21,7 @@
                                 <fieldset>
 
                                     <select id="transaction_type" class="_form-control select2" autofocus name="transaction_type">
-                                        <option value="">Loai giao dich</option>
+                                        <option value="">Loại giao dịch </option>
                                         @foreach(App\UserTransaction::$transaction_adjustment as $k => $v)
                                             <option value="{{ $k }}">{{$v}}</option>
                                         @endforeach
@@ -29,7 +30,7 @@
                                     <div class="_form-item _form-item-sub ADJUSTMENT GIFT hidden">
 
                                         <select class="_form-control select2"  name="user_id" id="">
-                                            <option value="">Khach hang</option>
+                                            <option value="">Khách hàng </option>
                                             @if(!empty($users_customer))
                                                 @foreach($users_customer as $users_customer_item)
                                                     <option value="{{$users_customer_item['id']}}">{{$users_customer_item['email']}} - {{$users_customer_item['name']}}</option>
@@ -42,7 +43,7 @@
 
                                     <div class="_form-item _form-item-sub PAYMENT REFUND ORDER DEFAULT_SUB hidden">
                                         <select class="_form-control select2"  name="object_type" id="transaction_adjustment_object">
-                                            <option value="">Chon doi tuong</option>
+                                            <option value="">Chọn đối tượng </option>
 
                                                 @foreach(App\UserTransaction::$transaction_adjustment_object as $kk1 => $vv1)
                                                     <option value="{{$kk1}}">{{$vv1}}</option>
@@ -51,12 +52,12 @@
                                         </select>
                                     </div>
 
-                                    <input type="text" name="order_code" class="form-control _form-item _form-item-sub ORDER hidden" placeholder="Ma don">
+                                    <input type="text" name="order_code" class="form-control _form-item _form-item-sub ORDER hidden" placeholder="Mã đơn hàng ">
 
                                     <div class="select-transaction-adjustment-type _form-item _form-item-sub ADJUSTMENT hidden">
 
                                         <select class="_form-control select2"  name="transaction_adjustment_type" id="">
-                                            <option value="">Loai dieu chinh</option>
+                                            <option value="">Loại điều chỉnh </option>
                                             @foreach(App\UserTransaction::$transaction_adjustment_type as $kk => $vv)
                                                 <option value="{{$kk}}">{{$vv}}</option>
                                             @endforeach
@@ -64,11 +65,11 @@
 
                                     </div>
 
-                                    <input type="text" class="form-control _autoNumeric _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT" name="amount" placeholder="So tien">
+                                    <input type="text" class="form-control _autoNumeric _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT" name="amount" placeholder="Số tiền ">
 
-                                    <textarea name="transaction_note" placeholder="Ly do" class="form-control _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT"></textarea>
+                                    <textarea name="transaction_note" placeholder="Lý do " class="form-control _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT"></textarea>
 
-                                    <button class="btn btn-danger" id="_save-transaction-adjustment">TAO DIEU CHINH</button>
+                                    <button class="btn btn-danger" id="_save-transaction-adjustment">TẠO GIAO DỊCH </button>
                                     {{ csrf_field()  }}
                                 </fieldset>
                             </form>
@@ -96,6 +97,7 @@
     @parent
     <script>
         $(document).ready(function(){
+
 
             $('._form-item.DEFAULT').removeClass('hidden');
 
@@ -125,8 +127,12 @@
                    method: 'post',
                    data: data,
                    success:function(response) {
-                       bootbox.alert(response.message);
-                       $that.prop('disabled', false);
+                       if(response.success){
+                            window.location.href = "{{ url('transactions')  }}";
+                       }else{
+                           bootbox.alert(response.message);
+                           $that.prop('disabled', false);
+                       }
                    },
                    error: function(){
                        $that.prop('disabled', false);

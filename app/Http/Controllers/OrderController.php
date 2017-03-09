@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exchange;
+use App\OrderFreightBill;
+use App\OrderOriginalBill;
+use App\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 use App\Order;
 
 class OrderController extends Controller
@@ -13,10 +18,162 @@ class OrderController extends Controller
     {
 
         $this->middleware('auth');
-
-        $this->order = new Order();
     }
 
+    /**
+     * @author vanhs
+     * @desc Them ma van don
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function insertFreightBill(Request $request){
+        $order_id = $request->get('order_id');
+        $freight_bill = $request->get('freight_bill');
+
+        $order = Order::find($order_id);
+
+        if(!$order):
+            return response()->json(['success' => false, 'message' => 'Order not found!']);
+        endif;
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'Not permission!']);
+        endif;
+
+        $order_freight_bill_exists = $order->has_freight_bill($freight_bill);
+
+        if($order_freight_bill_exists):
+            return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn %s đã tồn tại', $freight_bill)]);
+        endif;
+
+        $freight_bill_exists = OrderFreightBill::where([
+            'freight_bill' => $freight_bill
+        ])->count();
+
+
+        OrderFreightBill::insert([
+            'user_id' => Auth::user()->id,
+            'order_id' => $order_id,
+            'freight_bill' => $freight_bill,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        if($freight_bill_exists):
+            return response()->json(['success' => true, 'message' => sprintf('Mã hóa đơn %s đã tồn tại ở 1 đơn hàng khác!', $freight_bill)]);
+        endif;
+
+        return response()->json(['success' => true, 'message' => 'insert success']);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Xoa ma van don
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removeFreightBill(Request $request){
+        $order_id = $request->get('order_id');
+        $freight_bill = $request->get('freight_bill');
+
+        $order = Order::find($order_id);
+
+        if(!$order):
+            return response()->json(['success' => false, 'message' => 'Order not found!']);
+        endif;
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_FREIGHT_BILL);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'Not permission!']);
+        endif;
+
+        OrderFreightBill::where([
+            'order_id' => $order_id,
+            'freight_bill' => $freight_bill
+        ])->delete();
+
+        return response()->json(['success' => true, 'message' => 'delete success']);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Them ma hoa don site goc
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function insertOriginalBill(Request $request){
+        $order_id = $request->get('order_id');
+        $original_bill = $request->get('original_bill');
+
+        $order = Order::find($order_id);
+
+        if(!$order):
+            return response()->json(['success' => false, 'message' => 'Order not found!']);
+        endif;
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_ORIGINAL_BILL);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'Not permission!']);
+        endif;
+
+        $order_original_bill_exists = $order->has_origin_bill($original_bill);
+
+        if($order_original_bill_exists):
+            return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại!', $original_bill)]);
+        endif;
+
+        OrderOriginalBill::insert([
+            'user_id' => Auth::user()->id,
+            'order_id' => $order_id,
+            'original_bill' => $original_bill,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        $original_bill_exists = OrderOriginalBill::where([
+            'original_bill' => $original_bill
+        ])->count();
+
+        if($original_bill_exists):
+            return response()->json(['success' => true, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại ở 1 đơn hàng khách!', $original_bill)]);
+        endif;
+
+        return response()->json(['success' => true, 'message' => 'insert success']);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Xoa ma hoa don site goc
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removeOriginalBill(Request $request){
+        $order_id = $request->get('order_id');
+        $original_bill = $request->get('original_bill');
+
+        $order = Order::find($order_id);
+
+        if(!$order):
+            return response()->json(['success' => false, 'message' => 'Order not found!']);
+        endif;
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_ORIGINAL_BILL);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'Not permission!']);
+        endif;
+
+        OrderOriginalBill::where([
+            'order_id' => $order_id,
+            'original_bill' => $original_bill
+        ])->delete();
+
+        return response()->json([ 'success' => true, 'message' => 'delete success' ]);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Danh sach don hang
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getOrders(){
         $exchange_rage = Exchange::getExchange();
         $per_page = 50;
@@ -25,18 +182,31 @@ class OrderController extends Controller
             ->paginate($per_page);
 
         return view('orders', [
-            'page_title' => 'Quan ly don hang',
+            'page_title' => ' Quản lý đơn hàng',
             'orders' => $orders,
             'exchange_rage' => $exchange_rage
         ]);
     }
 
+    /**
+     * @author vanhs
+     * @desc Chi tiet don hang
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function getOrder(Request $request){
         $order_id = $request->get('id');
 
+        $order = Order::find($order_id);
+
+        if(!$order):
+            return redirect('404');
+        endif;
+
         return view('order_detail', [
             'order_id' => $order_id,
-            'page_title' => 'Chi tiet don hang',
+            'order' => $order,
+            'page_title' => 'Chi tiết đơn hàng',
         ]);
     }
 }

@@ -11,3 +11,8 @@
     color: #fff!important;;
     border-bottom-color: #29c75f!important;;
 }
+
+.no-padding-leftright{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

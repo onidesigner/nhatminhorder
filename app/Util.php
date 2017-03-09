@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Util extends Model
 {
+    public static function getWorkingMonthSequence(){
+        $year = date("Y");
+        $month = date('n');
+        $count_year = intval($year) - 2014;
+        $count_month = $count_year*12 + $month;
+        return $count_month;
+    }
+
     /**
      * generate a random token string
      *

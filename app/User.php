@@ -140,12 +140,46 @@ class User extends Authenticatable
     }
 
     public function mobile(){
-        return $this->hasMany('App\UserMobile', 'order_id');
+        return $this->hasMany('App\UserMobile', 'user_id');
     }
 
     public function role(){
         return $this->hasMany('App\UserRole', 'user_id');
     }
 
-    
+    public function destination_warehouse(){
+        $user_address = $this->address()->where([
+            'is_default' => 1,
+            'user_id' => $this->id
+        ])->first();
+
+        if(!$user_address):
+            return null;
+        endif;
+
+        $district_id = $user_address->district_id;
+        $province_id = $user_address->province_id;
+
+        if($district_id):
+            $location = Location::where([
+                'id' => $district_id,
+                'type' => Location::TYPE_DISTRICT
+            ])->first();
+            if($location && $location->warehouse):
+                return $location->warehouse;
+            endif;
+        endif;
+
+        if($province_id):
+            $location = Location::where([
+                'id' => $province_id,
+                'type' => Location::TYPE_STATE
+            ])->first();
+            if($location && $location->warehouse):
+                return $location->warehouse;
+            endif;
+        endif;
+
+        return null;
+    }
 }

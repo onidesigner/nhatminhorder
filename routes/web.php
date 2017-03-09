@@ -52,6 +52,11 @@ Route::put('/user/address/default', 'UserAddressController@setDefaultUserAddress
 #region quan ly don hang
 Route::get('/order', 'OrderController@getOrders');
 Route::get('/order/{id}', 'OrderController@getOrder');
+Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
+Route::put('/order/{id}/freight_bill', 'OrderController@removeFreightBill');
+Route::post('/order/{id}/original_bill', 'OrderController@insertOriginalBill');
+Route::put('/order/{id}/original_bill', 'OrderController@removeOriginalBill');
+
 #endregion
 
 #region comment
