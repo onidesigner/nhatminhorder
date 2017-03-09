@@ -7,48 +7,7 @@
 @section('content')
     <div class="row">
         <div class="col-xs-12">
-            <div class="step">
-                <ul class="nav nav-tabs nav-justified" role="tablist">
-                    <li role="step" class="active">
-                        <a href="#step1" id="step1-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">
-                            <div class="icon fa fa-shopping-cart"></div>
-                            <div class="heading">
-                                <div class="title">Giỏ hàng </div>
-                                <div class="description">Bước 1 </div>
-                            </div>
-                        </a>
-                    </li>
-
-                    <li role="step">
-                        <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-credit-card"></div>
-                            <div class="heading">
-                                <div class="title">Đặt cọc & Thanh toán </div>
-                                <div class="description">Bước 2</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li role="step" class="">
-                        <a href="#step2" role="tab" id="step2-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-truck"></div>
-                            <div class="heading">
-                                <div class="title">NM247 tiếp nhận & xử lý </div>
-                                <div class="description">Bước 3</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li role="step">
-                        <a href="#step4" role="tab" id="step4-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-check"></div>
-                            <div class="heading">
-                                <div class="title">Nhận hàng </div>
-                                <div class="description">Bước 4</div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-
-            </div>
+            @include('partials/__cart_step', ['active' => 1])
         </div>
     </div>
 
@@ -57,7 +16,6 @@
             <strong>{{$data['statistic']['total_shops']}}</strong> shop / <strong>{{$data['statistic']['total_items']}}</strong> sản phẩm / <strong><span class="_autoNumeric">{{$data['statistic']['total_amount']}}</span></strong>đ tiền hàng
         </div>
     </div>
-
 
     @if(!empty($data['shops']))
         @foreach($data['shops'] as $shop)

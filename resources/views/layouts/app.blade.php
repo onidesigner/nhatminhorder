@@ -90,7 +90,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li class="navbar-title">
-                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup> | Số dư: <?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup>
+                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup> | Số dư: <span class="text-danger"><?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup></span>
 
                         </li>
                         {{--<li class="navbar-search hidden-sm">--}}
@@ -162,7 +162,13 @@
                             </a>
                             <div class="dropdown-menu">
                                 <div class="profile-info">
-                                    <h4 class="username">{{ Auth::user()->name }}</h4>
+                                    <h4 class="username">
+                                        @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                        [Quản trị viên]
+                                        @endif
+
+                                        {{ Auth::user()->name }}
+                                    </h4>
                                 </div>
                                 <ul class="action">
                                     <li>

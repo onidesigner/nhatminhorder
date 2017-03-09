@@ -17,8 +17,23 @@ class UserAddressController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * @author vanhs
+     * @desc Them dia chi cho khach hang
+     * @param Request $request
+     * @return mixed
+     */
     public function addNewUserAddress(Request $request){
         $send_data = $request->all();
+
+        $messages = [
+            'province_id.required' => 'Tỉnh thành không để trống!',
+            'district_id.required' => 'Quận huyện không để trống!',
+            'detail.required' => 'Địa chỉ không để trống!',
+            'reciver_name.required' => 'Tên người nhận không để trống!',
+            'reciver_phone.required' => 'Sô điện thoại không để trống!',
+            'reciver_phone.numeric' => 'Số điện thoại không hợp lệ!',
+        ];
 
         $validator = Validator::make($send_data, [
             'province_id' => 'required',
@@ -26,32 +41,35 @@ class UserAddressController extends Controller
             'detail' => 'required',
             'reciver_name' => 'required',
             'reciver_phone' => 'required|numeric'
-        ]);
+        ], $messages);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return Response::json(array('success' => false, 'message' => implode('<br>', $errors) ));
         }
 
-        $location = new Location();
-        if(!$location->checkProvinceContainDistrict($send_data['province_id'], $send_data['district_id'])):
-            return Response::json(array('success' => false, 'message' => "Du lieu Thanh pho hoac Quan Huyen khong chinh xac!" ));
+        if(!Location::checkProvinceContainDistrict($send_data['province_id'], $send_data['district_id'])):
+            return Response::json(array('success' => false, 'message' => "Dữ liệu Thành Phố hoặc Quận Huyện không chính xác!" ));
         endif;
 
         $current_user_id = Auth::user()->id;
         $send_data['user_id'] = $current_user_id;
 
-        $user_address = new UserAddress();
-
-        if(!$send_data['user_address_id'] && !$user_address->checkMaxUserAddress($current_user_id)):
-            return Response::json(array('success' => false, 'message' => sprintf('Ban chi co the them toi da %s dia chi!', $user_address->user_address_max) ));
+        if(!$send_data['user_address_id'] && !UserAddress::checkMaxUserAddress($current_user_id)):
+            return Response::json(array('success' => false, 'message' => sprintf('Bạn chỉ có thể thêm tối đa %s địa chỉ!', UserAddress::$user_address_max) ));
         endif;
 
-        $user_address->addNewUserAddress($send_data);
+        UserAddress::addNewUserAddress($send_data);
 
         return Response::json(array('success' => true));
     }
 
+    /**
+     * @author vanhs
+     * @desc Thiet lap dia chi mac dinh cho khach hang
+     * @param Request $request
+     * @return mixed
+     */
     public function setDefaultUserAddress(Request $request){
         $id = $request->input('id');
         $current_user_id = Auth::user()->id;
@@ -62,6 +80,12 @@ class UserAddressController extends Controller
         return Response::json(array('success' => true));
     }
 
+    /**
+     * @author vanhs
+     * @desc Xoa dia chi nhan hang
+     * @param Request $request
+     * @return mixed
+     */
     public function deleteUserAddress(Request $request){
         $id = $request->input('id');
         $action = $request->input('action');

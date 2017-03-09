@@ -26,9 +26,8 @@ class Location extends Model
             ->get();
     }
 
-    public function checkProvinceContainDistrict($province_id, $district_id){
-        $total = $this->newQuery()
-            ->select('id')
+    public static function checkProvinceContainDistrict($province_id, $district_id){
+        $total = self::select('id')
             ->where(['parent_id' => $province_id, 'id' => $district_id])
             ->count();
         if($total):

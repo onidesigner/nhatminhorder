@@ -201,11 +201,11 @@ class CartController extends Controller
 
 
         if(Auth::user()->section == User::SECTION_CRANE):
-            return Response::json(['success' => false, 'message' => 'Khong the dat coc.']);
+            return Response::json(['success' => false, 'message' => 'Tài khoản quản trị không thể đặt cọc.']);
         endif;
 
         if(!count($shop_id)):
-            return Response::json(['success' => false, 'message' => 'Khong ton tai shop.']);
+            return Response::json(['success' => false, 'message' => 'Không tồn tại shop.']);
         endif;
 
         $check_exists_address = UserAddress::select('id')->where([
@@ -213,7 +213,7 @@ class CartController extends Controller
         ])->count();
 
         if(!$check_exists_address):
-            return Response::json(['success' => false, 'message' => 'Ban chua thiet lap dia chi nhan hang.']);
+            return Response::json(['success' => false, 'message' => 'Hiện chưa có địa chỉ nhận hàng.']);
         endif;
 
         $check_exists_address_default = UserAddress::select('id')->where([
@@ -222,17 +222,17 @@ class CartController extends Controller
         ])->count();
 
         if(!$check_exists_address_default):
-            return Response::json(['success' => false, 'message' => 'Ban chua thiet lap dia chi nhan hang mac dinh.']);
+            return Response::json(['success' => false, 'message' => 'Chưa có địa chỉ nhận hàng mặc định.']);
         endif;
 
         $user_address = UserAddress::find($address_id);
         if(!$user_address):
-            return Response::json(['success' => false, 'message' => 'Dia chi nhan hang khong hop le.']);
+            return Response::json(['success' => false, 'message' => 'Địa chỉ nhận hàng không hợp lệ.']);
         endif;
 
         $pass = Auth::user()->password;
         if(!$password || !Hash::check($password, $pass)):
-            return Response::json(['success' => false, 'message' => 'Mat khau khong hop le.']);
+            return Response::json(['success' => false, 'message' => 'Mật khẩu không chính xác.']);
         endif;
 
         $exchange_rate = Exchange::getExchange();
@@ -258,12 +258,12 @@ class CartController extends Controller
         $deposit_amount = $this->cart->getDepositAmount($total_shop_amount);
 
         if(!($user_account_balance >= $deposit_amount)):
-            return Response::json(['success' => false, 'message' => 'Tai khoan khong de tien de thuc hien dat coc.']);
+            return Response::json(['success' => false, 'message' => 'Tài khoản không đủ tiền để thực hiện đặt cọc.']);
         endif;
 
         $this->cart->depositOrder($user_id, $shop_id, $address_id, $deposit_amount);
 
-        return Response::json(['success' => true, 'message' => 'Dat coc don thanh cong.']);
+        return Response::json(['success' => true, 'message' => 'Đặt cọc đơn thành công. Xin cám ơn!']);
     }
 
     public function deposit(Request $request){

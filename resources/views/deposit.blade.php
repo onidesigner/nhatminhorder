@@ -7,113 +7,92 @@
 @section('content')
     <div class="row">
         <div class="col-xs-12">
-            <div class="step">
-                <ul class="nav nav-tabs nav-justified" role="tablist">
-                    <li role="step" class="">
-                        <a href="#step1" id="step1-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">
-                            <div class="icon fa fa-shopping-cart"></div>
-                            <div class="heading">
-                                <div class="title">Gio Hang</div>
-                                <div class="description">Buoc 1</div>
-                            </div>
-                        </a>
-                    </li>
-
-                    <li role="step" class="active">
-                        <a href="#step3" role="tab" id="step3-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-credit-card"></div>
-                            <div class="heading">
-                                <div class="title">Dat coc & Thanh toan</div>
-                                <div class="description">Buoc 2</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li role="step" class="">
-                        <a href="#step2" role="tab" id="step2-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-truck"></div>
-                            <div class="heading">
-                                <div class="title">NM247 tiep nhan & xu ly</div>
-                                <div class="description">Buoc 3</div>
-                            </div>
-                        </a>
-                    </li>
-                    <li role="step">
-                        <a href="#step4" role="tab" id="step4-tab" data-toggle="tab" aria-controls="profile">
-                            <div class="icon fa fa-check"></div>
-                            <div class="heading">
-                                <div class="title">Nhan hang</div>
-                                <div class="description">Buoc 4</div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-
-            </div>
+            @include('partials/__cart_step', ['active' => 2])
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    Dia chi nhan hang
-                </div>
+
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
 
-                            @foreach($user_address as $user_address_item)
+                            <h3>Địa chỉ nhận hàng</h3>
+                            <br>
 
-                                <?php
-
-                                $province = App\Location::find($user_address_item->province_id)->label;
-                                $district = App\Location::find($user_address_item->district_id)->label;
-
-                                ?>
-
-                            <div class="media _user-address"
-                                 data-is-default="{{ $user_address_item->is_default }}"
-                                 data-id="{{$user_address_item->id}}">
-                                @if($user_address_item->is_default)
-                                    <div class="media-left">
-                                        <span class="label label-danger">MAC DINH</span>
-                                    </div>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">{{$user_address_item->reciver_name}} / {{$user_address_item->reciver_phone}}</h4>
-                                        <p>{{$user_address_item->detail}}, {{$district}}, {{$province}}</p>
-
-                                        <p>
-                                            <a href="javascript:void(0)" data-id="{{$user_address_item->id}}" data-json="{{ json_encode($user_address_item)  }}" class="_btn-action-edit">Sua</a> |
-                                            <a href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="_btn-action-delete">Xoa</a>
-                                        </p>
-                                    </div>
-                                @else
-
-                                    <div class="media-body">
-                                        <h4 class="media-heading">{{$user_address_item->reciver_name}} / {{$user_address_item->reciver_phone}}</h4>
-                                        <p>{{$user_address_item->detail}}, {{$district}}, {{$province}}</p>
-
-                                        <p>
-                                            <a href="javascript:void(0)" data-id="{{$user_address_item->id}}" data-json="{{ json_encode($user_address_item)  }}" class="_btn-action-edit">Sua</a> |
-                                            <a href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="_btn-action-delete">Xoa</a> |
-                                            <a href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="_btn-action-set-default">Dat mac dinh</a>
-                                        </p>
-                                    </div>
-                                @endif
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>TT</th>
+                                        <th>Thông tin địa chỉ</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
 
-                            </div>
+                                @foreach($user_address as $idx => $user_address_item)
 
-                            @endforeach
+                                    <?php
 
-                            <a class="btn btn-primary" id="_add-user-address">Them dia chi nhan hang</a>
+                                    $province = App\Location::find($user_address_item->province_id)->label;
+                                    $district = App\Location::find($user_address_item->district_id)->label;
+
+                                    ?>
+
+                                    <tr class="_user-address"
+                                         data-is-default="{{ $user_address_item->is_default }}"
+                                         data-id="{{$user_address_item->id}}">
+                                        <th width="5%">{{ $idx + 1 }}</th>
+                                        <td width="60%">
+                                            <p>
+                                                <strong>
+                                                    {{$user_address_item->reciver_name}} / {{$user_address_item->reciver_phone}}
+                                                </strong>
+
+                                                @if($user_address_item->is_default)
+                                                    <span class="label label-danger text-uppercase">Mặc định</span>
+                                                @endif
+                                            </p>
+
+                                            <p>{{$user_address_item->detail}}, {{$district}}, {{$province}}</p>
+                                        </td>
+                                        <td>
+                                            <a data-toggle="tooltip" title="Sửa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" data-json="{{ json_encode($user_address_item)  }}" class="_btn-action-edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            &nbsp;&nbsp;
+                                            <a data-toggle="tooltip" title="Xóa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="_btn-action-delete">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                            &nbsp;&nbsp;
+                                            @if(!$user_address_item->is_default)
+                                            <a data-toggle="tooltip" title="Đặt mặc định" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="_btn-action-set-default">
+                                                <i class="fa fa-check"></i>
+                                            </a>
+                                            @endif
+                                        </td>
+
+
+                                    </tr>
+
+                                @endforeach
+
+                                </tbody>
+                            </table>
+
+
+
+                            <a class="btn btn-primary" id="_add-user-address">Thêm địa chỉ</a>
 
                             <div class="modal fade" id="modal-id">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title">Cap nhat dia chi nhan hang</h4>
+                                            <h4 class="modal-title">Cập nhật địa chỉ nhận hàng</h4>
                                         </div>
                                         <div class="modal-body">
 
@@ -121,7 +100,7 @@
 
                                             <div style="margin-bottom: 15px;">
                                                 <select required id="province_id" autofocus name="province_id" class="_autofocus form-control" id="">
-                                                    <option value="">Tinh/Thanh pho</option>
+                                                    <option value="">Tỉnh / thành phố</option>
                                                     @foreach($all_provinces as $province)
                                                         <option value="{{$province->id}}">{{$province->label}}</option>
                                                     @endforeach
@@ -130,20 +109,20 @@
 
                                             <div style="margin-bottom: 15px;">
                                                 <select required id="district_id" name="district_id" class="form-control" id="">
-                                                    <option value="">Quan/Huyen</option>
+                                                    <option value="">Quận / huyện</option>
                                                     @foreach($all_districts as $district)
                                                         <option class="hidden" data-province-id="{{ $district->parent_id  }}" value="{{$district->id}}">{{$district->label}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
 
-                                            <input required type="text" name="detail" class="form-control" placeholder="Dia chi">
+                                            <input required type="text" name="detail" class="form-control" placeholder="Địa chỉ">
 
-                                            <input required type="text" id="reciver_name" name="reciver_name" class="form-control" placeholder="Ten nguoi nhan">
+                                            <input required type="text" id="reciver_name" name="reciver_name" class="form-control" placeholder="Tên người nhận">
 
-                                            <input required type="text" name="reciver_phone" class="form-control" placeholder="Dien thoai">
+                                            <input required type="text" name="reciver_phone" class="form-control" placeholder="Điện thoại">
 
-                                            <textarea name="note" rows="3" class="form-control" placeholder="Ghi chu"></textarea>
+                                            <textarea name="note" rows="3" class="form-control" placeholder="Ghi chú"></textarea>
 
                                             <input type="hidden" name="user_address_id" id="user_address_id" value="0">
 
@@ -151,8 +130,8 @@
 
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary" id="_btn-update-user-address">Save changes</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                            <button type="button" class="btn btn-primary" id="_btn-update-user-address">Cập nhật</button>
                                         </div>
                                     </div>
                                 </div>
@@ -162,13 +141,14 @@
                         <div class="col-md-6">
 
                             <h3>Danh sách shop kết đơn ({{count($shops)}})</h3>
+                            <br>
 
                             <table class="table">
                                 <thead>
                                 <tr>
                                     <th>Shop</th>
                                     <th>SL / Link</th>
-                                    <th>Tien hang</th>
+                                    <th>Tiền hàng</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -192,36 +172,36 @@
                                     </tr>
 
                                     @endforeach
+
+
+                                    <tr>
+                                        <td colspan="3">
+                                            Tổng tiền hàng: {{$total_amount_shop}} <sup>d</sup>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            Đặt cọc ({{$deposit_percent}}%): {{$deposit_amount}} <sup>d</sup>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                            Số dư hiện tại: {{ Auth::user()->account_balance  }} <sup>d</sup>
+                                        </td>
+                                    </tr>
                                 @endif
 
 
                                 </tbody>
                             </table>
 
-                            <ul>
-                                <li>
-                                    Tong tien hang: {{$total_amount_shop}} <sup>d</sup>
-                                </li>
-                                <li>
-                                    Dat coc ({{$deposit_percent}}%): {{$deposit_amount}} <sup>d</sup>
-                                </li>
-                                <li>
-                                    So du hien tai: {{ Auth::user()->account_balance  }} <sup>d</sup>
-                                </li>
-                            </ul>
-
 
                             @if(Auth::user()->account_balance >= $deposit_amount)
 
-                                <br>
-                                <br>
-
-
                                 <form action="">
-                                    <div class="col-sm-6 col-xs-12"><input placeholder="Nhap mat khau de dat coc" type="password" class="form-control _input-password" autofocus></div>
-                                    <br>
-                                    <div class="col-sm-12">
-                                        <input type="button" class="btn btn-danger btn-sm _action-deposit" value="DAT COC">
+                                    <div class="col-sm-4 col-xs-12"><input placeholder="Nhập mật khẩu" type="password" class="form-control _input-password" autofocus></div>
+                                    <div class="col-sm-4 col-xs-12">
+                                        <input type="button" class="btn btn-danger btn-sm _action-deposit" value="ĐẶT CỌC">
                                     </div>
 
                                 </form>
@@ -229,10 +209,10 @@
                             @else
 
                                 <p class="text-danger">
-                                    Hien so tien trong tai khoan khong du de dat coc. <br>
-                                    Hien ban con thieu {{  abs(Auth::user()->account_balance - $deposit_amount) }} <sup>d</sup> <br>
-                                    Vui long nap tien vao tai khoan de tien hanh dat coc don. <br>
-                                    Can giup do, lien he hotline 1988 02344. Xin cam on
+                                    Hiện số tiền trong tài khoản không đủ để đặt cọc. <br>
+                                    Hiện bạn còn thiếu {{  abs(Auth::user()->account_balance - $deposit_amount) }} <sup>d</sup> <br>
+                                    Vui lòng nạp tiền vào tài khoản để tiến hành đặt cọc đơn hàng. <br>
+                                    Liên hệ HOTLINE để được hỗ trợ!
                                 </p>
 
                             @endif
