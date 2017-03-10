@@ -12,9 +12,8 @@ class UserAddress extends Model
 
     public static $user_address_max = 5;
 
-    public function findByUserId($user_id){
-        return $this->newQuery()
-            ->select('*')
+    public static function findByUserId($user_id){
+        return self::select('*')
             ->where([
                 'user_id' => $user_id
             ])

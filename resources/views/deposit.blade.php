@@ -223,6 +223,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
 
     </div>
@@ -271,7 +273,8 @@
                            bootbox.alert(response.message);
                            $('._input-password').focus();
                        }else{
-                           bootbox.alert(response.message);
+                           //bootbox.alert(response.message);
+                           window.location.href = response.redirect_url;
                        }
 
                    },

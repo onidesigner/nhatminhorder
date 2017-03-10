@@ -24,6 +24,7 @@ Route::get('/cart/add', 'AddonController@addCart');
 
 Route::get('/cart', 'CartController@showCart');
 Route::get('/dat-coc', 'CartController@deposit');
+Route::get('/dat-coc-thanh-cong', 'CartController@depositSuccess');
 Route::post('/cart/quantity', 'CartController@updateQuantity');
 Route::post('/cart/shop/service', 'CartController@updateService');
 Route::post('/cart/item/comment', 'CartController@actionUpdate');
@@ -39,6 +40,9 @@ Route::get('/sua-nhan-vien/{id}', 'UserController@getUser');
 Route::post('/sua-nhan-vien/{id}', 'UserController@updateUser');
 Route::post('/user/phone', 'UserController@addUserPhone');
 Route::put('/user/phone', 'UserController@deleteUserPhone');
+Route::get('/user/original_site', 'UserController@listUserOriginalSite');
+Route::post('/user/original_site', 'UserController@addUserOriginalSite');
+Route::put('/user/original_site/delete', 'UserController@removeUserOriginalSite');
 #endregion
 
 #region quan ly dia chi nhan hang
@@ -75,6 +79,15 @@ Route::post('/setting/role', 'SystemConfigController@addRole');
 Route::post('/setting/role/permission', 'SystemConfigController@savePermission');
 Route::post('/setting/role/user', 'SystemConfigController@updateUserRole');
 Route::put('/setting/role/delete', 'SystemConfigController@deleteRole');
+
+//======== Warehouse ==========
+Route::get('/warehouses', 'WarehouseController@render');
+Route::post('/warehouse', 'WarehouseController@insert');
+Route::put('/warehouse/delete', 'WarehouseController@delete');
+
+Route::get('/warehouses_manually', 'WarehouseController@render_manually');
+Route::post('/warehouses_manually', 'WarehouseController@insert_manually');
+Route::put('/warehouses_manually/delete', 'WarehouseController@delete_manually');
 
 #endregion
 

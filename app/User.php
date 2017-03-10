@@ -39,9 +39,19 @@ class User extends Authenticatable
     const SECTION_CRANE = 'CRANE';
     const SECTION_CUSTOMER = 'CUSTOMER';
 
+    const SITE_TAOBAO = 'taobao';
+    const SITE_TMALL = 'tmall';
+    const SITE_1688 = '1688';
+
     public static $status_list = [
         self::STATUS_ACTIVE => 'Kích hoạt',
         self::STATUS_INACTIVE => 'Ngừng kích hoạt'
+    ];
+
+    public static $site_list = [
+        self::SITE_TAOBAO => 'Taobao',
+        self::SITE_TMALL => 'Tmall',
+        self::SITE_1688 => '1688'
     ];
 
     public static $god = [
@@ -147,7 +157,21 @@ class User extends Authenticatable
         return $this->hasMany('App\UserRole', 'user_id');
     }
 
+    /**
+     * @author vanhs
+     * @desc Hàm lấy ra kho đích của đơn hàng khách
+     * 1. Lấy theo cấu hình bằng tay, nếu có
+     * 2. Lấy tự động theo location mapping
+     * @return null
+     */
     public function destination_warehouse(){
+        $user_warehouse_manually = UserWarehouse::where([
+            'user_id' => $this->id,
+        ])->first();
+        if($user_warehouse_manually):
+            return $user_warehouse_manually->warehouse_code;
+        endif;
+
         $user_address = $this->address()->where([
             'is_default' => 1,
             'user_id' => $this->id

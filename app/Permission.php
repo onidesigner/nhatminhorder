@@ -21,10 +21,6 @@ class Permission extends Model
     const PERMISSION_USER_REMOVE_MOBILE = 'USER_REMOVE_MOBILE';
     #endregion
 
-    #region -- System permission --
-    const PERMISSION_UPDATE_SYSTEM_CONFIG = 'UPDATE_SYSTEM_CONFIG';
-    #endregion
-
     #region -- Transaction permission --
     const PERMISSION_TRANSACTION_VIEW = 'TRANSACTION_VIEW';
     const PERMISSION_TRANSACTION_CREATE = 'TRANSACTION_CREATE';
@@ -37,6 +33,16 @@ class Permission extends Model
     const PERMISSION_ORDER_REMOVE_FREIGHT_BILL = 'ORDER_REMOVE_FREIGHT_BILL';
     const PERMISSION_ORDER_ADD_ORIGINAL_BILL = 'ORDER_ADD_ORIGINAL_BILL';
     const PERMISSION_ORDER_REMOVE_ORIGINAL_BILL = 'ORDER_REMOVE_ORIGINAL_BILL';
+    #endregion
+
+    #region -- System permission --
+    const PERMISSION_UPDATE_SYSTEM_CONFIG = 'UPDATE_SYSTEM_CONFIG';
+    const PERMISSION_MANAGER_USER_ORIGINAL_SITE = 'MANAGER_USER_ORIGINAL_SITE';
+    const PERMISSION_MANAGER_WAREHOUSE = 'MANAGER_WAREHOUSE';
+
+    const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_VIEW = 'MANAGER_WAREHOUSE_MANUALLY_VIEW';
+    const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_INSERT = 'MANAGER_WAREHOUSE_MANUALLY_INSERT';
+    const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE = 'MANAGER_WAREHOUSE_MANUALLY_DELETE';
     #endregion
 
     public static $permissions = array(
@@ -136,7 +142,27 @@ class Permission extends Model
                     'label' => 'Chỉnh sửa cấu hình chung trên hệ thống ',
                     'description' => 'Quyền cho phép quản trị viên chỉnh sửa cấu hình chung trên hệ thống',
                 ),
+                self::PERMISSION_MANAGER_USER_ORIGINAL_SITE => array(
+                    'label' => 'Quản lý user mua hàng site gốc',
+                    'description' => '',
+                ),
+                self::PERMISSION_MANAGER_WAREHOUSE => array(
+                    'label' => 'Quản lý kho hàng',
+                    'description' => '',
+                ),
 
+                self::PERMISSION_MANAGER_WAREHOUSE_MANUALLY_VIEW => array(
+                    'label' => 'Xem trang cấu hình kho',
+                    'description' => 'Cấu hình kho bằng tay, mức ưu tiên cao nhất',
+                ),
+                self::PERMISSION_MANAGER_WAREHOUSE_MANUALLY_INSERT => array(
+                    'label' => 'Thêm cấu hình kho',
+                    'description' => 'Cấu hình kho bằng tay, mức ưu tiên cao nhất',
+                ),
+                self::PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE => array(
+                    'label' => 'Xóa cấu hình kho',
+                    'description' => 'Cấu hình kho bằng tay, mức ưu tiên cao nhất',
+                ),
             ),
         ),
 

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserOriginSiteTable extends Migration
+class ChangeColumnToUserAddress extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateUserOriginSiteTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_origin_site', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('username', 100);
-            $table->string('site', 25);
-            $table->timestamps();
+        Schema::table('user_address', function (Blueprint $table) {
+            $table->string('note', 255)->nullable()->change();
         });
     }
 
@@ -28,6 +25,8 @@ class CreateUserOriginSiteTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_origin_site');
+        Schema::table('user_address', function (Blueprint $table) {
+            //
+        });
     }
 }

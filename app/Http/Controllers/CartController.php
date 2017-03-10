@@ -193,6 +193,12 @@ class CartController extends Controller
         return Response::json(array('success' => true));
     }
 
+    /**
+     * @author vanhs
+     * @desc Xu ly hanh dong dat coc don hang
+     * @param Request $request
+     * @return mixed
+     */
     public function depositOrder(Request $request){
         $user_id = Auth::user()->id;
         $password = $request->get('password');
@@ -263,13 +269,34 @@ class CartController extends Controller
 
         $this->cart->depositOrder($user_id, $shop_id, $address_id, $deposit_amount);
 
-        return Response::json(['success' => true, 'message' => 'Đặt cọc đơn thành công. Xin cám ơn!']);
+        $redirect_url = url('dat-coc-thanh-cong');
+
+        return Response::json(['success' => true,
+            'redirect_url' => $redirect_url,
+            'message' => 'Đặt cọc đơn thành công. Xin cám ơn!']);
     }
 
+    /**
+     * @author vanhs
+     * @desc Hien thi trang dat coc don thanh cong
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function depositSuccess(){
+        $data = [
+            'page_title' => 'Đặt cọc thành công'
+        ];
+
+        return view('deposit_success', $data);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Hien thi thong tin trang dat coc don hang
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function deposit(Request $request){
         $user_id = Auth::user()->id;
-        $user_address = new UserAddress();
-        $location = new Location();
         $exchange_rate = Exchange::getExchange();
 
         $shops = [];
@@ -309,10 +336,10 @@ class CartController extends Controller
         $deposit_amount = $this->cart->getDepositAmount($total_amount_shop);
 
         $data = [
-            'page_title' => 'Dat coc',
-            'user_address' => $user_address->findByUserId($user_id),
-            'all_provinces' => $location->getAllProvinces(),
-            'all_districts' => $location->getAllDistricts(),
+            'page_title' => 'Đặt cọc',
+            'user_address' => UserAddress::findByUserId($user_id),
+            'all_provinces' => Location::getAllProvinces(),
+            'all_districts' => Location::getAllDistricts(),
             'shops' => $shops,
             'shop_id' => $shop_id_list,
             'total_amount_shop' => $total_amount_shop,

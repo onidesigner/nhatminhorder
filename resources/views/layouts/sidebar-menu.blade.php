@@ -63,6 +63,18 @@ $menus = [
                 'title' => 'Nhóm & phân quyền '
             ],
             [
+                'url' => url('user/original_site'),
+                'title' => 'Quản lý user mua hàng site gốc'
+            ],
+            [
+                'url' => url('warehouses'),
+                'title' => 'Quản lý kho hàng'
+            ],
+            [
+                'url' => url('warehouses_manually'),
+                'title' => 'Cấu hình kho'
+            ],
+            [
                 'url' => url('setting'),
                 'title' => 'Cấu hình chung '
             ]

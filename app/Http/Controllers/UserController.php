@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Permission;
 use App\UserAddress;
+use App\UserOriginalSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -15,6 +16,95 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    /**
+     * @author vanhs
+     * @desc Lay du lieu hien thi danh sach user mua hang site goc
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
+    public function listUserOriginalSite(){
+        $can_execute = Permission::isAllow(Permission::PERMISSION_MANAGER_USER_ORIGINAL_SITE);
+        if(!$can_execute):
+            return redirect('403');
+        endif;
+
+        $data = UserOriginalSite::select('*')->orderBy('id', 'desc')->get();
+
+        return view('user_original_site', [
+            'page_title' => 'Quản lý user mua hàng site gốc',
+            'data' => $data
+        ]);
+    }
+
+
+    /**
+     * @author vanhs
+     * @desc Them user mua hang site goc
+     * @param Request $request
+     * @return mixed
+     */
+    public function addUserOriginalSite(Request $request){
+        $can_execute = Permission::isAllow(Permission::PERMISSION_MANAGER_USER_ORIGINAL_SITE);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'not permisison']);
+        endif;
+
+        $username = $request->get('username');
+        $site = $request->get('site');
+
+        $error = [];
+        if(empty($username)):
+            $error[] = 'Vui lòng nhập vào user mua hàng!';
+        endif;
+
+        if(empty($site)):
+            $error[] = 'Vui lòng chọn site gốc!';
+        endif;
+
+        if(count($error)):
+            return response()->json(['success' => false, 'message' => implode('<br/>', $error)]);
+        endif;
+
+        $exists = UserOriginalSite::where([
+            'username' => $username,
+            'site' => $site
+        ])->count();
+
+        if($exists):
+            return response()->json(['success' => false, 'message' => sprintf('Đã tồn tại user: %s - site: %s', $username, $site)]);
+        endif;
+
+        UserOriginalSite::insert([
+            'username' => $username,
+            'site' => $site,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'insert success']);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Xoa user mua hang site goc
+     * @param Request $request
+     * @return mixed
+     */
+    public function removeUserOriginalSite(Request $request){
+        $can_execute = Permission::isAllow(Permission::PERMISSION_MANAGER_USER_ORIGINAL_SITE);
+        if(!$can_execute):
+            return response()->json(['success' => false, 'message' => 'not permisison']);
+        endif;
+
+        $username = $request->get('username');
+        $site = $request->get('site');
+
+        UserOriginalSite::where([
+            'username' => $username,
+            'site' => $site
+        ])->delete();
+
+        return response()->json(['success' => true, 'message' => 'delete success']);
     }
 
     /**

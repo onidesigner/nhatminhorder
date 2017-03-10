@@ -12,15 +12,15 @@ class Location extends Model
     const TYPE_DISTRICT = 'DISTRICT';
     const TYPE_STATE = 'STATE';
 
-    public function getAllProvinces(){
-        return $this->newQuery()->addSelect('*')
+    public static function getAllProvinces(){
+        return self::addSelect('*')
             ->where(['type' => self::TYPE_STATE, 'status' => 0])
             ->orderBy('logistic_code', 'asc')
             ->get();
     }
 
-    public function getAllDistricts(){
-        return $this->newQuery()->addSelect('*')
+    public static function getAllDistricts(){
+        return self::addSelect('*')
             ->where(['type' => self::TYPE_DISTRICT, 'status' => 0])
             ->orderBy('logistic_code', 'asc')
             ->get();

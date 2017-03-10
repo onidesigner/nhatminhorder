@@ -21,6 +21,14 @@ class WareHouse extends Model
         self::WAREHOUSE_CNPX => "Bằng Tường - CNPX"
     );
 
+    public static $type_warehouse = [
+        self::TYPE_DISTRIBUTION => 'Kho phân phối'
+    ];
+
+    public static function getTypeNameWarehouse($type){
+        return empty(self::$type_warehouse[$type]) ? '' : self::$type_warehouse[$type];
+    }
+
     /**
      * @desc Lấy tên alias của kho dựa theo mã kho | Vd: VNHN, K-HN có alias là HN; VNSG, K-SG có alias là SG...
      * @param $code
