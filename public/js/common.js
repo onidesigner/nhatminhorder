@@ -1,4 +1,12 @@
 $(document).ready(function() {
+
+    // $('.sidebar-nav > li').each(function(i){
+    //     var len = $(this).find('.dropdown-menu > ul > li').length;
+    //     if(!len){
+    //         $(this).removeClass('dropdown');
+    //     }
+    // });
+
     if ($('[data-toggle="tooltip"]').length) {
         $('[data-toggle="tooltip"]').tooltip();
     }

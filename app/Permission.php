@@ -17,6 +17,7 @@ class Permission extends Model
     const PERMISSION_DELETE_ROLE = 'DELETE_ROLE';
     const PERMISSION_CREATE_ROLE = 'CREATE_ROLE';
     const PERMISSION_VIEW_ROLE = 'VIEW_ROLE';
+    const PERMISSION_VIEW_LIST_ROLE = 'VIEW_LIST_ROLE';
     const PERMISSION_USER_ADD_MOBILE = 'USER_ADD_MOBILE';
     const PERMISSION_USER_REMOVE_MOBILE = 'USER_REMOVE_MOBILE';
     #endregion
@@ -120,6 +121,10 @@ class Permission extends Model
         'role_permission' => array(
             'label' => 'Nhóm & phân quyền',
             'permissions' => array(
+                self::PERMISSION_VIEW_LIST_ROLE => array(
+                    'label' => 'Quyền xem chức năng nhóm & phân quyền',
+                    'description' => '',
+                ),
                 self::PERMISSION_CREATE_ROLE => array(
                     'label' => 'Quyền tạo nhóm',
                     'description' => '',

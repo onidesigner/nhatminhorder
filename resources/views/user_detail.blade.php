@@ -77,7 +77,12 @@
                                         @if(!empty($user_mobiles))
                                             <ul id="_list-user-phone">
                                                 @foreach($user_mobiles as $user_mobile)
-                                                    <li class="_row-user-phone">{{$user_mobile->mobile}}
+                                                    <li class="_row-user-phone">
+                                                        {{$user_mobile->mobile}}
+
+                                                        &nbsp;&nbsp;<small style="color: grey">{{$user_mobile->created_at}}</small>
+
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;
                                                         @if($permission['can_remove_mobile'])
                                                         <a data-phone="{{$user_mobile->mobile}}"
                                                                 data-id="{{ $user_mobile->id }}" href="javascript:void(0)" class="_remove-user-phone">
@@ -94,14 +99,10 @@
                                         <input type="text" class="_input-user-phone" autofocus placeholder="Nhập điện thoại...">
 
                                         @if($permission['can_add_mobile'])
-                                        <a href="javascript:void(0)" class="_add-user-phone"><i class="fa fa-plus"></i> Thêm</a>
+                                            <a href="javascript:void(0)" class="_add-user-phone"><i class="fa fa-plus"></i> Thêm</a>
                                         @endif
                                     </div>
                                 </div>
-
-
-
-
 
                             </div>
                             <div role="tabpanel" class="tab-pane" id="userTransaction">

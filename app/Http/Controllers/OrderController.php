@@ -195,7 +195,7 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function getOrder(Request $request){
-        $order_id = $request->get('id');
+        $order_id = $request->route('id');
 
         $order = Order::find($order_id);
 

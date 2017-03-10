@@ -90,7 +90,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li class="navbar-title">
-                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup> | Số dư: <span class="text-danger"><?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup></span>
+                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup>&nbsp;&nbsp;&nbsp;Số dư: <span class="text-danger"><?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup></span>
 
                         </li>
                         {{--<li class="navbar-search hidden-sm">--}}
@@ -164,7 +164,9 @@
                                 <div class="profile-info">
                                     <h4 class="username">
                                         @if(Auth::user()->section == App\User::SECTION_CRANE)
-                                        [Quản trị viên]
+                                            [Quản trị viên]
+                                        @else
+                                            [Khách hàng]
                                         @endif
 
                                         {{ Auth::user()->name }}
@@ -173,14 +175,14 @@
                                 <ul class="action">
                                     <li>
                                         <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
-                                            Profile
+                                            Cá nhân
                                         </a>
                                     </li>
                                     <li>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">
-                                            Logout
+                                            Thoát
                                         </a>
 
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
