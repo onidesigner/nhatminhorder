@@ -34,9 +34,9 @@ class CreateOrderTable extends Migration
             $table->double('deposit_amount', 20, 2);//tien dat coc - VND
             $table->double('domestic_shipping_fee', 20, 2);//phi van chuyen noi dia TQ - NDT
             $table->string('account_purchase_origin', 50);//acc mua hang site goc
-            $table->timestamp('deposited_at');//thoi gian dat coc
-            $table->timestamp('cancelled_at');//thoi gian huy don cua khach
-            $table->timestamp('out_of_stock_at');//thoi gian an nut het hang
+            $table->timestamp('deposited_at')->nullable();//thoi gian dat coc
+            $table->timestamp('cancelled_at')->nullable();//thoi gian huy don cua khach
+            $table->timestamp('out_of_stock_at')->nullable();//thoi gian an nut het hang
             $table->timestamps();
         });
     }

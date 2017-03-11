@@ -18,55 +18,50 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Site</th>
-                                <th>Shop avatar</th>
-                                <th>Ma don</th>
-
-                                <th>Trang thai</th>
-                                <th>SL khach dat</th>
-                                <th>Tien hang</th>
-                                <th>Thoi gian</th>
+                                <th>Đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Tỉ giá</th>
+                                <th>Tiền hàng</th>
+                                <th>Thời gian</th>
                             </tr>
                         </thead>
                         <tbody>
 
                         @foreach($orders as $order)
                             <tr>
-                                <td>{{$order->id}}</td>
                                 <td>
 
-                                    @if($order->site == 'tmall')
-                                        <span class="label label-danger">tmall</span>&nbsp;
-                                    @endif
+                                    <img src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
 
-                                    @if($order->site == '1688')
-                                        <span class="label label-success">1688</span>&nbsp;
-                                    @endif
-
-                                    @if($order->site == 'taobao')
-                                        <span class="label label-warning">taobao</span>&nbsp;
-                                    @endif
+                                    <strong>[{{strtoupper($order->site)}}]</strong>
+                                    <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+                                    <p>
+                                        {{ App\Order::getStatusTitle($order->status)  }}
+                                    </p>
 
                                 </td>
                                 <td>
-                                    <img src="{{$order->shop_avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
+                                    <?php
+                                    $user = App\User::find($order->user_id);
+                                    echo '<p><strong>' . $user->email . '</strong></p>';
+//                                    echo '<p>' . $user->name . '</p>';
+                                    ?>
 
-
-
-
+                                    <p>
+                                        Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{$order->deposit_amount}} <sup>đ</sup></span>
+                                    </p>
                                 </td>
-                                <td><a href="{{ url('order', $order->id)  }}">{{$order->code}}</a></td>
-
                                 <td>
-                                    <span class="text-uppercase">Dat dat coc</span>
+                                    <span class="text-danger">{{$order->exchange_rate}} <sup>đ</sup></span>
                                 </td>
-                                <td>{{ $order->order_quantity  }}</td>
-                                <td>{{ $order->total_amount * $exchange_rage  }} <sup>d</sup> / {{ $order->total_amount  }} ¥</td>
                                 <td>
-                                    Tao: {{$order->created_at}}<br>
-                                    Dat coc: {{$order->deposit_at}}<br>
-
+                                    <span class="text-danger">{{$order->amount * $order->exchange_rate}} <sup>đ</sup></span>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Tạo: {{$order->created_at}}</li>
+                                        <li>Đặt cọc: {{$order->deposited_at}}</li>
+                                    </ul>
                                 </td>
                             </tr>
                         @endforeach

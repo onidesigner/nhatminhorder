@@ -10,12 +10,7 @@ class Order extends Model
 {
     protected $table = 'order';
 
-
-    const SITE_TAOBAO = 'taobao';
-    const SITE_TMALL = 'tmall';
-    const SITE_1688 = '1688';
-
-    const STATUS_DEPOSITED = '';
+    const STATUS_DEPOSITED = 'DEPOSITED';
     const STATUS_BUYING = '';
     const STATUS_NEGOTIATING = '';
     const STATUS_NEGOTIATED = '';
@@ -52,6 +47,14 @@ class Order extends Model
         self::STATUS_CANCELLED => "Hủy bỏ",
         self::STATUS_LOST => 'Thất lạc'
     );
+
+    public static function getStatusTitle($code){
+        if(empty($code)){
+            return null;
+        }
+
+        return empty(self::$statusTitle[$code]) ? '' : self::$statusTitle[$code];
+    }
 
     /**
      * @desc Lay danh sach san pham nam trong don hang

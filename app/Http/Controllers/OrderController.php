@@ -6,6 +6,7 @@ use App\Exchange;
 use App\OrderFreightBill;
 use App\OrderOriginalBill;
 use App\Permission;
+use App\UserTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -212,17 +213,30 @@ class OrderController extends Controller
         $order = Order::find($order_id);
 
         if(!$order):
-            return redirect('404');
+            $order = Order::where(['code' => $order_id])->first();
+            if(!$order):
+                return redirect('404');
+            endif;
         endif;
 
         $freight_bill = $order->freight_bill;
         $original_bill = $order->original_bill;
+
+        $order_items = $order->item;
+        $transactions = UserTransaction::where([
+            'object_id' => $order->code,
+            'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
+            'state' => UserTransaction::STATE_COMPLETED
+        ])->orderBy('created_at', 'desc')
+            ->get();
 
         return view('order_detail', [
             'order_id' => $order_id,
             'freight_bill' => $freight_bill,
             'original_bill' => $original_bill,
             'order' => $order,
+            'order_items' => $order_items,
+            'transactions' => $transactions,
             'page_title' => 'Chi tiết đơn hàng',
         ]);
     }

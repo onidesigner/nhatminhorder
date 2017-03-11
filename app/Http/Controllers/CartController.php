@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CartItem;
 use App\Exchange;
+use App\Order;
 use App\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -369,7 +370,7 @@ class CartController extends Controller
                 $deposit_percent, $deposit_amount);
 
             if($result){
-                $redirect_url = url('cart/deposit/success');
+                $redirect_url = url('cart/deposit/success?orders=' . implode(',', $result));
 
                 return Response::json(['success' => true,
                     'redirect_url' => $redirect_url,
@@ -389,11 +390,22 @@ class CartController extends Controller
     /**
      * @author vanhs
      * @desc Hien thi trang dat coc don thanh cong
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function depositSuccess(){
+    public function depositSuccess(Request $request){
+        $ids = $request->get('orders');
+        $orders = [];
+        if($ids){
+            $list = explode(',', $ids);
+            if(count($list)){
+                $orders = Order::whereIn('id', $list)->get();
+            }
+        }
+
         $data = [
-            'page_title' => 'Đặt cọc thành công'
+            'page_title' => 'Đặt cọc thành công',
+            'orders' => $orders
         ];
 
         return view('deposit_success', $data);

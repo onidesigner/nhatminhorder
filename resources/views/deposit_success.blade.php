@@ -109,14 +109,46 @@
     {{--</div>--}}
 
 
-
-
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
             <div class="card">
 
                 <div class="card-body">
-                    Dat coc don hang thanh cong!
+                    <h3>{{$page_title}}</h3>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">&nbsp;</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        @if(count($orders))
+
+                            @foreach($orders as $order)
+                                <tr>
+                                    <td>
+                                        <img style="float: left;
+                                                margin-right: 10px;
+                                                margin-top: 10px;" src="{{ $order->avatar  }}" width="50px" alt="">
+
+                                        <h4>
+                                            <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+
+
+                                        </h4>
+                                        <p>
+                                            Đã đặt cọc
+                                        </p>
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

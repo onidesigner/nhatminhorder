@@ -163,59 +163,196 @@
 @endsection
 
 @section('content')
+
+
+
     <div class="row">
         <div class="col-sm-8 col-xs-12">
+
+
+
             <div class="card">
 
                 <div class="card-body">
-                    {{$page_title}}
-
-
-                    <br>
-
-                    <h4>Mã vận đơn</h4>
-
-                        <ul id="_freight-bill-list">
-                            @if(count($freight_bill))
-                        @foreach($freight_bill as $key => $val)
-                            <li class="_freight-bill-list-item">{{$val->freight_bill}}
-                                <a
-                                        data-order-id="{{$val->order_id}}"
-                                        data-freight-bill="{{$val->freight_bill}}"
-                                        href="javascript:void(0)" class="_remove-freight-bill"><i class="fa fa-times"></i></a>
+                    <div role="tabpanel">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active">
+                                <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Thông tin chung</a>
                             </li>
-                        @endforeach
-                        @endif
+                            <li role="presentation">
+                                <a href="#order-transaction" aria-controls="tab" role="tab" data-toggle="tab">LS Giao dịch</a>
+                            </li>
                         </ul>
 
-
-                    <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
-                    <a href="javascript:void(0)" id="_save-freight-bill">Thêm</a>
-
-                    <br>
-
-                    <h4>Mã đơn gốc</h4>
-
-                        <ul id="_original-bill-list">
-                            @if(count($original_bill))
-                            @foreach($original_bill as $key => $val)
-                                    <li class="_original-bill-list-item">{{$val->original_bill}}
-                                    <a
-                                            data-order-id="{{$val->order_id}}"
-                                            data-original-bill="{{$val->original_bill}}"
-                                            href="javascript:void(0)" class="_remove-original-bill"><i class="fa fa-times"></i></a>
-                                </li>
-                            @endforeach
-                            @endif
-                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
 
 
+                                <h4>Mã vận đơn</h4>
+
+                                <ul id="_freight-bill-list">
+                                    @if(count($freight_bill))
+                                        @foreach($freight_bill as $key => $val)
+                                            <li class="_freight-bill-list-item">{{$val->freight_bill}}
+                                                <a
+                                                        data-order-id="{{$val->order_id}}"
+                                                        data-freight-bill="{{$val->freight_bill}}"
+                                                        href="javascript:void(0)" class="_remove-freight-bill"><i class="fa fa-times"></i></a>
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                </ul>
 
 
-                    <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
-                    <a href="javascript:void(0)" id="_save-original-bill">Thêm</a>
+                                <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
+                                <a href="javascript:void(0)" id="_save-freight-bill">Thêm</a>
+
+                                <br>
+
+                                <h4>Mã đơn gốc</h4>
+
+                                <ul id="_original-bill-list">
+                                    @if(count($original_bill))
+                                        @foreach($original_bill as $key => $val)
+                                            <li class="_original-bill-list-item">{{$val->original_bill}}
+                                                <a
+                                                        data-order-id="{{$val->order_id}}"
+                                                        data-original-bill="{{$val->original_bill}}"
+                                                        href="javascript:void(0)" class="_remove-original-bill"><i class="fa fa-times"></i></a>
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                </ul>
+
+
+
+
+                                <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
+                                <a href="javascript:void(0)" id="_save-original-bill">Thêm</a>
+
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="order-transaction">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Mã GD</th>
+                                        <th>Loại</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thời gian</th>
+                                        <th>Giá trị</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($transactions as $transaction)
+                                        <?php
+
+                                        $user = App\User::find($transaction->user_id);
+                                        $order = App\Order::find($transaction->object_id);
+
+                                        if(!$user) $user = new App\User();
+                                        if(!$order) $order = new App\Order();
+                                        ?>
+                                        <tr>
+
+
+                                            <td>
+                                                {{$transaction->transaction_code}}<br>
+                                                <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
+                                            </td>
+                                            <td>
+                                                {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
+                                            </td>
+                                            <td>
+
+
+                                    <span class="@if($transaction->state == App\UserTransaction::STATE_COMPLETED) label label-success @endif">
+                                {{ App\UserTransaction::$transaction_state[$transaction->state]  }}
+                                    </span>
+                                            </td>
+
+
+                                            <td>{{$transaction->created_at}}</td>
+                                            <td>
+                                <span class="text-danger">
+                                    {{$transaction->amount}} <sup>d</sup>
+                                </span>
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
+
+            <br>
+
+            <div class="card">
+
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th width="10%">ID</th>
+                            <th>SẢN PHẨM</th>
+                            <th>SL</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        @if(count($order_items))
+                        <tbody>
+                        @foreach($order_items as $order_item)
+                            <tr>
+                                <td>{{$order_item->id}}</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <a href="{{$order_item->link}}" target="_blank">
+                                                <img class="img-responsive" width="90px" src="{{$order_item->image}}" alt="">
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
+                                            <br>
+
+                                            <p>
+                                                Địa điểm đăng bán: {{$order_item->location_sale}}
+                                            </p>
+                                            <p>
+                                                Mẫu: {{$order_item->property}}
+                                            </p>
+
+                                            <input type="text" placeholder="Chat về sản phẩm...">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{$order_item->order_quantity}}
+                                </td>
+                                <td>
+                                    <p>
+                                        Đơn giá: {{$order_item->order_quantity}} <sup>đ</sup>
+                                    </p>
+                                    <p>
+                                        Tổng: {{$order_item->order_quantity}} <sup>đ</sup>
+                                    </p>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                        @endif
+                    </table>
+                </div>
+            </div>
+
         </div>
 
         <div class="col-sm-4 col-xs-12">
@@ -225,6 +362,8 @@
                 'object_type' => App\Comment::TYPE_OBJECT_ORDER,
                 'scope' => App\Comment::TYPE_EXTERNAL
             ])
+
+            
         </div>
     </div>
 

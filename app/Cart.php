@@ -76,7 +76,7 @@ class Cart extends Model
      * @param $exchange_rate
      * @param $deposit_percent
      * @param $deposit_amount
-     * @return bool
+     * @return bool|array
      */
     public static function depositOrder(User $user, $destination_warehouse,
                                         $shop_id,
@@ -85,6 +85,8 @@ class Cart extends Model
         DB::beginTransaction();
 
         try{
+            $data_order_success = [];
+
             $user_id = $user->id;
 
             $shops = Cart::where([
@@ -200,6 +202,8 @@ class Cart extends Model
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
                     #endregion
+
+                    $data_order_success[] = $order->id;
                 endforeach;
 
             endif;
@@ -207,7 +211,7 @@ class Cart extends Model
             self::removeCartAfterDepositOrder($user_id, $shop_id);
 
             DB::commit();
-            return true;
+            return $data_order_success;
         }catch (\Exception $e){
             DB::rollback();
             return false;
