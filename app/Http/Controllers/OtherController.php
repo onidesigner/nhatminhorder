@@ -10,7 +10,6 @@ class OtherController extends Controller
     public function __construct()
     {
 
-
     }
 
     public function renderPageNotFound()

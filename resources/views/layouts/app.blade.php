@@ -174,7 +174,7 @@
                                 </div>
                                 <ul class="action">
                                     <li>
-                                        <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
+                                        <a href="{{ url('user/detail', Auth::user()->id)  }}">
                                             Cá nhân
                                         </a>
                                     </li>
@@ -213,12 +213,14 @@
 @show
 
 @section('js_bottom')
-<script type="text/javascript" src="{{ asset('js/vendor.js') }}"></script>
+{{--<script type="text/javascript" src="{{ asset('js/vendor.js') }}"></script>--}}
+<script type="text/javascript" src="{{ asset('js/jquery-3.1.1.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
 <script src="{{ asset('js/autoNumeric.min.js')  }}"></script>
 <script src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+{{--<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>--}}
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
 @show
 

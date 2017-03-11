@@ -143,7 +143,7 @@ class UserController extends Controller
         endif;
 
         if($user->checkMaxMobile()):
-            return Response::json(['success' => false, 'message' => sprintf('Bạn chỉ được thêm tối đa %s số điện thoại !', $user->max_mobiles)]);
+            return Response::json(['success' => false, 'message' => sprintf('Bạn chỉ được thêm tối đa %s số điện thoại !', User::getMaxMobile())]);
         endif;
 
         if($user->checkExistsMobile($user_phone)):
@@ -290,7 +290,7 @@ class UserController extends Controller
         $user->updated_at = date('Y-m-d H:i:s');
         $user->save();
 
-        return redirect("nhan-vien/{$user_id}");
+        return redirect("user/detail/{$user_id}");
     }
 
     /**

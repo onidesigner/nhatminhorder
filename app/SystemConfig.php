@@ -3,29 +3,25 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SystemConfig extends Model
 {
+    const CACHE_SYSTEM_CONFIG_KEY = 'system_config';
+
     protected $table = 'system_config';
 
-    protected $system_config_data = [
+    public static $system_config_data = [
         [
-            'field_name' => 'Field 1',
-            'key' => 'website_name'
+            'field_name' => 'Tối đa địa chỉ nhận hàng khách',
+            'key' => 'user_address_max'
         ],
         [
-            'field_name' => 'Field 2',
-            'key' => 'website_name1'
+            'field_name' => 'Tối đa số điện thoại khách',
+            'key' => 'user_mobile_max'
         ],
-        [
-            'field_name' => 'Field 3',
-            'key' => 'website_name2'
-        ]
-    ];
 
-    public function showTable(){
-        return $this->system_config_data;
-    }
+    ];
 
     public function updateData($data_insert){
         if(count($data_insert)):
@@ -35,5 +31,18 @@ class SystemConfig extends Model
         endif;
 
         return true;
+    }
+
+    public static function getConfigValueByKey($key){
+        if(empty($key)):
+            return null;
+        endif;
+
+        $system_config_cache = (array)Cache::get(self::CACHE_SYSTEM_CONFIG_KEY);
+        if(!empty($system_config_cache[$key])):
+            return $system_config_cache[$key];
+        endif;
+
+        return null;
     }
 }

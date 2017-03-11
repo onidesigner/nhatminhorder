@@ -32,7 +32,7 @@
 
                                 <div class="row">
                                     <div class="col-sm-4 col-xs-12">
-                                        <h4>Thông tin chung &nbsp;&nbsp;&nbsp;<small><a href="{{ url('sua-nhan-vien', $user_id)  }}">Sửa</a></small></h4>
+                                        <h4>Thông tin chung &nbsp;&nbsp;&nbsp;<small><a href="{{ url('user/edit', $user_id)  }}">Sửa</a></small></h4>
 
                                         <table class="table">
 

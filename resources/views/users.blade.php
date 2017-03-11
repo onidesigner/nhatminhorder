@@ -45,7 +45,7 @@
                                             <td>
                                                 [{{ App\User::getSectionName($user->section)  }}]
 
-                                                <a href="{{ url('nhan-vien', $user->id)  }}">{{$user->name}}</a>
+                                                <a href="{{ url('user/detail', $user->id)  }}">{{$user->name}}</a>
                                             </td>
                                             <td>{{ App\User::getStatusName($user->status)  }}</td>
                                             <td>

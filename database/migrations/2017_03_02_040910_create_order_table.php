@@ -15,44 +15,28 @@ class CreateOrderTable extends Migration
     {
         Schema::create('order', function (Blueprint $table) {
             $table->increments('id');
-//            $table->char('code', 100);
-//            $table->string('avatar', 255);
-//            $table->string('status', 50);
-//            $table->string('seller_name', 200);
-//            $table->string('seller_id', 50);
-//            $table->string('seller_aliwang', 100);
-//            $table->string('seller_homeland', 100);
-//            $table->text('seller_info');
-//            $table->integer('buyer_id');
-//            $table->tinyInteger('product_group_id');
-//            $table->integer('order_quantity');
-//            $table->integer('pending_quantity');
-//            $table->integer('recive_quantity');
-//            $table->integer('packages_quantity');
-//            $table->enum('customer_confirm', ['CONFIRMED','WAIT','NONE'])->default('NONE');
-//            $table->string('note_customer_confirm', 255);
-//            $table->double('temporary_total_amount', 20, 2);
-//            $table->double('total_amount', 20, 2);
-//            $table->string('receive_warehouse', 50);
-//            $table->double('order_amount', 20, 2);
-//            $table->double('real_amount', 20, 2);
-//            $table->double('bought_amount', 20, 2);
-//            $table->double('deposit_amount', 20, 2);
-//            $table->decimal('deposit_ratio', 3, 2);
-//            $table->decimal('deposit_ratio_origin', 3, 2);
-//            $table->double('refund_amount', 20, 2);
-//            $table->double('real_payment_amount', 20, 2);
-//            $table->double('real_refund_amount', 20, 2);
-//            $table->double('refund_by_order', 20, 2);
-//            $table->double('refund_by_complaint', 20, 2);
-//            $table->double('debit_amount', 20, 2);
-//            $table->double('real_surcharge', 20, 2);
-//            $table->double('real_service_amount', 20, 2);
-//            $table->double('alipay_cny_refund_total', 20, 2);
-//            $table->double('service_fee', 20, 2);
-//            $table->double('domestic_shipping_fee', 20, 2);
-
-
+            $table->char('code', 50)->nullable();//ma don hang
+            $table->string('avatar', 255)->nullable();
+            $table->string('status', 50)->nullable();//trang thai don
+            $table->char('site', 50)->nullable();//site goc [taobao, tmall, 1688]
+            $table->integer('total_order_quantity')->nullable()->default(0);//tong so luong dat
+            $table->integer('total_checking_quantity')->nullable()->default(0);//tong so luong kiem
+            $table->integer('total_receiver_quantity')->nullable()->default(0);//tong so luong nhan
+            $table->decimal('exchange_rate', 20, 2)->nullable();//ti gia - VND
+            $table->integer('user_id')->nullable()->default(0);//id khac hang
+            $table->integer('paid_staff_id')->nullable()->default(0);//id nhan vien mua hang
+            $table->integer('teller_id')->nullable()->default(0);//id nhan vien thanh toan
+            $table->integer('user_address_id')->nullable()->default(0);//thong tin dia chi nhan hang khi dat coc don
+            $table->double('amount', 20, 2)->nullable()->default(0);//tong gia tri don hang - NDT
+            $table->char('destination_warehouse', 50)->nullable();//kho dich cua don hang
+            $table->decimal('weight', 6, 2);//tong can nang don hang
+            $table->double('deposit_percent', 20, 2);//ti le dat coc don hang
+            $table->double('deposit_amount', 20, 2);//tien dat coc - VND
+            $table->double('domestic_shipping_fee', 20, 2);//phi van chuyen noi dia TQ - NDT
+            $table->string('account_purchase_origin', 50);//acc mua hang site goc
+            $table->timestamp('deposited_at');//thoi gian dat coc
+            $table->timestamp('cancelled_at');//thoi gian huy don cua khach
+            $table->timestamp('out_of_stock_at');//thoi gian an nut het hang
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\UserMobile;
 
@@ -31,8 +32,6 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
-    public $max_mobiles = 3;
-
     const STATUS_ACTIVE = 'ACTIVE';
     const STATUS_INACTIVE = 'INACTIVE';
 
@@ -55,13 +54,46 @@ class User extends Authenticatable
     ];
 
     public static $god = [
-        'hosivan90@gmail.com'
+        'hosivan90@gmail.com',
+        'nguyenhoanggiangdhxd@gmail.com'
     ];
 
     public static $section_list = [
         self::SECTION_CRANE => 'Quản trị viên',
         self::SECTION_CUSTOMER => 'Khách hàng',
     ];
+
+    /**
+     * @author vanhs
+     * @desc Kiem tra xem user hien tai co dang hoat dong hay khong?
+     * @return bool
+     */
+    public function isDisabled(){
+        if($this->status != self::STATUS_ACTIVE){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Kiem tra xem user hien tai co phai la quan tri hay khong?
+     * @return bool
+     */
+    public function isCrane(){
+        if($this->section == self::SECTION_CRANE){
+            return true;
+        }
+        return false;
+    }
+
+    public static function getMaxMobile(){
+        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_mobile_max'])):
+            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_mobile_max'];
+        endif;
+
+        return 3;
+    }
 
     protected static function statusList(){
         return self::$status_list;
@@ -141,7 +173,7 @@ class User extends Authenticatable
     public function checkMaxMobile(){
         return UserMobile::where([
             'user_id' => $this->id
-        ])->count() >= $this->max_mobiles;
+        ])->count() >= self::getMaxMobile();
     }
 
 

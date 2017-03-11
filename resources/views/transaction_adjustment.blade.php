@@ -20,16 +20,18 @@
                             <form id="_form-transaction-adjustment">
                                 <fieldset>
 
-                                    <select id="transaction_type" class="_form-control select2" autofocus name="transaction_type">
+                                    <select id="transaction_type" class="form-control _selectpicker" autofocus name="transaction_type">
                                         <option value="">Loại giao dịch </option>
                                         @foreach(App\UserTransaction::$transaction_adjustment as $k => $v)
                                             <option value="{{ $k }}">{{$v}}</option>
                                         @endforeach
                                     </select>
 
+
+
                                     <div class="_form-item _form-item-sub ADJUSTMENT GIFT hidden">
 
-                                        <select class="_form-control select2"  name="user_id" id="">
+                                        <select class="form-control _selectpicker"  name="user_id" id="">
                                             <option value="">Khách hàng </option>
                                             @if(!empty($users_customer))
                                                 @foreach($users_customer as $users_customer_item)
@@ -42,7 +44,7 @@
 
 
                                     <div class="_form-item _form-item-sub PAYMENT REFUND ORDER DEFAULT_SUB hidden">
-                                        <select class="_form-control select2"  name="object_type" id="transaction_adjustment_object">
+                                        <select class="form-control _selectpicker"  name="object_type" id="transaction_adjustment_object">
                                             <option value="">Chọn đối tượng </option>
 
                                                 @foreach(App\UserTransaction::$transaction_adjustment_object as $kk1 => $vv1)
@@ -56,7 +58,7 @@
 
                                     <div class="select-transaction-adjustment-type _form-item _form-item-sub ADJUSTMENT hidden">
 
-                                        <select class="_form-control select2"  name="transaction_adjustment_type" id="">
+                                        <select class="form-control _selectpicker"  name="transaction_adjustment_type" id="">
                                             <option value="">Loại điều chỉnh </option>
                                             @foreach(App\UserTransaction::$transaction_adjustment_type as $kk => $vv)
                                                 <option value="{{$kk}}">{{$vv}}</option>
@@ -86,18 +88,20 @@
 @endsection
 
 @section('css_bottom')
-<style>
-    ._form-item span.select2{
-        width: 100%!important;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
 @endsection
 
 @section('js_bottom')
     @parent
+
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+
     <script>
         $(document).ready(function(){
-
+            $('._selectpicker').selectpicker({
+//                style: 'btn-info',
+//                width: 'fit',
+            });
 
             $('._form-item.DEFAULT').removeClass('hidden');
 
@@ -112,7 +116,7 @@
                 $('._form-item.' + classType).removeClass('hidden');
 
                 $('#transaction_adjustment_object option:first').prop('selected', true);
-                $('#transaction_adjustment_object').select2();
+                $('#transaction_adjustment_object').selectpicker('refresh');
             });
 
             $(document).on('click', '#_save-transaction-adjustment', function(event){

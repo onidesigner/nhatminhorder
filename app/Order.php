@@ -163,8 +163,11 @@ class Order extends Model
 
         //remove shipping address province's code
         $current_order_no = self::select('id')->where([
-            'user_id' => $user->id,
-            'DATE(`created_time`)' => date('Y-m-d')
+
+            [ 'user_id', '=', $user->id ],
+            [ 'created_at', '>=', date('Y-m-d') . ' 00:00:00' ],
+            [ 'created_at', '<=', date('Y-m-d') . ' 23:59:59' ]
+
         ])->count();
 
         $serial_part = str_pad($current_order_no + 1, 1, '0', STR_PAD_LEFT);

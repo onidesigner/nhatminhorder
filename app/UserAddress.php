@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Location;
 
@@ -10,21 +11,30 @@ class UserAddress extends Model
 {
     protected $table = 'user_address';
 
-    public static $user_address_max = 5;
+    public static function getUserAddressMax(){
+        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_address_max'])):
+            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_address_max'];
+        endif;
+        return 5;
+    }
 
     public static function findByUserId($user_id){
         return self::select('*')
             ->where([
-                'user_id' => $user_id
+                'user_id' => $user_id,
+                'is_delete' => 0
             ])
             ->orderBy('is_default', 'desc')->get();
     }
 
     public static function checkMaxUserAddress($user_id){
         $total = self::select('id')
-            ->where(['user_id' => $user_id])
+            ->where([
+                'user_id' => $user_id,
+                'is_delete' => 0,
+            ])
             ->count();
-        if($total < self::$user_address_max):
+        if($total < self::getUserAddressMax()):
             return true;
         endif;
 
@@ -40,7 +50,9 @@ class UserAddress extends Model
             unset($send_data['_token']);
 
             if(!$user_address_id):
-                self::where(['user_id' => $send_data['user_id']])
+                self::where([
+                        'user_id' => $send_data['user_id'],
+                    ])
                     ->update([
                         'is_default' => 0
                     ]);
@@ -62,17 +74,14 @@ class UserAddress extends Model
         }
     }
 
-    public static function deleteUserAddress($id, $user_id){
-        return self::where(['id' => $id, 'user_id' => $user_id])
-            ->delete();
-    }
-
     public static function setDefaultUserAddress($id, $user_id){
 
         try{
             DB::beginTransaction();
 
-            self::where(['user_id' => $user_id])
+            self::where([
+                    'user_id' => $user_id
+                ])
                 ->update([
                     'is_default' => 0
                 ]);

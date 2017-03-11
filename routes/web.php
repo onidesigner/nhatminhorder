@@ -23,8 +23,8 @@ Route::get('/home', 'HomeController@index');
 Route::get('/cart/add', 'AddonController@addCart');
 
 Route::get('/cart', 'CartController@showCart');
-Route::get('/dat-coc', 'CartController@deposit');
-Route::get('/dat-coc-thanh-cong', 'CartController@depositSuccess');
+Route::get('/cart/deposit', 'CartController@deposit');
+Route::get('/cart/deposit/success', 'CartController@depositSuccess');
 Route::post('/cart/quantity', 'CartController@updateQuantity');
 Route::post('/cart/shop/service', 'CartController@updateService');
 Route::post('/cart/item/comment', 'CartController@actionUpdate');
@@ -34,10 +34,10 @@ Route::post('/cart/deposit', 'CartController@depositOrder');
 #endregion
 
 #region quan ly nhan vien
-Route::get('/nhan-vien', 'UserController@getUsers');
-Route::get('/nhan-vien/{id}', 'UserController@detailUser');
-Route::get('/sua-nhan-vien/{id}', 'UserController@getUser');
-Route::post('/sua-nhan-vien/{id}', 'UserController@updateUser');
+Route::get('/user', 'UserController@getUsers');
+Route::get('/user/detail/{id}', 'UserController@detailUser');
+Route::get('/user/edit/{id}', 'UserController@getUser');
+Route::post('/user/edit/{id}', 'UserController@updateUser');
 Route::post('/user/phone', 'UserController@addUserPhone');
 Route::put('/user/phone', 'UserController@deleteUserPhone');
 Route::get('/user/original_site', 'UserController@listUserOriginalSite');

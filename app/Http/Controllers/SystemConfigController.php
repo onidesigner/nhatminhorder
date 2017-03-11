@@ -8,6 +8,7 @@ use App\SystemConfig;
 use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use App\Role;
@@ -323,6 +324,12 @@ class SystemConfigController extends Controller
         return view('role', $data);
     }
 
+    /**
+     * @author vanhs
+     * @desc Hien thi thong tin trang cau hinh chung he thong
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getList(Request $request){
         $data_inserted = [];
 
@@ -333,19 +340,23 @@ class SystemConfigController extends Controller
             $data_inserted[$data_inserted_array_item['config_key']] = $data_inserted_array_item['config_value'];
         endforeach;
 
-        $system_config = new SystemConfig();
-
-//        var_dump($data_inserted);
+//        echo SystemConfig::getConfigValueByKey('website_name');
 
         $data = [
             'page_title' => "Cấu hình chung hệ thống ",
-            'data' => $system_config->showTable(),
+            'data' => SystemConfig::$system_config_data,
             'data_inserted' => $data_inserted,
             'save' => $request->get('save')
         ];
         return view('system_config', $data);
     }
 
+    /**
+     * @author vanhs
+     * @desc Luu thong tin cau hinh chung he thong
+     * @param Request $request
+     * @return Redirect
+     */
     public function update(Request $request){
 
         $data_send = $request->all();
@@ -356,18 +367,25 @@ class SystemConfigController extends Controller
 
         $data_insert = [];
 
+        $cache_data = [];
+
         foreach($data_send as $key => $data_send_item):
+            $config_value = $data_send_item ? $data_send_item : '';
 
             $data_insert[] = [
                 'config_key' => $key,
-                'config_value' => $data_send_item ? $data_send_item : '',
+                'config_value' => $config_value,
                 'created_at' => date('Y-m-d H:i:s')
             ];
+
+            $cache_data[$key] = $config_value;
         endforeach;
 
-//        var_dump($data_insert);
-
         $system_config->updateData($data_insert);
+
+        Cache::forever(SystemConfig::CACHE_SYSTEM_CONFIG_KEY, $cache_data);
+
+//        $cache = Cache::get('system_config');
 
         return redirect("setting?save=success");
     }

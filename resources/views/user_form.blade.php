@@ -14,8 +14,8 @@
                     @include('partials/__breadcrumb',
                                 [
                                     'urls' => [
-                                        ['name' => 'Trang chủ', 'link' => $app->make('url')->to('home')],
-                                        ['name' => 'Nhân viên', 'link' => $app->make('url')->to('nhan-vien')],
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Nhân viên', 'link' => url('user')],
                                         ['name' => $page_title, 'link' => null],
                                     ]
                                 ]
@@ -42,7 +42,7 @@
                                     $section_metadata['disabled'] = 'disabled';
                                 endif;
 
-                                echo Form::open(array('url' => url('sua-nhan-vien' )));
+                                echo Form::open(array('url' => url('user/edit', $user['id'] )));
                                 echo Form::text('name', $user['name'], ['class' => 'form-control', 'placeholder' => 'Họ & tên', 'autofocus' => 'autofocus']);
                                 echo Form::password('password', ['class' => 'form-control', 'placeholder' => 'Mật khẩu']);
                                 echo Form::text('email', $user['email'], ['class' => 'form-control', 'placeholder' => 'Email', 'disabled' => 'disabled']);

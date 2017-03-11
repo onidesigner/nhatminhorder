@@ -12,10 +12,6 @@ class Exchange extends Model
     const STATUS_ACTIVE = 'ACTIVE';
     const STATUS_DISABLED = 'DISABLED';
 
-    public static function isStatusActive($status = null){
-        return $status == self::STATUS_ACTIVE;
-    }
-
     /**
      * @author vanhs
      * @desc Ham lay ti gia hien tai
@@ -23,6 +19,7 @@ class Exchange extends Model
      * @return int
      */
     public static function getExchange($apply_time = null){
+
         $value = 0;
         if(!$apply_time):
             $apply_time = date('Y-m-d H:i:s');
@@ -40,4 +37,6 @@ class Exchange extends Model
 
         return $value;
     }
+
+
 }

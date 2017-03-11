@@ -80,7 +80,7 @@
                                                 {{$idx + 1}}
                                             </td>
                                             <td>
-                                                <a href="{{ url('nhan-vien', $user_warehous->user_id)  }}">
+                                                <a href="{{ url('user/detail', $user_warehous->user_id)  }}">
                                                     {{$user_warehous->email}} ({{$user_warehous->user_name}})
                                                 </a>
                                             </td>

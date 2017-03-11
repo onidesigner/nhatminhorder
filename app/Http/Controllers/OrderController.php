@@ -16,7 +16,6 @@ class OrderController extends Controller
 
     public function __construct()
     {
-
         $this->middleware('auth');
     }
 
@@ -41,6 +40,10 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Not permission!']);
         endif;
 
+        if(empty($freight_bill)):
+            return response()->json(['success' => false, 'message' => 'Mã vận đơn không để trống!']);
+        endif;
+
         $order_freight_bill_exists = $order->has_freight_bill($freight_bill);
 
         if($order_freight_bill_exists):
@@ -50,7 +53,6 @@ class OrderController extends Controller
         $freight_bill_exists = OrderFreightBill::where([
             'freight_bill' => $freight_bill
         ])->count();
-
 
         OrderFreightBill::insert([
             'user_id' => Auth::user()->id,
@@ -63,7 +65,7 @@ class OrderController extends Controller
             return response()->json(['success' => true, 'message' => sprintf('Mã hóa đơn %s đã tồn tại ở 1 đơn hàng khác!', $freight_bill)]);
         endif;
 
-        return response()->json(['success' => true, 'message' => 'insert success']);
+        return response()->json(['success' => true, 'message' => '']);
     }
 
     /**
@@ -116,11 +118,19 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Not permission!']);
         endif;
 
+        if(empty($original_bill)):
+            return response()->json(['success' => false, 'message' => 'Mã hóa đơn gốc không để trống!']);
+        endif;
+
         $order_original_bill_exists = $order->has_origin_bill($original_bill);
 
         if($order_original_bill_exists):
             return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại!', $original_bill)]);
         endif;
+
+        $original_bill_exists = OrderOriginalBill::where([
+            'original_bill' => $original_bill
+        ])->count();
 
         OrderOriginalBill::insert([
             'user_id' => Auth::user()->id,
@@ -129,15 +139,11 @@ class OrderController extends Controller
             'created_at' => date('Y-m-d H:i:s')
         ]);
 
-        $original_bill_exists = OrderOriginalBill::where([
-            'original_bill' => $original_bill
-        ])->count();
-
         if($original_bill_exists):
             return response()->json(['success' => true, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại ở 1 đơn hàng khách!', $original_bill)]);
         endif;
 
-        return response()->json(['success' => true, 'message' => 'insert success']);
+        return response()->json(['success' => true, 'message' => '']);
     }
 
     /**
@@ -195,6 +201,12 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function getOrder(Request $request){
+
+        $can_view = Permission::isAllow(Permission::PERMISSION_ORDER_VIEW);
+        if(!$can_view):
+            return redirect('403');
+        endif;
+
         $order_id = $request->route('id');
 
         $order = Order::find($order_id);
@@ -203,8 +215,13 @@ class OrderController extends Controller
             return redirect('404');
         endif;
 
+        $freight_bill = $order->freight_bill;
+        $original_bill = $order->original_bill;
+
         return view('order_detail', [
             'order_id' => $order_id,
+            'freight_bill' => $freight_bill,
+            'original_bill' => $original_bill,
             'order' => $order,
             'page_title' => 'Chi tiết đơn hàng',
         ]);

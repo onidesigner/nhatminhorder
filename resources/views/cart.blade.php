@@ -94,7 +94,7 @@
 
                                     </td>
 
-                                    <td><span class="_autoNumeric">{{$item->price_vnd}}</span>đ / ¥{{$item->price_promotion}}</td>
+                                    <td><span class="_autoNumeric">{{$item->price_calculator_vnd}}</span>đ / ¥{{$item->price_calculator}}</td>
                                     <td>
                                         <input
                                                 data-shop-id="{{$shop->shop_id}}"
@@ -114,7 +114,7 @@
                                         : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tổng: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
                                         &nbsp;
 
-                                        <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
+                                        <a href="{{ url('cart/deposit?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
                                     </td>
                                 </tr>
 
@@ -134,7 +134,7 @@
             <div class="col-sm-12">
                 <div class="card ">
                     <div class="card-header" style="position: relative">
-                        <h4>Gio hang hien dang trong!</h4>
+                        <h4>Giỏ hàng hiện đang trống!</h4>
                     </div>
                 </div>
             </div>
@@ -174,6 +174,10 @@
 
                             if(response.success){
                                 $('._shop[data-shop-id="' + shop_id + '"]').remove();
+
+                                if(!$('._shop').length){
+                                    window.location.reload();
+                                }
                             }
                         },
                         error: function () {

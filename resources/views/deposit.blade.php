@@ -84,8 +84,9 @@
                             </table>
 
 
-
-                            <a class="btn btn-primary" id="_add-user-address">Thêm địa chỉ</a>
+                            @if($max_user_address)
+                                <a class="btn btn-primary" id="_add-user-address">Thêm địa chỉ</a>
+                            @endif
 
                             <div class="modal fade" id="modal-id">
                                 <div class="modal-dialog">
@@ -246,12 +247,12 @@
                  var address_id = $('._user-address[data-is-default=1]').data('id');
 
                  if(!$('._user-address').length){
-                     bootbox.alert('Hien tai ban chua co dia chi nhan hang!');
+                     bootbox.alert('Hiện chưa có địa chỉ nhận hàng!');
                      return false;
                  }
 
                  if(!address_id){
-                     bootbox.alert('Vui long thiet lap 1 dia chi nhan hang lam mac dinh!');
+                     bootbox.alert('Vui lòng thiết lập 1 địa chỉ nhận hàng làm mặc định!');
                      return false;
                  }
 
@@ -323,7 +324,7 @@
 
             $(document).on('click', '._btn-action-delete', function () {
                 var user_address_id = $(this).data('id');
-                bootbox.confirm("Ban co chac muon xoa dia chi nay?", function(result){
+                bootbox.confirm("Bạn có chắc muốn xóa địa chỉ này?", function(result){
                     if(result){
                         $.ajax({
                             url: "{{ url('user/address/delete')  }}",

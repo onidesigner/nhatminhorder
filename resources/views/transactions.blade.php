@@ -49,7 +49,7 @@
                                 {{$transaction->id}}
                             </td>
                             <td>
-                                <a href="{{ url('nhan-vien', $user->id)  }}">
+                                <a href="{{ url('user/detail', $user->id)  }}">
                                     <strong>{{$user->email}}</strong>
                                 </a><br>
 

@@ -56,7 +56,7 @@ class UserAddressController extends Controller
         $send_data['user_id'] = $current_user_id;
 
         if(!$send_data['user_address_id'] && !UserAddress::checkMaxUserAddress($current_user_id)):
-            return Response::json(array('success' => false, 'message' => sprintf('Bạn chỉ có thể thêm tối đa %s địa chỉ!', UserAddress::$user_address_max) ));
+            return Response::json(array('success' => false, 'message' => sprintf('Bạn chỉ có thể thêm tối đa %s địa chỉ!', UserAddress::getUserAddressMax()) ));
         endif;
 
         UserAddress::addNewUserAddress($send_data);
@@ -94,8 +94,12 @@ class UserAddressController extends Controller
         switch ($action):
             case "delete":
 
-                $user_address = new UserAddress();
-                $user_address->deleteUserAddress($id, $current_user_id);
+                UserAddress::where([
+                    'id' => $id,
+                    'user_id' => $current_user_id
+                ])->update([
+                    'is_delete' => 1
+                ]);
 
                 break;
             case "update":

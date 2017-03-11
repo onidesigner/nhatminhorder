@@ -20,8 +20,8 @@
                                 @foreach($data as $key => $data_item)
 
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">{{$data_item['field_name']}}</label>
-                                    <div class="col-md-9">
+                                    <label class="col-md-4 control-label">{{$data_item['field_name']}}</label>
+                                    <div class="col-md-8">
 
                                         <input @if($key == 0) autofocus @endif type="text" name="{{$data_item['key']}}" class="form-control" placeholder="" value="{{ @$data_inserted[$data_item['key']]  }}">
                                     </div>
