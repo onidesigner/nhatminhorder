@@ -25,8 +25,8 @@ class CreateOrderItemTable extends Migration
             $table->string('property', 255)->nullable();
             $table->string('property_translated', 255)->nullable();
             $table->string('location_sale', 100)->nullable();
-            $table->double('price', 20, 2);
-            $table->double('price_promotion', 20, 2);
+            $table->double('price', 20, 2);//NDT
+            $table->double('price_promotion', 20, 2);//NDT
             $table->text('price_table');
             $table->integer('order_quantity');
             $table->integer('checking_quantity');

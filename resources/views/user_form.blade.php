@@ -8,18 +8,18 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-
+                @include('partials/__breadcrumb',
+                                                [
+                                                    'urls' => [
+                                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                                        ['name' => 'Nhân viên', 'link' => url('user')],
+                                                        ['name' => $page_title, 'link' => null],
+                                                    ]
+                                                ]
+                                            )
                 <div class="card-body">
 
-                    @include('partials/__breadcrumb',
-                                [
-                                    'urls' => [
-                                        ['name' => 'Trang chủ', 'link' => url('home')],
-                                        ['name' => 'Nhân viên', 'link' => url('user')],
-                                        ['name' => $page_title, 'link' => null],
-                                    ]
-                                ]
-                            )
+
 
                     <div class="row">
 

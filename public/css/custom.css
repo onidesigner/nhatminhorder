@@ -12,7 +12,19 @@
     border-bottom-color: #29c75f!important;;
 }
 
-.no-padding-leftright{
+.no-padding-leftright, .no-padding-leftright td{
     padding-left: 0 !important;
     padding-right: 0 !important;
+}
+
+.navbar .navbar-collapse .navbar-nav > li.dropdown.arrow-none:hover:after{
+    display: none!important;
+}
+
+.width-auto{
+    width: auto!important;
+}
+
+.border-top-none{
+    border-top:none!important;
 }

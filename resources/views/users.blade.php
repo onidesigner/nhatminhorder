@@ -10,10 +10,8 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            @include('partials/__breadcrumb',
+
+                @include('partials/__breadcrumb',
                                 [
                                     'urls' => [
                                         ['name' => 'Trang chủ', 'link' => $app->make('url')->to('home')],
@@ -21,6 +19,11 @@
                                     ]
                                 ]
                             )
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+
 
                             <p>
                                 Tìm thấy ({{ $total_users }}) nhân viên

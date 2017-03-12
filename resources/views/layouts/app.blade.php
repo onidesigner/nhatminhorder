@@ -97,30 +97,25 @@
                             {{--<input id="search" type="text" placeholder="Search.." autocomplete="off">--}}
                             {{--<button class="btn-search"><i class="fa fa-search"></i></button>--}}
                         {{--</li>--}}
+
                     </ul>
+
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="dropdown notification">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <li class="arrow-none dropdown notification">
+                            <a href="{{ url('cart') }}" class="dropdown-toggle" data-toggle="dropdown1111">
                                 <div class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></div>
                                 <div class="title">New Orders</div>
-                                <div class="count">0</div>
+                                <div class="count width-auto">
+                                    {{ App\Cart::getCartTotalQuantityItem(Auth::user()->id)  }}
+                                </div>
                             </a>
-                            <div class="dropdown-menu">
-                                <ul>
-                                    <li class="dropdown-header">Ordering</li>
-                                    <li class="dropdown-empty">No New Ordered</li>
-                                    <li class="dropdown-footer">
-                                        <a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
 
                         <li class="dropdown notification danger">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
                                 <div class="title">System Notifications</div>
-                                <div class="count">10</div>
+                                <div class="count width-auto">10</div>
                             </a>
                             <div class="dropdown-menu">
                                 <ul>

@@ -31,4 +31,14 @@ class OrderItem extends Model
         return false;
     }
 
+    public function getPriceCalculator(){
+        if($this->price > $this->price_promotion):
+            return $this->price_promotion;
+        endif;
+
+        return $this->price;
+    }
+
+
+
 }

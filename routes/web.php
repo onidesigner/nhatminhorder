@@ -60,6 +60,7 @@ Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
 Route::put('/order/{id}/freight_bill', 'OrderController@removeFreightBill');
 Route::post('/order/{id}/original_bill', 'OrderController@insertOriginalBill');
 Route::put('/order/{id}/original_bill', 'OrderController@removeOriginalBill');
+Route::post('/order/{id}/action', 'OrderController@action');
 
 #endregion
 

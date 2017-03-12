@@ -12,7 +12,27 @@
     <div class="row">
 
 
+        <div class="col-sm-6">
 
+
+
+            <div class="card">
+                @include('partials/__breadcrumb',
+                                                [
+                                                    'urls' => [
+                                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                                        ['name' => 'Nhóm & phân quyền', 'link' => url('setting/roles')],
+                                                        ['name' => 'Chi tiết nhóm' . $page_title, 'link' => null],
+                                                    ]
+                                                ]
+                                            )
+                <div class="card-body">
+
+                    @include('partials/__permissions', ['can_edit' => 1])
+                </div>
+            </div>
+
+        </div>
 
         <div class="col-sm-6">
             <div class="panel panel-danger panel-nhatminh">
@@ -81,17 +101,7 @@
             </div>
         </div>
 
-        <div class="col-sm-6">
 
-                    <div class="card">
-
-                        <div class="card-body">
-
-            @include('partials/__permissions', ['can_edit' => 1])
-                        </div>
-                    </div>
-
-        </div>
     </div>
 @endsection
 

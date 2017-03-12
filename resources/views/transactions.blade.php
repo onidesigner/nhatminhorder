@@ -10,9 +10,18 @@
         <div class="col-md-12">
             <div class="card">
 
+
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => $app->make('url')->to('home')],
+                                        ['name' => 'Lịch sử giao dịch', 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
 
-                    <h3>{{$page_title}}</h3>
 
                     @if($can_create_transaction)
                         <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">

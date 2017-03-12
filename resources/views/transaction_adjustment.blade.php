@@ -10,6 +10,16 @@
         <div class="col-md-12">
             <div class="card">
 
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Lịch sử giao dịch', 'link' => url('transactions')],
+                                        ['name' => 'Tạo giao dịch', 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
 
                     <div class="row">

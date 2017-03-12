@@ -9,9 +9,16 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    {{$page_title}}
-                </div>
+
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Cấu hình chung', 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
                     <form class="form form-horizontal" action="{{ url('setting')  }}" method="post">
                         <div class="section">

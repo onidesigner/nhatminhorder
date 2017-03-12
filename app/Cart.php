@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,41 @@ class Cart extends Model
 
     protected $table_name = 'carts';
 
+    /**
+     * @author vanhs
+     * @desc Lay ti le % dat coc cho don hang
+     * @param null $apply_time
+     * @return int
+     */
     public static function getDepositPercent($apply_time = null){
+        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['order_deposit_percent'])):
+            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['order_deposit_percent'];
+        endif;
+
         return self::$deposit_percent;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Dem tong so san pham nam trong gio
+     * @param $user_id
+     * @return int
+     */
+    public static function getCartTotalQuantityItem($user_id){
+        $total_quantity = 0;
+        $cart_items = CartItem::where([
+            'user_id' => $user_id
+        ])->get();
+        if($cart_items){
+            foreach($cart_items as $cart_item){
+                if(!$cart_item || !$cart_item instanceof CartItem){
+                    continue;
+                }
+
+                $total_quantity += $cart_item->quantity;
+            }
+        }
+        return $total_quantity;
     }
 
     public static function getDepositAmount($deposit_percent, $total_amount){
@@ -118,6 +152,9 @@ class Cart extends Model
                         'site' => strtolower($shop->site),
                         'exchange_rate' => $exchange_rate,
                         'user_id' => $user_id,
+                        'seller_id' => $shop->seller_id,
+                        'wangwang' => $shop->wangwang,
+                        'location_sale' => $shop->location_sale,
                         'user_address_id' => $address_id,
                         'destination_warehouse' => $destination_warehouse,
                         'deposit_percent' => $deposit_percent,
@@ -178,7 +215,7 @@ class Cart extends Model
 
                     #region Tao giao dich & tru tien tk khach
                     $deposit_amount = 0 - $deposit_amount;
-                    $transaction_note = sprintf('Dat coc don hang %s', $order_code);
+                    $transaction_note = sprintf('Đặt cọc đơn hàng %s', $order_code);
 
                     User::where(['id' => $user_id])->update([
                         'account_balance' => DB::raw("account_balance+$deposit_amount")
@@ -264,6 +301,9 @@ class Cart extends Model
                     'shop_link' => null,
                     'avatar' => $params['image_model'],
                     'site' => $params['site'],
+                    'seller_id' => $params['seller_id'],
+                    'wangwang' => $params['wangwang'],
+                    'location_sale' => $params['location_sale'],
                     'created_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s')
                 ];

@@ -9,6 +9,15 @@
         <div class="col-md-12">
             <div class="card">
 
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Đơn hàng', 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
 
                     <h3>{{$page_title}}</h3>

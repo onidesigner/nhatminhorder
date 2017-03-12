@@ -9,10 +9,21 @@
         <div class="col-md-12">
             <div class="card">
 
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => $page_title, 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body"><div class="row">
+
+
+
                         <div class="col-md-8">
 
-                            <h3>{{$page_title}}</h3>
 
                             <a class="btn btn-danger text-uppercase pull-right" data-toggle="modal" href='#modal-id'>Tạo nhóm </a>
                             <div class="modal fade" id="modal-id">

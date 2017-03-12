@@ -4,21 +4,128 @@
     {{$page_title}}
 @endsection
 
+@section('css_bottom')
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+@endsection
+
 @section('js_bottom')
     @parent
 
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script>
         $(document).ready(function(){
 
             var freight_bill_tpl = _.template($('#_freight-bill-tpl').html());
             var original_bill_tpl = _.template($('#_original-bill-tpl').html());
 
+            $(document).on('keypress', '._input-action', function(e){
+
+                if(e.keyCode == 13){
+                    var value = $(this).val();
+                    var action = $(this).data('action');
+                    var item_id = $(this).data('item-id');
+                    var message = $(this).val();
+                    var $that = $(this);
+
+                    if(!value){
+                        return false;
+                    }
+
+                    $.ajax({
+                        url: "{{ url('order/' .$order_id. '/action')  }}",
+                        method: 'post',
+                        data: {
+                            item_id:item_id,
+                            order_id:"{{$order_id}}",
+                            message:message,
+                            action:action,
+                            _token: "{{ csrf_token() }}",
+                        },
+                        success:function(response) {
+                            if(response.success){
+                                $that.val('').focus();
+                                window.location.reload();
+                            }else{
+                                bootbox.alert(response.message);
+                            }
+
+                        },
+                        error: function(){
+
+                        }
+                    });
+                }
+
+
+            });
+
+            $(document).on('click', '._btn-action', function(){
+
+                var action = $(this).data('action');
+
+                var $that = $(this);
+
+                $that.prop('disabled', true);
+
+                $.ajax({
+                    url: "{{ url('order/' .$order_id. '/action')  }}",
+                    method: 'post',
+                    data: {
+                        deposit:$('#_change_deposit').val(),
+                        domestic_shipping_china:$('#_domestic_shipping_china').val(),
+                        action:action,
+                        _token: "{{ csrf_token() }}",
+                    },
+                    success:function(response) {
+                        if(response.success){
+                            window.location.reload();
+                        }else{
+                            bootbox.alert(response.message);
+                        }
+
+                        $that.prop('disabled', false);
+                    },
+                    error: function(){
+                        $that.prop('disabled', false);
+                    }
+                });
+
+            });
+
+            $(document).on('change', '._select-action', function(){
+
+                var action = $(this).data('action');
+
+                var value = $(this).val();
+
+                $.ajax({
+                  url: "{{ url('order/' .$order_id. '/action')  }}",
+                  method: 'post',
+                  data: {
+                      value:value,
+                      action:action,
+                      order_id:"{{$order_id}}",
+                      _token: "{{ csrf_token() }}",
+                  },
+                  success:function(response) {
+                        if(response.success){
+
+                            window.location.reload();
+                        }else{
+                            bootbox.alert(response.message);
+                        }
+                  },
+                  error: function(){
+
+                  }
+                });
+
+            });
+
             $(document).on('click', '#_save-freight-bill', function(){
                 var $that = $(this);
 
-                if($(this).hasClass('disabled')) return false;
-
-                $(this).addClass('disabled');
+                $that.prop('disabled', true);
 
                 var freight_bill = $('#_freight_bill').val();
 
@@ -48,10 +155,10 @@
 
                         }
 
-                        $that.removeClass('disabled');
+                        $that.prop('disabled', false);
                     },
                     error: function(){
-                        $that.removeClass('disabled');
+                        $that.prop('disabled', false);
                     }
                 });
             });
@@ -59,9 +166,7 @@
             $(document).on('click', '#_save-original-bill', function(){
                 var $that = $(this);
 
-                if($(this).hasClass('disabled')) return false;
-
-                $(this).addClass('disabled');
+                $that.prop('disabled', true);
 
                 var original_bill = $('#_original_bill').val();
 
@@ -90,10 +195,10 @@
                             bootbox.alert(response.message);
                         }
 
-                        $that.removeClass('disabled');
+                        $that.prop('disabled', false);
                     },
                     error: function(){
-                        $that.removeClass('disabled');
+                        $that.prop('disabled', false);
                     }
                 });
             });
@@ -173,6 +278,16 @@
 
             <div class="card">
 
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Đơn hàng', 'link' => url('order')],
+                                        ['name' => 'Đơn ' . $order->code, 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
                     <div role="tabpanel">
                         <!-- Nav tabs -->
@@ -190,47 +305,205 @@
                             <div role="tabpanel" class="tab-pane active" id="home">
 
 
-                                <h4>Mã vận đơn</h4>
+                                <div class="row">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <table class="table no-padding-leftright">
+                                            <tbody>
+                                            <tr>
+                                                <td width="50%" class="border-top-none">Acc mua</td>
+                                                <td class="border-top-none">
+                                                    <select data-action="account_purchase_origin" class="form-control _select-action">
+                                                        <option value="">Chọn Acc mua hàng site gốc</option>
 
-                                <ul id="_freight-bill-list">
-                                    @if(count($freight_bill))
-                                        @foreach($freight_bill as $key => $val)
-                                            <li class="_freight-bill-list-item">{{$val->freight_bill}}
-                                                <a
-                                                        data-order-id="{{$val->order_id}}"
-                                                        data-freight-bill="{{$val->freight_bill}}"
-                                                        href="javascript:void(0)" class="_remove-freight-bill"><i class="fa fa-times"></i></a>
-                                            </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
+                                                        @if($user_origin_site)
+                                                            @foreach($user_origin_site as $key => $val)
+                                                                <option data-site="{{$val->site}}" @if($val->username == $order->account_purchase_origin) selected @endif value="{{$val->username}}">{{$val->site}} - {{$val->username}}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tỉ lệ đặt cọc</td>
+                                                <td>
+                                                    <input id="_change_deposit" type="text" value="{{$order->deposit_percent}}">
+                                                    <button class="_btn-action" data-action="change_deposit">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tỉ giá</td>
+                                                <td>{{$order->exchange_rate}} <sup>đ</sup></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Người bán</td>
+                                                <td>
+                                                    <img src="{{ App\Order::getFavicon($order->site)  }}" width="16px" alt="">
+                                                    <span>{{$order->seller_id}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Wangwang</td>
+                                                <td>
+                                                    <!-- aliwangwang -->
+                                                    <a style="padding: 0 45px;position: relative;" target="_blank"
+                                                       href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid={{ $order->wangwang  }}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8">
+                                                        <img style="position: absolute;left: 3px;top: -4px;" border="0"
+                                                             src="http://amos.alicdn.com/realonline.aw?v=2&amp;uid={{ $order->wangwang  }}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8"
+                                                             title="Click vào đây để chat với người bán">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Địa điểm bán</td>
+                                                <td>
+                                                    {{$order->location_sale}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hóa đơn gốc</td>
+                                                <td>
+                                                    <ul style="margin: 0;padding: 0;list-style: none;" id="_original-bill-list">
+                                                        @if(count($original_bill))
+                                                            @foreach($original_bill as $key => $val)
+                                                                <li class="_original-bill-list-item">{{$val->original_bill}}
+                                                                    <a
+                                                                            data-order-id="{{$val->order_id}}"
+                                                                            data-original-bill="{{$val->original_bill}}"
+                                                                            href="javascript:void(0)" class="_remove-original-bill"><i class="fa fa-times"></i></a>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
 
 
-                                <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
-                                <a href="javascript:void(0)" id="_save-freight-bill">Thêm</a>
+                                                    <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
 
-                                <br>
+                                                    <button id="_save-original-bill">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Vận đơn</td>
+                                                <td>
 
-                                <h4>Mã đơn gốc</h4>
-
-                                <ul id="_original-bill-list">
-                                    @if(count($original_bill))
-                                        @foreach($original_bill as $key => $val)
-                                            <li class="_original-bill-list-item">{{$val->original_bill}}
-                                                <a
-                                                        data-order-id="{{$val->order_id}}"
-                                                        data-original-bill="{{$val->original_bill}}"
-                                                        href="javascript:void(0)" class="_remove-original-bill"><i class="fa fa-times"></i></a>
-                                            </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
+                                                    <ul style="margin: 0;padding: 0;list-style: none;" id="_freight-bill-list">
+                                                        @if(count($freight_bill))
+                                                            @foreach($freight_bill as $key => $val)
+                                                                <li class="_freight-bill-list-item">{{$val->freight_bill}}
+                                                                    <a
+                                                                            data-order-id="{{$val->order_id}}"
+                                                                            data-freight-bill="{{$val->freight_bill}}"
+                                                                            href="javascript:void(0)" class="_remove-freight-bill"><i class="fa fa-times"></i></a>
+                                                                </li>
+                                                            @endforeach
+                                                        @endif
+                                                    </ul>
 
 
+                                                    <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
 
+                                                    <button id="_save-freight-bill">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
 
-                                <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
-                                <a href="javascript:void(0)" id="_save-original-bill">Thêm</a>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Phí VC nội địa TQ</td>
+                                                <td>
+
+                                                    {{--<div class="input-group">--}}
+                                                        {{--<input type="text" class="form-control" placeholder="Input group" aria-describedby="basic-addon1" value="">--}}
+                                                        {{--<span class="input-group-addon" id="basic-addon1" style="padding: 0;">--}}
+                                                            {{--<button class="btn btn-danger" style="margin: 0;border-radius: 0;"><i class="fa fa-user" aria-hidden="true"></i></button>--}}
+                                                        {{--</span>--}}
+                                                    {{--</div>--}}
+
+                                                    <input id="_domestic_shipping_china" placeholder="Đơn vị NDT" type="text" name="" value="{{ $order->domestic_shipping_fee  }}" pattern="">
+
+                                                    <button data-action="domestic_shipping_china" class="_btn-action">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>Kho nhận hàng</td>
+                                                <td>
+
+                                                    <select data-action="receive_warehouse" class="form-control _select-action">
+                                                        <option value="">Chọn kho</option>
+
+                                                        @if($warehouse_receive)
+                                                            @foreach($warehouse_receive as $key => $val)
+                                                                <option @if($val->code == $order->receive_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Kho phân phối</td>
+                                                <td>
+                                                    <select data-action="destination_warehouse" class="form-control _select-action">
+                                                        <option value="">Chọn kho</option>
+
+                                                        @if($warehouse_distribution)
+                                                            @foreach($warehouse_distribution as $key => $val)
+                                                                <option @if($val->code == $order->destination_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+
+                                                </td>
+                                            </tr>
+                                            @if($order->user_address_id)
+                                            <tr>
+                                                <td>Đ/C nhận hàng</td>
+                                                <td>
+                                                    <i class="fa fa-user"></i> {{$user_address->reciver_name}} - <i class="fa fa-phone"></i> {{$user_address->reciver_phone}}
+                                                    <br>
+                                                    <i class="fa fa-map-marker"></i> {{$user_address->detail}}, {{$user_address->district_label}}, {{$user_address->province_label}}<br>
+                                                </td>
+                                            </tr>
+                                            @endif
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+
+                                        <table class="table no-padding-leftright">
+                                            <tbody>
+                                            <?php $count = 0; ?>
+                                            @foreach(App\Order::$timeListOrderDetail as $k => $v)
+                                            <?php $count++; ?>
+
+                                                @if($count == 1)
+                                                    <tr>
+                                                        <td width="50%" class="border-top-none">{{$v}}</td>
+                                                        <td class="border-top-none">{{$order->$k}}</td>
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <td>{{$v}}</td>
+                                                        <td>{{$order->$k}}</td>
+                                                    </tr>
+                                                @endif
+
+                                            @endforeach
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
 
                             </div>
                             <div role="tabpanel" class="tab-pane" id="order-transaction">
@@ -250,10 +523,10 @@
                                         <?php
 
                                         $user = App\User::find($transaction->user_id);
-                                        $order = App\Order::find($transaction->object_id);
+                                        $order2 = App\Order::find($transaction->object_id);
 
                                         if(!$user) $user = new App\User();
-                                        if(!$order) $order = new App\Order();
+                                        if(!$order2) $order2 = new App\Order();
                                         ?>
                                         <tr>
 
@@ -312,7 +585,7 @@
                         @foreach($order_items as $order_item)
                             <tr>
                                 <td>{{$order_item->id}}</td>
-                                <td>
+                                <td width="50%">
                                     <div class="row">
                                         <div class="col-sm-2">
                                             <a href="{{$order_item->link}}" target="_blank">
@@ -330,7 +603,42 @@
                                                 Mẫu: {{$order_item->property}}
                                             </p>
 
-                                            <input type="text" placeholder="Chat về sản phẩm...">
+                                            <input style="width: 100%; margin-bottom: 10px;"
+                                                    data-action="order_item_comment"
+                                                    data-item-id="{{$order_item->id}}"
+                                                    class="_input-action" type="text" placeholder="Chat về sản phẩm...">
+
+
+                                            <ul style="    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;">
+                                                @if(!empty($order_item_comments[$order_item->id]))
+                                                    @foreach($order_item_comments[$order_item->id] as $order_item_comment)
+                                                        <li style="margin-bottom: 5px;
+
+                                                        @if(in_array($order_item_comment->type_context, [App\Comment::TYPE_CONTEXT_ACTIVITY, App\Comment::TYPE_CONTEXT_LOG]))
+
+                                                                color: grey;
+                                                        @endif
+
+">
+                                                            @if($order_item_comment->type_context != App\Comment::TYPE_CONTEXT_LOG)
+
+                                                                <strong>{{$order_item_comment->user->name}}</strong>
+
+                                                            @endif
+
+                                                            {{$order_item_comment->message}}
+                                                            <small>
+                                                                {{$order_item_comment->created_at}}
+                                                            </small>
+
+                                                        </li>
+                                                    @endforeach
+                                                @endif
+
+                                            </ul>
                                         </div>
                                     </div>
                                 </td>
@@ -339,10 +647,10 @@
                                 </td>
                                 <td>
                                     <p>
-                                        Đơn giá: {{$order_item->order_quantity}} <sup>đ</sup>
+                                        Đơn giá: <span class="text-success">{{$order_item->getPriceCalculator()}}¥</span> · {{$order_item->getPriceCalculator() * $order->exchange_rate}} <sup>đ</sup>
                                     </p>
                                     <p>
-                                        Tổng: {{$order_item->order_quantity}} <sup>đ</sup>
+                                        Tổng: <span class="text-success">{{$order_item->getPriceCalculator() * $order_item->order_quantity}}¥</span> · {{$order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate}} <sup>đ</sup>
                                     </p>
                                 </td>
                             </tr>
@@ -363,7 +671,6 @@
                 'scope' => App\Comment::TYPE_EXTERNAL
             ])
 
-            
         </div>
     </div>
 

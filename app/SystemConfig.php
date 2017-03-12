@@ -20,6 +20,10 @@ class SystemConfig extends Model
             'field_name' => 'Tối đa số điện thoại khách',
             'key' => 'user_mobile_max'
         ],
+        [
+            'field_name' => 'Tỉ lệ đặt cọc đơn hàng',
+            'key' => 'order_deposit_percent'
+        ],
 
     ];
 

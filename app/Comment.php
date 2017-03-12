@@ -10,6 +10,7 @@ class Comment extends Model
 
     const TYPE_EXTERNAL = 'EXTERNAL';
     const TYPE_INTERNAL = 'INTERNAL';
+    const TYPE_NONE = 'NONE';
 
     const TYPE_CONTEXT_CHAT = 'CHAT';
     const TYPE_CONTEXT_ACTIVITY = 'ACTIVITY';
@@ -17,6 +18,7 @@ class Comment extends Model
 
 
     const TYPE_OBJECT_ORDER = 'ORDER';
+    const TYPE_OBJECT_ORDER_ITEM = 'ORDER_ITEM';
 
     public function addNewComment($data_insert){
         return $this->newQuery()->insert($data_insert);

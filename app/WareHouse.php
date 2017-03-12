@@ -9,20 +9,14 @@ class WareHouse extends Model
     protected $table = 'warehouse';
 
     const TYPE_DISTRIBUTION = 'DISTRIBUTION';
-    const WAREHOUSE_CNGZ = 'CNGZ';
-    const WAREHOUSE_CNPX = 'CNPX';
+    const TYPE_RECEIVE = 'RECEIVE';
+
     const WAREHOUSE_ALIAS_HN = 'HN';
     const WAREHOUSE_ALIAS_SG = 'SG';
-//    const WAREHOUSE_HN_CITY_ID = 52;
-//    const WAREHOUSE_SG_CITY_ID = 84;
-
-    public static $receive_warehouse = array(
-        self::WAREHOUSE_CNGZ => "Quảng Châu - CNGZ",
-        self::WAREHOUSE_CNPX => "Bằng Tường - CNPX"
-    );
 
     public static $type_warehouse = [
-        self::TYPE_DISTRIBUTION => 'Kho phân phối'
+        self::TYPE_DISTRIBUTION => 'Kho phân phối',
+        self::TYPE_RECEIVE => 'Kho nhận hàng',
     ];
 
     public static function getTypeNameWarehouse($type){

@@ -10,6 +10,16 @@
         <div class="col-md-12">
             <div class="card">
 
+                @include('partials/__breadcrumb',
+                                [
+                                    'urls' => [
+                                        ['name' => 'Trang chủ', 'link' => url('home')],
+                                        ['name' => 'Nhân viên', 'link' => url('user')],
+                                        ['name' => $user->code, 'link' => null],
+                                    ]
+                                ]
+                            )
+
                 <div class="card-body">
 
 

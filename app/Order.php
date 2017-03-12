@@ -48,6 +48,26 @@ class Order extends Model
         self::STATUS_LOST => 'Thất lạc'
     );
 
+    public static $timeListOrderDetail = [
+        'deposited_at' => 'Đặt cọc',
+        'out_of_stock_at' => 'Hết hàng',
+        'cancelled_at' => 'Hủy đơn'
+    ];
+
+    public static function getFavicon($site){
+        if(empty($site)) return null;
+        $site = strtolower($site);
+        return asset('images/favicon_site_china/' . $site . '.png');
+    }
+
+    public static function isAfterStatus($status, $include_current){
+        return true;
+    }
+
+    public static function isBeforeStatus($status, $include_current){
+
+    }
+
     public static function getStatusTitle($code){
         if(empty($code)){
             return null;

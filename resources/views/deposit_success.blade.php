@@ -6,6 +6,11 @@
 @endsection
 
 @section('content')
+    <div class="row">
+        <div class="col-xs-12">
+            @include('partials/__cart_step', ['active' => 3])
+        </div>
+    </div>
 
     {{--<div class="row">--}}
         {{--<div class="col-sm-3">--}}
@@ -110,7 +115,7 @@
 
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-offset-4 col-md-3">
             <div class="card">
 
                 <div class="card-body">
