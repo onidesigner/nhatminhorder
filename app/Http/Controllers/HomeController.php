@@ -109,7 +109,7 @@ class HomeController extends Controller
 //        die('hello');
 
         return view('home', [
-            'page_title' => 'Home'
+            'page_title' => 'Trang chủ'
         ]);
     }
 }

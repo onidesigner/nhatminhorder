@@ -102,7 +102,7 @@
 
                     <ul class="nav navbar-nav navbar-right">
                         <li class="arrow-none dropdown notification">
-                            <a href="{{ url('cart') }}" class="dropdown-toggle" data-toggle="dropdown1111">
+                            <a href="{{ url('gio-hang') }}" class="dropdown-toggle" data-toggle="dropdown1111">
                                 <div class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></div>
                                 <div class="title">New Orders</div>
                                 <div class="count width-auto">
@@ -169,7 +169,12 @@
                                 </div>
                                 <ul class="action">
                                     <li>
-                                        <a href="{{ url('user/detail', Auth::user()->id)  }}">
+
+                                        @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                            <a href="{{ url('user/detail', Auth::user()->id)  }}">
+                                        @else
+                                            <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
+                                        @endif
                                             Cá nhân
                                         </a>
                                     </li>
@@ -203,6 +208,8 @@
 </div>
 
 <input type="hidden" class="_autoNumericTemp" value="" />
+
+@yield('widget')
 
 @section('css_bottom')
 @show

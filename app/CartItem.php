@@ -19,8 +19,7 @@ class CartItem extends Model
      * @return bool
      */
     public static function checkExistsCartItemWithItemAndProperty($shop_id, $user_id, $item_id, $property){
-        $row = self::select('id')
-            ->where('property_md5', self::genPropertyMd5($item_id, $property))
+        $row = self::where('property_md5', self::genPropertyMd5($item_id, $property))
             ->where('shop_id', $shop_id)
             ->where('user_id', $user_id)
             ->first();

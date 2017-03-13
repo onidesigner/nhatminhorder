@@ -8,6 +8,10 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
 @endsection
 
+@section('widget')
+
+@endsection
+
 @section('js_bottom')
     @parent
 
@@ -65,13 +69,16 @@
 
                 var $that = $(this);
 
-                $that.prop('disabled', true);
+                if($that.hasClass('disabled')) return false;
+
+                $that.addClass('disabled');
 
                 $.ajax({
                     url: "{{ url('order/' .$order_id. '/action')  }}",
                     method: 'post',
                     data: {
                         deposit:$('#_change_deposit').val(),
+                        status: $that.data('status'),
                         domestic_shipping_china:$('#_domestic_shipping_china').val(),
                         action:action,
                         _token: "{{ csrf_token() }}",
@@ -83,10 +90,10 @@
                             bootbox.alert(response.message);
                         }
 
-                        $that.prop('disabled', false);
+                        $that.removeClass('disabled');
                     },
                     error: function(){
-                        $that.prop('disabled', false);
+                        $that.removeClass('disabled');
                     }
                 });
 
@@ -139,16 +146,18 @@
                     },
                     success:function(response) {
                         if(response.success){
-                            $('#_freight-bill-list').append( freight_bill_tpl ({
-                                order_id: "{{$order_id}}",
-                                freight_bill:freight_bill,
-                            }) );
+                            {{--$('#_freight-bill-list').append( freight_bill_tpl ({--}}
+                                {{--order_id: "{{$order_id}}",--}}
+                                {{--freight_bill:freight_bill,--}}
+                            {{--}) );--}}
 
-                            if(response.message){
-                                bootbox.alert(response.message);
-                            }
+                            {{--if(response.message){--}}
+                                {{--bootbox.alert(response.message);--}}
+                            {{--}--}}
 
-                            $('#_freight_bill').val('');
+                            {{--$('#_freight_bill').val('');--}}
+
+                            window.location.reload();
 
                         }else{
                             bootbox.alert(response.message);
@@ -181,16 +190,18 @@
 
                     success:function(response) {
                         if(response.success){
-                            $('#_original-bill-list').append( original_bill_tpl ({
-                                order_id: "{{$order_id}}",
-                                original_bill:original_bill,
-                            }) );
+                            {{--$('#_original-bill-list').append( original_bill_tpl ({--}}
+                                {{--order_id: "{{$order_id}}",--}}
+                                {{--original_bill:original_bill,--}}
+                            {{--}) );--}}
 
-                            if(response.message){
-                                bootbox.alert(response.message);
-                            }
+                            {{--if(response.message){--}}
+                                {{--bootbox.alert(response.message);--}}
+                            {{--}--}}
 
-                            $('#_original_bill').val('');
+                            {{--$('#_original_bill').val('');--}}
+
+                            window.location.reload();
                         }else{
                             bootbox.alert(response.message);
                         }
@@ -220,7 +231,8 @@
                     },
                     success:function(response) {
                         if(response.success){
-                            $that.parents('._freight-bill-list-item').remove();
+//                            $that.parents('._freight-bill-list-item').remove();
+                            window.location.reload();
                         }else{
                             bootbox.alert(response.message);
                         }
@@ -229,8 +241,6 @@
 
                     }
                 });
-
-
             });
 
             $(document).on('click', '._remove-original-bill', function(){
@@ -250,7 +260,8 @@
                     },
                     success:function(response) {
                         if(response.success){
-                            $that.parents('._original-bill-list-item').remove();
+//                            $that.parents('._original-bill-list-item').remove();
+                            window.location.reload();
                         }else{
                             bootbox.alert(response.message);
                         }
@@ -273,8 +284,6 @@
 
     <div class="row">
         <div class="col-sm-8 col-xs-12">
-
-
 
             <div class="card">
 
@@ -364,6 +373,13 @@
                                             <tr>
                                                 <td>Hóa đơn gốc</td>
                                                 <td>
+
+                                                    <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
+
+                                                    <button id="_save-original-bill">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
+
                                                     <ul style="margin: 0;padding: 0;list-style: none;" id="_original-bill-list">
                                                         @if(count($original_bill))
                                                             @foreach($original_bill as $key => $val)
@@ -378,16 +394,18 @@
                                                     </ul>
 
 
-                                                    <input id="_original_bill" placeholder="" type="text" name="original_bill" value="" pattern="">
 
-                                                    <button id="_save-original-bill">
-                                                        <i class="fa fa-save"></i>
-                                                    </button>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Vận đơn</td>
                                                 <td>
+
+                                                    <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
+
+                                                    <button id="_save-freight-bill">
+                                                        <i class="fa fa-save"></i>
+                                                    </button>
 
                                                     <ul style="margin: 0;padding: 0;list-style: none;" id="_freight-bill-list">
                                                         @if(count($freight_bill))
@@ -403,11 +421,7 @@
                                                     </ul>
 
 
-                                                    <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
 
-                                                    <button id="_save-freight-bill">
-                                                        <i class="fa fa-save"></i>
-                                                    </button>
 
                                                 </td>
                                             </tr>
@@ -661,6 +675,8 @@
                 </div>
             </div>
 
+
+
         </div>
 
         <div class="col-sm-4 col-xs-12">
@@ -673,6 +689,22 @@
 
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Hành động
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="javascript:void(0)" class="_btn-action" data-action="change_status" data-status="{{ App\Order::STATUS_BOUGHT  }}">ĐÃ MUA</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
 
     <script type="text/template" id="_freight-bill-tpl">
         <li><%= freight_bill %>

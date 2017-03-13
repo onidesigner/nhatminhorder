@@ -30,10 +30,16 @@ if(Auth::user()->section == App\User::SECTION_CUSTOMER){
             ]
         ],
         [
-            'url' => url('user'),
+            'url' => '#',
             'icon' => 'fa-user',
             'title' => 'Nhân viên',
-            'permission' => \App\Permission::PERMISSION_USER_VIEW_LIST
+            'children' => [
+                [
+                    'url' => url('user'),
+                    'title' => 'Quản lý nhân viên',
+                    'permission' => \App\Permission::PERMISSION_USER_VIEW_LIST
+                ],
+            ]
         ],
         [
             'url' => '#',

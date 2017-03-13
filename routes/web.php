@@ -20,22 +20,25 @@ Auth::routes();
 Route::get('/home', 'HomeController@index');
 
 #region quan ly gio hang
-Route::get('/cart/add', 'AddonController@addCart');
+Route::get('/cart/add', 'Customer\AddonController@addCart');
 
-Route::get('/cart', 'CartController@showCart');
-Route::get('/cart/deposit', 'CartController@deposit');
-Route::get('/cart/deposit/success', 'CartController@depositSuccess');
-Route::post('/cart/quantity', 'CartController@updateQuantity');
-Route::post('/cart/shop/service', 'CartController@updateService');
-Route::post('/cart/item/comment', 'CartController@actionUpdate');
-Route::delete('/cart/item', 'CartController@deleteItem');
-Route::delete('/cart/shop', 'CartController@deleteShop');
-Route::post('/cart/deposit', 'CartController@depositOrder');
+Route::get('/gio-hang', 'Customer\CartController@showCart');
+Route::get('/dat-coc', 'Customer\CartController@deposit');
+Route::get('/dat-coc-thanh-cong', 'Customer\CartController@depositSuccess');
+Route::post('/cart/quantity', 'Customer\CartController@updateQuantity');
+Route::post('/cart/shop/service', 'Customer\CartController@updateService');
+Route::post('/cart/item/comment', 'Customer\CartController@actionUpdate');
+Route::delete('/cart/item', 'Customer\CartController@deleteItem');
+Route::delete('/cart/shop', 'Customer\CartController@deleteShop');
+Route::post('/dat-coc', 'Customer\CartController@depositOrder');
 #endregion
 
 #region quan ly nhan vien
 Route::get('/user', 'UserController@getUsers');
 Route::get('/user/detail/{id}', 'UserController@detailUser');
+
+Route::get('/nhan-vien/{id}', 'Customer\UserController@detail');
+
 Route::get('/user/edit/{id}', 'UserController@getUser');
 Route::post('/user/edit/{id}', 'UserController@updateUser');
 Route::post('/user/phone', 'UserController@addUserPhone');
@@ -46,15 +49,15 @@ Route::put('/user/original_site/delete', 'UserController@removeUserOriginalSite'
 #endregion
 
 #region quan ly dia chi nhan hang
-//Route::get('/locations/provinces', 'LocationController@getAllProvinces');
-//Route::get('/locations/districts', 'LocationController@getAllDistricts');
-Route::post('/user/address', 'UserAddressController@addNewUserAddress');
-Route::put('/user/address/delete', 'UserAddressController@deleteUserAddress');
-Route::put('/user/address/default', 'UserAddressController@setDefaultUserAddress');
+Route::post('/user/address', 'Customer\UserAddressController@addNewUserAddress');
+Route::put('/user/address/delete', 'Customer\UserAddressController@deleteUserAddress');
+Route::put('/user/address/default', 'Customer\UserAddressController@setDefaultUserAddress');
 #endregion
 
 #region quan ly don hang
 Route::get('/order', 'OrderController@getOrders');
+Route::get('/don-hang', 'Customer\OrderController@orders');
+Route::get('/don-hang/{id}', 'Customer\OrderController@order');
 Route::get('/order/{id}', 'OrderController@getOrder');
 Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
 Route::put('/order/{id}/freight_bill', 'OrderController@removeFreightBill');
@@ -66,7 +69,6 @@ Route::post('/order/{id}/action', 'OrderController@action');
 
 #region comment
 Route::post('/comment', 'CommentController@addNewComment');
-Route::get('/comment', 'CommentController@getComment');
 #endregion
 
 #region he thong

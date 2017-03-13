@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\DB;
 class OrderController extends Controller
 {
 
+    protected $action_error = [];
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -418,20 +420,62 @@ class OrderController extends Controller
             if (!method_exists($this, $action)) {
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
-            $this->$action($request, $order, $user);
+
+            $result = $this->$action($request, $order, $user);
+            if(!$result){
+                return response()->json( ['success' => false, 'message' => implode('<br>', (array)$this->action_error)] );
+            }
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'success']);
 
         }catch(\Exception $e){
             DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại' . $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
         }
 
     }
 
+    private function __change_status(Request $request, Order $order, User $user){
+        $this->action_error = [];
+        if(empty($order->account_purchase_origin)){
+            $this->action_error = 'Vui lòng chọn user mua hàng site gốc!';
+        }
+
+        $exists_original_bill = Order::find($order->id)->original_bill()->count();
+        if(!$exists_original_bill){
+            $this->action_error = 'Vui lòng nhập mã hóa đơn gốc!';
+        }
+
+        if(!empty($order->domestic_shipping_fee)){
+            $this->action_error = 'Vui lòng nhập vào phí vận chuyển nội địa TQ!';
+        }
+
+        if(empty($order->receive_warehouse)){
+            $this->action_error = 'Vui lòng chọn kho nhận hàng bên Trung Quốc!';
+        }
+
+        if(empty($order->destination_warehouse)){
+            $this->action_error = 'Vui lòng chọn kho phân phối tại Việt Nam!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+//        Order::where([
+//            'id' => $order->id,
+//            'user_id' => $user->id
+//        ])->update([
+//            'status' => Order::STATUS_BOUGHT,
+//            'bought_at' => date('Y-m-d H:i:s')
+//        ]);
+
+        return true;
+    }
+
     private function __order_item_comment(Request $request, Order $order, User $user){
-        Comment::insert([
+        return Comment::insert([
             'user_id' => $user->id,
             'parent_object_id' => $order->id,
             'parent_object_type' => Comment::TYPE_OBJECT_ORDER,
@@ -471,6 +515,8 @@ class OrderController extends Controller
             'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
             'created_at' => date('Y-m-d H:i:s')
         ]);
+
+        return true;
     }
 
     private function __receive_warehouse(Request $request, Order $order, User $user){
@@ -500,6 +546,8 @@ class OrderController extends Controller
             'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
             'created_at' => date('Y-m-d H:i:s')
         ]);
+
+        return true;
     }
 
     private function __destination_warehouse(Request $request, Order $order, User $user){
@@ -529,6 +577,8 @@ class OrderController extends Controller
             'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
             'created_at' => date('Y-m-d H:i:s')
         ]);
+
+        return true;
     }
 
     private function __change_deposit(Request $request, Order $order, User $user){
@@ -544,6 +594,8 @@ class OrderController extends Controller
 //            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
 //            'created_at' => date('Y-m-d H:i:s')
 //        ]);
+
+        return true;
     }
 
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
@@ -575,5 +627,7 @@ class OrderController extends Controller
             'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
             'created_at' => date('Y-m-d H:i:s')
         ]);
+
+        return true;
     }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\CartItem;
 use App\Exchange;
 use App\Order;
 use App\UserAddress;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,6 @@ use App\Location;
 
 class CartController extends Controller
 {
-
     public $cart = null;
 
     public function __construct()
@@ -40,9 +40,9 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found!']);
         }
 
-        if($user->isCrane()){
-            return response()->json(['success' => false, 'message' => 'User is crane!']);
-        }
+//        if($user->isCrane()){
+//            return response()->json(['success' => false, 'message' => 'User is crane!']);
+//        }
 
         if($user->isDisabled()){
             return response()->json(['success' => false, 'message' => 'User is disabled!']);
@@ -76,9 +76,9 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found!']);
         }
 
-        if($user->isCrane()){
-            return response()->json(['success' => false, 'message' => 'User is crane!']);
-        }
+//        if($user->isCrane()){
+//            return response()->json(['success' => false, 'message' => 'User is crane!']);
+//        }
 
         if($user->isDisabled()){
             return response()->json(['success' => false, 'message' => 'User is disabled!']);
@@ -131,9 +131,9 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found!']);
         }
 
-        if($user->isCrane()){
-            return response()->json(['success' => false, 'message' => 'User is crane!']);
-        }
+//        if($user->isCrane()){
+//            return response()->json(['success' => false, 'message' => 'User is crane!']);
+//        }
 
         if($user->isDisabled()){
             return response()->json(['success' => false, 'message' => 'User is disabled!']);
@@ -176,9 +176,9 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found!']);
         }
 
-        if($user->isCrane()){
-            return response()->json(['success' => false, 'message' => 'User is crane!']);
-        }
+//        if($user->isCrane()){
+//            return response()->json(['success' => false, 'message' => 'User is crane!']);
+//        }
 
         if($user->isDisabled()){
             return response()->json(['success' => false, 'message' => 'User is disabled!']);
@@ -231,9 +231,9 @@ class CartController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found!']);
         }
 
-        if($user->isCrane()){
-            return response()->json(['success' => false, 'message' => 'User is crane!']);
-        }
+//        if($user->isCrane()){
+//            return response()->json(['success' => false, 'message' => 'User is crane!']);
+//        }
 
         if($user->isDisabled()){
             return response()->json(['success' => false, 'message' => 'User is disabled!']);
@@ -370,7 +370,7 @@ class CartController extends Controller
                 $deposit_percent, $deposit_amount);
 
             if($result){
-                $redirect_url = url('cart/deposit/success?orders=' . implode(',', $result));
+                $redirect_url = url('dat-coc-thanh-cong?orders=' . implode(',', $result));
 
                 return Response::json(['success' => true,
                     'redirect_url' => $redirect_url,
@@ -408,7 +408,7 @@ class CartController extends Controller
             'orders' => $orders
         ];
 
-        return view('deposit_success', $data);
+        return view('customer/deposit_success', $data);
     }
 
     /**
@@ -428,7 +428,7 @@ class CartController extends Controller
             $shops = Cart::where([
                 'user_id' => $user_id,
             ])->whereIn('shop_id', $shop_id_list)
-            ->get();
+                ->get();
         endif;
         $total_amount_shop = 0;
 
@@ -467,13 +467,13 @@ class CartController extends Controller
             'shops' => $shops,
             'shop_id' => $shop_id_list,
             'total_amount_shop' => $total_amount_shop,
-            'deposit_percent' => $deposit_amount,
+            'deposit_percent' => $deposit_percent,
             'deposit_amount' => $deposit_amount
         ];
 
         JavaScript::put($data);
 
-        return view('deposit', $data);
+        return view('customer/deposit', $data);
     }
 
     /**
@@ -488,9 +488,9 @@ class CartController extends Controller
             return redirect('404');
         }
 
-        if($user->isCrane()){
-            return redirect('403');
-        }
+//        if($user->isCrane()){
+//            return redirect('403');
+//        }
 
         if($user->isDisabled()){
             return redirect('403');
@@ -581,7 +581,7 @@ class CartController extends Controller
 
         JavaScript::put($data);
 
-        return view('cart', [
+        return view('customer/cart', [
             'page_title' => 'Giỏ hàng',
             'data' => $data
         ]);

@@ -195,7 +195,7 @@
                     <button class="next" type="button" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.getElementById('confirm_main'))">
                         <span>Tiếp tục mua hàng</span>
                     </button>
-                    <a class="cart" href="{{ url('cart')  }}">Vào giỏ hàng</a>
+                    <a class="cart" href="{{ url('gio-hang')  }}">Vào giỏ hàng</a>
                 </div>
             </div>
         </div>

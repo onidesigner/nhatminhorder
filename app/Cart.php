@@ -12,7 +12,6 @@ use App\CartItem;
 
 class Cart extends Model
 {
-    public static $deposit_percent = 50;
 
     protected $table_name = 'carts';
 
@@ -27,7 +26,13 @@ class Cart extends Model
             return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['order_deposit_percent'];
         endif;
 
-        return self::$deposit_percent;
+        $value = 100;
+        $row = SystemConfig::where(['config_key' => SystemConfig::CACHE_SYSTEM_CONFIG_KEY])->first();
+        if($row && $row->config_value){
+            $value = $row->config_value;
+            Cache::forever(SystemConfig::CACHE_SYSTEM_CONFIG_KEY, $value);
+        }
+        return $value;
     }
 
     /**
@@ -58,11 +63,17 @@ class Cart extends Model
         return $deposit_amount;
     }
 
-    public static function insertOrderServices($insert_id_order, $cart_services = null){
+    public static function insertOrderServices($insert_id_order, $cart_services = ''){
+        $cart_services .= sprintf('|%s', Service::TYPE_SHIPPING_CHINA_VIETNAM);
+
         if($cart_services):
             $service_data_insert = [];
             $cart_services = explode('|', $cart_services);
             foreach($cart_services as $cart_service):
+                if(empty($cart_service)):
+                    continue;
+                endif;
+
                 $service_data_insert[] = [
                     'order_id' => $insert_id_order,
                     'service_code' => $cart_service,
@@ -339,7 +350,8 @@ class Cart extends Model
                 CartItem::insert($data_insert_item);
             else:
                 CartItem::where([
-                    'id', $exist_cart_item_with_property->id
+                    'id' => $exist_cart_item_with_property->id,
+                    'user_id' => $user_id
                 ])
                 ->update([
                     'quantity' => DB::raw("quantity+{$params['quantity']}"),

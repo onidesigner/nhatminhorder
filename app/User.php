@@ -204,7 +204,7 @@ class User extends Authenticatable
             return $user_warehouse_manually->warehouse_code;
         endif;
 
-        $user_address = $this->address()->where([
+        $user_address = UserAddress::where([
             'is_default' => 1,
             'user_id' => $this->id
         ])->first();

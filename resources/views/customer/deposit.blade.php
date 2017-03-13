@@ -259,7 +259,7 @@
                 $that.prop('disabled', true);
 
                  $.ajax({
-                   url: "{{ url('cart/deposit')  }}",
+                   url: "{{ url('dat-coc')  }}",
                    method: 'post',
                    data: {
                        password: password,

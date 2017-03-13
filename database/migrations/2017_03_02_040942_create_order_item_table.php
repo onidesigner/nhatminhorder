@@ -15,7 +15,7 @@ class CreateOrderItemTable extends Migration
     {
         Schema::create('order_item', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('item_id', 50);//id sp trung quoc
+            $table->string('item_id', 50)->nullable();//id sp trung quoc
             $table->integer('order_id');
             $table->integer('user_id');
             $table->string('title', 255)->nullable();
@@ -27,7 +27,7 @@ class CreateOrderItemTable extends Migration
             $table->string('location_sale', 100)->nullable();
             $table->double('price', 20, 2);//NDT
             $table->double('price_promotion', 20, 2);//NDT
-            $table->text('price_table');
+            $table->text('price_table')->nullable();
             $table->integer('order_quantity');
             $table->integer('checking_quantity');
             $table->integer('receiver_quantity');

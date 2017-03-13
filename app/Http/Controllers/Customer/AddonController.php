@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\DB;
 use App\Exchange;
@@ -28,7 +29,7 @@ class AddonController extends Controller
         $params = Request::all();
 
         if($not_login):
-            $view = View::make('add_to_cart_success', [
+            $view = View::make('customer/add_to_cart_success', [
                 'success' => false,
                 'is_translate' => $params['is_translate'],
                 'message' => 'Vui lòng <a style="color:blue;" target="_blank" href="' . url('login') . '">đăng nhập</a> vào hệ thống để tiến hành đặt hàng!'
@@ -38,7 +39,7 @@ class AddonController extends Controller
         endif;
 
         if(Cart::addCart($params)):
-            $view = View::make('add_to_cart_success', [
+            $view = View::make('customer/add_to_cart_success', [
                 'success' => true,
                 'is_translate' => $params['is_translate'],
                 'price' => $params['price_origin'] > $params['price_promotion']
@@ -48,7 +49,7 @@ class AddonController extends Controller
             return response()->json(['html' => $html]);
         endif;
 
-        $view = View::make('add_to_cart_success', [
+        $view = View::make('customer/add_to_cart_success', [
             'success' => false,
             'is_translate' => $params['is_translate'],
             'price' => $params['price_origin'] > $params['price_promotion']

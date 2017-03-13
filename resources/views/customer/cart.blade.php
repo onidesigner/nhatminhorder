@@ -99,7 +99,7 @@
                                         <input
                                                 data-shop-id="{{$shop->shop_id}}"
                                                 data-item-id="{{$item->id}}" style="width: 80px"
-                                                type="number"
+                                                type="text"
                                                 name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
                                     </td>
                                     <td><span class="_autoNumeric">{{$item->total_amount_item_vnd}}</span>đ / ¥{{$item->total_amount_item}}</td>
@@ -109,12 +109,9 @@
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="5">
-                                        Tổng tiền hàng: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ + Phí tạm tính
-                                        <a href="javascript:void(0)" title="" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Mua hang: 1000<br/>Kiem hang: 1000<br />Van chuyen TQ - VD: 1000<br/>Tong: 50000<br /><a href=''>>>>Bieu phi dich vu</a>"><i class="fa fa-question"></i></a>
-                                        : <span class="_autoNumeric">{{$shop->fee_temp}}</span>đ = Tổng: <span class="_autoNumeric">{{$shop->total_amount_finish}}</span>đ
-                                        &nbsp;
+                                        Tổng tiền hàng: <span class="_autoNumeric">{{$shop->total_amount_items}}</span>đ
 
-                                        <a href="{{ url('cart/deposit?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
+                                        <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
                                     </td>
                                 </tr>
 
@@ -173,11 +170,13 @@
                             }
 
                             if(response.success){
-                                $('._shop[data-shop-id="' + shop_id + '"]').remove();
+//                                $('._shop[data-shop-id="' + shop_id + '"]').remove();
+//
+//                                if(!$('._shop').length){
+//                                    window.location.reload();
+//                                }
 
-                                if(!$('._shop').length){
-                                    window.location.reload();
-                                }
+                                window.location.reload();
                             }
                         },
                         error: function () {
@@ -215,12 +214,13 @@
                     }
 
                     if(response.success){
-                        $('._shop-item[data-shop-id="' + shop_id + '"][data-shop-item-id="' + item_id + '"]').remove();
+//                        $('._shop-item[data-shop-id="' + shop_id + '"][data-shop-item-id="' + item_id + '"]').remove();
+//
+//                        if( !$('._shop-item[data-shop-id="' + shop_id + '"]').length ){
+//                            $('._shop[data-shop-id="' + shop_id + '"]').remove();
+//                        }
 
-                        if( !$('._shop-item[data-shop-id="' + shop_id + '"]').length ){
-                            $('._shop[data-shop-id="' + shop_id + '"]').remove();
-                        }
-
+                        window.location.reload();
 
                     }
                 },
@@ -247,13 +247,23 @@
                     checked:checked ? 1 : 0
                 },
                 success: function(response){
-                    if(!response.success && response.message){
-                        bootbox.alert({
-                            message: response.message,
-                            size: 'small'
-                        });
-                    }
+//                    if(!response.success && response.message){
+//                        bootbox.alert({
+//                            message: response.message,
+//                            size: 'small'
+//                        });
+//                    }
 
+                    if(response.success){
+//                        window.location.reload();
+                    }else{
+                        if(response.message){
+                            bootbox.alert({
+                                message: response.message,
+                                size: 'small'
+                            });
+                        }
+                    }
 
                 },
                 error: function () {
@@ -283,6 +293,10 @@
                             size: 'small'
                         });
                     }
+
+                    if(response.success){
+                        window.location.reload();
+                    }
                 },
                 error: function () {
 
@@ -310,6 +324,10 @@
                             message: response.message,
                             size: 'small'
                         });
+                    }
+
+                    if(response.success){
+//                        window.location.reload();
                     }
                 },
                 error: function () {

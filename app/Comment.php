@@ -20,11 +20,4 @@ class Comment extends Model
     const TYPE_OBJECT_ORDER = 'ORDER';
     const TYPE_OBJECT_ORDER_ITEM = 'ORDER_ITEM';
 
-    public function addNewComment($data_insert){
-        return $this->newQuery()->insert($data_insert);
-    }
-
-    public function getComments($data_where){
-        return $this->newQuery()->where($data_where)->orderBy('created_at', 'desc')->get();
-    }
 }

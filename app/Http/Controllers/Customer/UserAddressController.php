@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 use Illuminate\Support\Facades\Response;
 use App\UserAddress;
 use App\Location;
@@ -11,7 +13,6 @@ use Illuminate\Support\Facades\Validator;
 
 class UserAddressController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth');
