@@ -15,12 +15,12 @@ $(document).ready(function() {
         $('[data-toggle="popover"]').popover();
     }
 
-    $('._autoNumericTemp').autoNumeric({aPad: false, mDec: 3, vMax: 9999999999999.99, aSep: '.', aDec: ','});
+    $('._autoNumericTemp').autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
     if ($('._autoNumeric').length) {
         $('._autoNumeric').each(function (i) {
             var tagName = $(this).prop("tagName").toLowerCase();
             if (tagName == 'input') {
-                $(this).autoNumeric({aPad: false, mDec: 3, vMax: 9999999999999.99, aSep: '.', aDec: ','});
+                $(this).autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
             } else {
                 var value = $(this).text().trim();
                 $(this).text(formatNumber(value));

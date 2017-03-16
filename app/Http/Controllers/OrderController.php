@@ -14,6 +14,7 @@ use App\User;
 use App\UserAddress;
 use App\UserOriginalSite;
 use App\UserTransaction;
+use App\Util;
 use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -344,6 +345,14 @@ class OrderController extends Controller
             }
         }
 
+        $permission = [
+            'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED,
+            'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+        ];
+
         return view('order_detail', [
             'order_id' => $order_id,
             'freight_bill' => $freight_bill,
@@ -357,6 +366,7 @@ class OrderController extends Controller
             'order_items' => $order_items,
             'transactions' => $transactions,
             'page_title' => 'Chi tiết đơn hàng',
+            'permission' => $permission
         ]);
     }
 
@@ -406,6 +416,101 @@ class OrderController extends Controller
 
     /**
      * @author vanhs
+     * @desc Thay doi so luong san pham
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __change_order_item_quantity(Request $request, Order $order, User $user){
+        $item_id = $request->get('item_id');
+        $order_item = OrderItem::find($item_id);
+
+        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        }
+
+        if(!$order_item || !$order_item instanceof OrderItem){
+            $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $old_order_quantity = $order_item->order_quantity;
+        $new_order_quantity = (int)$request->get('value');
+        $order_item->order_quantity = $new_order_quantity;
+        $order_item->save();
+
+        $order->total_order_quantity = $order->total_order_quantity();
+        $order->amount = $order->amount();
+        $order->save();
+
+        if($old_order_quantity <> $new_order_quantity){
+            Comment::createComment(
+                $user,
+                $order_item,
+                sprintf("Sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity),
+                Comment::TYPE_NONE,
+                Comment::TYPE_CONTEXT_ACTIVITY,
+                $order
+            );
+        }
+
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Thay doi gia san pham
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __change_order_item_price(Request $request, Order $order, User $user){
+        $item_id = $request->get('item_id');
+        $order_item = OrderItem::find($item_id);
+
+        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        }
+
+        if(!$order_item || !$order_item instanceof OrderItem){
+            $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $old_order_item_price = 0;
+        $new_order_item_price = (double)$request->get('value');
+        $order_item->price = $new_order_item_price;
+        $order_item->price_promotion = $new_order_item_price;
+        $order_item->save();
+
+        $order->amount = $order->amount();
+        $order->save();
+
+        if($old_order_item_price <> $new_order_item_price){
+            Comment::createComment(
+                $user,
+                $order_item,
+                sprintf("Sửa giá sản phẩm từ %s thành %s", $old_order_item_price, $new_order_item_price),
+                Comment::TYPE_NONE,
+                Comment::TYPE_CONTEXT_ACTIVITY,
+                $order
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
      * @desc Hanh dong mua don hang
      * @param Request $request
      * @param Order $order
@@ -447,22 +552,13 @@ class OrderController extends Controller
         $deposit_percent_new = $order->deposit_percent;
         $deposit_amount_new = Cart::getDepositAmount($deposit_percent_new, $order_amount);
         $deposit_amount_old = UserTransaction::getDepositOrder($customer, $order);
+        $deposit_amount_old = abs($deposit_amount_old);
 
         $order->paid_staff_id = $user->id;
         $order->status = Order::STATUS_BOUGHT;
         $order->deposit_amount = $deposit_amount_new;
         $order->bought_at = date('Y-m-d H:i:s');
         $order->save();
-
-//        Order::where([
-//            'id' => $order->id,
-//            'user_id' => $user->id
-//        ])->update([
-//            'paid_staff_id' => Auth::user()->id,
-//            'status' => Order::STATUS_BOUGHT,
-//            'deposit_amount' => $deposit_amount_new,
-//            'bought_at' => date('Y-m-d H:i:s'),
-//        ]);
 
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
@@ -477,7 +573,7 @@ class OrderController extends Controller
 
             $message = sprintf("Hệ thống tiến hành %s số tiền %s để đảm bảo tỉ lệ đặt cọc %s phần trăm",
                 $temp,
-                abs($deposit_amount_old - $deposit_amount_new),
+                Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new)),
                 $deposit_percent_new);
 
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
@@ -491,31 +587,6 @@ class OrderController extends Controller
                 $order,
                 $user_transaction_amount
             );
-
-//            $raw = DB::raw("account_balance-{$user_transaction_amount}");
-//            if($user_transaction_amount > 0){
-//                $raw = DB::raw("account_balance+{$user_transaction_amount}");
-//            }
-//            User::where(['id' => $user->id])->update([
-//                'account_balance' => $raw
-//            ]);
-//
-//            $user_after = User::find($user->id);
-//
-//            UserTransaction::insert([
-//                'user_id' => $order->user_id,
-//                'state' => UserTransaction::STATE_COMPLETED,
-//                'transaction_code' => UserTransaction::generateTransactionCode(),
-//                'transaction_type' => UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
-//                'ending_balance' => $user_after->account_balance,
-//                'created_by' => Auth::user()->id,
-//                'object_id' => $order->id,
-//                'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
-//                'amount' => $user_transaction_amount,
-//                'transaction_detail' => json_encode($order),
-//                'transaction_note' => $message,
-//                'created_at' => date('Y-m-d H:i:s')
-//            ]);
         }
 
         return true;
@@ -587,6 +658,14 @@ class OrderController extends Controller
      * @return bool
      */
     private function __account_purchase_origin(Request $request, Order $order, User $user){
+        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+            $this->action_error[] = sprintf('Không thể thay đổi acc mua hàng khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
         $message = null;
 
         $account_old = $order->account_purchase_origin;
@@ -707,6 +786,14 @@ class OrderController extends Controller
      */
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
     {
+        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+            $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
         $old_demestic_shipping_fee = $order->domestic_shipping_fee;
         $domestic_shipping_fee = $request->get('domestic_shipping_china');
 

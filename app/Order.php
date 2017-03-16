@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use App\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -311,6 +312,33 @@ class Order extends Model
 
     public function package(){
         return $this->hasMany('App\Package', 'order_id');
+    }
+
+    public function total_order_quantity(){
+        return DB::table('order_item')
+            ->select(DB::raw('SUM(order_quantity) as total_quantity'))
+            ->where([
+                'order_id' => $this->id
+            ])
+            ->first()->total_quantity;
+    }
+
+    public function total_checking_quantity(){
+        return DB::table('order_item')
+            ->select(DB::raw('SUM(checking_quantity) as total_quantity'))
+            ->where([
+                'order_id' => $this->id
+            ])
+            ->first()->total_quantity;
+    }
+
+    public function total_receiver_quantity(){
+        return DB::table('order_item')
+            ->select(DB::raw('SUM(receiver_quantity) as total_quantity'))
+            ->where([
+                'order_id' => $this->id
+            ])
+            ->first()->total_quantity;
     }
 
     public function amount($vnd = false){

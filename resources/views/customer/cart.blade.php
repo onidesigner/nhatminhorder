@@ -99,7 +99,7 @@
                                         <input
                                                 data-shop-id="{{$shop->shop_id}}"
                                                 data-item-id="{{$item->id}}" style="width: 80px"
-                                                type="text"
+                                                type="number"
                                                 name="quantity" class="form-control text-center _quantity" value="{{$item->quantity}}" />
                                     </td>
                                     <td><span class="_autoNumeric">{{$item->total_amount_item_vnd}}</span>đ / ¥{{$item->total_amount_item}}</td>
@@ -130,8 +130,10 @@
 
             <div class="col-sm-12">
                 <div class="card ">
-                    <div class="card-header" style="position: relative">
+                    <div class="card-body">
                         <h4>Giỏ hàng hiện đang trống!</h4>
+
+                        Click vào <a href="">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!
                     </div>
                 </div>
             </div>
@@ -272,36 +274,40 @@
             })
         });
 
-        $(document).on('change', '._quantity', function(){
-            var shop_id = $(this).data('shop-id');
-            var item_id = $(this).data('item-id');
-            var quantity = $(this).val();
+        $(document).on('keypress', '._quantity', function(e){
+            if(e.keyCode == 13){
+                var shop_id = $(this).data('shop-id');
+                var item_id = $(this).data('item-id');
+                var quantity = $(this).val();
 
-            $.ajax({
-                url: "{{ url('cart/quantity') }}",
-                method: 'post',
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    shop_id:shop_id,
-                    item_id:item_id,
-                    quantity:quantity
-                },
-                success: function(response){
-                    if(!response.success && response.message){
-                        bootbox.alert({
-                            message: response.message,
-                            size: 'small'
-                        });
+                $.ajax({
+                    url: "{{ url('cart/quantity') }}",
+                    method: 'post',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        shop_id:shop_id,
+                        item_id:item_id,
+                        quantity:quantity
+                    },
+                    success: function(response){
+                        if(!response.success && response.message){
+                            bootbox.alert({
+                                message: response.message,
+                                size: 'small'
+                            });
+                        }
+
+                        if(response.success){
+                            window.location.reload();
+                        }
+                    },
+                    error: function () {
+
                     }
+                })
+            }
 
-                    if(response.success){
-                        window.location.reload();
-                    }
-                },
-                error: function () {
 
-                }
-            })
         });
 
         $(document).on('change', '._comment', function(){

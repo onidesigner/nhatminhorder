@@ -68,7 +68,7 @@
                                 @endif
                             </td>
 
-                            <td>{{$transaction->created_at}}</td>
+                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
                             <td>
                                 <span class="text-danger">
                                     {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>

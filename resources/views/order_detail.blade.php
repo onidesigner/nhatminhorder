@@ -26,6 +26,9 @@
 
                 if(e.keyCode == 13){
                     var value = $(this).val();
+                    if($(this).hasClass('_autoNumeric')){
+                        value = $(this).autoNumeric('get');
+                    }
                     var action = $(this).data('action');
                     var item_id = $(this).data('item-id');
                     var message = $(this).val();
@@ -42,12 +45,13 @@
                             item_id:item_id,
                             order_id:"{{$order_id}}",
                             message:message,
+                            value:value,
                             action:action,
                             _token: "{{ csrf_token() }}",
                         },
                         success:function(response) {
                             if(response.success){
-                                $that.val('').focus();
+//                                $that.val('').focus();
                                 window.location.reload();
                             }else{
                                 bootbox.alert(response.message);
@@ -321,6 +325,8 @@
                                             <tr>
                                                 <td width="50%" class="border-top-none">Acc mua</td>
                                                 <td class="border-top-none">
+
+                                                    @if($permission['can_change_order_account_purchase_origin'])
                                                     <select data-action="account_purchase_origin" class="form-control _select-action">
                                                         <option value="">Chọn Acc mua hàng site gốc</option>
 
@@ -330,15 +336,19 @@
                                                             @endforeach
                                                         @endif
                                                     </select>
+                                                    @else
+                                                        {{$order->account_purchase_origin}}
+                                                    @endif
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Tỉ lệ đặt cọc</td>
+                                                <td>Tỉ lệ đặt cọc (%)</td>
                                                 <td>
                                                     <input id="_change_deposit" type="text" value="{{$order->deposit_percent}}">
                                                     <button class="_btn-action" data-action="change_deposit">
                                                         <i class="fa fa-save"></i>
                                                     </button>
+
                                                 </td>
                                             </tr>
                                             <tr>
@@ -427,7 +437,7 @@
                                             </tr>
 
                                             <tr>
-                                                <td>Phí VC nội địa TQ</td>
+                                                <td>Phí VC nội địa TQ (¥)</td>
                                                 <td>
 
                                                     {{--<div class="input-group">--}}
@@ -437,12 +447,18 @@
                                                         {{--</span>--}}
                                                     {{--</div>--}}
 
+                                                    @if($permission['can_change_order_domestic_shipping_fee'])
                                                     <input id="_domestic_shipping_china" placeholder="Đơn vị NDT" type="text" name="" value="{{ $order->domestic_shipping_fee  }}" pattern="">
 
                                                     <button data-action="domestic_shipping_china" class="_btn-action">
                                                         <i class="fa fa-save"></i>
                                                     </button>
 
+
+
+                                                    @else
+                                                        {{ $order->domestic_shipping_fee  }}
+                                                    @endif
                                                 </td>
                                             </tr>
 
@@ -496,22 +512,30 @@
                                         <table class="table no-padding-leftright">
                                             <tbody>
                                             <?php $count = 0; ?>
-                                            @foreach(App\Order::$timeListOrderDetail as $k => $v)
-                                            <?php $count++; ?>
+
+                                            <?php
+                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                $count++;
+                                                if(empty($order->$k)){
+                                                    continue;
+                                                }
+                                            ?>
 
                                                 @if($count == 1)
+
                                                     <tr>
                                                         <td width="50%" class="border-top-none">{{$v}}</td>
-                                                        <td class="border-top-none">{{$order->$k}}</td>
+                                                        <td class="border-top-none">{{ App\Util::formatDate($order->$k) }}</td>
                                                     </tr>
+
                                                 @else
                                                     <tr>
                                                         <td>{{$v}}</td>
-                                                        <td>{{$order->$k}}</td>
+                                                        <td>{{ App\Util::formatDate($order->$k)  }}</td>
                                                     </tr>
                                                 @endif
 
-                                            @endforeach
+                                            <?php } ?>
 
                                             </tbody>
                                         </table>
@@ -602,8 +626,7 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th width="10%">ID</th>
-                            <th>SẢN PHẨM</th>
+                            <th width="50%">SẢN PHẨM</th>
                             <th>SL ({{ $total_order_quantity }})</th>
                             <th>{{ $total_price_ndt  }}¥ · {{ App\Util::formatNumber($total_price_vnd)  }} <sup>đ</sup></th>
                         </tr>
@@ -612,8 +635,8 @@
                         <tbody>
                         @foreach($order_items as $order_item)
                             <tr>
-                                <td>{{$order_item->id}}</td>
-                                <td width="50%">
+
+                                <td>
                                     <div class="row">
                                         <div class="col-sm-2">
                                             <a href="{{$order_item->link}}" target="_blank">
@@ -621,6 +644,7 @@
                                             </a>
                                         </div>
                                         <div class="col-sm-10">
+                                            ID: #{{$order_item->id}}<br>
                                             <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
                                             <br>
 
@@ -659,7 +683,7 @@
 
                                                             {{$order_item_comment->message}}
                                                             <small>
-                                                                {{$order_item_comment->created_at}}
+                                                                {{ App\Util::formatDate($order_item_comment->created_at)  }}
                                                             </small>
 
                                                         </li>
@@ -671,11 +695,35 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{$order_item->order_quantity}}
+                                    @if($permission['can_change_order_item_quantity'])
+                                        <input
+                                                style="width: 80px;"
+                                                class="_input-action"
+                                                data-action="change_order_item_quantity"
+                                                data-item-id="{{$order_item->id}}"
+                                                type="number"
+                                                value="{{$order_item->order_quantity}}" placeholder="">
+                                    @else
+                                        {{$order_item->order_quantity}}
+                                    @endif
                                 </td>
                                 <td>
                                     <p>
-                                        Đơn giá: <span class="text-success">{{$order_item->getPriceCalculator()}}¥</span> · {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order->exchange_rate) }} <sup>đ</sup>
+                                        Đơn giá:
+                                        @if($permission['can_change_order_item_price'])
+                                        <input
+                                                style="width: 90px;"
+                                                class="_input-action _autoNumeric"
+                                                data-action="change_order_item_price"
+                                                data-item-id="{{$order_item->id}}"
+                                                type="text"
+                                                value="{{ $order_item->getPriceCalculator() }}" placeholder="">¥ ·
+                                        @else
+                                            <span class="text-success">{{ $order_item->getPriceCalculator() }}</span>¥ ·
+                                        @endif
+                                        {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order->exchange_rate) }}
+
+                                        <sup>đ</sup>
                                     </p>
                                     <p>
                                         Tổng: <span class="text-success">{{$order_item->getPriceCalculator() * $order_item->order_quantity}}¥</span> · {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate) }} <sup>đ</sup>
@@ -712,7 +760,9 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="javascript:void(0)" class="_btn-action" data-action="change_status" data-status="{{ App\Order::STATUS_BOUGHT  }}">ĐÃ MUA</a></li>
+                    @if($permission['can_change_order_bought'])
+                        <li><a href="javascript:void(0)" class="_btn-action" data-action="bought_order">ĐÃ MUA</a></li>
+                    @endif
                 </ul>
             </div>
         </div>

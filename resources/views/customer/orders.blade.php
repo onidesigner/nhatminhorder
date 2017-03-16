@@ -61,10 +61,21 @@
                                         <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
                                     </td>
                                     <td>
-                                        <ul>
-                                            <li>Tạo: {{$order->created_at}}</li>
-                                            <li>Đặt cọc: {{$order->deposited_at}}</li>
+
+                                        <ul style="list-style: none; margin: 0; padding: 0;">
+
+
+                                            <?php
+                                            foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                            if(empty($order->$k)){
+                                                continue;
+                                            }
+                                            ?>
+                                            <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
+                                            <?php } ?>
+
                                         </ul>
+
                                     </td>
                                 </tr>
                             @endforeach

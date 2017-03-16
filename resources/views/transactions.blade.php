@@ -82,7 +82,7 @@
                             </td>
                             <td>
                                 @if($transaction->object_type == App\UserTransaction::OBJECT_TYPE_ORDER)
-                                    <a href="">{{$order->code}}</a>
+                                    <a href="{{  url('order', $order->id) }}">{{$order->code}}</a>
                                 @endif
                             </td>
 

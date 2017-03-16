@@ -17,9 +17,11 @@ class UserTransaction extends Model
 
     const TRANSACTION_TYPE_DEPOSIT = 'DEPOSIT';//nạp tiền
     const TRANSACTION_TYPE_WITHDRAWAL = 'WITHDRAWAL';//rút tiền
+
     const TRANSACTION_TYPE_ORDER_DEPOSIT = 'ORDER_DEPOSIT';//đặt cọc
-    const TRANSACTION_TYPE_ORDER_PAYMENT = 'ORDER_PAYMENT';//thanh toán trên đơn
     const TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT = 'DEPOSIT_ADJUSTMENT'; //điều chỉnh đặt cọc trên đơn
+
+    const TRANSACTION_TYPE_ORDER_PAYMENT = 'ORDER_PAYMENT';//thanh toán trên đơn
     const TRANSACTION_TYPE_PAYMENT = 'PAYMENT';//truy thu
     const TRANSACTION_TYPE_PROMOTION = 'PROMOTION';//khuyến mại
     const TRANSACTION_TYPE_GIFT = 'GIFT';//quà tặng

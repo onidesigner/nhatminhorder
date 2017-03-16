@@ -18,6 +18,13 @@ class Util extends Model
         return number_format($number, 2, ",", ".");
     }
 
+    public static function formatDate($date){
+        if(empty($date)){
+            return '';
+        }
+        return date('H:i d/m/Y', strtotime($date));
+    }
+
     /**
      * generate a random token string
      *

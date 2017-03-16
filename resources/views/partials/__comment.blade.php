@@ -46,7 +46,7 @@
                         <strong>{{$user_comment->name}}</strong>
                     @endif
                     {{$comment_public->message}}
-                    <small>{{$comment_public->created_at}}</small>
+                    <small>{{ App\Util::formatDate($comment_public->created_at)  }}</small>
                 </li>
             @endforeach
             </ul>
@@ -75,7 +75,7 @@
                             <strong>{{$user_comment->name}}</strong>
                         @endif
                         {{$comment_private->message}}
-                        <small>{{$comment_private->created_at}}</small>
+                        <small>{{ App\Util::formatDate($comment_private->created_at)  }}</small>
                     </li>
                 @endforeach
             </ul>

@@ -39,7 +39,7 @@
                                     <tr>
                                         <td>{{ $date_item->site  }}</td>
                                         <td>{{ $date_item->username  }}</td>
-                                        <td>{{ $date_item->created_at  }}</td>
+                                        <td>{{ App\Util::formatDate($date_item->created_at)  }}</td>
                                         <td>
                                             <a href="javascript:void(0)" class="_remove"
                                             data-site="{{ $date_item->site  }}"

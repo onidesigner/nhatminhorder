@@ -69,10 +69,10 @@
                                                 <td class="no-padding-leftright"><strong>Trạng thái</strong>: {{ App\User::getStatusName($user->status) }}</td>
                                             </tr>
                                             <tr>
-                                                <td class="no-padding-leftright"><strong>Gia nhập</strong>: {{$user->created_at}}</td>
+                                                <td class="no-padding-leftright"><strong>Gia nhập</strong>: {{ App\Util::formatDate($user->created_at)  }}</td>
                                             </tr>
                                             <tr>
-                                                <td class="no-padding-leftright"><strong>Cập nhật</strong>: {{$user->updated_at}}</td>
+                                                <td class="no-padding-leftright"><strong>Cập nhật</strong>: {{ App\Util::formatDate($user->updated_at)  }}</td>
                                             </tr>
 
                                             </tbody>
@@ -90,7 +90,7 @@
                                                     <li class="_row-user-phone">
                                                         {{$user_mobile->mobile}}
 
-                                                        &nbsp;&nbsp;<small style="color: grey">{{$user_mobile->created_at}}</small>
+                                                        &nbsp;&nbsp;<small style="color: grey">{{ App\Util::formatDate($user_mobile->created_at)  }}</small>
 
                                                         &nbsp;&nbsp;&nbsp;&nbsp;
                                                         @if($permission['can_remove_mobile'])
@@ -120,7 +120,6 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Khách</th>
                                         <th>Mã GD</th>
                                         <th>Loại</th>
                                         <th>Trạng thái</th>
@@ -150,12 +149,7 @@
                                             <td>
                                                 {{$transaction->id}}
                                             </td>
-                                            <td>
-                                                <strong>{{$user->email}}</strong><br>
-                                                <small>{{$user->name}}</small>
 
-                                                <code>{{$user->code}}</code>
-                                            </td>
                                             <td>
                                                 {{$transaction->transaction_code}}<br>
                                                 <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
@@ -172,19 +166,19 @@
                                             </td>
                                             <td>
                                                 @if($transaction->object_type == App\UserTransaction::OBJECT_TYPE_ORDER)
-                                                    <a href="">{{$order->code}}</a>
+                                                    <a href="{{ url('order', $order->id)  }}">{{$order->code}}</a>
                                                 @endif
                                             </td>
 
-                                            <td>{{$transaction->created_at}}</td>
+                                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
                                             <td>
                                 <span class="text-danger">
-                                    {{$transaction->amount}} <sup>d</sup>
+                                    {{ App\Util::formatNumber($transaction->amount)  }} <sup>d</sup>
                                 </span>
                                             </td>
                                             <td>
                                                 <strong>
-                                                    {{$transaction->ending_balance}} <sup>d</sup>
+                                                    {{ App\Util::formatNumber($transaction->ending_balance)  }} <sup>d</sup>
                                                 </strong>
                                             </td>
                                         </tr>

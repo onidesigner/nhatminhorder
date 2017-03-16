@@ -60,7 +60,7 @@
                             </td>
                             <td>{{$data_item->alias}}</td>
                             <td>{{ App\WareHouse::getTypeNameWarehouse($data_item->type) }}</td>
-                            <td>{{$data_item->created_at}}</td>
+                            <td>{{ App\Util::formatDate($data_item->created_at)  }}</td>
                             <td>
 
                                 <a href="javascript:void(0)" class="_remove" data-id="{{$data_item->id}}">
