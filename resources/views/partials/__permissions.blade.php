@@ -1,6 +1,5 @@
 @if($can_edit)
-
-<button class="btn btn-danger pull-right text-uppercase" id="_save-permission">Lưu phân quyền</button>
+    <button class="btn btn-danger pull-right text-uppercase" id="_save-permission">Lưu phân quyền</button>
 @endif
 
 @if(!empty($permissions))

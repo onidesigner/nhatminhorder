@@ -57,14 +57,14 @@
                                     ?>
 
                                     <p>
-                                        Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{$order->deposit_amount}} <sup>đ</sup></span>
+                                        Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount) }} <sup>đ</sup></span>
                                     </p>
                                 </td>
                                 <td>
-                                    <span class="text-danger">{{$order->exchange_rate}} <sup>đ</sup></span>
+                                    <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
                                 </td>
                                 <td>
-                                    <span class="text-danger">{{$order->amount * $order->exchange_rate}} <sup>đ</sup></span>
+                                    <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
                                 </td>
                                 <td>
                                     <ul>
@@ -82,7 +82,7 @@
 
                     @else
 
-                        <h4>Hien chua co don hang!</h4>
+                        <h4>Hiện chưa có đơn hàng!</h4>
 
                     @endif
                 </div>

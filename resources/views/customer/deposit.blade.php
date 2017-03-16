@@ -169,7 +169,7 @@
                                             </div>
                                         </td>
                                         <td>{{ $shop->total_quantity  }} / {{ $shop->total_link  }}</td>
-                                        <td>{{ $shop->total_amount  }} <sup>d</sup></td>
+                                        <td>{{ App\Util::formatNumber($shop->total_amount)  }} <sup>d</sup></td>
                                     </tr>
 
                                     @endforeach
@@ -177,17 +177,17 @@
 
                                     <tr>
                                         <td colspan="3">
-                                            Tổng tiền hàng: {{$total_amount_shop}} <sup>d</sup>
+                                            Tổng tiền hàng: {{ App\Util::formatNumber($total_amount_shop) }} <sup>d</sup>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="3">
-                                            Đặt cọc ({{$deposit_percent}}%): {{$deposit_amount}} <sup>d</sup>
+                                            Đặt cọc ({{$deposit_percent}}%): {{ App\Util::formatNumber($deposit_amount) }} <sup>d</sup>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="3">
-                                            Số dư hiện tại: {{ Auth::user()->account_balance  }} <sup>d</sup>
+                                            Số dư hiện tại: {{ App\Util::formatNumber(Auth::user()->account_balance) }} <sup>d</sup>
                                         </td>
                                     </tr>
                                 @endif

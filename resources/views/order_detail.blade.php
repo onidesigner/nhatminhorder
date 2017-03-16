@@ -343,7 +343,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Tỉ giá</td>
-                                                <td>{{$order->exchange_rate}} <sup>đ</sup></td>
+                                                <td>{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></td>
                                             </tr>
                                             <tr>
                                                 <td>Người bán</td>
@@ -564,7 +564,7 @@
                                             <td>{{$transaction->created_at}}</td>
                                             <td>
                                 <span class="text-danger">
-                                    {{$transaction->amount}} <sup>d</sup>
+                                    {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
                                 </span>
                                             </td>
 
@@ -585,13 +585,27 @@
             <div class="card">
 
                 <div class="card-body">
+                    <?php
+                    $total_order_quantity = 0;
+                    $total_price_ndt = 0;
+                    $total_price_vnd = 0;
+                    if(count($order_items)){
+                        foreach($order_items as $order_item){
+                            $total_order_quantity += $order_item->order_quantity;
+                            $total_price_ndt += $order_item->getPriceCalculator() * $order_item->order_quantity;
+                            $total_price_vnd += $order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate;
+                        }
+                    }
+
+                    ?>
+
                     <table class="table table-striped">
                         <thead>
                         <tr>
                             <th width="10%">ID</th>
                             <th>SẢN PHẨM</th>
-                            <th>SL</th>
-                            <th></th>
+                            <th>SL ({{ $total_order_quantity }})</th>
+                            <th>{{ $total_price_ndt  }}¥ · {{ App\Util::formatNumber($total_price_vnd)  }} <sup>đ</sup></th>
                         </tr>
                         </thead>
                         @if(count($order_items))
@@ -661,10 +675,10 @@
                                 </td>
                                 <td>
                                     <p>
-                                        Đơn giá: <span class="text-success">{{$order_item->getPriceCalculator()}}¥</span> · {{$order_item->getPriceCalculator() * $order->exchange_rate}} <sup>đ</sup>
+                                        Đơn giá: <span class="text-success">{{$order_item->getPriceCalculator()}}¥</span> · {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order->exchange_rate) }} <sup>đ</sup>
                                     </p>
                                     <p>
-                                        Tổng: <span class="text-success">{{$order_item->getPriceCalculator() * $order_item->order_quantity}}¥</span> · {{$order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate}} <sup>đ</sup>
+                                        Tổng: <span class="text-success">{{$order_item->getPriceCalculator() * $order_item->order_quantity}}¥</span> · {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate) }} <sup>đ</sup>
                                     </p>
                                 </td>
                             </tr>

@@ -6,7 +6,16 @@ if(Auth::user()->section == App\User::SECTION_CUSTOMER){
             'url' => url('home'),
             'icon' => 'fa-home',
             'title' => 'Trang chủ',
-            'use' => ['customer', 'crane']
+        ],
+        [
+            'url' => url('don-hang'),
+            'icon' => 'fa-cubes',
+            'title' => 'Đơn hàng',
+        ],
+        [
+            'url' => url('giao-dich'),
+            'icon' => 'fa-money',
+            'title' => 'Giao dịch',
         ],
     ];
 }else{
@@ -15,7 +24,6 @@ if(Auth::user()->section == App\User::SECTION_CUSTOMER){
             'url' => url('home'),
             'icon' => 'fa-home',
             'title' => 'Trang chủ',
-            'use' => ['customer', 'crane']
         ],
         [
             'url' => '#',

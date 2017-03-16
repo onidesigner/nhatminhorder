@@ -111,44 +111,54 @@
                             </a>
                         </li>
 
-                        <li class="dropdown notification danger">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <li class="arrow-none dropdown notification danger">
+                            <a href="{{ url('thong-bao') }}" class="dropdown-toggle" data-toggle="dropdown2222">
                                 <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
                                 <div class="title">System Notifications</div>
-                                <div class="count width-auto">10</div>
+                                <div class="count width-auto">
+                                    0
+                                </div>
                             </a>
-                            <div class="dropdown-menu">
-                                <ul>
-                                    <li class="dropdown-header">Notification</li>
-                                    <li>
-                                        <a href="#">
-                                            <span class="badge badge-danger pull-right">8</span>
-                                            <div class="message">
-                                                <div class="content">
-                                                    <div class="title">New Order</div>
-                                                    <div class="description">$400 total</div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span class="badge badge-danger pull-right">14</span>
-                                            Inbox
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <span class="badge badge-danger pull-right">5</span>
-                                            Issues Report
-                                        </a>
-                                    </li>
-                                    <li class="dropdown-footer">
-                                        <a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
                         </li>
+
+                        {{--<li class="dropdown notification danger">--}}
+                            {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">--}}
+                                {{--<div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>--}}
+                                {{--<div class="title">System Notifications</div>--}}
+                                {{--<div class="count width-auto">10</div>--}}
+                            {{--</a>--}}
+                            {{--<div class="dropdown-menu">--}}
+                                {{--<ul>--}}
+                                    {{--<li class="dropdown-header">Notification</li>--}}
+                                    {{--<li>--}}
+                                        {{--<a href="#">--}}
+                                            {{--<span class="badge badge-danger pull-right">8</span>--}}
+                                            {{--<div class="message">--}}
+                                                {{--<div class="content">--}}
+                                                    {{--<div class="title">New Order</div>--}}
+                                                    {{--<div class="description">$400 total</div>--}}
+                                                {{--</div>--}}
+                                            {{--</div>--}}
+                                        {{--</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li>--}}
+                                        {{--<a href="#">--}}
+                                            {{--<span class="badge badge-danger pull-right">14</span>--}}
+                                            {{--Inbox--}}
+                                        {{--</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li>--}}
+                                        {{--<a href="#">--}}
+                                            {{--<span class="badge badge-danger pull-right">5</span>--}}
+                                            {{--Issues Report--}}
+                                        {{--</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li class="dropdown-footer">--}}
+                                        {{--<a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
+                                    {{--</li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
 
                         <li class="dropdown profile">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">

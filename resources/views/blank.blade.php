@@ -8,7 +8,14 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-
+                @include('partials/__breadcrumb',
+                    [
+                        'urls' => [
+                            ['name' => 'Trang chủ', 'link' => url('home')],
+                            ['name' => 'Trang trắng', 'link' => null],
+                        ]
+                    ]
+                )
                 <div class="card-body">
                     page blank
                 </div>

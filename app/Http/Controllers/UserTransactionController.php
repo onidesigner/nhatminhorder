@@ -37,9 +37,7 @@ class UserTransactionController extends Controller
         $can_create_transaction = Permission::isAllow(Permission::PERMISSION_TRANSACTION_CREATE);
 
         $per_page = 20;
-        $user_transaction = new UserTransaction();
-        $transactions = $user_transaction->newQuery()
-            ->orderBy('id', 'desc')
+        $transactions = UserTransaction::orderBy('id', 'desc')
             ->paginate($per_page);
 
         return view('transactions', [

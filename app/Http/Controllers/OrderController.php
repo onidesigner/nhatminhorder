@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Cart;
 use App\Comment;
 use App\Exchange;
 use App\Location;
@@ -74,27 +75,22 @@ class OrderController extends Controller
                 'freight_bill' => $freight_bill
             ])->count();
 
-            OrderFreightBill::insert([
-                'user_id' => Auth::user()->id,
-                'order_id' => $order_id,
-                'freight_bill' => $freight_bill,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            $order->create_freight_bill($user->id, $freight_bill);
 
             $message = '';
             if($freight_bill_exists):
                 $message = sprintf('Mã hóa đơn %s đã tồn tại ở 1 đơn hàng khác!', $freight_bill);
             endif;
 
-            Comment::insert([
-                'user_id' => $user->id,
-                'object_id' => $order->id,
-                'object_type' => Comment::TYPE_OBJECT_ORDER,
-                'scope' => Comment::TYPE_INTERNAL,
-                'message' => sprintf('Thêm mã vận đơn %s', $freight_bill),
-                'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            Comment::createComment($user, $order, sprintf('Thêm mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            $order_empty_freight_bill = $order->exist_freight_bill();
+            if($order_empty_freight_bill
+                && $order->status == Order::STATUS_BOUGHT){
+                $order->changeStatus(Order::STATUS_SELLER_DELIVERY);
+                Comment::createComment($user, $order, "Đơn hàng chuyển sang trạng thái người bán giao.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                Comment::createComment($user, $order, "Chuyển trạng thái đơn sang người bán giao.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            }
 
             DB::commit();
             return response()->json(['success' => true, 'message' => $message]);
@@ -140,15 +136,8 @@ class OrderController extends Controller
                 'freight_bill' => $freight_bill
             ])->delete();
 
-            Comment::insert([
-                'user_id' => $user->id,
-                'object_id' => $order->id,
-                'object_type' => Comment::TYPE_OBJECT_ORDER,
-                'scope' => Comment::TYPE_INTERNAL,
-                'message' => sprintf('Xóa mã vận đơn %s', $freight_bill),
-                'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            Comment::createComment($user, $order, sprintf('Xóa mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
             DB::commit();
             return response()->json(['success' => true, 'message' => 'delete success']);
 
@@ -191,7 +180,7 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Mã hóa đơn gốc không để trống!']);
             endif;
 
-            $order_original_bill_exists = $order->has_origin_bill($original_bill);
+            $order_original_bill_exists = $order->has_original_bill($original_bill);
 
             if($order_original_bill_exists):
                 return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại!', $original_bill)]);
@@ -201,22 +190,9 @@ class OrderController extends Controller
                 'original_bill' => $original_bill
             ])->count();
 
-            OrderOriginalBill::insert([
-                'user_id' => Auth::user()->id,
-                'order_id' => $order_id,
-                'original_bill' => $original_bill,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            $order->create_original_bill($user->id, $original_bill);
 
-            Comment::insert([
-                'user_id' => $user->id,
-                'object_id' => $order->id,
-                'object_type' => Comment::TYPE_OBJECT_ORDER,
-                'scope' => Comment::TYPE_INTERNAL,
-                'message' => sprintf('Thêm mã hóa đơn gốc %s', $original_bill),
-                'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            Comment::createComment($user, $order, sprintf('Thêm mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
             $message = '';
 
@@ -228,7 +204,7 @@ class OrderController extends Controller
             return response()->json(['success' => true, 'message' => $message]);
         }catch(\Exception $e){
             DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Exception']);
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại hoặc liên hệ với kỹ thuật để được hỗ trợ!']);
         }
     }
 
@@ -267,15 +243,7 @@ class OrderController extends Controller
                 'original_bill' => $original_bill
             ])->delete();
 
-            Comment::insert([
-                'user_id' => $user->id,
-                'object_id' => $order->id,
-                'object_type' => Comment::TYPE_OBJECT_ORDER,
-                'scope' => Comment::TYPE_INTERNAL,
-                'message' => sprintf('Xóa mã hóa đơn gốc %s', $original_bill),
-                'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
+            Comment::createComment($user, $order, sprintf('Xóa mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
             DB::commit();
             return response()->json([ 'success' => true, 'message' => 'delete success' ]);
@@ -423,7 +391,7 @@ class OrderController extends Controller
 
             $result = $this->$action($request, $order, $user);
             if(!$result){
-                return response()->json( ['success' => false, 'message' => implode('<br>', (array)$this->action_error)] );
+                return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
             }
 
             DB::commit();
@@ -436,58 +404,188 @@ class OrderController extends Controller
 
     }
 
-    private function __change_status(Request $request, Order $order, User $user){
-        $this->action_error = [];
+    /**
+     * @author vanhs
+     * @desc Hanh dong mua don hang
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __bought_order(Request $request, Order $order, User $user){
+        if($order->status != Order::STATUS_DEPOSITED){
+            $this->action_error[] = sprintf('Đơn hiện đang ở trạng thái [%s], không thể chuyển sang đã mua!', Order::getStatusTitle($order->status));
+        }
+
         if(empty($order->account_purchase_origin)){
-            $this->action_error = 'Vui lòng chọn user mua hàng site gốc!';
+            $this->action_error[] = 'Vui lòng chọn user mua hàng site gốc!';
         }
 
         $exists_original_bill = Order::find($order->id)->original_bill()->count();
         if(!$exists_original_bill){
-            $this->action_error = 'Vui lòng nhập mã hóa đơn gốc!';
+            $this->action_error[] = 'Vui lòng nhập mã hóa đơn gốc!';
         }
 
         if(!empty($order->domestic_shipping_fee)){
-            $this->action_error = 'Vui lòng nhập vào phí vận chuyển nội địa TQ!';
+            $this->action_error[] = 'Vui lòng nhập vào phí vận chuyển nội địa TQ!';
         }
 
         if(empty($order->receive_warehouse)){
-            $this->action_error = 'Vui lòng chọn kho nhận hàng bên Trung Quốc!';
+            $this->action_error[] = 'Vui lòng chọn kho nhận hàng bên Trung Quốc!';
         }
 
         if(empty($order->destination_warehouse)){
-            $this->action_error = 'Vui lòng chọn kho phân phối tại Việt Nam!';
+            $this->action_error[] = 'Vui lòng chọn kho phân phối tại Việt Nam!';
         }
 
         if(count($this->action_error)){
             return false;
         }
 
+        $customer = User::find($order->user_id);
+        $order_amount = $order->amount(true);
+        $deposit_percent_new = $order->deposit_percent;
+        $deposit_amount_new = Cart::getDepositAmount($deposit_percent_new, $order_amount);
+        $deposit_amount_old = UserTransaction::getDepositOrder($customer, $order);
+
+        $order->paid_staff_id = $user->id;
+        $order->status = Order::STATUS_BOUGHT;
+        $order->deposit_amount = $deposit_amount_new;
+        $order->bought_at = date('Y-m-d H:i:s');
+        $order->save();
+
 //        Order::where([
 //            'id' => $order->id,
 //            'user_id' => $user->id
 //        ])->update([
+//            'paid_staff_id' => Auth::user()->id,
 //            'status' => Order::STATUS_BOUGHT,
-//            'bought_at' => date('Y-m-d H:i:s')
+//            'deposit_amount' => $deposit_amount_new,
+//            'bought_at' => date('Y-m-d H:i:s'),
 //        ]);
+
+        Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        if($deposit_amount_new <> $deposit_amount_old){
+            $temp = 'truy thu';
+            $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
+            if($deposit_amount_old > $deposit_amount_new){
+                $user_transaction_amount = abs($deposit_amount_old - $deposit_amount_new);
+                $temp = 'trả lại';
+            }
+
+            $message = sprintf("Hệ thống tiến hành %s số tiền %s để đảm bảo tỉ lệ đặt cọc %s phần trăm",
+                $temp,
+                abs($deposit_amount_old - $deposit_amount_new),
+                $deposit_percent_new);
+
+            Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            UserTransaction::createTransaction(
+                UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+                $message,
+                $user,
+                $customer,
+                $order,
+                $user_transaction_amount
+            );
+
+//            $raw = DB::raw("account_balance-{$user_transaction_amount}");
+//            if($user_transaction_amount > 0){
+//                $raw = DB::raw("account_balance+{$user_transaction_amount}");
+//            }
+//            User::where(['id' => $user->id])->update([
+//                'account_balance' => $raw
+//            ]);
+//
+//            $user_after = User::find($user->id);
+//
+//            UserTransaction::insert([
+//                'user_id' => $order->user_id,
+//                'state' => UserTransaction::STATE_COMPLETED,
+//                'transaction_code' => UserTransaction::generateTransactionCode(),
+//                'transaction_type' => UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+//                'ending_balance' => $user_after->account_balance,
+//                'created_by' => Auth::user()->id,
+//                'object_id' => $order->id,
+//                'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
+//                'amount' => $user_transaction_amount,
+//                'transaction_detail' => json_encode($order),
+//                'transaction_note' => $message,
+//                'created_at' => date('Y-m-d H:i:s')
+//            ]);
+        }
 
         return true;
     }
 
-    private function __order_item_comment(Request $request, Order $order, User $user){
-        return Comment::insert([
-            'user_id' => $user->id,
-            'parent_object_id' => $order->id,
-            'parent_object_type' => Comment::TYPE_OBJECT_ORDER,
-            'object_id' => $request->get('item_id'),
-            'object_type' => Comment::TYPE_OBJECT_ORDER_ITEM,
-            'scope' => Comment::TYPE_NONE,
-            'message' => $request->get('message'),
-            'type_context' => Comment::TYPE_CONTEXT_CHAT,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+    /**
+     * @author vanhs
+     * @desc Huy don hang
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __cancel_order(Request $request, Order $order, User $user){
+        if($order->isAfterStatus(Order::STATUS_TRANSPORTING, true)){
+            $this->action_error[] = 'Đơn hàng bắt đầu vận chuyển về Việt Nam. Không thể hủy đơn hàng!';
+            return false;
+        }
+
+        $order->changeStatus(Order::STATUS_CANCELLED);
+
+        $customer = User::find($order->user_id);
+
+        $deposit_amount = UserTransaction::getDepositOrder($customer, $order);
+        if($deposit_amount < 0){
+            UserTransaction::createTransaction(
+                UserTransaction::TRANSACTION_TYPE_REFUND,
+                sprintf('Trả lại tiền đặt cọc đơn hàng %s', $order->code),
+                $user,
+                $user,
+                $order,
+                abs($deposit_amount)
+            );
+        }
+
+        Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Commment san pham
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __order_item_comment(Request $request, Order $order, User $user){
+        $item_id = $request->get('item_id');
+        $order_item = OrderItem::find($item_id);
+        return Comment::createComment(
+            $user,
+            $order_item,
+            $request->get('message'),
+            Comment::TYPE_NONE,
+            Comment::TYPE_CONTEXT_CHAT,
+            $order
+        );
+    }
+
+    /**
+     * @author vanhs
+     * @desc Them user mua hang site goc
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __account_purchase_origin(Request $request, Order $order, User $user){
         $message = null;
 
@@ -500,25 +598,22 @@ class OrderController extends Controller
             $message = sprintf('Thay đổi user mua hàng site gốc %s -> %s', $account_old, $account_new);
         }
 
-        Order::where([
-            'id' => $order->id
-        ])->update([
-            'account_purchase_origin' => $account_new
-        ]);
+        $order->account_purchase_origin = $account_new;
+        $order->save();
 
-        Comment::insert([
-            'user_id' => $user->id,
-            'object_id' => $order->id,
-            'object_type' => Comment::TYPE_OBJECT_ORDER,
-            'scope' => Comment::TYPE_INTERNAL,
-            'message' => $message,
-            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Thiet lap kho nhan hang
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __receive_warehouse(Request $request, Order $order, User $user){
         $message = null;
 
@@ -531,25 +626,22 @@ class OrderController extends Controller
             $message = sprintf('Thay đổi kho nhận hàng %s -> %s', $old, $new);
         }
 
-        Order::where([
-            'id' => $order->id
-        ])->update([
-            'receive_warehouse' => $new
-        ]);
+        $order->receive_warehouse = $new;
+        $order->save();
 
-        Comment::insert([
-            'user_id' => $user->id,
-            'object_id' => $order->id,
-            'object_type' => Comment::TYPE_OBJECT_ORDER,
-            'scope' => Comment::TYPE_INTERNAL,
-            'message' => $message,
-            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Thiet lap kho phan phoi
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __destination_warehouse(Request $request, Order $order, User $user){
         $message = null;
 
@@ -562,71 +654,67 @@ class OrderController extends Controller
             $message = sprintf('Thay đổi kho phân phối %s -> %s', $old, $new);
         }
 
-        Order::where([
-            'id' => $order->id
-        ])->update([
-            'destination_warehouse' => $new
-        ]);
+        $order->destination_warehouse = $new;
+        $order->save();
 
-        Comment::insert([
-            'user_id' => $user->id,
-            'object_id' => $order->id,
-            'object_type' => Comment::TYPE_OBJECT_ORDER,
-            'scope' => Comment::TYPE_INTERNAL,
-            'message' => $message,
-            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Doi ti le dat coc
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __change_deposit(Request $request, Order $order, User $user){
 
-//        $message = null;
-//
-//        Comment::insert([
-//            'user_id' => $user->id,
-//            'object_id' => $order->id,
-//            'object_type' => Comment::TYPE_OBJECT_ORDER,
-//            'scope' => Comment::TYPE_INTERNAL,
-//            'message' => $message,
-//            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-//            'created_at' => date('Y-m-d H:i:s')
-//        ]);
+        $old_deposit_percent = $order->deposit_percent;
+        $new_deposit_percent = (double)$request->get('deposit');
+
+        if($new_deposit_percent > 100){
+            $this->action_error[] = 'Tỉ lệ đặt cọc không hợp lệ!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $order->deposit_percent = $new_deposit_percent;
+        $order->save();
+
+        if($old_deposit_percent <> $new_deposit_percent){
+            $message = sprintf("Thay đổi tỉ lệ đặt cọc đơn hàng từ %s thành %s", $old_deposit_percent, $new_deposit_percent);
+
+            Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        }
+
 
         return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Phi van chuyen noi dia TQ
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
     {
-        $domestic_shipping_fee = (double)$request->get('domestic_shipping_china');
+        $old_demestic_shipping_fee = $order->domestic_shipping_fee;
+        $domestic_shipping_fee = $request->get('domestic_shipping_china');
 
-        Order::where([
-            'id' => $order->id
-        ])->update([
-            'domestic_shipping_fee' => $domestic_shipping_fee
-        ]);
+        $order->domestic_shipping_fee = $domestic_shipping_fee;
+        $order->save();
 
-        Comment::insert([
-            'user_id' => $user->id,
-            'object_id' => $order->id,
-            'object_type' => Comment::TYPE_OBJECT_ORDER,
-            'scope' => Comment::TYPE_INTERNAL,
-            'message' => sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee),
-            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-
-        Comment::insert([
-            'user_id' => $user->id,
-            'object_id' => $order->id,
-            'object_type' => Comment::TYPE_OBJECT_ORDER,
-            'scope' => Comment::TYPE_EXTERNAL,
-            'message' => sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee),
-            'type_context' => Comment::TYPE_CONTEXT_ACTIVITY,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
+        Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }

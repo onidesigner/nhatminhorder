@@ -22,17 +22,9 @@
 
                 <div class="card-body">
 
-
-                    @if($can_create_transaction)
-                        <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">
-                            TẠO GIAO DỊCH</a>
-                    @endif
-
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Khách </th>
                             <th>Mã GD</th>
                             <th>Loại </th>
                             <th>Trạng thái </th>
@@ -54,18 +46,8 @@
                             if(!$order) $order = new App\Order();
                         ?>
                         <tr>
-                            <td>
-                                {{$transaction->id}}
-                            </td>
-                            <td>
-                                <a href="{{ url('user/detail', $user->id)  }}">
-                                    <strong>{{$user->email}}</strong>
-                                </a><br>
 
-                                <small>{{$user->name}}</small>
 
-                                <code>{{$user->code}}</code>
-                            </td>
                             <td>
                                 {{$transaction->transaction_code}}<br>
                             <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
@@ -82,7 +64,7 @@
                             </td>
                             <td>
                                 @if($transaction->object_type == App\UserTransaction::OBJECT_TYPE_ORDER)
-                                    <a href="">{{$order->code}}</a>
+                                    <a href="{{ url('don-hang', $order->id) }}">{{$order->code}}</a>
                                 @endif
                             </td>
 

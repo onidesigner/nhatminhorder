@@ -14,6 +14,10 @@ class Util extends Model
         return $count_month;
     }
 
+    public static function formatNumber($number){
+        return number_format($number, 2, ",", ".");
+    }
+
     /**
      * generate a random token string
      *

@@ -56,8 +56,6 @@ Route::put('/user/address/default', 'Customer\UserAddressController@setDefaultUs
 
 #region quan ly don hang
 Route::get('/order', 'OrderController@getOrders');
-Route::get('/don-hang', 'Customer\OrderController@orders');
-Route::get('/don-hang/{id}', 'Customer\OrderController@order');
 Route::get('/order/{id}', 'OrderController@getOrder');
 Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
 Route::put('/order/{id}/freight_bill', 'OrderController@removeFreightBill');
@@ -107,4 +105,21 @@ Route::post('actionWarehouse', 'ExportWarehouseController@actionWarehouse');
 
 Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
+
+
+
+//================ CUSTOMER ==============
+#region -- giao dich --
+Route::get('giao-dich', 'Customer\UserTransactionController@getTransactions');
+#endregion
+
+#region -- don hang --
+Route::get('/don-hang', 'Customer\OrderController@orders');
+Route::get('/don-hang/{id}', 'Customer\OrderController@order');
+Route::post('/don-hang/{id}/hanh-dong', 'Customer\OrderController@action');
+#endregion
+
+#region -- thong bao --
+Route::get('/thong-bao', 'Customer\NotificationController@indexs');
+#endregion
 
