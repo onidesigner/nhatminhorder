@@ -40,4 +40,13 @@ class WareHouse extends Model
 
         return $alias;
     }
+
+    public static function findByType($type){
+        return self::where([
+            'type' => $type
+        ])
+        ->orderBy('alias', 'asc')
+        ->orderBy('ordering', 'asc')
+        ->get();
+    }
 }

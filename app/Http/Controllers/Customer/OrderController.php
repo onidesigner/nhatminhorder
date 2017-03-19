@@ -5,8 +5,11 @@ use App\Comment;
 use App\Exchange;
 use App\Http\Controllers\Controller;
 use App\Order;
+use App\Package;
+use App\Service;
 use App\User;
 use App\UserTransaction;
+use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +119,86 @@ class OrderController extends Controller
             DB::rollback();
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
         }
+    }
+
+    private function __customer_delivery(Request $request, Order $order, User $user){
+        if($order->status != Order::STATUS_WAITING_DELIVERY){
+            $this->action_error[] = 'Trạng thái không hợp lệ!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $order->changeStatus(Order::STATUS_CUSTOMER_DELIVERY);
+
+        $total_package_weight_payment = 0;
+        $packages_payment = $order->package()->where([ 'status' => '' ])->get();
+        if($packages_payment){
+            foreach($packages_payment as $package_payment){
+                if(!$package_payment instanceof Package){
+                    continue;
+                }
+                $total_package_weight_payment += (float)$package_payment->weight;
+            }
+        }
+
+        $customer_payment_order = UserTransaction::getPaymentOrder($user, $order);
+        $total_order_payment = 0;
+
+        $total_amount_vnd = $order->amountWithItems(true);
+        $shipping_china_vietnam = $order->getShippingChinaVietnam($total_package_weight_payment);
+        $total_order_payment += $total_amount_vnd;
+        $total_order_payment += $order->getBuyingFee($total_amount_vnd);
+        if($order->existService(Service::TYPE_CHECKING)){
+            $total_order_payment += $order->getCheckingFee();
+        }
+        if($order->existService(Service::TYPE_WOOD_CRATING)){
+            $total_order_payment += $order->getWoodCrating($shipping_china_vietnam, 10, 10);
+        }
+
+        Comment::createComment($user, $order, "Chuyển trạng thái đơn hàng sang yêu cầu giao", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, "Chuyển trạng thái đơn hàng sang yêu cầu giao", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        if($customer_payment_order <> $total_order_payment){
+            $temp = 'truy thu';
+            $user_transaction_amount = 0 - abs($customer_payment_order - $total_order_payment);
+            if($customer_payment_order > $total_order_payment){
+                $user_transaction_amount = abs($customer_payment_order - $total_order_payment);
+                $temp = 'trả lại';
+            }
+
+            $message = sprintf("Hệ thống tiến hành %s số tiền %s",
+                $temp,
+                Util::formatNumber(abs($customer_payment_order - $total_order_payment)));
+
+            Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            UserTransaction::createTransaction(
+                UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+                $message,
+                $user,
+                $user,
+                $order,
+                $user_transaction_amount
+            );
+        }
+
+        return true;
+    }
+
+    private function __received_order(Request $request, Order $order, User $user){
+        if($order->status != Order::STATUS_DELIVERING){
+            $this->action_error[] = 'Trạng thái không hợp lệ!';
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $order->changeStatus(Order::STATUS_RECEIVED);
+        Comment::createComment($user, $order, "Chuyển trạng thái đơn sang đã nhận hàng", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
     }
 
     /**

@@ -51,9 +51,8 @@
                                 </td>
                                 <td>
                                     <?php
-                                    $user = App\User::find($order->user_id);
-                                    echo '<p><strong>' . $user->email . '</strong></p>';
-//                                    echo '<p>' . $user->name . '</p>';
+                                    $customer = App\User::find($order->user_id);
+                                    echo '<p><strong>' . $customer->email . '</strong> <code>'. $customer->code .'</code></p>';
                                     ?>
 
                                     <p>

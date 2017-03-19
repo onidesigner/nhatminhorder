@@ -6,6 +6,9 @@ use App\ServiceWoodCrating;
 
 class WoodCrating extends AbstractService {
 
+    const TYPE_CALCULATOR_MANUAL = 'MANUAL';
+    const TYPE_CALCULATOR_EQUIVALENT = 'EQUIVALENT';
+
     function __construct($data) {
         $this->service = new Service();
 

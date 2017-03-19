@@ -19,7 +19,6 @@ class CreateServicesTable extends Migration
             $table->string('code', 50);
             $table->enum('status', ['ACTIVE','DISABLED']);
             $table->double('fixed_fee', 20, 2);
-            $table->double('fixed_fee_min', 20, 2);
             $table->string('description', 255);
             $table->timestamps();
         });

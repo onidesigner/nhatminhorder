@@ -21,16 +21,12 @@ class CreateUserTransactionTable extends Migration
             $table->enum('transaction_type', ['DEPOSIT','WITHDRAWAL','REFUND','ORDER_DEPOSIT','ORDER_PAYMENT','ADJUSTMENT','CHARGE_FEE','GIFT','PAYMENT','PROMOTION','REFUND_COMPLAINT','DEPOSIT_ADJUSTMENT']);
             $table->double('amount', 20, 2);
             $table->double('ending_balance', 20, 2);
-            $table->integer('closed_by');
             $table->integer('created_by');
             $table->string('object_id', 255);
             $table->string('object_type', 20);
             $table->string('transaction_detail', 255);
             $table->string('transaction_note', 255);
             $table->char('checksum', 64);
-            $table->string('external_id', 50);
-            $table->timestamp('expired_time');
-            $table->timestamp('closed_time');
             $table->timestamps();
         });
     }

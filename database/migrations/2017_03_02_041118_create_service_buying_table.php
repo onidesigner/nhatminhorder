@@ -15,7 +15,6 @@ class CreateServiceBuyingTable extends Migration
     {
         Schema::create('service_buying', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('level')->default(0);
             $table->decimal('fee_percent', 4, 1);
             $table->double('min_fee', 20, 2);
             $table->double('begin', 20, 2);

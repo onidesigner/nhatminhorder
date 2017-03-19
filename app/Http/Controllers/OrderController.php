@@ -9,6 +9,7 @@ use App\Location;
 use App\OrderFreightBill;
 use App\OrderItem;
 use App\OrderOriginalBill;
+use App\OrderService;
 use App\Permission;
 use App\User;
 use App\UserAddress;
@@ -61,6 +62,10 @@ class OrderController extends Controller
             if(!$can_execute):
                 return response()->json(['success' => false, 'message' => 'Not permission!']);
             endif;
+
+            if($order->isEndingStatus()){
+                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+            }
 
             if(empty($freight_bill)):
                 return response()->json(['success' => false, 'message' => 'Mã vận đơn không để trống!']);
@@ -132,6 +137,10 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Not permission!']);
             endif;
 
+            if($order->isEndingStatus()){
+                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+            }
+
             OrderFreightBill::where([
                 'order_id' => $order_id,
                 'freight_bill' => $freight_bill
@@ -176,6 +185,10 @@ class OrderController extends Controller
             if(!$can_execute):
                 return response()->json(['success' => false, 'message' => 'Not permission!']);
             endif;
+
+            if($order->isEndingStatus()){
+                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+            }
 
             if(empty($original_bill)):
                 return response()->json(['success' => false, 'message' => 'Mã hóa đơn gốc không để trống!']);
@@ -239,6 +252,10 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Not permission!']);
             endif;
 
+            if($order->isEndingStatus()){
+                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+            }
+
             OrderOriginalBill::where([
                 'order_id' => $order_id,
                 'original_bill' => $original_bill
@@ -287,57 +304,30 @@ class OrderController extends Controller
         endif;
 
         $order_id = $request->route('id');
-
-        $order = Order::find($order_id);
-
+        $order = Order::findOneByIdOrCode($order_id);
         if(!$order):
-            $order = Order::where(['code' => $order_id])->first();
-            if(!$order):
-                return redirect('404');
-            endif;
+            return redirect('404');
         endif;
 
-        $freight_bill = $order->freight_bill;
-        $original_bill = $order->original_bill;
-
-        $user_origin_site = UserOriginalSite::all();
-
-        $warehouse_distribution = Warehouse::where(['type' => WareHouse::TYPE_DISTRIBUTION])
-            ->orderBy('alias', 'asc')
-            ->orderBy('ordering', 'asc')->get();
-
-        $warehouse_receive = Warehouse::where(['type' => WareHouse::TYPE_RECEIVE])
-            ->orderBy('alias', 'asc')
-            ->orderBy('ordering', 'asc')->get();
-
-        $order_items = $order->item;
-        $transactions = UserTransaction::where([
-            'object_id' => $order->id,
-            'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
-            'state' => UserTransaction::STATE_COMPLETED
-        ])->orderBy('created_at', 'desc')
-            ->get();
+        $customer = User::find($order->user_id);
+        if(!$customer || !$customer instanceof User){
+            return redirect('404');
+        }
 
         $user_address = UserAddress::find($order->user_address_id);
         if($user_address && $user_address instanceof UserAddress){
             $district = Location::find($user_address->district_id);
-            if($district){
+            if($district && $district instanceof Location){
                 $user_address->district_label = $district->label;
             }
-
             $province = Location::find($user_address->province_id);
-            if($province){
+            if($province && $province instanceof Location){
                 $user_address->province_label = $province->label;
             }
         }
 
         $order_item_comments_data = [];
-        $order_item_comments = Comment::where([
-            'parent_object_id' => $order->id,
-            'parent_object_type' => Comment::TYPE_OBJECT_ORDER,
-            'object_type' => Comment::TYPE_OBJECT_ORDER_ITEM,
-            'scope' => Comment::TYPE_NONE,
-        ])->orderBy('created_at', 'desc')->get();
+        $order_item_comments = Order::findByOrderItemComments($order->id);
         if($order_item_comments){
             foreach($order_item_comments as $order_item_comment){
                 $order_item_comment->user = User::find($order_item_comment->user_id);
@@ -355,16 +345,19 @@ class OrderController extends Controller
 
         return view('order_detail', [
             'order_id' => $order_id,
-            'freight_bill' => $freight_bill,
-            'original_bill' => $original_bill,
-            'warehouse_distribution' => $warehouse_distribution,
-            'warehouse_receive' => $warehouse_receive,
+            'freight_bill' => $order->freight_bill,
+            'original_bill' => $order->original_bill,
+            'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
+            'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
             'user_address' => $user_address,
             'order' => $order,
+            'order_service' => $order->service,
             'order_item_comments' => $order_item_comments_data,
-            'user_origin_site' => $user_origin_site,
-            'order_items' => $order_items,
-            'transactions' => $transactions,
+            'user_origin_site' => UserOriginalSite::all(),
+            'order_items' => $order->item,
+            'order_fee' => $order->fee($customer),
+            'customer' => $customer,
+            'transactions' => Order::findByTransactions($order->id),
             'page_title' => 'Chi tiết đơn hàng',
             'permission' => $permission
         ]);
@@ -399,6 +392,12 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
 
+
+
+            if($order->isEndingStatus()){
+                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+            }
+
             $result = $this->$action($request, $order, $user);
             if(!$result){
                 return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
@@ -412,6 +411,75 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
         }
 
+    }
+
+    private function __insert_freight_bill(Request $request, Order $order, User $user){
+
+    }
+
+    private function __remove_freight_bill(Request $request, Order $order, User $user){
+        $order_id = $request->get('order_id');
+        $freight_bill = $request->get('freight_bill');
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_FREIGHT_BILL);
+        if(!$can_execute):
+            $this->action_error[] = 'Not permission!';
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        OrderFreightBill::where([
+            'order_id' => $order_id,
+            'freight_bill' => $freight_bill
+        ])->delete();
+
+        Comment::createComment($user, $order, sprintf('Xóa mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+    }
+
+    private function __insert_original_bill(Request $request, Order $order, User $user){
+
+    }
+
+    private function __remove_original_bill(Request $request, Order $order, User $user){
+
+    }
+
+    /**
+     * @author vanhs
+     * @desc Them/bo dich vu tren don
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __change_order_service(Request $request, Order $order, User $user){
+
+        $action_check = $request->get('action_check');
+        $service_code = $request->get('service_code');
+        $service_name = $request->get('service_name');
+
+        $exists_service = $order->existService($service_code);
+        switch ($action_check){
+            case 'check':
+                if(!$exists_service){
+                    OrderService::addService($order->id, $service_code);
+
+                    Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                }
+                break;
+            case 'uncheck':
+                if($exists_service){
+                    OrderService::removeService($order->id, $service_code);
+
+                    Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                }
+                break;
+        }
+        return true;
     }
 
     /**
@@ -444,7 +512,7 @@ class OrderController extends Controller
         $order_item->save();
 
         $order->total_order_quantity = $order->total_order_quantity();
-        $order->amount = $order->amount();
+        $order->amount = $order->amountWithItems();
         $order->save();
 
         if($old_order_quantity <> $new_order_quantity){
@@ -492,7 +560,7 @@ class OrderController extends Controller
         $order_item->price_promotion = $new_order_item_price;
         $order_item->save();
 
-        $order->amount = $order->amount();
+        $order->amount = $order->amountWithItems();
         $order->save();
 
         if($old_order_item_price <> $new_order_item_price){
@@ -548,31 +616,32 @@ class OrderController extends Controller
         }
 
         $customer = User::find($order->user_id);
-        $order_amount = $order->amount(true);
+        $order_amount = $order->amountWithItems(true);
         $deposit_percent_new = $order->deposit_percent;
         $deposit_amount_new = Cart::getDepositAmount($deposit_percent_new, $order_amount);
         $deposit_amount_old = UserTransaction::getDepositOrder($customer, $order);
         $deposit_amount_old = abs($deposit_amount_old);
 
+        $order->changeStatus(Order::STATUS_BOUGHT, false);
         $order->paid_staff_id = $user->id;
-        $order->status = Order::STATUS_BOUGHT;
         $order->deposit_amount = $deposit_amount_new;
-        $order->bought_at = date('Y-m-d H:i:s');
         $order->save();
 
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-        if($deposit_amount_new <> $deposit_amount_old){
-            $temp = 'truy thu';
-            $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
+        $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
+
+        if($user_transaction_amount <> 0){
+            $text = 'truy thu';
+
             if($deposit_amount_old > $deposit_amount_new){
                 $user_transaction_amount = abs($deposit_amount_old - $deposit_amount_new);
-                $temp = 'trả lại';
+                $text = 'trả lại';
             }
 
             $message = sprintf("Hệ thống tiến hành %s số tiền %s để đảm bảo tỉ lệ đặt cọc %s phần trăm",
-                $temp,
+                $text,
                 Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new)),
                 $deposit_percent_new);
 

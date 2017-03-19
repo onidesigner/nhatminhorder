@@ -145,45 +145,10 @@ class UserTransactionController extends Controller
         return ['success' => true];
     }
 
-    /**
-     * @author vanhs
-     * @desc Tao giao dich: luu thong tin vao bang user_transaction, cap nhat tai chinh khach
-     * @param User $user
-     * @param $state
-     * @param $amount
-     * @param $transaction_type
-     * @param $transaction_detail
-     * @param $transaction_note
-     * @param string $order_id
-     * @param $object_type
-     */
-    private function __createTransaction(User $user, $state, $amount, $transaction_type,
-                                         $transaction_detail, $transaction_note,
-                                         $order_id = '', $object_type= ''){
-        $code = UserTransaction::generateTransactionCode();
-
-        $ending_balance = $user->account_balance + $amount;
-
-        UserTransaction::insert([
-            'ending_balance' => $ending_balance,
-            'user_id' => $user->id,
-            'state' => $state,
-            'object_id' => $order_id,
-            'object_type' => $object_type,
-            'transaction_code' => $code,
-            'transaction_type' => $transaction_type,
-            'amount' => $amount,
-            'created_by' => Auth::user()->id,
-            'transaction_detail' => $transaction_detail,
-            'transaction_note' => $transaction_note,
-            'created_at' => date('Y-m-d H:i:s')
-        ]);
-
-        $user->updateAccountBalance($amount, $user->id);
-    }
-
     public function createTransactionAdjustment(Request $request){
         try{
+
+            $user_create = User::find(Auth::user()->id);
 
             $data_insert = $request->all();
             $data_insert['created_at'] = date('Y-m-d H:i:s');
@@ -195,6 +160,8 @@ class UserTransactionController extends Controller
                 return Response::json(array('success' => false, 'message' => $validate_data['message'] ));
             endif;
 
+            $is_ok = false;
+
             switch ($data_insert['transaction_type']):
                 case UserTransaction::TRANSACTION_TYPE_ADJUSTMENT:
 
@@ -202,21 +169,31 @@ class UserTransactionController extends Controller
                         $data_insert['amount'] = 0 - $data_insert['amount'];
                     endif;
 
-                    $user = User::find($data_insert['user_id']);
+                    $customer = User::find($data_insert['user_id']);
 
-                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
-                        $data_insert['transaction_type'], $data_insert['transaction_note'],
-                        $data_insert['transaction_note']);
+                    $is_ok = UserTransaction::createTransaction(
+                        UserTransaction::TRANSACTION_TYPE_ADJUSTMENT,
+                        $data_insert['transaction_note'],
+                        $user_create,
+                        $customer,
+                        null,
+                        $data_insert['amount']
+                    );
 
                     break;
 
                 case UserTransaction::TRANSACTION_TYPE_GIFT:
 
-                    $user = User::find($data_insert['user_id']);
+                    $customer = User::find($data_insert['user_id']);
 
-                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
-                        $data_insert['transaction_type'], $data_insert['transaction_note'],
-                        $data_insert['transaction_note']);
+                    $is_ok = UserTransaction::createTransaction(
+                        UserTransaction::TRANSACTION_TYPE_GIFT,
+                        $data_insert['transaction_note'],
+                        $user_create,
+                        $customer,
+                        null,
+                        $data_insert['amount']
+                    );
 
                     break;
 
@@ -228,8 +205,6 @@ class UserTransactionController extends Controller
                     endif;
 
                     $object = null;
-                    $object_id = null;
-                    $object_type = $data_insert['object_type'];
                     switch ($data_insert['object_type']):
                         case UserTransaction::OBJECT_TYPE_ORDER:
                             $object = Order::select('*')
@@ -237,19 +212,27 @@ class UserTransactionController extends Controller
                                     'code' => $data_insert['order_code']
                                 ])
                                 ->first();
-                            $object_id = $object->code;
                             break;
                     endswitch;
 
-                    $user = User::find($object->buyer_id);
+                    $customer = User::find($object->user_id);
 
-                    $this->__createTransaction($user, UserTransaction::STATE_COMPLETED, $data_insert['amount'],
-                        $data_insert['transaction_type'], json_encode($object),
-                        $data_insert['transaction_note'], $object_id, $object_type);
+                    $is_ok = UserTransaction::createTransaction(
+                        $data_insert['transaction_type'],
+                        $data_insert['transaction_note'],
+                        $user_create,
+                        $customer,
+                        $object,
+                        $data_insert['amount']
+                    );
 
                     break;
 
             endswitch;
+
+            if(!$is_ok){
+                return Response::json(['success' => true, 'message' => 'insert fail!']);
+            }
 
             DB::commit();
 
@@ -261,8 +244,7 @@ class UserTransactionController extends Controller
     }
 
     public function renderTransactionAdjustment(){
-        $user = new User();
-        $users_customer = $user->newQuery()->where([
+        $users_customer = User::where([
             'status' => User::STATUS_ACTIVE,
             'section' => User::SECTION_CUSTOMER,
         ])->orderBy('name', 'asc')->get()->toArray();

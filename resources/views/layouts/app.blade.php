@@ -90,7 +90,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-left">
                         <li class="navbar-title">
-                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>d</sup>&nbsp;&nbsp;&nbsp;Số dư: <span class="text-danger"><?php echo number_format(Auth::user()->account_balance, 2, ",", ".") ?> <sup>d</sup></span>
+                            Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>đ</sup>&nbsp;&nbsp;&nbsp;Số dư: <span class="text-danger"><?php echo App\Util::formatNumber(Auth::user()->account_balance) ?> <sup>đ</sup></span>
 
                         </li>
                         {{--<li class="navbar-search hidden-sm">--}}

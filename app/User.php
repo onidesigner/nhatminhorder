@@ -131,10 +131,17 @@ class User extends Authenticatable
         try{
             DB::beginTransaction();
 
-            $this->newQuery()->where([
+            if($amount > 0){
+                $raw = DB::raw("account_balance+{$amount}");
+            }else{
+                $amount = abs($amount);
+                $raw = DB::raw("account_balance-{$amount}");
+            }
+
+            self::where([
                 'id' => $user_id,
             ])->update([
-                'account_balance' => DB::raw("account_balance+{$amount}")
+                'account_balance' => $raw
             ]);
 
             DB::commit();

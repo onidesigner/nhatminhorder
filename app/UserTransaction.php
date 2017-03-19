@@ -128,18 +128,31 @@ class UserTransaction extends Model
 
     }
 
+    public static function getPaymentOrder(User $customer, Order $order){
+        return DB::table('user_transaction')
+            ->select(DB::raw('SUM(amount) as total_amount'))
+            ->where([
+                'user_id' => $customer->id,
+                'state' => self::STATE_COMPLETED,
+                'object_id' => $order->id,
+                'object_type' => self::OBJECT_TYPE_ORDER,
+
+            ])
+            ->first()->total_amount;
+    }
+
     public static function getDepositOrder(User $customer, Order $order){
         return DB::table('user_transaction')
             ->select(DB::raw('SUM(amount) as total_amount'))
             ->where([
                 'user_id' => $customer->id,
-                'state' => UserTransaction::STATE_COMPLETED,
+                'state' => self::STATE_COMPLETED,
                 'object_id' => $order->id,
-                'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
+                'object_type' => self::OBJECT_TYPE_ORDER,
 
             ])
             ->whereIn('transaction_type', [
-                UserTransaction::TRANSACTION_TYPE_ORDER_DEPOSIT,
+                self::TRANSACTION_TYPE_ORDER_DEPOSIT,
                 self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT
             ])
             ->first()->total_amount;
@@ -149,18 +162,9 @@ class UserTransaction extends Model
         try{
             DB::beginTransaction();
 
-            if($amount > 0){
-                $raw = DB::raw("account_balance+{$amount}");
-            }else{
-                $raw = DB::raw("account_balance-{$amount}");
-            }
-            User::where([
-                'id' => $customer->id
-            ])->update([
-                'account_balance' => $raw,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-            $customer_after = User::find($customer->id);
+            $customer->updateAccountBalance($amount, $customer->id);
+
+            $customer_after_change = User::find($customer->id);
 
             $transaction_code = self::generateTransactionCode();
 
@@ -178,10 +182,15 @@ class UserTransaction extends Model
             $user_transaction->transaction_code = $transaction_code;
             $user_transaction->transaction_type = $transaction_type;
             $user_transaction->amount = $amount;
-            $user_transaction->ending_balance = $customer_after->account_balance;
+            $user_transaction->ending_balance = $customer_after_change->account_balance;
             $user_transaction->created_by = $create->id;
-            $user_transaction->object_id = $object_id;
-            $user_transaction->object_type = $object_type;
+            if($object_id){
+                $user_transaction->object_id = $object_id;
+            }
+            if($object_type){
+                $user_transaction->object_type = $object_type;
+            }
+
             $user_transaction->transaction_detail = json_encode($object);
             $user_transaction->transaction_note = $transaction_note;
             $user_transaction->save();
