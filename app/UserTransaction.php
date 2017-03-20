@@ -158,6 +158,19 @@ class UserTransaction extends Model
             ->first()->total_amount;
     }
 
+    public static function getCustomerPaymentOrder(User $customer, Order $order){
+        return DB::table('user_transaction')
+            ->select(DB::raw('SUM(amount) as total_amount'))
+            ->where([
+                'user_id' => $customer->id,
+                'state' => self::STATE_COMPLETED,
+                'object_id' => $order->id,
+                'object_type' => self::OBJECT_TYPE_ORDER,
+
+            ])
+            ->first()->total_amount;
+    }
+
     public static function createTransaction($transaction_type, $transaction_note, User $create, User $customer, $object, $amount){
         try{
             DB::beginTransaction();

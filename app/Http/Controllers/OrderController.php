@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 class OrderController extends Controller
 {
@@ -35,258 +36,40 @@ class OrderController extends Controller
 
     /**
      * @author vanhs
-     * @desc Them ma van don
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function insertFreightBill(Request $request){
-
-        try{
-            DB::beginTransaction();
-
-            $order_id = $request->get('order_id');
-            $freight_bill = $request->get('freight_bill');
-
-            $order = Order::find($order_id);
-            $user = User::find(Auth::user()->id);
-
-            if(!$order):
-                return response()->json(['success' => false, 'message' => 'Order not found!']);
-            endif;
-
-            if(!$user):
-                return response()->json(['success' => false, 'message' => 'User not found!']);
-            endif;
-
-            $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL);
-            if(!$can_execute):
-                return response()->json(['success' => false, 'message' => 'Not permission!']);
-            endif;
-
-            if($order->isEndingStatus()){
-                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
-            }
-
-            if(empty($freight_bill)):
-                return response()->json(['success' => false, 'message' => 'Mã vận đơn không để trống!']);
-            endif;
-
-            $order_freight_bill_exists = $order->has_freight_bill($freight_bill);
-
-            if($order_freight_bill_exists):
-                return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn %s đã tồn tại', $freight_bill)]);
-            endif;
-
-            $freight_bill_exists = OrderFreightBill::where([
-                'freight_bill' => $freight_bill
-            ])->count();
-
-            $order->create_freight_bill($user->id, $freight_bill);
-
-            $message = '';
-            if($freight_bill_exists):
-                $message = sprintf('Mã hóa đơn %s đã tồn tại ở 1 đơn hàng khác!', $freight_bill);
-            endif;
-
-            Comment::createComment($user, $order, sprintf('Thêm mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-            $order_empty_freight_bill = $order->exist_freight_bill();
-            if($order_empty_freight_bill
-                && $order->status == Order::STATUS_BOUGHT){
-                $order->changeStatus(Order::STATUS_SELLER_DELIVERY);
-                Comment::createComment($user, $order, "Đơn hàng chuyển sang trạng thái người bán giao.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                Comment::createComment($user, $order, "Chuyển trạng thái đơn sang người bán giao.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-            }
-
-            DB::commit();
-            return response()->json(['success' => true, 'message' => $message]);
-
-        }catch(\Exception $e){
-            DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Exception!']);
-        }
-    }
-
-    /**
-     * @author vanhs
-     * @desc Xoa ma van don
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function removeFreightBill(Request $request){
-
-        try{
-            DB::beginTransaction();
-
-            $order_id = $request->get('order_id');
-            $freight_bill = $request->get('freight_bill');
-
-            $order = Order::find($order_id);
-            $user = User::find(Auth::user()->id);
-
-            if(!$order):
-                return response()->json(['success' => false, 'message' => 'Order not found!']);
-            endif;
-
-            if(!$user):
-                return response()->json(['success' => false, 'message' => 'User not found!']);
-            endif;
-
-            $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_FREIGHT_BILL);
-            if(!$can_execute):
-                return response()->json(['success' => false, 'message' => 'Not permission!']);
-            endif;
-
-            if($order->isEndingStatus()){
-                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
-            }
-
-            OrderFreightBill::where([
-                'order_id' => $order_id,
-                'freight_bill' => $freight_bill
-            ])->delete();
-
-            Comment::createComment($user, $order, sprintf('Xóa mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-            DB::commit();
-            return response()->json(['success' => true, 'message' => 'delete success']);
-
-        }catch(\Exception $e){
-            DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Exception']);
-        }
-    }
-
-    /**
-     * @author vanhs
-     * @desc Them ma hoa don site goc
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function insertOriginalBill(Request $request){
-        try{
-            DB::beginTransaction();
-
-            $order_id = $request->get('order_id');
-            $original_bill = $request->get('original_bill');
-
-            $order = Order::find($order_id);
-            $user = User::find(Auth::user()->id);
-
-            if(!$order):
-                return response()->json(['success' => false, 'message' => 'Order not found!']);
-            endif;
-
-            if(!$user):
-                return response()->json(['success' => false, 'message' => 'User not found!']);
-            endif;
-
-            $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_ORIGINAL_BILL);
-            if(!$can_execute):
-                return response()->json(['success' => false, 'message' => 'Not permission!']);
-            endif;
-
-            if($order->isEndingStatus()){
-                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
-            }
-
-            if(empty($original_bill)):
-                return response()->json(['success' => false, 'message' => 'Mã hóa đơn gốc không để trống!']);
-            endif;
-
-            $order_original_bill_exists = $order->has_original_bill($original_bill);
-
-            if($order_original_bill_exists):
-                return response()->json(['success' => false, 'message' => sprintf('Mã hóa đơn gốc %s đã tồn tại!', $original_bill)]);
-            endif;
-
-            $original_bill_exists = OrderOriginalBill::where([
-                'original_bill' => $original_bill
-            ])->count();
-
-            $order->create_original_bill($user->id, $original_bill);
-
-            Comment::createComment($user, $order, sprintf('Thêm mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-            $message = '';
-
-            if($original_bill_exists):
-                $message = sprintf('Mã hóa đơn gốc %s đã tồn tại ở 1 đơn hàng khách!', $original_bill);
-            endif;
-
-            DB::commit();
-            return response()->json(['success' => true, 'message' => $message]);
-        }catch(\Exception $e){
-            DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại hoặc liên hệ với kỹ thuật để được hỗ trợ!']);
-        }
-    }
-
-    /**
-     * @author vanhs
-     * @desc Xoa ma hoa don site goc
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function removeOriginalBill(Request $request){
-        try{
-            DB::beginTransaction();
-
-            $order_id = $request->get('order_id');
-            $user = User::find(Auth::user()->id);
-
-            $original_bill = $request->get('original_bill');
-
-            $order = Order::find($order_id);
-
-            if(!$order):
-                return response()->json(['success' => false, 'message' => 'Order not found!']);
-            endif;
-
-            if(!$user):
-                return response()->json(['success' => false, 'message' => 'User not found!']);
-            endif;
-
-            $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_ORIGINAL_BILL);
-            if(!$can_execute):
-                return response()->json(['success' => false, 'message' => 'Not permission!']);
-            endif;
-
-            if($order->isEndingStatus()){
-                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
-            }
-
-            OrderOriginalBill::where([
-                'order_id' => $order_id,
-                'original_bill' => $original_bill
-            ])->delete();
-
-            Comment::createComment($user, $order, sprintf('Xóa mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-            DB::commit();
-            return response()->json([ 'success' => true, 'message' => 'delete success' ]);
-        }catch(\Exception $e){
-            DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Exception!']);
-        }
-    }
-
-    /**
-     * @author vanhs
      * @desc Danh sach don hang
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getOrders(){
-        $exchange_rage = Exchange::getExchange();
+    public function orders(){
+        $params = Input::all();
         $per_page = 50;
-        $orders = Order::select('*')
-            ->orderBy('id', 'desc')
-            ->paginate($per_page);
+
+        $orders = Order::select('*');
+        $orders = $orders->orderBy('id', 'desc');
+        if(!empty($params['status'])){
+            $orders = $orders->whereIn('status', explode(',', $params['status']));
+        }
+        $total_orders = $orders->count();
+        $orders = $orders->paginate($per_page);
+
+        $status_list = [];
+        foreach(Order::$statusTitle as $key => $val){
+            $selected = false;
+            if(!empty($params['status'])){
+                $selected = in_array($key, explode(',', $params['status']));
+            }
+            $status_list[] = [
+                'key' => $key,
+                'val' => $val,
+                'selected' => $selected
+            ];
+        }
 
         return view('orders', [
             'page_title' => ' Quản lý đơn hàng',
             'orders' => $orders,
-            'exchange_rage' => $exchange_rage
+            'total_orders' => $total_orders,
+            'status_list' => $status_list,
+            'params' => $params,
         ]);
     }
 
@@ -296,7 +79,7 @@ class OrderController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function getOrder(Request $request){
+    public function order(Request $request){
 
         $can_view = Permission::isAllow(Permission::PERMISSION_ORDER_VIEW);
         if(!$can_view):
@@ -341,12 +124,27 @@ class OrderController extends Controller
             'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
         ];
+
+        $fee = $order->fee($customer);
+
+        $order_fee = [];
+        foreach(Order::$fee_field_order_detail as $key => $label){
+            $value = $key;
+            if(isset($fee[$key])){
+                $value = Util::formatNumber($fee[$key]);
+            }
+            $order_fee[] = [
+                'label' => $label,
+                'value' => $value,
+            ];
+        }
 
         return view('order_detail', [
             'order_id' => $order_id,
-            'freight_bill' => $order->freight_bill,
-            'original_bill' => $order->original_bill,
+            'freight_bill' => $order->freight_bill()->where([ 'is_deleted' => 0 ])->get(),
+            'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
             'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
             'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
             'user_address' => $user_address,
@@ -355,7 +153,7 @@ class OrderController extends Controller
             'order_item_comments' => $order_item_comments_data,
             'user_origin_site' => UserOriginalSite::all(),
             'order_items' => $order->item,
-            'order_fee' => $order->fee($customer),
+            'order_fee' => $order_fee,
             'customer' => $customer,
             'transactions' => Order::findByTransactions($order->id),
             'page_title' => 'Chi tiết đơn hàng',
@@ -415,11 +213,55 @@ class OrderController extends Controller
 
     private function __insert_freight_bill(Request $request, Order $order, User $user){
 
+        $freight_bill = $request->get('freight_bill');
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL);
+        if(!$can_execute):
+            $this->action_error[] = 'Not permission!';
+        endif;
+
+        if(empty($freight_bill)):
+            $this->action_error[] = 'Mã vận đơn không để trống!';
+        endif;
+
+        $order_freight_bill_exists = $order->has_freight_bill($freight_bill);
+
+        if($order_freight_bill_exists):
+            $this->action_error[] = sprintf('Mã hóa đơn %s đã tồn tại', $freight_bill);
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+//        $freight_bill_exists = OrderFreightBill::where([
+//            'freight_bill' => $freight_bill,
+//            'is_deleted' => 0,
+//        ])->count();
+
+        $order->create_freight_bill($user->id, $freight_bill);
+
+//        $message = '';
+//        if($freight_bill_exists):
+//            $message = sprintf('Mã hóa đơn %s đã tồn tại ở 1 đơn hàng khác!', $freight_bill);
+//        endif;
+
+        Comment::createComment($user, $order, sprintf('Thêm mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        $order_empty_freight_bill = $order->exist_freight_bill();
+        if($order_empty_freight_bill
+            && $order->status == Order::STATUS_BOUGHT){
+            $order->changeStatus(Order::STATUS_SELLER_DELIVERY);
+            Comment::createComment($user, $order, "Đơn hàng chuyển sang trạng thái người bán giao.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            Comment::createComment($user, $order, "Chuyển trạng thái đơn sang người bán giao.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        }
+
+        return true;
     }
 
     private function __remove_freight_bill(Request $request, Order $order, User $user){
-        $order_id = $request->get('order_id');
-        $freight_bill = $request->get('freight_bill');
+
+        $freight_bill = $request->get('freight_bill_delete');
 
         $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_FREIGHT_BILL);
         if(!$can_execute):
@@ -431,19 +273,81 @@ class OrderController extends Controller
         }
 
         OrderFreightBill::where([
-            'order_id' => $order_id,
+            'order_id' => $order->id,
             'freight_bill' => $freight_bill
-        ])->delete();
+        ])->update([
+            'is_deleted' => 1,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
 
         Comment::createComment($user, $order, sprintf('Xóa mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        return true;
     }
 
     private function __insert_original_bill(Request $request, Order $order, User $user){
+        $original_bill = $request->get('original_bill');
 
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_ORIGINAL_BILL);
+        if(!$can_execute):
+            $this->action_error[] = 'Not permission!';
+        endif;
+
+        if(empty($original_bill)):
+            $this->action_error[] = 'Mã hóa đơn gốc không để trống!';
+        endif;
+
+        $order_original_bill_exists = $order->has_original_bill($original_bill);
+
+        if($order_original_bill_exists):
+            $this->action_error[] = sprintf('Mã hóa đơn gốc %s đã tồn tại!', $original_bill);
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+//        $original_bill_exists = OrderOriginalBill::where([
+//            'original_bill' => $original_bill,
+//            'is_delete' => 0,
+//        ])->count();
+
+        $order->create_original_bill($user->id, $original_bill);
+
+        Comment::createComment($user, $order, sprintf('Thêm mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+//        $message = '';
+//        if($original_bill_exists):
+//            $message = sprintf('Mã hóa đơn gốc %s đã tồn tại ở 1 đơn hàng khách!', $original_bill);
+//        endif;
+
+        return true;
     }
 
     private function __remove_original_bill(Request $request, Order $order, User $user){
 
+        $original_bill = $request->get('original_bill_delete');
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_ORIGINAL_BILL);
+        if(!$can_execute):
+            $this->action_error[] = 'Not permission!';
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        OrderOriginalBill::where([
+            'order_id' => $order->id,
+            'original_bill' => $original_bill
+        ])->update([
+            'updated_at' => date('Y-m-d H:i:s'),
+            'is_deleted' => 1
+        ]);
+
+        Comment::createComment($user, $order, sprintf('Xóa mã hóa đơn gốc %s', $original_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        return true;
     }
 
     /**
@@ -825,6 +729,10 @@ class OrderController extends Controller
 
         if($new_deposit_percent > 100){
             $this->action_error[] = 'Tỉ lệ đặt cọc không hợp lệ!';
+        }
+
+        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+            $this->action_error[] = 'Không được phép sửa tỉ lệ đặt cọc đơn ở trạng thái này!';
         }
 
         if(count($this->action_error)){

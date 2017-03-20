@@ -22,6 +22,30 @@
 
                     <h3>{{$page_title}}</h3>
 
+                    <form action="{{ url('order')  }}" method="get" id="_form-orders">
+
+                        @foreach($status_list as $status_list_item)
+                            @if($status_list_item['selected'])
+                                <a class="_select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                    <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}</span>
+                                </a>
+                            @else
+                                <a class="_select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                    <span class="label label-success"><span>{{ $status_list_item['val']  }}</span></span>
+                                </a>
+                            @endif
+
+                        @endforeach
+
+
+
+                        <input type="hidden" name="status" value="">
+
+                    </form>
+                    <br>
+
+                    <p>Tìm thấy {{ $total_orders }} đơn hàng</p>
+
                     @if(count($orders))
 
                     <table class="table">
@@ -105,6 +129,23 @@
     <script>
         $(document).ready(function(){
 
+            $(document).on('click', '._select-order-status', function(){
+                 var selected = $(this).hasClass('selected');
+                 if(selected){
+                     $(this).removeClass('selected');
+                 }else{
+                     $(this).addClass('selected');
+                 }
+
+                 var order_status_list = [];
+                 $('._select-order-status.selected').each(function(){
+                     order_status_list.push($(this).data('status'));
+                 });
+
+                 $('[name="status"]').val(order_status_list.join(','));
+
+                 $('#_form-orders').submit();
+            });
 
         });
 
