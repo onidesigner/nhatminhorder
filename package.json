@@ -15,6 +15,13 @@
     "vue": "^2.0.1"
   },
   "dependencies": {
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "laravel-elixir": "^6.0.0-15",
+    "laravel-elixir-vue-2": "^0.3.0",
+    "laravel-elixir-webpack-official": "^1.0.10",
+    "lodash": "^4.17.4",
+    "vue": "^2.2.4",
+    "vue-resource": "^1.2.1",
+    "vue-router": "^2.3.0"
   }
 }

@@ -105,6 +105,7 @@ Route::post('actionWarehouse', 'ExportWarehouseController@actionWarehouse');
 
 Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
+Route::get('/vue', 'OtherController@renderExampleVue');
 
 
 

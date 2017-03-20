@@ -25,4 +25,10 @@ class OtherController extends Controller
             'page_title' => 'Page 403'
         ]);
     }
+
+    public function renderExampleVue(){
+        return view('example_vue', [
+            'page_title' => 'Example Vue'
+        ]);
+    }
 }

@@ -7,3 +7,7 @@
 Homestead.json
 Homestead.yaml
 .env
+/public/css/app.css.map
+/npm-debug.log
+.DS_Store
+/hosivan.md
