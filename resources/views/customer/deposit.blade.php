@@ -237,6 +237,14 @@
     <script>
         $(document).ready(function(){
 
+
+            $(document).on('keypress', '._input-password', function(e){
+                 if(e.keyCode == 13){
+                     e.preventDefault();
+                     $('._action-deposit').click();
+                 }
+            });
+
             $(document).on('click', '._action-deposit', function () {
                  var $that = $(this);
 

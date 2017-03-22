@@ -149,6 +149,7 @@
                                                     style="width: 250px; padding: 0 5px;"
                                                     name="comment"
                                                     type="text"
+                                                    data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
                                                     class="___input-action" value="{{$item->comment}}" />
 
                                         </form>
@@ -169,6 +170,7 @@
                                             <input
                                                     style="width: 80px"
                                                     type="number"
+                                                    data-key-global="cart-item-quantity-{{$shop->shop_id}}-{{$item->id}}"
                                                     name="quantity" class="form-control text-center ___input-action" value="{{$item->quantity}}" />
                                         </form>
 

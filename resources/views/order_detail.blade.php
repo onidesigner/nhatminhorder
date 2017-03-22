@@ -535,6 +535,7 @@
                                                        name="order_item_comment_message"
                                                        class="___input-action"
                                                        type="text"
+                                                       data-key-global="order-item-comment-{{$order_item->id}}"
                                                        placeholder="Chat về sản phẩm...">
 
                                             </form>
@@ -587,6 +588,7 @@
                                                     style="width: 80px;"
                                                     class="___input-action"
                                                     name="order_quantity"
+                                                    data-key-global="order-item-quantity-{{$order_item->id}}"
                                                     type="number"
                                                     value="{{$order_item->order_quantity}}" placeholder="">
 
@@ -616,6 +618,7 @@
                                                     class="___input-action _autoNumeric"
                                                     type="text"
                                                     name="order_item_price"
+                                                    data-key-global="order-item-price-{{$order_item->id}}"
                                                     value="{{ $order_item->getPriceCalculator() }}" placeholder="">¥ ·
 
                                         </form>

@@ -178,10 +178,12 @@ $(document).on('click', '.___btn-action', function(){
 $(document).on('keypress', '.___input-action', function(e){
 
     if(e.keyCode == 13){
-        console.log('input action');
+        // console.log('input action');
         e.preventDefault();
         var $that = $(this);
         var data_send = $that.parents('.___form').serializeObject();
+            data_send.key = $(this).attr('data-key-global');
+
         var value = data_send[$(this).attr('name')];
         if(!value){
             return false;
@@ -215,6 +217,12 @@ function call_ajax($that, data_send){
                     }else{
                         $('#_content').html(response.html);
                     }
+
+                    //focus input keypress
+                    if(data_send.key){
+                        $('[data-key-global="' + data_send.key + '"]').focus();
+                    }
+
                 }else{
                     window.location.reload();
                 }

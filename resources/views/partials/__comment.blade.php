@@ -6,9 +6,9 @@
 
 
 <div class="card" id="box-chat-right">
-    <div class="card-header">
-        Trao đổi về đơn hàng
-    </div>
+    {{--<div class="card-header">--}}
+        {{--Trao đổi về đơn hàng--}}
+    {{--</div>--}}
     <div class="card-body">
 
         @if(!isset($scope_view) || (isset($scope_view) && $scope_view == App\Comment::TYPE_EXTERNAL))
@@ -43,6 +43,7 @@
                     type="text"
                     style="width: 100%; margin-bottom: 20px;"
                     class="___input-action"
+                    data-key-global="box-chat-external"
                     placeholder="Chat với khách...">
         </form>
 
@@ -104,6 +105,7 @@
                     name="message"
                     type="text"
                     style="width: 100%; margin-bottom: 20px;"
+                    data-key-global="box-chat-internal"
                     class="___input-action"
                     placeholder="Chat nội bộ...">
         </form>

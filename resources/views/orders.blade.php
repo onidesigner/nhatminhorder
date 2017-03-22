@@ -86,7 +86,7 @@
                                             <span class="" data-code="{{ $service['code']  }}">
 
                                                 <i class="fa {{ $service['icon']  }}"></i>
-                                                <span class="text-uppercase">{{ $service['name']  }}</span>
+                                                <span>{{ $service['name']  }}</span>
                                             </span>
                                             <br>
                                         @endforeach
