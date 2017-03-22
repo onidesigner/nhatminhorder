@@ -25,5 +25,13 @@ class OrderService extends Model
         ])->delete();
     }
 
+    public static function findByOrderIds($order_ids = []){
+        if(!count($order_ids)) return [];
+        return OrderService::whereIn('order_id', $order_ids)->get();
+    }
 
+    public static function findByOrderId($order_id = null){
+        if(!$order_id) return [];
+        return OrderService::where('order_id', $order_id)->get();
+    }
 }

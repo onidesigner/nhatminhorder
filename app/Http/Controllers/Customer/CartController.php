@@ -17,239 +17,17 @@ use App\Service;
 use App\Cart;
 use JavaScript;
 use App\Location;
+use Illuminate\Support\Facades\View;
 
 class CartController extends Controller
 {
     public $cart = null;
 
+    protected $action_error = [];
+
     public function __construct()
     {
         $this->middleware('auth');
-    }
-
-    /**
-     * @author vanhs
-     * @desc Cap nhat so luong san pham trong gio hang
-     * @param Request $request
-     * @return mixed
-     */
-    public function updateQuantity(Request $request){
-        $user = User::find(Auth::user()->id);
-
-        if(!$user || !$user instanceof User){
-            return response()->json(['success' => false, 'message' => 'User not found!']);
-        }
-
-//        if($user->isCrane()){
-//            return response()->json(['success' => false, 'message' => 'User is crane!']);
-//        }
-
-        if($user->isDisabled()){
-            return response()->json(['success' => false, 'message' => 'User is disabled!']);
-        }
-
-        $item_id = $request->get('item_id');
-        $shop_id = $request->get('shop_id');
-        $quantity = $request->get('quantity');
-
-        CartItem::where([
-            'id' => $item_id,
-            'user_id' => $user->id
-        ])->update([
-            'quantity' => $quantity
-        ]);
-
-        return Response::json(array('success' => true));
-    }
-
-    /**
-     * @author vanhs
-     * @desc Xoa san pham trong gio hang
-     * @param Request $request
-     * @return mixed
-     * @throws \Exception
-     */
-    public function deleteItem(Request $request){
-        $user = User::find(Auth::user()->id);
-
-        if(!$user || !$user instanceof User){
-            return response()->json(['success' => false, 'message' => 'User not found!']);
-        }
-
-//        if($user->isCrane()){
-//            return response()->json(['success' => false, 'message' => 'User is crane!']);
-//        }
-
-        if($user->isDisabled()){
-            return response()->json(['success' => false, 'message' => 'User is disabled!']);
-        }
-
-        $user_id = $user->id;
-        $item_id = $request->get('item_id');
-        $shop_id = $request->get('shop_id');
-
-        DB::beginTransaction();
-
-        try {
-            CartItem::where([
-                'id' => $item_id,
-                'shop_id' => $shop_id,
-                'user_id' => $user_id
-            ])->delete();
-
-            $total_shop_items = CartItem::where([
-                'shop_id' => $shop_id,
-                'user_id' => $user_id
-            ])->count();
-
-            if(!$total_shop_items):
-                Cart::where([
-                    'shop_id' => $shop_id,
-                    'user_id' => $user_id
-                ])->delete();
-            endif;
-
-            DB::commit();
-            return Response::json(array('success' => true));
-        } catch (\Exception $e) {
-            DB::rollback();
-            return Response::json(array('success' => false, 'message' => 'Có lỗi...'));
-        }
-    }
-
-    /**
-     * @author vanhs
-     * @desc Xoa shop trong gio hang
-     * @param Request $request
-     * @return bool
-     * @throws \Exception
-     */
-    public function deleteShop(Request $request){
-        $user = User::find(Auth::user()->id);
-
-        if(!$user || !$user instanceof User){
-            return response()->json(['success' => false, 'message' => 'User not found!']);
-        }
-
-//        if($user->isCrane()){
-//            return response()->json(['success' => false, 'message' => 'User is crane!']);
-//        }
-
-        if($user->isDisabled()){
-            return response()->json(['success' => false, 'message' => 'User is disabled!']);
-        }
-
-        $shop_id = $request->get('shop_id');
-        $user_id = $user->id;
-
-        DB::beginTransaction();
-
-        try {
-            Cart::where([
-                'shop_id' => $shop_id,
-                'user_id' => $user_id
-            ])->delete();
-
-            CartItem::where([
-                'shop_id' => $shop_id,
-                'user_id' => $user_id
-            ])->delete();
-
-            DB::commit();
-            return Response::json(array('success' => true));
-        } catch (\Exception $e) {
-            DB::rollback();
-            return Response::json(array('success' => false, 'message' => 'Có lỗi...'));
-        }
-    }
-
-    /**
-     * @author vanhs
-     * @desc Cap nhat dich vu cho tung shop, trong gio hang
-     * @param Request $request
-     * @return mixed
-     */
-    public function updateService(Request $request){
-        $user = User::find(Auth::user()->id);
-
-        if(!$user || !$user instanceof User){
-            return response()->json(['success' => false, 'message' => 'User not found!']);
-        }
-
-//        if($user->isCrane()){
-//            return response()->json(['success' => false, 'message' => 'User is crane!']);
-//        }
-
-        if($user->isDisabled()){
-            return response()->json(['success' => false, 'message' => 'User is disabled!']);
-        }
-
-        $service = $request->get('service');
-        $user_id = $user->id;
-        $shop_id = $request->get('shop_id');
-        $checked = $request->get('checked');
-
-        $service_string = Cart::select('services')->where([
-            'user_id' => $user_id,
-            'shop_id' => $shop_id
-        ])->first()->services;
-
-        $services = [];
-        if($service_string){
-            $services = explode('|', $service_string);
-        }
-
-        if($checked):
-            if(!in_array($service, $services)):
-                $services[] = $service;
-            endif;
-        else:
-            $key = array_search($service, $services);
-            unset($services[$key]);
-        endif;
-
-        Cart::where([
-            'user_id' => $user_id,
-            'shop_id' => $shop_id
-        ])->update([
-            'services' => implode('|', $services)
-        ]);
-
-        return Response::json(array('success' => true));
-    }
-
-    /**
-     * @author vanhs
-     * @desc Update cac thong tin cua shop trong gio hang (Chi thich rieng, chu thich chung, ...)
-     * @param Request $request
-     * @return mixed
-     */
-    public function actionUpdate(Request $request){
-        $user = User::find(Auth::user()->id);
-
-        if(!$user || !$user instanceof User){
-            return response()->json(['success' => false, 'message' => 'User not found!']);
-        }
-
-//        if($user->isCrane()){
-//            return response()->json(['success' => false, 'message' => 'User is crane!']);
-//        }
-
-        if($user->isDisabled()){
-            return response()->json(['success' => false, 'message' => 'User is disabled!']);
-        }
-
-        $user_id = $user->id;
-        $data = $request->get('data');
-        $shop_id = $request->get('shop_id');
-        $item_id = $request->get('item_id');
-
-        CartItem::where([
-            'user_id' => $user_id,
-            'id' => $item_id
-        ])->update($data);
-
-        return Response::json(array('success' => true));
     }
 
     /**
@@ -417,7 +195,7 @@ class CartController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function deposit(Request $request){
+    public function showDeposit(Request $request){
         $user_id = Auth::user()->id;
         $exchange_rate = Exchange::getExchange();
 
@@ -481,32 +259,36 @@ class CartController extends Controller
      * @desc Lay thong tin gio hang theo tung user
      * @return array
      */
-    public function showCart(){
-        $user = User::find(Auth::user()->id);
+    public function showCart(Request $request){
+        $customer = User::find(Auth::user()->id);
 
-        if(!$user || !$user instanceof User){
+        if(!$customer || !$customer instanceof User){
             return redirect('404');
         }
 
-//        if($user->isCrane()){
-//            return redirect('403');
-//        }
-
-        if($user->isDisabled()){
+        if($customer->isDisabled()){
             return redirect('403');
         }
 
-        $user_id = $user->id;
+        return view('customer/cart', [
+            'page_title' => 'Giỏ hàng',
+            'layout' => 'layouts.app',
+            'data' => $this->__getInitDataCart($customer)
+        ]);
+    }
 
+    private function __getInitDataCart(User $customer){
         $data = [];
 
+        $customer_id = $customer->id;
+
         $carts = Cart::where([
-            'user_id' => $user_id
-        ])->orderBy('updated_at', 'desc')->get();
+            'user_id' => $customer_id
+        ])->orderBy('last_insert_item_at', 'desc')->get();
 
         $cart_items = CartItem::where([
-            'user_id' => $user_id
-        ])->orderBy('updated_at', 'desc')->get();
+            'user_id' => $customer_id
+        ])->orderBy('created_at', 'desc')->get();
 
         $total_shops = 0;
         $total_items = 0;
@@ -567,11 +349,14 @@ class CartController extends Controller
             endforeach;
         endif;
 
-        //fixdata
-        $data['services'] = [
-            ['title' => 'Kiểm hàng', 'code' => Service::TYPE_CHECKING],
-            ['title' => 'Đóng gỗ', 'code' => Service::TYPE_WOOD_CRATING]
-        ];
+        $services_data = [];
+        foreach(Service::$service_customer_choose as $k => $v){
+            $services_data[] = [
+                'title' => $v,
+                'code' => $k,
+            ];
+        }
+        $data['services'] = $services_data;
 
         $data['statistic'] = [
             'total_shops' => $total_shops,
@@ -579,11 +364,195 @@ class CartController extends Controller
             'total_amount' => $total_amount_vnd
         ];
 
-        JavaScript::put($data);
-
-        return view('customer/cart', [
-            'page_title' => 'Giỏ hàng',
-            'data' => $data
-        ]);
+        return $data;
     }
+
+    public function action(Request $request)
+    {
+
+        try{
+            DB::beginTransaction();
+
+            $customer = User::find(Auth::user()->id);
+            $action = '__' . $request->get('action');
+
+            if(!$customer){
+                return response()->json(['success' => false, 'message' => 'User not found!']);
+            }
+
+            if($customer->isDisabled()){
+                return response()->json(['success' => false, 'message' => 'User is disabled!']);
+            }
+
+            if (!method_exists($this, $action)) {
+                return response()->json(['success' => false, 'message' => 'Not support action!']);
+            }
+
+            $result = $this->$action($request, $customer);
+
+            if(!$result){
+                return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
+            }
+
+            $view = View::make($request->get('response'), [
+                'data' => $this->__getInitDataCart($customer),
+                'layout' => 'layouts/app_blank',
+            ]);
+
+            $html = $view->render();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'success',
+                'html' => $html
+            ]);
+
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
+        }
+
+    }
+
+    /**
+     * @author vanhs
+     * @desc Cap nhat so luong san pham
+     * @param Request $request
+     * @param User $customer
+     * @return bool
+     */
+    private function __update_quantity(Request $request, User $customer){
+        $item_id = $request->get('item_id');
+        $shop_id = $request->get('shop_id');
+        $quantity = $request->get('quantity');
+
+        CartItem::where([
+            'id' => $item_id,
+            'user_id' => $customer->id
+        ])->update([
+            'quantity' => $quantity
+        ]);
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Them/bo dich vu tren tung shop
+     * @param Request $request
+     * @param User $customer
+     * @return bool
+     */
+    private function __choose_service(Request $request, User $customer){
+
+        $service = $request->get('service');
+        $customer_id = $customer->id;
+        $shop_id = $request->get('shop_id');
+        $checkbox = $request->get('checkbox');
+
+        $service_string = Cart::select('services')->where([
+            'user_id' => $customer_id,
+            'shop_id' => $shop_id
+        ])->first()->services;
+
+        $services = [];
+        if($service_string){
+            $services = explode('|', $service_string);
+        }
+
+        if($checkbox == 'check'):
+            if(!in_array($service, $services)):
+                $services[] = $service;
+            endif;
+        else:
+            $key = array_search($service, $services);
+            unset($services[$key]);
+        endif;
+
+        Cart::where([
+            'user_id' => $customer_id,
+            'shop_id' => $shop_id
+        ])->update([
+            'services' => implode('|', $services)
+        ]);
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Xoa san pham trong shop
+     * @param Request $request
+     * @param User $customer
+     * @return bool
+     */
+    private function __remove_item(Request $request, User $customer){
+        $customer_id = $customer->id;
+        $item_id = $request->get('item_id');
+        $shop_id = $request->get('shop_id');
+
+        CartItem::where([
+            'id' => $item_id,
+            'shop_id' => $shop_id,
+            'user_id' => $customer_id
+        ])->delete();
+
+        $total_shop_items = CartItem::where([
+            'shop_id' => $shop_id,
+            'user_id' => $customer_id
+        ])->count();
+
+        if(!$total_shop_items):
+            Cart::where([
+                'shop_id' => $shop_id,
+                'user_id' => $customer_id
+            ])->delete();
+        endif;
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Xoa shop
+     * @param Request $request
+     * @param User $customer
+     * @return bool
+     */
+    private function __remove_shop(Request $request, User $customer){
+        $shop_id = $request->get('shop_id');
+        $customer_id = $customer->id;
+
+        Cart::where([
+            'shop_id' => $shop_id,
+            'user_id' => $customer_id
+        ])->delete();
+
+        CartItem::where([
+            'shop_id' => $shop_id,
+            'user_id' => $customer_id
+        ])->delete();
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Comment san pham
+     * @param Request $request
+     * @param User $customer
+     * @return bool
+     */
+    private function __comment(Request $request, User $customer){
+        CartItem::where([
+            'user_id' => $customer->id,
+            'id' => $request->get('item_id')
+        ])->update([
+            'comment' => $request->get('comment'),
+        ]);
+
+        return true;
+    }
+
 }

@@ -21,6 +21,7 @@ class AddonController extends Controller
 
     /**
      * @author vanhs
+     * @desc API them san pham vao gio hang
      * @param Request $request
      * @return mixed
      */
@@ -29,35 +30,34 @@ class AddonController extends Controller
         $params = Request::all();
 
         if($not_login):
-            $view = View::make('customer/add_to_cart_success', [
-                'success' => false,
-                'is_translate' => $params['is_translate'],
-                'message' => 'Vui lòng <a style="color:blue;" target="_blank" href="' . url('login') . '">đăng nhập</a> vào hệ thống để tiến hành đặt hàng!'
-            ]);
-            $html = $view->render();
+            $html = $this->__addon_alert_template(false, $params['is_translate'], 'Vui lòng <a style="color:blue;" target="_blank" href="' . url('login') . '">đăng nhập</a> vào hệ thống để tiến hành đặt hàng!');
             return response()->json(['html' => $html]);
         endif;
 
         if(Cart::addCart($params)):
-            $view = View::make('customer/add_to_cart_success', [
-                'success' => true,
-                'is_translate' => $params['is_translate'],
-                'price' => $params['price_origin'] > $params['price_promotion']
-                    ? $params['price_promotion'] : $params['price_origin']
-            ]);
-            $html = $view->render();
+            $price = $this->__get_price($params['price_origin'], $params['price_promotion']);
+            $html = $this->__addon_alert_template(true, $params['is_translate'], null, $price);
             return response()->json(['html' => $html]);
         endif;
 
-        $view = View::make('customer/add_to_cart_success', [
-            'success' => false,
-            'is_translate' => $params['is_translate'],
-            'price' => $params['price_origin'] > $params['price_promotion']
-                ? $params['price_promotion'] : $params['price_origin'],
-            'message' => 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ. Vui lòng thử lại!'
-        ]);
-        $html = $view->render();
+        $price = $this->__get_price($params['price_origin'], $params['price_promotion']);
+        $html = $this->__addon_alert_template(false, $params['is_translate'], 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ. Vui lòng thử lại!', $price);
         return response()->json(['html' => $html]);
+    }
+
+    private function __get_price($price_origin, $price_promotion){
+        return $price_origin > $price_promotion
+            ? $price_promotion : $price_origin;
+    }
+
+    private function __addon_alert_template($success, $is_translate, $message = null, $price = null){
+        $view = View::make('customer/add_to_cart_success', [
+            'success' => $success,
+            'is_translate' => $is_translate,
+            'message' => $message,
+            'price' => $price
+        ]);
+        return $view->render();
     }
 
     /**

@@ -340,27 +340,30 @@ var CommonTool = function() {
     this.timeOut = 0;
 
     this.sendAjaxToCart = function (add_cart_url,data) {
-        setTimeout(function(){
 
-            console.info(data);
+        chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'GET', callback: 'afterAddToCart' });
 
-            //if(site_using_https){
-            //    Action.request({
-            //        url: add_cart_url,
-            //        type: "POST",
-            //        data: data
-            //    }).done(function (response) {
-            //        Action.afterAddToCart({ response : response });
-            //    });
-            //}else{
-            //    chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'POST', callback: 'afterAddToCart' });
-            //}
-
-            //Luon gui qua background
-            chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'GET', callback: 'afterAddToCart' });
-
-        }, this.timeOut * 1000);
-        this.timeOut++;
+        // setTimeout(function(){
+        //
+        //     console.info(data);
+        //
+        //     //if(site_using_https){
+        //     //    Action.request({
+        //     //        url: add_cart_url,
+        //     //        type: "POST",
+        //     //        data: data
+        //     //    }).done(function (response) {
+        //     //        Action.afterAddToCart({ response : response });
+        //     //    });
+        //     //}else{
+        //     //    chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'POST', callback: 'afterAddToCart' });
+        //     //}
+        //
+        //     //Luon gui qua background
+        //     chrome.runtime.sendMessage({ action: "addToCart", url: add_cart_url, data: data, method: 'GET', callback: 'afterAddToCart' });
+        //
+        // }, this.timeOut * 1000);
+        // this.timeOut++;
 
     };
     this.loadJsFile = function(jsUrl){

@@ -1,3 +1,5 @@
+var xhr = null;
+
 $(document).ready(function() {
 
     // $('.sidebar-nav > li').each(function(i){
@@ -15,22 +17,15 @@ $(document).ready(function() {
         $('[data-toggle="popover"]').popover();
     }
 
-    $('._autoNumericTemp').autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
     if ($('._autoNumeric').length) {
         $('._autoNumeric').each(function (i) {
             var tagName = $(this).prop("tagName").toLowerCase();
             if (tagName == 'input') {
                 $(this).autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
             } else {
-                var value = $(this).text().trim();
-                $(this).text(formatNumber(value));
+                //todo
             }
         })
-    }
-
-    function formatNumber(value) {
-        $('._autoNumericTemp').autoNumeric('set', value);
-        return $('._autoNumericTemp').val();
     }
 
     $(document).ajaxStop(function(){
@@ -104,7 +99,6 @@ $(document).ready(function() {
                                 case "CHECKBOX":
                                     if(typeof value == "string"){ value = [value]; }//convert value to array if value is string
                                     for(var i = 0; i < value.length; i++){
-                                        console.info("vao day");
                                         $self.filter("[value='" + value[i] + "']").prop("checked", true);
                                     }
                                     break;
@@ -148,5 +142,91 @@ $(document).ready(function() {
             console.warn("Exception: " + e.message);
         }
     };
+});
+
+
+//============= begin event global ===========
+$(document).on('click', '.___btn-action', function(){
+    var $that = $(this);
+
+    if($that.hasClass('disabled')) return false;
+
+    $that.addClass('disabled');
+
+    var tagName = $that.prop("tagName").toUpperCase();
+    var type = $that.prop("type").toUpperCase();
+    var data_send = $that.parents('.___form').serializeObject();
+
+    if(tagName == 'INPUT' && type == 'CHECKBOX'){
+        data_send.checkbox = $that.is(':checked') ? 'check' : 'uncheck';
+    }
+
+    if(data_send.confirm){
+        bootbox.confirm(data_send.confirm, function(result) {
+            if (result) {
+                call_ajax($that, data_send);
+            }else{
+                $that.removeClass('disabled');
+            }
+        });
+    }else{
+        call_ajax($that, data_send);
+    }
 
 });
+
+$(document).on('keypress', '.___input-action', function(e){
+
+    if(e.keyCode == 13){
+        console.log('input action');
+        e.preventDefault();
+        var $that = $(this);
+        var data_send = $that.parents('.___form').serializeObject();
+        var value = data_send[$(this).attr('name')];
+        if(!value){
+            return false;
+        }
+        call_ajax($that, data_send);
+    }
+});
+
+$(document).on('change', '.___select-action', function(){
+    var $that = $(this);
+    var data_send = $that.parents('.___form').serializeObject();
+    data_send.select = $(this).val();
+
+    call_ajax($that, data_send);
+});
+
+//============= end event global ===========
+
+//============= begin function global ===========
+function call_ajax($that, data_send){
+    return $.ajax({
+        url: data_send.url,
+        method: data_send.method,
+        data: data_send,
+        success:function(response) {
+            if(response.success){
+
+                if(response.html){
+                    if(response.anchor){
+                        $(response.anchor).html(response.html);
+                    }else{
+                        $('#_content').html(response.html);
+                    }
+                }else{
+                    window.location.reload();
+                }
+
+            }else{
+                bootbox.alert(response.message);
+            }
+            $that.removeClass('disabled');
+        },
+        error: function(){
+            $that.removeClass('disabled');
+        }
+    });
+}
+//============= end function global ===========

@@ -1,37 +1,53 @@
 <?php
-        $user = App\User::find(Auth::user()->id);
-
-
-        $comments_public = App\Comment::where([
-            'object_id' => $object_id,
-            'object_type' => $object_type,
-            'scope' => App\Comment::TYPE_EXTERNAL
-        ])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        $comments_private = App\Comment::where([
-            'object_id' => $object_id,
-            'object_type' => $object_type,
-            'scope' => App\Comment::TYPE_INTERNAL
-        ])
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $user = App\User::find(Auth::user()->id);
+    $comments_public = null;
+    $comments_private = null;
 ?>
 
 
-<div class="card">
+<div class="card" id="box-chat-right">
     <div class="card-header">
         Trao đổi về đơn hàng
     </div>
     <div class="card-body">
-        <input data-scope="{{ App\Comment::TYPE_EXTERNAL  }}" type="text" style="width: 100%; margin-bottom: 20px;" class="form-control1 _input-comment" placeholder="Chat với khách...">
+
+        @if(!isset($scope_view) || (isset($scope_view) && $scope_view == App\Comment::TYPE_EXTERNAL))
+
+            <?php
+
+            $comments_public = App\Comment::where([
+                'object_id' => $object_id,
+                'object_type' => $object_type,
+                'scope' => App\Comment::TYPE_EXTERNAL
+            ])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            ?>
+
+        <form class="___form">
+            <input type="hidden" name="action" value="comment">
+            <input type="hidden" name="method" value="post">
+            <input type="hidden" name="url" value="{{ url('comment')  }}">
+            <input type="hidden" name="object_id" value="{{$object_id}}">
+            <input type="hidden" name="object_type" value="{{$object_type}}">
+            <input type="hidden" name="scope_view" value="{{@$scope_view}}">
+            <input type="hidden" name="scope" value="{{ App\Comment::TYPE_EXTERNAL  }}">
+            <input type="hidden" name="is_public_profile" value="1">
+            <input type="hidden" name="anchor" value="#anchor-box-comment">
+            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+            <input type="hidden" name="response" value="partials/__comment">
+
+            <input
+                    name="message"
+                    type="text"
+                    style="width: 100%; margin-bottom: 20px;"
+                    class="___input-action"
+                    placeholder="Chat với khách...">
+        </form>
 
         @if($comments_public)
-            <ul style="list-style: none;
-            overflow-y: auto;
-    margin: 0;
-    padding: 0;">
+            <ul class="comment-panel-view" style="">
             @foreach($comments_public as $comment_public)
                 <li style="margin-bottom: 10px;
 
@@ -54,13 +70,46 @@
 
         <br>
 
-        <input data-scope="{{ App\Comment::TYPE_INTERNAL  }}" type="text" style="width: 100%; margin-bottom: 20px;" class="form-control1 _input-comment" placeholder="Chat nội bộ...">
+        @endif
+
+
+        @if(!isset($scope_view) || (isset($scope_view) && $scope_view == App\Comment::TYPE_INTERNAL))
+
+            <?php
+
+                $comments_private = App\Comment::where([
+                    'object_id' => $object_id,
+                    'object_type' => $object_type,
+                    'scope' => App\Comment::TYPE_INTERNAL
+                ])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+            ?>
+
+        <form class="___form">
+            <input type="hidden" name="action" value="comment">
+            <input type="hidden" name="method" value="post">
+            <input type="hidden" name="url" value="{{ url('comment')  }}">
+            <input type="hidden" name="object_id" value="{{$object_id}}">
+            <input type="hidden" name="object_type" value="{{$object_type}}">
+            <input type="hidden" name="scope_view" value="{{@$scope_view}}">
+            <input type="hidden" name="scope" value="{{ App\Comment::TYPE_INTERNAL  }}">
+            <input type="hidden" name="is_public_profile" value="1">
+            <input type="hidden" name="anchor" value="#anchor-box-comment">
+            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+            <input type="hidden" name="response" value="partials/__comment">
+
+            <input
+                    name="message"
+                    type="text"
+                    style="width: 100%; margin-bottom: 20px;"
+                    class="___input-action"
+                    placeholder="Chat nội bộ...">
+        </form>
 
         @if($comments_private)
-            <ul style="list-style: none;
-            overflow-y: auto;
-    margin: 0;
-    padding: 0;">
+            <ul class="comment-panel-view" style="">
                 @foreach($comments_private as $comment_private)
                     <li style="margin-bottom: 10px;
 
@@ -81,96 +130,8 @@
             </ul>
         @endif
 
+        @endif
         <div id="_content"></div>
     </div>
 </div>
 
-@section('js_bottom')
-@parent
-<script>
-    $(document).ready(function(){
-        var object_id = "{{$object_id}}";
-        var object_type = "{{$object_type}}";
-
-        var comment_tpl = _.template($('#_comment-row-template').html());
-
-        {{--$.ajax({--}}
-            {{--url: "{{ url('comment')  }}",--}}
-            {{--method: 'get',--}}
-            {{--data: {--}}
-                {{--object_id: object_id,--}}
-                {{--object_type: object_type,--}}
-                {{--"_token": "{{ csrf_token() }}"--}}
-            {{--},--}}
-            {{--success:function(response) {--}}
-                {{--$('#_content').html( comment_tpl (response) );--}}
-            {{--},--}}
-            {{--error: function(){--}}
-
-            {{--}--}}
-        {{--});--}}
-
-        $(document).on('keypress', '._input-comment', function(event){
-            var $that = $(this);
-            if(event.keyCode == 13){
-                var comment = $(this).val();
-                var scope = $(this).data('scope');
-
-                $.ajax({
-                  url: "{{ url('comment')  }}",
-                  method: 'post',
-                  data: {
-                      object_id: object_id,
-                      object_type: object_type,
-                      scope: scope,
-                      message: comment,
-                      is_public_profile:1,
-                      "_token": "{{ csrf_token() }}"
-                  },
-                  success:function(response) {
-                      if(response.success){
-                          window.location.reload();
-//                          $that.val('').focus();
-//
-//                          $('#_content').prepend( comment_tpl (response) );
-                      }else{
-                          bootbox.alert(response.message);
-                      }
-                  },
-                  error: function(){
-
-                  }
-                });
-            }
-        });
-    });
-</script>
-
-@endsection
-
-@section('css_bottom')
-@parent
-<style>
-    .comment-text-grey{
-        color: grey!important;
-    }
-</style>
-@endsection
-
-<script type="text/template" id="_comment-row-template">
-    <% _.each(data, function(comment, key){ %>
-    <div class="media social-post <% if (comment.type_context != 'CHAT'){ %> comment-text-grey <% } %>">
-        <div class="media-body">
-            <div class="media-heading">
-                <% if(comment.type_context != 'LOG'){ %>
-                    <h4><%= comment.name %></h4>
-                <% } %>
-                <h5 class="timeing"><%= comment.created_at %></h5>
-            </div>
-            <div class="media-content">
-                <%= comment.message %>
-            </div>
-        </div>
-    </div>
-    <% }) %>
-</script>

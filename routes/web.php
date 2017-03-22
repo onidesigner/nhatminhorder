@@ -23,11 +23,12 @@ Route::get('/home', 'HomeController@index');
 Route::get('/cart/add', 'Customer\AddonController@addCart');
 
 Route::get('/gio-hang', 'Customer\CartController@showCart');
-Route::get('/dat-coc', 'Customer\CartController@deposit');
+Route::get('/dat-coc', 'Customer\CartController@showDeposit');
 Route::get('/dat-coc-thanh-cong', 'Customer\CartController@depositSuccess');
 Route::post('/cart/quantity', 'Customer\CartController@updateQuantity');
 Route::post('/cart/shop/service', 'Customer\CartController@updateService');
 Route::post('/cart/item/comment', 'Customer\CartController@actionUpdate');
+Route::post('/gio-hang/hanh-dong', 'Customer\CartController@action');
 Route::delete('/cart/item', 'Customer\CartController@deleteItem');
 Route::delete('/cart/shop', 'Customer\CartController@deleteShop');
 Route::post('/dat-coc', 'Customer\CartController@depositOrder');
@@ -66,7 +67,7 @@ Route::post('/order/{id}/action', 'OrderController@action');
 #endregion
 
 #region comment
-Route::post('/comment', 'CommentController@addNewComment');
+Route::post('/comment', 'CommentController@action');
 #endregion
 
 #region he thong

@@ -51,7 +51,9 @@
                     <table class="table">
                         <thead>
                             <tr>
+
                                 <th>Đơn hàng</th>
+                                <th>Dịch vụ</th>
                                 <th>Khách hàng</th>
                                 <th>Tỉ giá</th>
                                 <th>Tiền hàng</th>
@@ -62,16 +64,33 @@
 
                         @foreach($orders as $order)
                             <tr>
+
                                 <td>
 
                                     <img src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
 
                                     <strong>[{{strtoupper($order->site)}}]</strong>
                                     <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+
+
+
                                     <p>
                                         {{ App\Order::getStatusTitle($order->status)  }}
                                     </p>
 
+                                </td>
+                                <td>
+                                    @if(isset($services[$order->id]))
+                                        @foreach($services[$order->id] as $service)
+
+                                            <span class="" data-code="{{ $service['code']  }}">
+
+                                                <i class="fa {{ $service['icon']  }}"></i>
+                                                <span class="text-uppercase">{{ $service['name']  }}</span>
+                                            </span>
+                                            <br>
+                                        @endforeach
+                                    @endif
                                 </td>
                                 <td>
                                     <?php

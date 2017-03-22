@@ -102,6 +102,35 @@ class Order extends Model
 
     #region -- begin function static --
 
+    /**
+     * @author vanhs
+     * @desc Lay danh sach ma hoa don goc + link chi tiet don hang TQ
+     * @param $site
+     * @param null $original_bill
+     * @return array
+     */
+    public static function originalBillWithLink($site = null, $original_bill = null)
+    {
+        if (empty($site) || empty($original_bill)) {
+            return null;
+        }
+
+        $href = null;
+        switch (strtolower($site)) {
+            case User::SITE_TAOBAO:
+                $href = sprintf("http://trade.taobao.com/trade/detail/trade_item_detail.htm?bizOrderId=%s", $original_bill);
+                break;
+            case User::SITE_TMALL;
+                $href = sprintf("http://trade.tmall.com/detail/orderDetail.htm?bizOrderId=%s", $original_bill);
+                break;
+            case User::SITE_1688;
+                $href = sprintf("http://trade.1688.com/order/unify_buyer_detail.htm?orderId=%s", $original_bill);
+                break;
+        }
+
+        return $href;
+    }
+
     public static function getFieldTimeByStatus($field_time){
         return self::$fieldTime[$field_time] ? self::$fieldTime[$field_time] : null;
     }
@@ -594,4 +623,6 @@ class Order extends Model
         //end save code
         return $saved;
     }
+
+
 }

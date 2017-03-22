@@ -16,27 +16,64 @@ class Service extends Model
     const TYPE_BUYING = 'BUYING';
     const TYPE_CHECKING = 'CHECKING';
     const TYPE_SHIPPING_CHINA_VIETNAM = 'SHIPPING_CHINA_VIETNAM';
-    const TYPE_HIGH_VALUE = 'HIGH_VALUE';
-    const TYPE_FRAGILE = 'FRAGILE';
     const TYPE_WOOD_CRATING = 'WOOD_CRATING';
 
-    public static $_serviceNaming = [
+    public static $serviceNaming = [
         self::TYPE_BUYING => 'Mua Hàng',
         self::TYPE_CHECKING => 'Kiểm Hàng',
         self::TYPE_SHIPPING_CHINA_VIETNAM => 'VCT Quốc Tế',
-        self::TYPE_FRAGILE => 'Dễ Vỡ',
         self::TYPE_WOOD_CRATING => 'Đóng Gỗ',
-        self::TYPE_HIGH_VALUE => 'Giá Trị Cao',
     ];
 
+    public static $serviceIcon = [
+        self::TYPE_BUYING => 'fa-shopping-cart',
+        self::TYPE_CHECKING => 'fa-chevron-down',
+        self::TYPE_SHIPPING_CHINA_VIETNAM => 'fa-truck',
+        self::TYPE_WOOD_CRATING => 'fa-cube',
+    ];
+
+    /**
+     * @author vanhs
+     * @desc Cac dich vu ma khach hang duoc phep lua chon tren gio hang
+     * @var array
+     */
+    public static $service_customer_choose = [
+        self::TYPE_CHECKING => 'Kiểm Hàng',
+        self::TYPE_WOOD_CRATING => 'Đóng Gỗ',
+    ];
+
+    public static $service_default = [
+        self::TYPE_BUYING,
+        self::TYPE_SHIPPING_CHINA_VIETNAM,
+    ];
+
+    public static function checkIsDefault($code){
+        if(in_array($code, self::$service_default)){
+            return true;
+        }
+        return false;
+    }
+
+    public static function getServiceDefault(){
+        return self::$service_default;
+    }
+
+    public static function getServiceIcon($code) {
+        return (isset(self::$serviceIcon[$code]))? self::$serviceIcon[$code] : '';
+    }
+
     public static function getServiceName($code) {
-        return (isset(self::$_serviceNaming[$code]))? self::$_serviceNaming[$code] : 'Khác';
+        return (isset(self::$serviceNaming[$code]))? self::$serviceNaming[$code] : 'Khác';
+    }
+
+    public static function getAllService(){
+        return self::where(['status' => self::STATUS_ACTIVE])->get();
     }
 
     public function findOneByCode($code){
         if($code) return null;
 
-        $result = $this->newQuery()->where([
+        $result = self::where([
             'status' => self::STATUS_ACTIVE,
             'code' => $code
         ])->first();
@@ -52,7 +89,7 @@ class Service extends Model
      */
     public function getFixedFeeWithServiceCode($code){
         $fee = 0;
-        $result = $this->newQuery()->where([
+        $result = self::where([
             'status' => self::STATUS_ACTIVE,
             'code' => $code
         ])->first();

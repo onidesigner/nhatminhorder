@@ -34,6 +34,8 @@ class Permission extends Model
     const PERMISSION_ORDER_REMOVE_FREIGHT_BILL = 'ORDER_REMOVE_FREIGHT_BILL';
     const PERMISSION_ORDER_ADD_ORIGINAL_BILL = 'ORDER_ADD_ORIGINAL_BILL';
     const PERMISSION_ORDER_REMOVE_ORIGINAL_BILL = 'ORDER_REMOVE_ORIGINAL_BILL';
+
+    const PERMISSION_ORDER_CHANGE_SERVICE = 'ORDER_CHANGE_SERVICE';
     #endregion
 
     #region -- System permission --
@@ -73,6 +75,10 @@ class Permission extends Model
                 ],
                 self::PERMISSION_ORDER_REMOVE_ORIGINAL_BILL => [
                     'label' => 'Xoá mã đơn hàng gốc trong đơn',
+                    'description' => '',
+                ],
+                self::PERMISSION_ORDER_CHANGE_SERVICE => [
+                    'label' => 'Thêm/bỏ dịch vụ trên chi tiết đơn hàng',
                     'description' => '',
                 ],
             ]

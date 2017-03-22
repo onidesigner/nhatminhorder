@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use Illuminate\Support\Facades\View;
 
 class CommentController extends Controller
 {
-    public $user_id = null;
+    protected $action_error = [];
 
     public function __construct()
     {
@@ -18,25 +20,81 @@ class CommentController extends Controller
 
     }
 
+    public function action(Request $request)
+    {
+        try{
+            DB::beginTransaction();
+
+            $user = User::find(Auth::user()->id);
+            $action = '__' . $request->get('action');
+
+            if(!$user || !$user instanceof User){
+                return response()->json(['success' => false, 'message' => 'User not found!']);
+            }
+
+            if(empty($request->get('object_id'))
+                && empty($request->get('object_type'))
+                && empty($request->get('scope_view'))){
+                return response()->json(['success' => false, 'message' => 'Params is missing!']);
+            }
+
+            if (!method_exists($this, $action)) {
+                return response()->json(['success' => false, 'message' => 'Not support action!']);
+            }
+
+            $result = $this->$action($request, $user);
+            if(!$result){
+                return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
+            }
+
+            DB::commit();
+
+            $view = View::make($request->get('response'), [
+                'object_id' => $request->get('object_id'),
+                'object_type' => $request->get('object_type'),
+                'scope_view' => $request->get('scope_view'),
+            ]);
+            $html = $view->render();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'success',
+                'html' => $html,
+                'anchor' => $request->get('anchor'),
+            ]);
+
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
+        }
+
+    }
+
     /**
      * @author vanhs
-     * @desc Them comment moi
+     * @desc Them comment
      * @param Request $request
      * @return mixed
      */
-    public function addNewComment(Request $request){
-        $data_insert = $request->all();
-        $current_user_id = Auth::user()->id;
+    private function __comment(Request $request, $user){
+        if(empty($request->get('message'))){
+            $this->action_error[] = 'Nội dung không để trống!';
+        }
 
-        unset($data_insert['_token']);
-        $data_insert['type_context'] = Comment::TYPE_CONTEXT_CHAT;
-        $data_insert['user_id'] = $current_user_id;
-        $data_insert['created_at'] = date('Y-m-d H:i:s');
+        if(count($this->action_error)){
+            return false;
+        }
 
-        Comment::insert($data_insert);
+        $comment = new Comment();
+        $comment->user_id = $user->id;
+        $comment->object_id = $request->get('object_id');
+        $comment->object_type = $request->get('object_type');
+        $comment->scope = $request->get('scope');
+        $comment->message = $request->get('message');
+        $comment->type_context = Comment::TYPE_CONTEXT_CHAT;
+        $comment->is_public_profile = $request->get('is_public_profile');
+        $comment->save();
 
-        $data_insert['name'] = Auth::user()->name;
-
-        return Response::json(array('success' => true, 'data' => [ $data_insert ]));
+        return true;
     }
 }

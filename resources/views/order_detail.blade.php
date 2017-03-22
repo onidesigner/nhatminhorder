@@ -1,24 +1,11 @@
-@extends('layouts.app')
+@extends($layout)
 
 @section('page_title')
-    {{$page_title}}
+    {{@$page_title}}
 @endsection
 
 @section('css_bottom')
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
-    <style>
-        .order-fee{
-            margin: 0 0 30px 0;
-            padding: 0;
-            list-style: none;
-            float: left;
-        }
-        .order-fee li{
-            width: 25%;
-            float: left;
-            padding: 15px 30px;
-        }
-    </style>
+    {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">--}}
 @endsection
 
 @section('widget')
@@ -28,139 +15,17 @@
 @section('js_bottom')
     @parent
 
-    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+{{--    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>--}}
     <script>
         $(document).ready(function(){
-
-            $(document).on('keypress', '._input-action', function(e){
-
-                if(e.keyCode == 13){
-                    var value = $(this).val();
-                    if($(this).hasClass('_autoNumeric')){
-                        value = $(this).autoNumeric('get');
-                    }
-                    var action = $(this).data('action');
-                    var item_id = $(this).data('item-id');
-                    var message = $(this).val();
-                    var $that = $(this);
-
-                    if(!value){
-                        return false;
-                    }
-
-                    $.ajax({
-                        url: "{{ url('order/' .$order_id. '/action')  }}",
-                        method: 'post',
-                        data: {
-                            item_id:item_id,
-                            order_id:"{{$order_id}}",
-                            message:message,
-                            value:value,
-                            action:action,
-                            _token: "{{ csrf_token() }}",
-                        },
-                        success:function(response) {
-                            if(response.success){
-//                                $that.val('').focus();
-                                window.location.reload();
-                            }else{
-                                bootbox.alert(response.message);
-                            }
-
-                        },
-                        error: function(){
-
-                        }
-                    });
-                }
-
-
-            });
-
-            $(document).on('click', '._btn-action', function(){
-
-                var action = $(this).data('action');
-
-                var $that = $(this);
-
-                if($that.hasClass('disabled')) return false;
-
-                $that.addClass('disabled');
-
-                $.ajax({
-                    url: "{{ url('order/' .$order_id. '/action')  }}",
-                    method: 'post',
-                    data: {
-                        original_bill:$('#_original_bill').val(),
-                        freight_bill:$('#_freight_bill').val(),
-                        original_bill_delete:$that.data('original-bill'),
-                        freight_bill_delete:$that.data('freight-bill'),
-
-                        deposit:$('#_change_deposit').val(),
-
-                        status: $that.data('status'),
-
-                        domestic_shipping_china:$('#_domestic_shipping_china').val(),
-
-                        action:action,
-
-                        _token: "{{ csrf_token() }}",
-                    },
-                    success:function(response) {
-                        if(response.success){
-                            window.location.reload();
-                        }else{
-                            bootbox.alert(response.message);
-                        }
-
-                        $that.removeClass('disabled');
-                    },
-                    error: function(){
-                        $that.removeClass('disabled');
-                    }
-                });
-
-            });
-
-            $(document).on('change', '._select-action', function(){
-
-                var action = $(this).data('action');
-
-                var value = $(this).val();
-
-                $.ajax({
-                  url: "{{ url('order/' .$order_id. '/action')  }}",
-                  method: 'post',
-                  data: {
-                      value:value,
-                      action:action,
-                      order_id:"{{$order_id}}",
-                      _token: "{{ csrf_token() }}",
-                  },
-                  success:function(response) {
-                        if(response.success){
-
-                            window.location.reload();
-                        }else{
-                            bootbox.alert(response.message);
-                        }
-                  },
-                  error: function(){
-
-                  }
-                });
-
-            });
-
+            //todo
         });
     </script>
 @endsection
 
 @section('content')
 
-
-
-    <div class="row">
+    <div id="order-detail-page" class="row">
         <div class="col-sm-8 col-xs-12">
 
             <div class="card">
@@ -198,19 +63,63 @@
                                         <table class="table no-padding-leftright">
                                             <tbody>
                                             <tr>
-                                                <td width="50%" class="border-top-none">Acc mua</td>
+                                                <td width="50%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
+                                                    <code>{{$order->code}}</code> ({{ App\Order::getStatusTitle($order->status)  }})
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Dịch vụ</td>
+                                                <td>
+                                                    @if(!empty($services))
+                                                        @foreach($services as $service)
+                                                            <form class="___form">
+                                                                <input type="hidden" name="action" value="choose_service">
+                                                                <input type="hidden" name="method" value="post">
+                                                                <input type="hidden" name="service" value="{{$service['code']}}">
+                                                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                                <input type="hidden" name="response" value="order_detail">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+
+                                                                <label class="checkbox-inline">
+                                                                    <input
+                                                                            class="___btn-action"
+                                                                            @if($service['checked']) checked @endif
+                                                                            @if($service['is_default']) disabled @endif
+                                                                            type="checkbox"
+                                                                            value="{{$service['code']}}">{{$service['name']}}
+                                                                </label>
+
+                                                            </form>
+                                                        @endforeach
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Acc mua</td>
+                                                <td>
 
                                                     @if($permission['can_change_order_account_purchase_origin'])
-                                                    <select data-action="account_purchase_origin" class="form-control _select-action">
-                                                        <option value="">Chọn Acc mua hàng site gốc</option>
 
-                                                        @if($user_origin_site)
-                                                            @foreach($user_origin_site as $key => $val)
-                                                                <option data-site="{{$val->site}}" @if($val->username == $order->account_purchase_origin) selected @endif value="{{$val->username}}">{{$val->site}} - {{$val->username}}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                    <form class="___form">
+                                                        <input type="hidden" name="action" value="account_purchase_origin">
+                                                        <input type="hidden" name="method" value="post">
+                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                        <input type="hidden" name="response" value="order_detail">
+
+                                                        <select data-action="account_purchase_origin" class="form-control ___select-action">
+                                                            <option value="">Chọn Acc mua hàng site gốc</option>
+
+                                                            @if($user_origin_site)
+                                                                @foreach($user_origin_site as $key => $val)
+                                                                    <option data-site="{{$val->site}}" @if($val->username == $order->account_purchase_origin) selected @endif value="{{$val->username}}">{{$val->site}} - {{$val->username}}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+
+                                                    </form>
+
                                                     @else
                                                         {{$order->account_purchase_origin}}
                                                     @endif
@@ -220,9 +129,16 @@
                                                 <td>Tỉ lệ đặt cọc (%)</td>
                                                 <td>
                                                     @if($permission['can_change_order_deposit_percent'])
-                                                        <input id="_change_deposit" type="text" value="{{$order->deposit_percent}}">
+                                                        <form class="___form">
+                                                            <input type="hidden" name="action" value="change_deposit">
+                                                            <input type="hidden" name="method" value="post">
+                                                            <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                            <input type="hidden" name="response" value="order_detail">
 
-                                                        <a href="javascript:void(0)" class="_btn-action" data-action="change_deposit">Lưu</a>
+                                                            <input name="deposit" type="text" value="{{$order->deposit_percent}}">
+                                                            <a href="javascript:void(0)" class="___btn-action">Lưu</a>
+                                                        </form>
                                                     @else
                                                         {{$order->deposit_percent}}
                                                     @endif
@@ -260,20 +176,35 @@
                                             <tr>
                                                 <td>Hóa đơn gốc</td>
                                                 <td>
-                                                    <input id="_original_bill" type="text" value="" name="original_bill">
-
-
-                                                    <a href="javascript:void(0)" class="_btn-action" data-action="insert_original_bill">Lưu</a>
+                                                    <form class="___form">
+                                                        <input type="hidden" name="action" value="insert_original_bill">
+                                                        <input type="hidden" name="method" value="post">
+                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                        <input type="hidden" name="response" value="order_detail">
+                                                        <input type="text" name="original_bill">
+                                                        <a href="javascript:void(0)" class="___btn-action">Lưu</a>
+                                                    </form>
 
                                                     <ul style="margin: 0;padding: 0;list-style: none;" id="_original-bill-list">
                                                         @if(count($original_bill))
                                                             @foreach($original_bill as $key => $val)
-                                                                <li class="_original-bill-list-item">{{$val->original_bill}}
-                                                                    <a
-                                                                            data-order-id="{{$val->order_id}}"
-                                                                            data-original-bill="{{$val->original_bill}}"
-                                                                            data-action="remove_original_bill"
-                                                                            href="javascript:void(0)" class="_btn-action"><i class="fa fa-times"></i></a>
+                                                                <li class="_original-bill-list-item">
+                                                                    <a style="color: black;" href="{{  App\Order::originalBillWithLink($order->site, $val->original_bill) }}" target="_blank">{{$val->original_bill}}</a>
+
+                                                                    &nbsp;&nbsp;&nbsp;
+
+                                                                    <form class="___form" style="display: inline;">
+                                                                        <input type="hidden" name="action" value="remove_original_bill">
+                                                                        <input type="hidden" name="method" value="post">
+                                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                                        <input type="hidden" name="response" value="order_detail">
+                                                                        <input type="hidden" name="original_bill_delete" value="{{$val->original_bill}}">
+
+                                                                        <a href="javascript:void(0)" class="___btn-action"><i class="fa fa-times"></i></a>
+                                                                    </form>
+
                                                                 </li>
                                                             @endforeach
                                                         @endif
@@ -287,19 +218,32 @@
                                                 <td>Vận đơn</td>
                                                 <td>
 
-                                                    <input id="_freight_bill" placeholder="" type="text" name="freight_bill" value="" pattern="">
-
-                                                    <a href="javascript:void(0)" class="_btn-action" data-action="insert_freight_bill">Lưu</a>
+                                                    <form class="___form">
+                                                        <input type="hidden" name="action" value="insert_freight_bill">
+                                                        <input type="hidden" name="method" value="post">
+                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                        <input type="hidden" name="response" value="order_detail">
+                                                        <input placeholder="" type="text" name="freight_bill" value="">
+                                                        <a href="javascript:void(0)" class="___btn-action">Lưu</a>
+                                                    </form>
 
                                                     <ul style="margin: 0;padding: 0;list-style: none;" id="_freight-bill-list">
                                                         @if(count($freight_bill))
                                                             @foreach($freight_bill as $key => $val)
-                                                                <li class="_freight-bill-list-item">{{$val->freight_bill}}
-                                                                    <a
-                                                                            data-order-id="{{$val->order_id}}"
-                                                                            data-freight-bill="{{$val->freight_bill}}"
-                                                                            data-action="remove_freight_bill"
-                                                                            href="javascript:void(0)" class="_btn-action"><i class="fa fa-times"></i></a>
+                                                                <li class="_freight-bill-list-item">
+                                                                    {{$val->freight_bill}}
+
+                                                                    <form class="___form" style="display: inline;">
+                                                                        <input type="hidden" name="action" value="remove_freight_bill">
+                                                                        <input type="hidden" name="method" value="post">
+                                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                                        <input type="hidden" name="response" value="order_detail">
+                                                                        <input placeholder="" type="hidden" name="freight_bill_delete" value="{{$val->freight_bill}}">
+                                                                        <a href="javascript:void(0)" class="___btn-action"><i class="fa fa-times"></i></a>
+                                                                    </form>
+
                                                                 </li>
                                                             @endforeach
                                                         @endif
@@ -323,13 +267,19 @@
                                                     {{--</div>--}}
 
                                                     @if($permission['can_change_order_domestic_shipping_fee'])
-                                                    <input id="_domestic_shipping_china" placeholder="Đơn vị NDT" type="text" name="" value="{{ $order->domestic_shipping_fee  }}" pattern="">
-
-                                                    <button data-action="domestic_shipping_china" class="_btn-action">
-                                                        <i class="fa fa-save"></i>
-                                                    </button>
 
 
+                                                        <form class="___form">
+                                                            <input type="hidden" name="action" value="domestic_shipping_china">
+                                                            <input type="hidden" name="method" value="post">
+                                                            <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                            <input type="hidden" name="response" value="order_detail">
+                                                            <input placeholder="Đơn vị NDT" type="text" name="domestic_shipping_china" value="{{ $order->domestic_shipping_fee  }}">
+
+
+                                                            <a href="javascript:void(0)" class="___btn-action">Lưu</a>
+                                                        </form>
 
                                                     @else
                                                         {{ $order->domestic_shipping_fee  }}
@@ -341,30 +291,54 @@
                                                 <td>Kho nhận hàng</td>
                                                 <td>
 
-                                                    <select data-action="receive_warehouse" class="form-control _select-action">
-                                                        <option value="">Chọn kho</option>
+                                                    <form class="___form">
+                                                        <input type="hidden" name="action" value="receive_warehouse">
+                                                        <input type="hidden" name="method" value="post">
+                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                        <input type="hidden" name="response" value="order_detail">
 
-                                                        @if($warehouse_receive)
-                                                            @foreach($warehouse_receive as $key => $val)
-                                                                <option @if($val->code == $order->receive_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                        <select class="form-control ___select-action">
+                                                            <option value="">Chọn kho</option>
+
+                                                            @if($warehouse_receive)
+                                                                @foreach($warehouse_receive as $key => $val)
+                                                                    <option @if($val->code == $order->receive_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+
+                                                    </form>
+
+
+
 
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Kho phân phối</td>
                                                 <td>
-                                                    <select data-action="destination_warehouse" class="form-control _select-action">
-                                                        <option value="">Chọn kho</option>
 
-                                                        @if($warehouse_distribution)
-                                                            @foreach($warehouse_distribution as $key => $val)
-                                                                <option @if($val->code == $order->destination_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                    <form class="___form">
+                                                        <input type="hidden" name="action" value="destination_warehouse">
+                                                        <input type="hidden" name="method" value="post">
+                                                        <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                        <input type="hidden" name="response" value="order_detail">
+
+                                                        <select class="form-control ___select-action">
+                                                            <option value="">Chọn kho</option>
+
+                                                            @if($warehouse_distribution)
+                                                                @foreach($warehouse_distribution as $key => $val)
+                                                                    <option @if($val->code == $order->destination_warehouse) selected @endif value="{{$val->code}}">[{{$val->alias}}] {{$val->name}} ({{$val->code}})</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+
+                                                    </form>
+
+
 
                                                 </td>
                                             </tr>
@@ -511,11 +485,11 @@
 
                     ?>
 
-                    <table class="table table-striped">
+                    <table class="table table-striped no-padding-leftright">
                         <thead>
                         <tr>
                             <th width="50%">SẢN PHẨM</th>
-                            <th>SL ({{ $total_order_quantity }})</th>
+                            <th width="15%">SL ({{ $total_order_quantity }})</th>
                             <th>{{ $total_price_ndt  }}¥ · {{ App\Util::formatNumber($total_price_vnd)  }} <sup>đ</sup></th>
                         </tr>
                         </thead>
@@ -543,11 +517,21 @@
                                                 Mẫu: {{$order_item->property}}
                                             </p>
 
-                                            <input style="width: 100%; margin-bottom: 10px;"
-                                                    data-action="order_item_comment"
-                                                    data-item-id="{{$order_item->id}}"
-                                                    class="_input-action" type="text" placeholder="Chat về sản phẩm...">
+                                            <form class="___form">
+                                                <input type="hidden" name="action" value="order_item_comment">
+                                                <input type="hidden" name="method" value="post">
+                                                <input type="hidden" name="item_id" value="{{$order_item->id}}">
+                                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                <input type="hidden" name="response" value="order_detail">
 
+                                                <input style="width: 100%; margin-bottom: 10px;"
+                                                       name="order_item_comment_message"
+                                                       class="___input-action"
+                                                       type="text"
+                                                       placeholder="Chat về sản phẩm...">
+
+                                            </form>
 
                                             <ul style="    margin: 0;
     padding: 0;
@@ -584,38 +568,63 @@
                                 </td>
                                 <td>
                                     @if($permission['can_change_order_item_quantity'])
-                                        <input
-                                                style="width: 80px;"
-                                                class="_input-action"
-                                                data-action="change_order_item_quantity"
-                                                data-item-id="{{$order_item->id}}"
-                                                type="number"
-                                                value="{{$order_item->order_quantity}}" placeholder="">
+
+                                        <form class="___form">
+                                            <input type="hidden" name="action" value="change_order_item_quantity">
+                                            <input type="hidden" name="method" value="post">
+                                            <input type="hidden" name="item_id" value="{{$order_item->id}}">
+                                            <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                            <input type="hidden" name="response" value="order_detail">
+
+                                            <input
+                                                    style="width: 80px;"
+                                                    class="___input-action"
+                                                    name="order_quantity"
+                                                    type="number"
+                                                    value="{{$order_item->order_quantity}}" placeholder="">
+
+                                        </form>
+
+
                                     @else
                                         {{$order_item->order_quantity}}
                                     @endif
                                 </td>
                                 <td>
-                                    <p>
+                                    <div>
                                         Đơn giá:
                                         @if($permission['can_change_order_item_price'])
-                                        <input
-                                                style="width: 90px;"
-                                                class="_input-action _autoNumeric"
-                                                data-action="change_order_item_price"
-                                                data-item-id="{{$order_item->id}}"
-                                                type="text"
-                                                value="{{ $order_item->getPriceCalculator() }}" placeholder="">¥ ·
+
+
+                                        <form class="___form" style="display: inline">
+                                            <input type="hidden" name="action" value="change_order_item_price">
+                                            <input type="hidden" name="method" value="post">
+                                            <input type="hidden" name="item_id" value="{{$order_item->id}}">
+                                            <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                            <input type="hidden" name="response" value="order_detail">
+
+                                            <input
+                                                    style="width: 90px;"
+                                                    class="___input-action _autoNumeric"
+                                                    type="text"
+                                                    name="order_item_price"
+                                                    value="{{ $order_item->getPriceCalculator() }}" placeholder="">¥ ·
+
+                                        </form>
+
+
                                         @else
                                             <span class="text-success">{{ $order_item->getPriceCalculator() }}</span>¥ ·
                                         @endif
                                         {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order->exchange_rate) }}
 
                                         <sup>đ</sup>
-                                    </p>
-                                    <p>
+                                    </div>
+                                    <div>
                                         Tổng: <span class="text-success">{{$order_item->getPriceCalculator() * $order_item->order_quantity}}¥</span> · {{ App\Util::formatNumber($order_item->getPriceCalculator() * $order_item->order_quantity * $order->exchange_rate) }} <sup>đ</sup>
-                                    </p>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -625,23 +634,8 @@
                 </div>
             </div>
 
+            <br>
 
-
-        </div>
-
-        <div class="col-sm-4 col-xs-12">
-
-            @include('partials/__comment', [
-                'object_id' => $order_id,
-                'object_type' => App\Comment::TYPE_OBJECT_ORDER,
-                'scope' => App\Comment::TYPE_EXTERNAL
-            ])
-
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-sm-12">
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Hành động
@@ -649,12 +643,32 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     @if($permission['can_change_order_bought'])
-                        <li><a href="javascript:void(0)" class="_btn-action" data-action="bought_order">ĐÃ MUA</a></li>
+                        <li>
+                            <form class="___form">
+                                <input type="hidden" name="action" value="bought_order">
+                                <input type="hidden" name="method" value="post">
+                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                <input type="hidden" name="response" value="order_detail">
+
+                                <a href="javascript:void(0)" class="___btn-action">ĐÃ MUA</a>
+                            </form>
+                        </li>
                     @endif
                 </ul>
             </div>
+
+        </div>
+
+        <div class="col-sm-4 col-xs-12" id="anchor-box-comment">
+            @include('partials/__comment', [
+                'object_id' => $order_id,
+                'object_type' => App\Comment::TYPE_OBJECT_ORDER,
+            ])
+
         </div>
     </div>
+
 
 @endsection
 

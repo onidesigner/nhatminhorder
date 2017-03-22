@@ -11,6 +11,7 @@ use App\OrderItem;
 use App\OrderOriginalBill;
 use App\OrderService;
 use App\Permission;
+use App\Service;
 use App\User;
 use App\UserAddress;
 use App\UserOriginalSite;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\View;
 
 class OrderController extends Controller
 {
@@ -64,14 +66,40 @@ class OrderController extends Controller
             ];
         }
 
+        $order_ids = [];
+        if($orders){
+            foreach($orders as $order){
+                if(!$order || !$order instanceof Order){
+                    continue;
+                }
+                $order_ids[] = $order->id;
+            }
+        }
+
+        $services = [];
+        $services_order = OrderService::findByOrderIds($order_ids);
+        foreach($services_order as $service_order){
+            if(!$service_order || !$service_order instanceof OrderService){
+                continue;
+            }
+            $services[$service_order->order_id][] = [
+                'code' => $service_order['service_code'],
+                'name' => Service::getServiceName($service_order['service_code']),
+                'icon' => Service::getServiceIcon($service_order['service_code']),
+            ];
+        }
+
         return view('orders', [
             'page_title' => ' Quản lý đơn hàng',
             'orders' => $orders,
+            'services' => $services,
             'total_orders' => $total_orders,
             'status_list' => $status_list,
             'params' => $params,
         ]);
     }
+
+
 
     /**
      * @author vanhs
@@ -97,6 +125,10 @@ class OrderController extends Controller
             return redirect('404');
         }
 
+        return view('order_detail', $this->__getOrderInitData($order, $customer, 'layouts.app'));
+    }
+
+    private function __getOrderInitData(Order $order, User $customer, $layout){
         $user_address = UserAddress::find($order->user_address_id);
         if($user_address && $user_address instanceof UserAddress){
             $district = Location::find($user_address->district_id);
@@ -141,15 +173,40 @@ class OrderController extends Controller
             ];
         }
 
-        return view('order_detail', [
-            'order_id' => $order_id,
+        $order_service = [];
+        $o_services = $order->service;
+        foreach($o_services as $o_service){
+            if(!$o_service || !$o_service instanceof OrderService){
+                continue;
+            }
+            $order_service[] = $o_service->service_code;
+        }
+
+        $services = [];
+        $services_list = Service::getAllService();
+        if($services_list){
+            foreach($services_list as $service){
+                if(!$service || !$service instanceof Service){
+                    continue;
+                }
+                $services[] = [
+                    'code' => $service->code,
+                    'name' => Service::getServiceName($service->code),
+                    'is_default' => Service::checkIsDefault($service->code),
+                    'checked' => in_array($service->code, $order_service) ? true : false
+                ];
+            }
+        }
+
+        return [
+            'order_id' => $order->id,
             'freight_bill' => $order->freight_bill()->where([ 'is_deleted' => 0 ])->get(),
             'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
             'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
             'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
             'user_address' => $user_address,
             'order' => $order,
-            'order_service' => $order->service,
+            'services' => $services,
             'order_item_comments' => $order_item_comments_data,
             'user_origin_site' => UserOriginalSite::all(),
             'order_items' => $order->item,
@@ -157,8 +214,9 @@ class OrderController extends Controller
             'customer' => $customer,
             'transactions' => Order::findByTransactions($order->id),
             'page_title' => 'Chi tiết đơn hàng',
-            'permission' => $permission
-        ]);
+            'permission' => $permission,
+            'layout' => $layout,
+        ];
     }
 
     /**
@@ -178,19 +236,23 @@ class OrderController extends Controller
             $user = User::find(Auth::user()->id);
             $action = '__' . $request->get('action');
 
-            if(!$order){
+            if(!$order || !$order instanceof Order){
                 return response()->json(['success' => false, 'message' => 'Order not found!']);
             }
 
-            if(!$user){
+            if(!$user || !$user instanceof User){
                 return response()->json(['success' => false, 'message' => 'User not found!']);
+            }
+
+            $customer = User::find($order->user_id);
+
+            if(!$customer || !$customer instanceof User){
+                return response()->json(['success' => false, 'message' => 'Customer not found!']);
             }
 
             if (!method_exists($this, $action)) {
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
-
-
 
             if($order->isEndingStatus()){
                 return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
@@ -202,7 +264,15 @@ class OrderController extends Controller
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'success']);
+
+            $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'layouts/app_blank'));
+            $html = $view->render();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'success',
+                'html' => $html
+            ]);
 
         }catch(\Exception $e){
             DB::rollback();
@@ -255,6 +325,53 @@ class OrderController extends Controller
             Comment::createComment($user, $order, "Đơn hàng chuyển sang trạng thái người bán giao.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
             Comment::createComment($user, $order, "Chuyển trạng thái đơn sang người bán giao.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         }
+
+        return true;
+    }
+
+    private function __choose_service(Request $request, Order $order, User $user){
+        $service = $request->get('service');
+        if(empty($service)){
+            $this->action_error[] = 'Chưa chọn dịch vụ!';
+        }
+
+        $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_REMOVE_FREIGHT_BILL);
+        if(!$can_execute):
+            $this->action_error[] = 'Not permission!';
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        if(in_array($service, Service::getServiceDefault())){
+            return true;
+        }
+
+        $message = null;
+        $exist_service = $order->existService($service);
+        if($request->get('checkbox') == 'check'){
+            if(!$exist_service){
+                $order_service = new OrderService();
+                $order_service->order_id = $order->id;
+                $order_service->service_code = $service;
+                $order_service->save();
+
+                $message = sprintf("Chọn dịch vụ %s", Service::getServiceName($service));
+            }
+        }else{
+            if($exist_service){
+                OrderService::where([
+                    'order_id' => $order->id,
+                    'service_code' => $service
+                ])->delete();
+
+                $message = sprintf("Bỏ chọn dịch vụ %s", Service::getServiceName($service));
+            }
+        }
+
+        Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }
@@ -411,7 +528,7 @@ class OrderController extends Controller
         }
 
         $old_order_quantity = $order_item->order_quantity;
-        $new_order_quantity = (int)$request->get('value');
+        $new_order_quantity = (int)$request->get('order_quantity');
         $order_item->order_quantity = $new_order_quantity;
         $order_item->save();
 
@@ -458,8 +575,8 @@ class OrderController extends Controller
             return false;
         }
 
-        $old_order_item_price = 0;
-        $new_order_item_price = (double)$request->get('value');
+        $old_order_item_price = $order_item->getPriceCalculator();
+        $new_order_item_price = (double)$request->get('order_item_price');
         $order_item->price = $new_order_item_price;
         $order_item->price_promotion = $new_order_item_price;
         $order_item->save();
@@ -503,7 +620,7 @@ class OrderController extends Controller
             $this->action_error[] = 'Vui lòng nhập mã hóa đơn gốc!';
         }
 
-        if(!empty($order->domestic_shipping_fee)){
+        if($order->domestic_shipping_fee < 0){
             $this->action_error[] = 'Vui lòng nhập vào phí vận chuyển nội địa TQ!';
         }
 
@@ -615,7 +732,7 @@ class OrderController extends Controller
         return Comment::createComment(
             $user,
             $order_item,
-            $request->get('message'),
+            $request->get('order_item_comment_message'),
             Comment::TYPE_NONE,
             Comment::TYPE_CONTEXT_CHAT,
             $order
@@ -642,7 +759,7 @@ class OrderController extends Controller
         $message = null;
 
         $account_old = $order->account_purchase_origin;
-        $account_new = $request->get('value');
+        $account_new = $request->get('select');
 
         if(empty($account_old)){
             $message = sprintf('Chon user mua hàng site gốc %s', $account_new);
@@ -670,7 +787,7 @@ class OrderController extends Controller
         $message = null;
 
         $old = $order->receive_warehouse;
-        $new = $request->get('value');
+        $new = $request->get('select');
 
         if(empty($old)){
             $message = sprintf('Thiết lập kho nhận hàng %s', $new);
@@ -698,7 +815,7 @@ class OrderController extends Controller
         $message = null;
 
         $old = $order->destination_warehouse;
-        $new = $request->get('value');
+        $new = $request->get('select');
 
         if(empty($old)){
             $message = sprintf('Thiết lập kho phân phối %s', $new);

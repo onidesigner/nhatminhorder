@@ -16,6 +16,9 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->nullable()->default(0);
+            $table->string('seller_id', 255)->nullable();
+            $table->string('wangwang', 255)->nullable();
+            $table->string('location_sale', 255)->nullable();
             $table->string('shop_id', 50)->nullable();
             $table->string('shop_name', 50)->nullable();
             $table->string('shop_link', 100)->nullable();
@@ -24,6 +27,7 @@ class CreateCartsTable extends Migration
             $table->string('services', 100)->nullable();
             $table->string('comment', 255)->nullable();
             $table->string('comment_private', 255)->nullable();
+            $table->timestamp('last_insert_item_at')->nullable()->before('created_at');
             $table->timestamps();
         });
     }

@@ -20,31 +20,7 @@
 </head>
 <body>
 
-{{--@include('partials/__comment', [--}}
-    {{--'object_id' => 100,--}}
-    {{--'object_type' => App\Comment::TYPE_OBJECT_ORDER,--}}
-    {{--'scope' => App\Comment::TYPE_EXTERNAL--}}
-{{--])--}}
-
 <div class="app app-default">
-    {{--<div class="row">--}}
-        {{--<div class="col-xs-12">--}}
-            {{--<div class="___loading" style="height: 100px; width:100%; position: fixed; top: 0; left:0; z-index: 9999999999; display: none'">--}}
-                {{--<div class="loader-container text-center">--}}
-                    {{--<div class="icon">--}}
-                        {{--<div class="sk-wave">--}}
-                            {{--<div class="sk-rect sk-rect1"></div>--}}
-                            {{--<div class="sk-rect sk-rect2"></div>--}}
-                            {{--<div class="sk-rect sk-rect3"></div>--}}
-                            {{--<div class="sk-rect sk-rect4"></div>--}}
-                            {{--<div class="sk-rect sk-rect5"></div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="title">Dang tai du lieu, cho xiu nhe!</div>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-    {{--</div>--}}
 
     <aside class="app-sidebar" id="sidebar">
 
@@ -209,7 +185,11 @@
 
         {{--@include('layouts/help-actions')--}}
 
-        @yield('content')
+        <div class="row">
+            <div class="col-xs-12" id="_content">
+                @yield('content')
+            </div>
+        </div>
 
         @include('layouts/footer')
 
@@ -217,22 +197,18 @@
 
 </div>
 
-<input type="hidden" class="_autoNumericTemp" value="" />
-
 @yield('widget')
 
 @section('css_bottom')
 @show
 
 @section('js_bottom')
-{{--<script type="text/javascript" src="{{ asset('js/vendor.js') }}"></script>--}}
 <script type="text/javascript" src="{{ asset('js/jquery-3.1.1.min.js') }}"></script>
-<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
-<script src="{{ asset('js/autoNumeric.min.js')  }}"></script>
-<script src="{{ asset('js/nprogress.js')  }}"></script>
+<script type="text/javascript" src="{{ asset('js/autoNumeric.min.js')  }}"></script>
+<script type="text/javascript" src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
-{{--<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>--}}
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
 @show
 

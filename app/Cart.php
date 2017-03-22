@@ -64,7 +64,10 @@ class Cart extends Model
     }
 
     public static function insertOrderServices($insert_id_order, $cart_services = ''){
-        $cart_services .= sprintf('|%s', Service::TYPE_SHIPPING_CHINA_VIETNAM);
+        $service_default = Service::getServiceDefault();
+        foreach($service_default as $service_default_item){
+            $cart_services .= sprintf('|%s', $service_default_item);
+        }
 
         if($cart_services):
             $service_data_insert = [];
@@ -316,7 +319,8 @@ class Cart extends Model
                     'wangwang' => $params['wangwang'],
                     'location_sale' => $params['location_sale'],
                     'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s')
+                    'last_insert_item_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
                 ];
 
                 $insert_id_cart = self::insertGetId($data_insert_cart);
@@ -325,7 +329,10 @@ class Cart extends Model
                         'shop_id' => $params['shop_id'],
                         'user_id' => $user_id
                     ])
-                    ->update(['updated_at' => date('Y-m-d H:i:s')]);
+                    ->update([
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'last_insert_item_at' => date('Y-m-d H:i:s')
+                    ]);
                 $insert_id_cart = $exist_shop_id->id;
             endif;
 

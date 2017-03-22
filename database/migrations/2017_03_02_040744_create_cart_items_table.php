@@ -26,8 +26,8 @@ class CreateCartItemsTable extends Migration
             $table->string('property', 50)->nullable();
             $table->string('property_translated', 50)->nullable();
             $table->string('property_md5', 50)->nullable();
-            $table->string('image_origin', 100)->nullable();
-            $table->string('image_model', 100)->nullable();
+            $table->mediumText('image_origin', 100)->nullable();
+            $table->mediumText('image_model', 100)->nullable();
             $table->string('seller_id', 50)->nullable();
             $table->string('shop_id', 50)->nullable();
             $table->string('shop_name', 50)->nullable();
