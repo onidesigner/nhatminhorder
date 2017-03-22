@@ -28,18 +28,17 @@
                             TẠO GIAO DỊCH</a>
                     @endif
 
-                    <table class="table">
+                    <table class="table no-padding-leftright">
                         <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Khách </th>
-                            <th>Mã GD</th>
-                            <th>Loại </th>
-                            <th>Trạng thái </th>
-                            <th>Đối tượng</th>
-                            <th>Thời gian </th>
-                            <th>Giá trị </th>
-                            <th>Số dư cuối </th>
+                            <th width="5%">ID</th>
+                            <th width="20%">Khách</th>
+                            <th width="20%">Mã GD</th>
+                            <th width="10%">Trạng thái</th>
+                            <th width="10%">Đối tượng</th>
+                            <th width="15%">Thời gian</th>
+                            <th class="text-right">Giá trị</th>
+                            <th class="text-right">Số dư cuối</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -69,10 +68,11 @@
                             <td>
                                 {{$transaction->transaction_code}}<br>
                             <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
+                                <p>
+                                    Loại GD: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
+                                </p>
                             </td>
-                            <td>
-                                {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
-                            </td>
+
                             <td>
 
 
@@ -86,17 +86,22 @@
                                 @endif
                             </td>
 
-                            <td>{{$transaction->created_at}}</td>
-                            <td>
+                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
+                            <td class="text-right">
                                 <span class="text-danger">
                                     {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
                                 </span>
+
+
+
+
                             </td>
-                            <td>
+                            <td class="text-right">
                                 <strong>
                                     {{ App\Util::formatNumber($transaction->ending_balance) }} <sup>d</sup>
                                 </strong>
                             </td>
+
                         </tr>
                         @endforeach
                         </tbody>

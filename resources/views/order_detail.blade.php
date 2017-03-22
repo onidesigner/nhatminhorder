@@ -65,7 +65,13 @@
                                             <tr>
                                                 <td width="50%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
-                                                    <code>{{$order->code}}</code> ({{ App\Order::getStatusTitle($order->status)  }})
+                                                    <code>{{$order->code}}</code> <br> ({{ App\Order::getStatusTitle($order->status)  }})
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Khách hàng: </td>
+                                                <td>
+                                                    {{$customer->email}} <code>{{$customer->code}}</code>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -489,8 +495,8 @@
                         <thead>
                         <tr>
                             <th width="50%">SẢN PHẨM</th>
-                            <th width="15%">SL ({{ $total_order_quantity }})</th>
-                            <th>{{ $total_price_ndt  }}¥ · {{ App\Util::formatNumber($total_price_vnd)  }} <sup>đ</sup></th>
+                            <th width="20%">SL ({{ $total_order_quantity }})</th>
+                            <th width="30%">{{ $total_price_ndt  }}¥ · {{ App\Util::formatNumber($total_price_vnd)  }} <sup>đ</sup></th>
                         </tr>
                         </thead>
                         @if(count($order_items))
@@ -643,7 +649,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                     @if($permission['can_change_order_bought'])
-                        <li>
+                        <li style="margin: 7px 0;">
                             <form class="___form">
                                 <input type="hidden" name="action" value="bought_order">
                                 <input type="hidden" name="method" value="post">
@@ -651,12 +657,51 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                 <input type="hidden" name="response" value="order_detail">
 
-                                <a href="javascript:void(0)" class="___btn-action">ĐÃ MUA</a>
+                                <a
+                                        style="display: inline-block;width: 100%;padding: 0 15px;"
+                                        href="javascript:void(0)"
+                                        class="___btn-action">ĐÃ MUA</a>
+                            </form>
+                        </li>
+                    @endif
+
+                    @if($permission['can_change_order_cancel'])
+                        <li style="margin: 7px 0;">
+                            <form class="___form">
+                                <input type="hidden" name="action" value="cancel_order">
+                                <input type="hidden" name="method" value="post">
+                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                <input type="hidden" name="response" value="order_detail">
+
+                                <a
+                                        style="display: inline-block;width: 100%;padding: 0 15px;"
+                                        href="javascript:void(0)"
+                                        class="___btn-action">HỦY ĐƠN</a>
+                            </form>
+                        </li>
+                    @endif
+
+                    @if($permission['can_change_order_received_from_seller'])
+                        <li style="margin: 7px 0;">
+                            <form class="___form">
+                                <input type="hidden" name="action" value="received_from_seller_order">
+                                <input type="hidden" name="method" value="post">
+                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                <input type="hidden" name="response" value="order_detail">
+
+                                <a
+                                        style="display: inline-block;width: 100%;padding: 0 15px;"
+                                        href="javascript:void(0)"
+                                        class="___btn-action">NHATMINH247 NHẬN</a>
                             </form>
                         </li>
                     @endif
                 </ul>
             </div>
+
+            <br>
 
         </div>
 

@@ -152,6 +152,8 @@ class OrderController extends Controller
 
         $permission = [
             'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED,
+            'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_TRANSPORTING),
+            'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
             'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
@@ -255,7 +257,7 @@ class OrderController extends Controller
             }
 
             if($order->isEndingStatus()){
-                return response()->json(['success' => false, 'message' => 'Đơn hàng hiện đã ở trạng thái cuối, không thể thay đổi thông tin!']);
+                return response()->json(['success' => false, 'message' => sprintf('Đơn hàng hiện đã ở trạng thái cuối (%s), không thể thay đổi thông tin!', Order::getStatusTitle($order->status))]);
             }
 
             $result = $this->$action($request, $order, $user);
@@ -322,8 +324,9 @@ class OrderController extends Controller
         if($order_empty_freight_bill
             && $order->status == Order::STATUS_BOUGHT){
             $order->changeStatus(Order::STATUS_SELLER_DELIVERY);
-            Comment::createComment($user, $order, "Đơn hàng chuyển sang trạng thái người bán giao.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-            Comment::createComment($user, $order, "Chuyển trạng thái đơn sang người bán giao.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            $status_title_after_change = Order::getStatusTitle(Order::STATUS_SELLER_DELIVERY);
+            Comment::createComment($user, $order, sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+            Comment::createComment($user, $order, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
         }
 
         return true;
@@ -649,7 +652,7 @@ class OrderController extends Controller
         $order->save();
 
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-        Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        Comment::createComment($user, $order, "Chuyển trạng thái đơn hàng sang đã mua.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
 
@@ -666,8 +669,8 @@ class OrderController extends Controller
                 Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new)),
                 $deposit_percent_new);
 
-            Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-            Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+            Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
 
             UserTransaction::createTransaction(
                 UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
@@ -706,7 +709,7 @@ class OrderController extends Controller
                 UserTransaction::TRANSACTION_TYPE_REFUND,
                 sprintf('Trả lại tiền đặt cọc đơn hàng %s', $order->code),
                 $user,
-                $user,
+                $customer,
                 $order,
                 abs($deposit_amount)
             );
@@ -714,6 +717,28 @@ class OrderController extends Controller
 
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Chuyen trang thai don sang nhatminh247 nhan hang
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __received_from_seller_order(Request $request, Order $order, User $user){
+        if($order->status != Order::STATUS_SELLER_DELIVERY){
+            $this->action_error[] = sprintf('Không thể chuyển đơn hàng sang trạng thái %s!', Order::getStatusTitle(Order::STATUS_RECEIVED_FROM_SELLER));
+        }
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        $order->changeOrderReceivedFromSeller(true);
 
         return true;
     }
@@ -899,4 +924,6 @@ class OrderController extends Controller
 
         return true;
     }
+
+
 }

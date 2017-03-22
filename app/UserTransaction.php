@@ -141,6 +141,13 @@ class UserTransaction extends Model
             ->first()->total_amount;
     }
 
+    /**
+     * @author vanhs
+     * @desc Tinh tong so tien khach da dat coc cho don hang de tra lai, khi an huy don hang
+     * @param User $customer
+     * @param Order $order
+     * @return mixed
+     */
     public static function getDepositOrder(User $customer, Order $order){
         return DB::table('user_transaction')
             ->select(DB::raw('SUM(amount) as total_amount'))

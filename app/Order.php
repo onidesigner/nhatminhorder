@@ -7,6 +7,7 @@ use App\Library\ServiceFee\WoodCrating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use App\OrderItem;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Order extends Model
@@ -23,7 +24,6 @@ class Order extends Model
 //    const STATUS_CHECKING = '';
 //    const STATUS_CHECKED = '';
     const STATUS_WAITING_DELIVERY = 'WAITING_DELIVERY';
-    const STATUS_CUSTOMER_DELIVERY = 'CUSTOMER_DELIVERY';
     const STATUS_DELIVERING = 'DELIVERING';
     const STATUS_RECEIVED = 'RECEIVED';
     const STATUS_CANCELLED = 'CANCELLED';
@@ -45,9 +45,8 @@ class Order extends Model
 //        self::STATUS_CHECKING => 'Đang kiểm hàng',
 //        self::STATUS_CHECKED => 'Đã kiểm hàng',
         self::STATUS_WAITING_DELIVERY => "Chờ giao hàng",
-        self::STATUS_CUSTOMER_DELIVERY => "Yêu cầu giao",
         self::STATUS_DELIVERING => "Đang giao hàng",
-        self::STATUS_RECEIVED => 'Khách nhận hàng',
+        self::STATUS_RECEIVED => 'Đã giao hàng',
         self::STATUS_CANCELLED => "Đã hủy",
     );
 
@@ -59,7 +58,6 @@ class Order extends Model
         self::STATUS_TRANSPORTING => "transporting_at",
 
         self::STATUS_WAITING_DELIVERY => 'waiting_delivery_at',
-        self::STATUS_CUSTOMER_DELIVERY => 'customer_delivery_at',
         self::STATUS_DELIVERING => 'delivering_at',
 
         self::STATUS_RECEIVED => 'received_at',
@@ -73,9 +71,8 @@ class Order extends Model
         'received_from_seller_at' => 'NhatMinh247 Nhận',
         'transporting_at' => 'Vận chuyển',
         'waiting_delivery_at' => 'Chờ giao hàng',
-        'customer_delivery_at' => 'Yêu cầu giao',
         'delivering_at' => 'Đang giao hàng',
-        'received_at' => 'Khách nhận hàng',
+        'received_at' => 'Đã giao hàng',
         'cancelled_at' => 'Hủy đơn'
     ];
 
@@ -87,7 +84,6 @@ class Order extends Model
         self::STATUS_TRANSPORTING,
 
         self::STATUS_WAITING_DELIVERY,
-        self::STATUS_CUSTOMER_DELIVERY,
         self::STATUS_DELIVERING,
         self::STATUS_RECEIVED,
         self::STATUS_CANCELLED,
@@ -624,5 +620,181 @@ class Order extends Model
         return $saved;
     }
 
+    /**
+     * @author vanhs
+     * @desc Chuyen trang thai don sang NhatMinh247 nhan hang
+     * @return bool
+     */
+    public function changeOrderReceivedFromSeller($manualy = false){
+
+        try{
+            DB::beginTransaction();
+
+            $create_user = User::find(Auth::user()->id);
+
+            #region -- change status --
+            if($this->status == self::STATUS_SELLER_DELIVERY){
+                $this->changeStatus(self::STATUS_RECEIVED_FROM_SELLER, false);
+                $this->save();
+
+                $status_title_after_change = self::getStatusTitle(self::STATUS_RECEIVED_FROM_SELLER);
+
+                $type_context = Comment::TYPE_CONTEXT_LOG;
+                $message_external = sprintf("Đơn hàng chuyển sang trạng thái %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $status_title_after_change);
+                $message_internal = sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change);
+                if($manualy){
+                    $type_context = Comment::TYPE_CONTEXT_ACTIVITY;
+                    $message_external = sprintf("Chuyển trạng thái đơn sang %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $status_title_after_change);
+                    $message_internal = sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change);
+                }
+
+                Comment::createComment($create_user, $this, $message_external, Comment::TYPE_EXTERNAL, $type_context);
+                Comment::createComment($create_user, $this, $message_internal, Comment::TYPE_INTERNAL, $type_context);
+            }
+            #endregion
+
+            DB::commit();
+            return true;
+
+        }catch(\Exception $e){
+            DB::rollback();
+            return false;
+        }
+
+    }
+
+    /**
+     * @author vanhs
+     * @desc Kiem tra xem don hang co chon chuyen thang hay khong
+     * @return bool
+     */
+    public function isOrderTransportStraight(){
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Chuyen trang thai don sang van chuyen:
+     * - neu la don khong chuyen thang thi trang thai don di tuan tu la: nhatminh247 nhan > van chuyen > cho giao hang > dang giao hang
+     * - neu la don chuyen thang thi trang thai don tuan tu la: nhatminh247 nhan > dang giao hang
+     * - neu kien dau tien xuat kho thi thu so tien hang con lai + phi mua hang + toan bo cac phi cua kien dau tien,
+     *  cac kien con lai thi thu toan bo cac phi cua tung kien
+     * @return bool
+     */
+    public function changeOrderTransporting(){
+        try{
+            DB::beginTransaction();
+            $create_user = User::find(Auth::user()->id);
+            $customer = User::find($this->user_id);
+
+            #region -- change status --
+            if($this->status == self::STATUS_RECEIVED_FROM_SELLER){
+                if($this->isOrderTransportStraight()){
+                    $this->changeStatus(self::STATUS_DELIVERING, false);
+                    $this->save();
+
+                    $status_title_after_change = self::getStatusTitle(self::STATUS_DELIVERING);
+
+                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+                }else{
+                    $this->changeStatus(self::STATUS_TRANSPORTING, false);
+                    $this->save();
+
+                    $status_title_after_change = self::getStatusTitle(self::STATUS_TRANSPORTING);
+
+                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+                }
+
+
+                $order_amount_vnd = $this->amountWithItems(true);
+                $order_buying_fee = $this->getBuyingFee($order_amount_vnd);
+                $total_customer_payment = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
+                $total_need_payment = ($order_amount_vnd + $order_buying_fee) - $total_customer_payment;
+                $total_need_payment = 0 - abs($total_need_payment);
+                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc + phí mua hàng %s, đơn %s', $order_buying_fee, $this->code);
+
+                UserTransaction::createTransaction(
+                    UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+                    $message,
+                    $create_user,
+                    $customer,
+                    $this,
+                    $total_need_payment
+                );
+
+                Comment::createComment($create_user, $this, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                Comment::createComment($create_user, $this, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+            }
+            #endregion
+            DB::commit();
+            return true;
+        }catch(\Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
+
+    /**
+     * @author vanhs
+     * @desc Chuyen trang thai don sang cho giao hang
+     * @return bool
+     */
+    public function changeOrderWaitingDelivery(){
+        try{
+            DB::beginTransaction();
+            $create_user = User::find(Auth::user()->id);
+
+            #region -- change status --
+            if($this->status == self::STATUS_TRANSPORTING){
+                $this->changeStatus(self::STATUS_WAITING_DELIVERY, false);
+                $this->save();
+
+                $status_title_after_change = self::getStatusTitle(self::STATUS_WAITING_DELIVERY);
+
+                Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+            }
+            #endregion
+
+            DB::commit();
+            return true;
+        }catch(\Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
+
+    /**
+     * @author vanhs
+     * @desc Chuyen trang thai don sang dang giao hang
+     * @return bool
+     */
+    public function changeOrderDelivering(){
+        try{
+            DB::beginTransaction();
+            $create_user = User::find(Auth::user()->id);
+
+            #region -- change status --
+            if($this->status == self::STATUS_WAITING_DELIVERY){
+                $this->changeStatus(self::STATUS_DELIVERING, false);
+                $this->save();
+
+                $status_title_after_change = self::getStatusTitle(self::STATUS_DELIVERING);
+
+                Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+            }
+            #endregion
+
+            DB::commit();
+            return true;
+        }catch(\Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
 
 }
