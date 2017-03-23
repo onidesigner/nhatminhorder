@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('nhatminh247');
+    return view('home/index');
 });
 
 Auth::routes();

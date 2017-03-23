@@ -35,11 +35,12 @@
     padding: 0;
     list-style: none;
     float: left;
+    width: 100%;
 }
 #order-detail-page .order-fee li{
     width: 25%;
     float: left;
-    padding: 15px 30px;
+    padding: 15px 0;
 }
 
 /** css box chat **/
@@ -52,4 +53,9 @@
     overflow-y: auto;
     margin: 0;
     padding: 0;
+}
+
+/** page customer cart **/
+._shop{
+    margin-bottom: 30px!important;
 }

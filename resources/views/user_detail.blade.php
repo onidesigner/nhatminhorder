@@ -55,7 +55,7 @@
                                             </tr>
                                             @if($user->section == App\User::SECTION_CUSTOMER)
                                                 <tr>
-                                                    <td class="no-padding-leftright"><strong>Số dư</strong>: {{$user->account_balance}}</td>
+                                                    <td class="no-padding-leftright"><strong>Số dư</strong>: {{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></td>
                                                 </tr>
                                             @endif
                                             <tr>

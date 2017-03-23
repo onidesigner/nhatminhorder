@@ -203,25 +203,17 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card ">
-                    <div class="card-body">
-                        <h4>Giỏ hàng hiện đang trống!</h4>
+                    <div class="card-body text-center">
+                        <h3>Giỏ hàng hiện đang trống!</h3>
 
-                        Click vào <a href="">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!
+                        <img src="{{ asset('images/empty/cart-empty.png') }}" alt="">
+                        {{--Click vào <a href="">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!--}}
                     </div>
                 </div>
             </div>
         </div>
     @endif
 
-@endsection
-
-@section('css_bottom')
-    @parent
-    <style>
-        ._shop{
-            margin-bottom: 30px!important;
-        }
-    </style>
 @endsection
 
 @section('js_bottom')

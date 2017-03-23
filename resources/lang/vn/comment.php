@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Trao doi nhanh'
+    'title' => 'Trao đổi nhanh'
 ];

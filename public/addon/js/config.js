@@ -70,6 +70,6 @@ var isUsingSetting = false;
 var translate_keyword_url = "";
 var version_tool = "1.0";
 var exchange_rate;
-var link_store_review_guidelines = "http://hotro.seudo.vn/post/huong-dan-cach-thuc-danh-gia-uy-tin-nha-cung-cap-71";//SEUDO
+var link_store_review_guidelines = "#";
 var web_service_url = "http://" + site_name + "/i/";
 var exchange_rate_url = 'http://' + site_name + '/api/exchange';

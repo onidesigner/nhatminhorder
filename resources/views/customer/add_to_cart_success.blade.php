@@ -90,8 +90,8 @@
     .modal-footer button.next{
         border-radius: 2px;
         color: #FFFFFF;
-        background: none repeat scroll 0 0 #DF3F3F;
-        border: 1px solid #C53838;
+        background: none repeat scroll 0 0 #29c75f;
+        border: 1px solid #29c75f;
         padding: 6px 12px 6px 25px;
         position: relative;
     }
@@ -108,13 +108,17 @@
     }
     .modal-footer button.next:hover{
         cursor: pointer;
-        border: 1px solid #c53838;
-        background: -moz-linear-gradient(top,  #df3f3f 0%, #c53838 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#df3f3f), color-stop(100%,#c53838));
-        background: -webkit-linear-gradient(top,  #df3f3f 0%,#c53838 100%);
-        background: -o-linear-gradient(top,  #df3f3f 0%,#c53838 100%);
-        background: -ms-linear-gradient(top,  #df3f3f 0%,#c53838 100%);
-        background: linear-gradient(top,  #df3f3f 0%,#c53838 100%);
+
+        background: none repeat scroll 0 0 #52e083;
+        border: 1px solid #52e083;
+
+        /*border: 1px solid #c53838;*/
+        /*background: -moz-linear-gradient(top,  #df3f3f 0%, #c53838 100%);*/
+        /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#df3f3f), color-stop(100%,#c53838));*/
+        /*background: -webkit-linear-gradient(top,  #df3f3f 0%,#c53838 100%);*/
+        /*background: -o-linear-gradient(top,  #df3f3f 0%,#c53838 100%);*/
+        /*background: -ms-linear-gradient(top,  #df3f3f 0%,#c53838 100%);*/
+        /*background: linear-gradient(top,  #df3f3f 0%,#c53838 100%);*/
     }
     .modal-footer .cart{
         text-decoration: none;
@@ -144,10 +148,10 @@
         text-decoration: none;
     }
 
-    .modal-dialog.seudo-error{
+    .modal-dialog.nhatminh247-error{
         background: #F2DEDE;
     }
-    .modal-dialog.seudo-error .modal-title{
+    .modal-dialog.nhatminh247-error .modal-title{
         color : #B94A48;
     }
 </style>
@@ -155,7 +159,7 @@
 <div class="book-seudo in" id="confirm_main">
     <div class="modal-backdrop"></div>
     <div class="modal " >
-        <div class="modal-dialog @if(!$success) seudo-error @endif">
+        <div class="modal-dialog @if(!$success) nhatminh247-error @endif">
             <div class="modal-content">
                 <div class="modal-header">
                     <span class="close" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.getElementById('confirm_main'))" >×</span>

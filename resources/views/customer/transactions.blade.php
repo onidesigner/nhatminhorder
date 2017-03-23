@@ -25,13 +25,13 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Mã GD</th>
-                            <th>Loại </th>
-                            <th>Trạng thái </th>
-                            <th>Đối tượng</th>
-                            <th>Thời gian </th>
-                            <th>Giá trị </th>
-                            <th>Số dư cuối </th>
+                            <th width="25%">Mã GD</th>
+                            <th width="10%">Loại </th>
+                            <th width="10%">Trạng thái </th>
+                            <th width="10%">Đối tượng</th>
+                            <th width="15%">Thời gian </th>
+                            <th width="15%" class="text-right">Giá trị </th>
+                            <th width="15%" class="text-right">Số dư cuối </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -69,12 +69,12 @@
                             </td>
 
                             <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
-                            <td>
+                            <td class="text-right">
                                 <span class="text-danger">
                                     {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
                                 </span>
                             </td>
-                            <td>
+                            <td class="text-right">
                                 <strong>
                                     {{ App\Util::formatNumber($transaction->ending_balance) }} <sup>d</sup>
                                 </strong>

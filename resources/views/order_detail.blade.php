@@ -668,22 +668,7 @@
                         </li>
                     @endif
 
-                    @if($permission['can_change_order_cancel'])
-                        <li style="margin: 7px 0;">
-                            <form class="___form">
-                                <input type="hidden" name="action" value="cancel_order">
-                                <input type="hidden" name="method" value="post">
-                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                <input type="hidden" name="response" value="order_detail">
 
-                                <a
-                                        style="display: inline-block;width: 100%;padding: 0 15px;"
-                                        href="javascript:void(0)"
-                                        class="___btn-action">HỦY ĐƠN</a>
-                            </form>
-                        </li>
-                    @endif
 
                     @if($permission['can_change_order_received_from_seller'])
                         <li style="margin: 7px 0;">
@@ -701,6 +686,24 @@
                             </form>
                         </li>
                     @endif
+
+                    @if($permission['can_change_order_cancel'])
+                        <li style="margin: 7px 0;">
+                            <form class="___form">
+                                <input type="hidden" name="action" value="cancel_order">
+                                <input type="hidden" name="method" value="post">
+                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                <input type="hidden" name="response" value="order_detail">
+
+                                <a
+                                        style="display: inline-block;width: 100%;padding: 0 15px;"
+                                        href="javascript:void(0)"
+                                        class="___btn-action">HỦY ĐƠN</a>
+                            </form>
+                        </li>
+                    @endif
+
                 </ul>
             </div>
 

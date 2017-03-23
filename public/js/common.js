@@ -9,24 +9,7 @@ $(document).ready(function() {
     //     }
     // });
 
-    if ($('[data-toggle="tooltip"]').length) {
-        $('[data-toggle="tooltip"]').tooltip();
-    }
-
-    if ($('[data-toggle="popover"]').length) {
-        $('[data-toggle="popover"]').popover();
-    }
-
-    if ($('._autoNumeric').length) {
-        $('._autoNumeric').each(function (i) {
-            var tagName = $(this).prop("tagName").toLowerCase();
-            if (tagName == 'input') {
-                $(this).autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
-            } else {
-                //todo
-            }
-        })
-    }
+    renderOnPage('html');
 
     $(document).ajaxStop(function(){
         NProgress.done();
@@ -39,10 +22,6 @@ $(document).ready(function() {
         complete:function(){
 
         }
-    });
-
-    $('.modal').on('shown.bs.modal', function() {
-        $("._autofocus").focus();
     });
 
     /**
@@ -144,6 +123,30 @@ $(document).ready(function() {
     };
 });
 
+function renderOnPage(parent){
+    if ($('[data-toggle="tooltip"]', parent).length) {
+        $('[data-toggle="tooltip"]', parent).tooltip();
+    }
+
+    if ($('[data-toggle="popover"]', parent).length) {
+        $('[data-toggle="popover"]', parent).popover();
+    }
+
+    if ($('._autoNumeric', parent).length) {
+        $('._autoNumeric', parent).each(function (i) {
+            var tagName = $(this).prop("tagName").toLowerCase();
+            if (tagName == 'input') {
+                $(this).autoNumeric({maximumValue: 9999999999999.99, digitGroupSeparator: '.', decimalCharacter: ','});
+            } else {
+                //todo
+            }
+        })
+    }
+
+    $('.modal', parent).on('shown.bs.modal', function() {
+        $("._autofocus").focus();
+    });
+}
 
 //============= begin event global ===========
 $(document).on('click', '.___btn-action', function(){
@@ -178,13 +181,17 @@ $(document).on('click', '.___btn-action', function(){
 $(document).on('keypress', '.___input-action', function(e){
 
     if(e.keyCode == 13){
-        // console.log('input action');
         e.preventDefault();
         var $that = $(this);
         var data_send = $that.parents('.___form').serializeObject();
             data_send.key = $(this).attr('data-key-global');
 
-        var value = data_send[$(this).attr('name')];
+        var name = $(this).attr('name');
+        var value = data_send[name];
+        if($(this).hasClass('_autoNumeric')){
+            data_send[name] = $(this).autoNumeric('get');
+        }
+
         if(!value){
             return false;
         }
@@ -212,11 +219,17 @@ function call_ajax($that, data_send){
             if(response.success){
 
                 if(response.html){
+                    var parent = 'html';
+
                     if(response.anchor){
                         $(response.anchor).html(response.html);
+                        parent = response.anchor;
                     }else{
                         $('#_content').html(response.html);
+                        parent = '#_content';
                     }
+
+                    renderOnPage(parent);
 
                     //focus input keypress
                     if(data_send.key){

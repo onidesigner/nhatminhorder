@@ -4,7 +4,7 @@
 
 
     <div class="form-suggestion">
-        Create an account for free.
+        Đăng ký tài khoản miễn phí.
     </div>
 
     <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
@@ -13,7 +13,7 @@
         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
 
             <div class="col-md-12">
-                <input placeholder="Name" id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+                <input placeholder="Họ & Tên" id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
 
                 @if ($errors->has('name'))
                     <span class="help-block">
@@ -26,7 +26,7 @@
         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
 
             <div class="col-md-12">
-                <input id="email" placeholder="E-Mail" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                <input id="email" placeholder="Email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
 
                 @if ($errors->has('email'))
                     <span class="help-block">
@@ -39,7 +39,7 @@
         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
 
             <div class="col-md-12">
-                <input id="password" placeholder="Password" type="password" class="form-control" name="password" required>
+                <input id="password" placeholder="Mật khẩu" type="password" class="form-control" name="password" required>
 
                 @if ($errors->has('password'))
                     <span class="help-block">
@@ -52,18 +52,18 @@
         <div class="form-group">
 
             <div class="col-md-12">
-                <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation" required>
+                <input id="password-confirm" placeholder="Nhập lại mật khẩu" type="password" class="form-control" name="password_confirmation" required>
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-12">
                 <button type="submit" class="btn btn-primary">
-                    Register
+                    Đăng ký
                 </button>
 
                 <a class="btn btn-link " href="{{ route('login') }}">
-                    Login
+                    Đăng nhập
                 </a>
             </div>
         </div>

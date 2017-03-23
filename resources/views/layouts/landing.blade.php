@@ -30,7 +30,7 @@
                 </div>
                 <div class="app-block">
                     <div class="app-right-section">
-                        <div class="app-brand"><span class="highlight">NhatMinh</span> 247</div>
+                        <div class="app-brand"><span class="highlight">NhậtMinh</span> 247</div>
                         <div class="app-info">
 
                             <ul class="list">

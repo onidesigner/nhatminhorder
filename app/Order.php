@@ -687,7 +687,6 @@ class Order extends Model
             $create_user = User::find(Auth::user()->id);
             $customer = User::find($this->user_id);
 
-            #region -- change status --
             if($this->status == self::STATUS_RECEIVED_FROM_SELLER){
                 if($this->isOrderTransportStraight()){
                     $this->changeStatus(self::STATUS_DELIVERING, false);
@@ -706,7 +705,6 @@ class Order extends Model
                     Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                     Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
                 }
-
 
                 $order_amount_vnd = $this->amountWithItems(true);
                 $order_buying_fee = $this->getBuyingFee($order_amount_vnd);
@@ -728,7 +726,9 @@ class Order extends Model
                 Comment::createComment($create_user, $this, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
             }
-            #endregion
+
+            //todo::thu toan bo phi cua tung kien hang
+
             DB::commit();
             return true;
         }catch(\Exception $e){

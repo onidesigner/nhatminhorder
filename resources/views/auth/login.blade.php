@@ -8,7 +8,7 @@
         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
 
             <div class="col-md-12">
-                <input id="email" type="email" placeholder="E-Mail Address" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
+                <input id="email" type="email" placeholder="Email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
 
                 @if ($errors->has('email'))
                     <span class="help-block">
@@ -21,7 +21,7 @@
         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
 
             <div class="col-md-12">
-                <input id="password" placeholder="Password" type="password" class="form-control" name="password" required>
+                <input id="password" placeholder="Mật khẩu" type="password" class="form-control" name="password" required>
 
                 @if ($errors->has('password'))
                     <span class="help-block">
@@ -36,7 +36,7 @@
                 <div class="checkbox">
 
                     <input id="chk-remember" type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                    <label for="chk-remember"> Remember Me</label>
+                    <label for="chk-remember"> Ghi nhớ</label>
                 </div>
             </div>
         </div>
@@ -44,15 +44,15 @@
         <div class="form-group">
             <div class="col-md-12">
                 <button type="submit" class="btn btn-primary">
-                    Login
+                    Đăng nhập
                 </button>
 
                 <a class="btn btn-link " href="{{ route('register') }}">
-                    Register An Account
+                    Đăng ký tài khoản
                 </a>
 
                 <a class="btn btn-link hidden" href="{{ route('password.request') }}">
-                    Forgot Your Password?
+                    Quên mật khẩu?
                 </a>
             </div>
         </div>
