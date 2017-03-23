@@ -108,8 +108,6 @@ Route::get('/404', 'OtherController@renderPageNotFound');
 Route::get('/403', 'OtherController@renderPageNotPermission');
 Route::get('/vue', 'OtherController@renderExampleVue');
 
-
-
 //================ CUSTOMER ==============
 #region -- giao dich --
 Route::get('giao-dich', 'Customer\UserTransactionController@getTransactions');
@@ -123,5 +121,22 @@ Route::post('/don-hang/{id}/hanh-dong', 'Customer\OrderController@action');
 
 #region -- thong bao --
 Route::get('/thong-bao', 'Customer\NotificationController@indexs');
+#endregion
+
+#region -- bai viet --
+Route::get('/taxonomies', 'TaxonomyController@indexs');
+Route::get('/taxonomy', 'TaxonomyController@createTaxonomy');
+
+Route::get('/posts', 'PostController@indexs');
+Route::get('/post', 'PostController@createPost');
+Route::get('/post/{id}', 'PostController@createPost');
+Route::get('/post/preview/{id}', 'PostController@previewPost');
+Route::post('/post/action', 'PostController@action');
+
+#endregion
+
+#region -- ho tro --
+Route::get('/ho-tro/danh-muc-{name?}_{id}', 'Support\TaxonomyController@indexs');
+Route::get('/ho-tro/{name?}_{id}', 'Support\PostController@index');
 #endregion
 

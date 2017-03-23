@@ -77,20 +77,20 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <li><a href="">Đặt hàng</a></li>
-                <li><a href="">Biểu phí</a></li>
-                <li><a href="">Quy định & Chính sách</a></li>
-                <li><a href="">Huớng dẫn</a></li>
+                <li><a target="_blank" href="{{ url('ho-tro/dat-hang_7')  }}">Đặt hàng</a></li>
+                <li><a target="_blank" href="{{ url('ho-tro/bieu-phi_8')  }}">Biểu phí</a></li>
+                <li><a target="_blank" href="{{ url('ho-tro/quy-dinh-chinh-sach_9')  }}">Quy định & Chính sách</a></li>
+                <li><a target="_blank" href="{{ url('ho-tro/huong-dan_10')  }}">Hướng dẫn</a></li>
 
 
                 @if (Route::has('login'))
                     @if (Auth::check())
 
-                        <li><a href="{{ url('/home') }}">Vào hệ thống</a></li>
+                        <li><a target="_blank" href="{{ url('/home') }}">Vào hệ thống</a></li>
                     @else
 
-                        <li><a href="{{ url('/login') }}">Đăng nhập</a></li>
-                        <li><a href="{{ url('/register') }}">Đăng ký</a></li>
+                        <li><a target="_blank" href="{{ url('/login') }}">Đăng nhập</a></li>
+                        <li><a target="_blank" href="{{ url('/register') }}">Đăng ký</a></li>
                     @endif
                 @endif
             </ul>

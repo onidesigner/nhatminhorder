@@ -27,6 +27,11 @@ class Permission extends Model
     const PERMISSION_TRANSACTION_CREATE = 'TRANSACTION_CREATE';
     #endregion
 
+    #region -- Taxonomy & post --
+    const PERMISSION_MANAGER_TAXONOMY = 'MANAGER_TAXONOMY';
+    const PERMISSION_MANAGER_POST = 'MANAGER_POST';
+    #endregion
+
     #region -- Order permission --
     const PERMISSION_ORDER_LIST_VIEW = 'ORDER_LIST_VIEW';
     const PERMISSION_ORDER_VIEW = 'ORDER_VIEW';
@@ -83,6 +88,20 @@ class Permission extends Model
                 ],
             ]
         ],
+
+        'news' => array(
+            'label' => 'Bài viết',
+            'permissions' => array(
+                self::PERMISSION_MANAGER_TAXONOMY => array(
+                    'label' => 'Quản lý danh mục bài viết',
+                    'description' => '',
+                ),
+                self::PERMISSION_MANAGER_POST => array(
+                    'label' => 'Quản lý bài viết',
+                    'description' => '',
+                ),
+            ),
+        ),
 
         'transaction_permission' => array(
             'label' => 'Giao dịch ',

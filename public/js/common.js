@@ -164,6 +164,10 @@ $(document).on('click', '.___btn-action', function(){
         data_send.checkbox = $that.is(':checked') ? 'check' : 'uncheck';
     }
 
+    if($that.parents('.___form').find('div#summernote').length){
+        data_send.summernote = $that.parents('.___form').find('div#summernote').summernote('code');
+    }
+
     if(data_send.confirm){
         bootbox.confirm(data_send.confirm, function(result) {
             if (result) {
@@ -237,7 +241,11 @@ function call_ajax($that, data_send){
                     }
 
                 }else{
-                    window.location.reload();
+                    if(response.redirect){
+                        location.href = response.redirect;
+                    }else{
+                        window.location.reload();
+                    }
                 }
 
             }else{
