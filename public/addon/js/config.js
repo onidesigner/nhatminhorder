@@ -10,6 +10,7 @@ var service_host,
 var site_using_https = false;
 
 var site_name = "nhatminhorder.dev:8000";
+// var site_name = "nhatminh247.vn";
 
 chrome.storage.sync.get({
     domain: site_using_https ? 'https://' + site_name + '/' : 'http://' + site_name + '/',

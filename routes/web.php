@@ -39,6 +39,10 @@ Route::get('/user', 'UserController@getUsers');
 Route::get('/user/detail/{id}', 'UserController@detailUser');
 
 Route::get('/nhan-vien/{id}', 'Customer\UserController@detail');
+Route::post('/nhan-vien/dien-thoai', 'Customer\UserController@add_user_phone');
+Route::put('/nhan-vien/dien-thoai', 'Customer\UserController@delete_user_phone');
+Route::get('/nhan-vien/sua/{id}', 'Customer\UserController@get_user');
+Route::post('/nhan-vien/sua/{id}', 'Customer\UserController@update_user');
 
 Route::get('/user/edit/{id}', 'UserController@getUser');
 Route::post('/user/edit/{id}', 'UserController@updateUser');

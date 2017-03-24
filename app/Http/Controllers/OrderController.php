@@ -656,7 +656,7 @@ class OrderController extends Controller
 
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
 
-        if($user_transaction_amount <> 0){
+        if(abs($user_transaction_amount) <> 0){
             $text = 'truy thu';
 
             if($deposit_amount_old > $deposit_amount_new){

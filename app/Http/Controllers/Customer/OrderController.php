@@ -4,15 +4,22 @@ namespace App\Http\Controllers\Customer;
 use App\Comment;
 use App\Exchange;
 use App\Http\Controllers\Controller;
+use App\Location;
 use App\Order;
+use App\OrderItem;
+use App\OrderService;
 use App\Package;
 use App\Service;
 use App\User;
+use App\UserAddress;
+use App\UserOriginalSite;
 use App\UserTransaction;
 use App\Util;
+use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 
 class OrderController extends Controller
 {
@@ -56,24 +63,114 @@ class OrderController extends Controller
     public function order(Request $request){
         $order_id = $request->route('id');
 
-        $order = Order::find($order_id);
+        $order = Order::findOneByIdOrCode($order_id);
+        $current_user = User::find(Auth::user()->id);
 
         if(!$order || !$order instanceof Order):
             return redirect('404');
         endif;
 
-        if($order->user_id != Auth::user()->id):
+        $customer = User::find($order->user_id);
+
+        if($customer->id != $current_user->id):
             return redirect('403');
         endif;
 
-        $can_cancel_order = $order->isBeforeStatus(Order::STATUS_BOUGHT);
+        return view('customer/order_detail', $this->__getOrderInitData($order, $customer, 'layouts.app'));
+    }
 
-        return view('customer/order_detail', [
+    private function __getOrderInitData(Order $order, User $customer, $layout){
+        $user_address = UserAddress::find($order->user_address_id);
+        if($user_address && $user_address instanceof UserAddress){
+            $district = Location::find($user_address->district_id);
+            if($district && $district instanceof Location){
+                $user_address->district_label = $district->label;
+            }
+            $province = Location::find($user_address->province_id);
+            if($province && $province instanceof Location){
+                $user_address->province_label = $province->label;
+            }
+        }
+
+        $order_item_comments_data = [];
+        $order_item_comments = Order::findByOrderItemComments($order->id);
+        if($order_item_comments){
+            foreach($order_item_comments as $order_item_comment){
+                $order_item_comment->user = User::find($order_item_comment->user_id);
+                $order_item_comments_data[$order_item_comment->object_id][] = $order_item_comment;
+            }
+        }
+
+        $permission = [
+            'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED,
+            'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_service' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
+            'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+        ];
+
+        $fee = $order->fee($customer);
+
+        $order_fee = [];
+        foreach(Order::$fee_field_order_detail as $key => $label){
+            $value = $key;
+            if(isset($fee[$key])){
+                $value = Util::formatNumber($fee[$key]);
+            }
+            $order_fee[] = [
+                'label' => $label,
+                'value' => $value,
+            ];
+        }
+
+        $order_service = [];
+        $o_services = $order->service;
+        foreach($o_services as $o_service){
+            if(!$o_service || !$o_service instanceof OrderService){
+                continue;
+            }
+            $order_service[] = $o_service->service_code;
+        }
+
+        $services = [];
+        $services_list = Service::getAllService();
+        if($services_list){
+            foreach($services_list as $service){
+                if(!$service || !$service instanceof Service){
+                    continue;
+                }
+                $services[] = [
+                    'code' => $service->code,
+                    'name' => Service::getServiceName($service->code),
+                    'is_default' => Service::checkIsDefault($service->code),
+                    'checked' => in_array($service->code, $order_service) ? true : false
+                ];
+            }
+        }
+
+        return [
+            'order_id' => $order->id,
+            'freight_bill' => $order->freight_bill()->where([ 'is_deleted' => 0 ])->get(),
+            'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
+            'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
+            'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
+            'user_address' => $user_address,
+            'order' => $order,
+            'services' => $services,
+            'order_item_comments' => $order_item_comments_data,
+            'user_origin_site' => UserOriginalSite::all(),
+            'order_items' => $order->item,
+            'order_fee' => $order_fee,
+            'customer' => $customer,
+            'transactions' => Order::findByTransactions($order->id),
             'page_title' => 'Chi tiết đơn hàng',
-            'can_cancel_order' => $can_cancel_order,
-            'order_id' => $order_id,
-            'order' => $order
-        ]);
+            'permission' => $permission,
+            'layout' => $layout,
+        ];
     }
 
     /**
@@ -88,18 +185,24 @@ class OrderController extends Controller
 
             $order_id = $request->route('id');
             $order = Order::find($order_id);
-            $user = User::find(Auth::user()->id);
+            $current_user = User::find(Auth::user()->id);
             $action = '__' . $request->get('action');
 
             if(!$order){
                 return response()->json(['success' => false, 'message' => 'Order not found!']);
             }
 
-            if(!$user){
-                return response()->json(['success' => false, 'message' => 'User not found!']);
+            $customer = User::find($order->user_id);
+
+            if(!$current_user || !$current_user instanceof User){
+                return response()->json(['success' => false, 'message' => 'Current user not found!']);
             }
 
-            if($order->user_id <> $user->id){
+            if(!$customer || !$customer instanceof User){
+                return response()->json(['success' => false, 'message' => 'Customer not found!']);
+            }
+
+            if($order->user_id <> $customer->id){
                 return response()->json(['success' => false, 'message' => 'Action reject!']);
             }
 
@@ -107,13 +210,21 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
 
-            $result = $this->$action($request, $order, $user);
+            $result = $this->$action($request, $order, $current_user);
             if(!$result){
                 return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
             }
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'success']);
+
+            $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'layouts/app_blank'));
+            $html = $view->render();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'success',
+                'html' => $html
+            ]);
 
         }catch(\Exception $e){
             DB::rollback();
@@ -188,18 +299,6 @@ class OrderController extends Controller
 //        return true;
 //    }
 
-    private function __received_order(Request $request, Order $order, User $user){
-        if($order->status != Order::STATUS_DELIVERING){
-            $this->action_error[] = 'Trạng thái không hợp lệ!';
-        }
-
-        if(count($this->action_error)){
-            return false;
-        }
-
-        $order->changeStatus(Order::STATUS_RECEIVED);
-        Comment::createComment($user, $order, "Chuyển trạng thái đơn sang đã nhận hàng", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-    }
 
     /**
      * @author vanhs
@@ -235,6 +334,73 @@ class OrderController extends Controller
         }
 
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Commment san pham
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
+    private function __order_item_comment(Request $request, Order $order, User $user){
+        $item_id = $request->get('item_id');
+        $order_item = OrderItem::find($item_id);
+        return Comment::createComment(
+            $user,
+            $order_item,
+            $request->get('order_item_comment_message'),
+            Comment::TYPE_NONE,
+            Comment::TYPE_CONTEXT_CHAT,
+            $order
+        );
+    }
+
+    private function __choose_service(Request $request, Order $order, User $user){
+        $service = $request->get('service');
+        if(empty($service)){
+            $this->action_error[] = 'Chưa chọn dịch vụ!';
+        }
+
+        $can_execute = $order->isBeforeStatus(Order::STATUS_BOUGHT);
+        if(!$can_execute):
+            $this->action_error[] = sprintf('Không thể chọn/bỏ dịch vụ ở trạng thái này %s!', Order::getStatusTitle($order->status));
+        endif;
+
+        if(count($this->action_error)){
+            return false;
+        }
+
+        if(in_array($service, Service::getServiceDefault())){
+            return true;
+        }
+
+        $message = null;
+        $exist_service = $order->existService($service);
+        if($request->get('checkbox') == 'check'){
+            if(!$exist_service){
+                $order_service = new OrderService();
+                $order_service->order_id = $order->id;
+                $order_service->service_code = $service;
+                $order_service->save();
+
+                $message = sprintf("Chọn dịch vụ %s", Service::getServiceName($service));
+            }
+        }else{
+            if($exist_service){
+                OrderService::where([
+                    'order_id' => $order->id,
+                    'service_code' => $service
+                ])->delete();
+
+                $message = sprintf("Bỏ chọn dịch vụ %s", Service::getServiceName($service));
+            }
+        }
+
+        Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         return true;
     }
