@@ -395,17 +395,15 @@ End Fixed Navigation
                             <img src="{{ asset('images/home/kh1.jpg')  }}" alt="Our Clients">
                             <div class="clearfix">
                                 <span>Nguyễn Đức Thành</span>
-                                <p>Mình đã đặt đèn nội thất qua dịch vụ của NhatMinh247. Đèn treo lên rất đẹp. Chi phí thì chỉ bằng phân nửa so với ngoài cửa hàng bán. Sắp tới mình có còn xây tầng tiếp nữa sẽ đặt toàn bộ nội thất bên bên về luôn. Sản phẩm đẹp , đa dạng còn hạt dẻ nữa.</p>
+                                <p>Mình đã đặt đèn nội thất qua dịch vụ của NhatMinh247. Đèn treo lên rất đẹp. Chi phí thì chỉ bằng phân nửa so với ngoài cửa hàng bán. Sắp tới mình có còn xây tầng tiếp nữa sẽ đặt toàn bộ nội thất bên đó về luôn. Sản phẩm đẹp, đa dạng còn hạt dẻ nữa.</p>
                             </div>
                         </div>
-
-
 
                         <div class="testimonial-item text-center">
                             <img src="{{ asset('images/home/kh3.jpg')  }}" alt="Our Clients">
                             <div class="clearfix">
                                 <span>Ngô Kim Dung</span>
-                                <p>Các bạn Chăm Sóc Khách Hàng của NhatMinh247 duyệt đơn cho mình rất nhanh. Chỉ 1 lần hướng dẫn mình đã làm quen với cách tạo đơn hàng và chưa đầy 1 tuần hàng đã về tay mình rồi</p>
+                                <p>Các bạn Chăm Sóc Khách Hàng của NhatMinh247 duyệt đơn cho mình rất nhanh. Chỉ 1 lần hướng dẫn mình đã làm quen với cách tạo đơn hàng và chưa đầy 3 ngày hàng đã về tay mình rồi</p>
                             </div>
                         </div>
                     </div>
