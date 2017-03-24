@@ -39,13 +39,10 @@ class PostController extends Controller
             return redirect('404');
         }
 
-        if(Auth::check()){
-            $can_view = Permission::isAllow(Permission::PERMISSION_MANAGER_POST);
-            if(!$can_view){
-                return redirect('403');
-            }
+        $can_view = Permission::isAllow(Permission::PERMISSION_MANAGER_POST);
+        if(!$can_view){
+            return redirect('403');
         }
-
 
         $author = User::find($post->create_user_id);
 

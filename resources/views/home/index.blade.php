@@ -77,20 +77,18 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <li><a target="_blank" href="{{ url('ho-tro/dat-hang_7')  }}">Đặt hàng</a></li>
-                <li><a target="_blank" href="{{ url('ho-tro/bieu-phi_8')  }}">Biểu phí</a></li>
-                <li><a target="_blank" href="{{ url('ho-tro/quy-dinh-chinh-sach_9')  }}">Quy định & Chính sách</a></li>
-                <li><a target="_blank" href="{{ url('ho-tro/huong-dan_10')  }}">Hướng dẫn</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Đặt hàng</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/bieu-phi/">Biểu phí</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/quy-dinh-va-chinh-sach/">Quy định & Chính sách</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
 
 
                 @if (Route::has('login'))
                     @if (Auth::check())
-
                         <li><a target="_blank" href="{{ url('/home') }}">Vào hệ thống</a></li>
                     @else
-
+                        <li><a target="_blank" href="{{ url('/register') }}">Tạo tài khoản</a></li>
                         <li><a target="_blank" href="{{ url('/login') }}">Đăng nhập</a></li>
-                        <li><a target="_blank" href="{{ url('/register') }}">Đăng ký</a></li>
                     @endif
                 @endif
             </ul>

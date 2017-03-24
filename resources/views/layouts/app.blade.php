@@ -144,26 +144,32 @@
                             <div class="dropdown-menu">
                                 <div class="profile-info">
                                     <h4 class="username">
+                                        <?php
+                                            $current_user = App\User::find(Auth::user()->id);
+                                        ?>
+
                                         @if(Auth::user()->section == App\User::SECTION_CRANE)
                                             [Quản trị viên]
                                         @else
 
                                         @endif
 
-                                        {{ Auth::user()->name }}
+                                        {{ Auth::user()->name }} <code>{{ $current_user->code }}</code>
                                     </h4>
                                 </div>
                                 <ul class="action">
                                     <li>
 
+
                                         @if(Auth::user()->section == App\User::SECTION_CRANE)
-                                            <a href="{{ url('user/detail', Auth::user()->id)  }}">
+                                             <a href="{{ url('user/detail', Auth::user()->id)  }}">
                                         @else
                                             <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
                                         @endif
                                             Thông tin cá nhân
                                         </a>
                                     </li>
+
                                     <li>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();

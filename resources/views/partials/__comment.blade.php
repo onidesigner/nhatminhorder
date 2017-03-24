@@ -44,7 +44,7 @@
                     style="width: 100%; margin-bottom: 20px;"
                     class="___input-action"
                     data-key-global="box-chat-external"
-                    placeholder="Chat với khách...">
+                    placeholder="Trao đổi thông tin...">
         </form>
 
         @if($comments_public)
