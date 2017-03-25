@@ -1,36 +1,87 @@
-var translate_value_bg;
+var site_name = 'nhatminhorder.dev:8000';
+var template_path = 'http://' + site_name + '/addon/template1';
+var version_tool = "1.0";
+var link_detail_cart = "http://" + site_name + "/gio-hang";
+var add_to_cart_url = "http://" + site_name + "/cart/add";
+var exchange_rate = 3560;
+//=======end config
 
-/* START xử lý template */
-var elem = document.createElement("div");
-elem.className = '_addon-template';
-document.body.insertBefore(elem,document.body.childNodes[0]);
-document.querySelectorAll("._addon-template")[0].style.display = 'none';
+var Helper = {
+    request: function(url, method, data, callback){
+        $.ajax({
+            url: url,
+            method: method,
+            data: data,
+            success:function(response) {
+                if(callback){
+                    callback(response);
+                }
+            },
+            error: function(){
 
-function load_template(){
-    var con = document.querySelectorAll("._addon-template")[0];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function(e) {
-        if(xhr.readyState == 4 && xhr.status == 200) {
-            con.innerHTML = xhr.responseText;
-
-            chrome.runtime.sendMessage({
-                action: "getExchangeRate",
-                url: exchange_rate_url,
-                callback: 'afterGetExchangeRate'
-            });
-
-            document.querySelectorAll("._addon-version")[0].textContent = "v" + version_tool;
-            if(link_detail_cart){
-                document.querySelectorAll("._link-detail-cart")[0].setAttribute("href", link_detail_cart);
             }
+        });
+    },
+
+    isSiteChina: function(){
+        return true;//todo:: fixme
+        var str = window.location.href;
+        if (!(str.match(/item.taobao/) || str.match(/detail.ju.taobao.com/) || str.match(/detail.tmall/) || str.match(/detail.1688/)
+            || str.match(/.1688.com\/offer/)
+            || str.match(/.tmall.hk/)
+            || str.match(/.yao.95095.com/)
+            || str.match(/tmall.com\/item\//) || str.match(/taobao.com\/item\//))) {
+            return false;
         }
-    };
-    xhr.open("GET", chrome.extension.getURL("../template/index.html"), true);
-    xhr.setRequestHeader('Content-type', 'text/html');
-    xhr.send();
+        return true;
+    },
 }
-load_template();
-/* END xử lý template */
+
+//=======end function common
+
+$(document).on('click', '._close-warning-ao', function () {
+    $("._alert-shop-credible").remove();
+});
+
+$(document).on('click', '._close_tool', function () {
+    $('._addon-wrapper').hide();
+    $("._div-block-price-book").fadeIn();
+});
+
+$(document).on('click', '._minimize_tool', function () {
+    $('._addon-wrapper').fadeIn();
+    $("._div-block-price-book").hide();
+});
+
+$(document).on('click', '._addToCart', function () {
+    var object = new factory();
+    var common_tool = new CommonTool();
+
+    common_tool.addDisabledButtonCart();
+
+    if (origin_site.match(/1688.com/)) {
+        object.add_to_cart();
+    } else {
+        addon_tool.AddToCart();
+    }
+});
+//=======end global event
+
+$(document).ready(function(){
+    Helper.request(template_path, 'get', {}, function(response){
+        $('body').append(response.html);
+        exchange_rate = parseFloat(response.exchange_rate).toFixed(0);
+
+        if(!Helper.isSiteChina()) return false;
+
+        var object = new factory();
+        object.init();
+    })
+});
+
+//=============================================================================================
+
+var translate_value_bg;
 
 var CommonTool = function() {
     this.reRenderPricePreview = function(){
@@ -83,23 +134,6 @@ var CommonTool = function() {
      */
     this.removeDisabledButtonCart = function(){
         $('._addToCart').removeAttr("disabled");
-    };
-
-    this.loadOptionCategory = function(){
-        if(catalog_scalar_url){
-            //if(site_using_https){
-            //    Action.request({
-            //        url: catalog_scalar_url
-            //    }).done(function (response) {
-            //        Action.afterGetCategory({ response : response });
-            //    });
-            //}else{
-            //    chrome.runtime.sendMessage({ action: "getCategory", url: catalog_scalar_url, callback: 'afterGetCategory' });
-            //}
-
-            //Link lấy danh mục mặc định là lấy qua background
-            //chrome.runtime.sendMessage({ action: "getCategory", url: catalog_scalar_url, callback: 'afterGetCategory' });
-        }
     };
 
     /**
@@ -291,12 +325,7 @@ var CommonTool = function() {
         // this.timeOut++;
 
     };
-    this.loadJsFile = function(jsUrl){
-        var file_ali = document.createElement('script');
-        file_ali.setAttribute('src', jsUrl+'?t=' + Math.random());
-        document.body.appendChild(file_ali);
-        return true;
-    };
+
     this.key_translate_lib = function (key) {
         var translate = [];
         translate['颜色'] = 'Màu';
@@ -332,15 +361,6 @@ var CommonTool = function() {
             return object.replaceWith( object.html().replace(/<\/?[^>]+>/gi, '') );
         }
         return false;
-    };
-
-    this.setCategorySelected = function(category_id){
-        this.setCookie("category_selected",category_id,100);
-        return true;
-    };
-
-    this.getCategorySelected = function(){
-        return this.getCookie("category_selected");
     };
 
     this.translate_guarantee_type = function(){
@@ -383,173 +403,6 @@ var CommonTool = function() {
 
     };
 
-    this.translate_title = function (title, type, object) {
-        if(isUsingSetting){//Nếu sử dụng setting thì lấy giá trị ở setting
-
-            if(isTranslate){
-
-                //if(site_using_https){
-                //    Action.request({
-                //        url: translate_url,
-                //        type: 'POST',
-                //        data: { text:title, type:type }
-                //    }).done(function (response) {
-                //        Action.afterTranslate({ response : response });
-                //    });
-                //}else{
-                //    chrome.runtime.sendMessage({ action: "translate", url: translate_url, method: 'POST', data: { text:title, type:type }, callback: 'afterTranslate'
-                //
-                //    });
-                //}
-
-                //Luôn gửi qua background
-                chrome.runtime.sendMessage({ action: "translate", url: translate_url, method: 'POST', data: { text:title, type:type }, callback: 'afterTranslate'
-
-                });
-
-                return true;
-            }
-
-        }else{
-            if(translate_value_bg == 1){
-
-                //if(site_using_https){
-                //    Action.request({
-                //        url: translate_url,
-                //        type: 'POST',
-                //        data: { text:title, type:type }
-                //    }).done(function (response) {
-                //        Action.afterTranslate({ response : response });
-                //    });
-                //}else{
-                //    chrome.runtime.sendMessage({ action: "translate", url: translate_url, method: 'POST', data: { text:title, type:type }, callback: 'afterTranslate'
-                //
-                //    });
-                //}
-
-                //Luôn gửi qua background
-                chrome.runtime.sendMessage({ action: "translate", url: translate_url, method: 'POST', data: { text:title, type:type }, callback: 'afterTranslate'
-
-                });
-
-                return true;
-            }
-
-        }
-
-        return false;
-    };
-
-    this.translate = function(dom,type){
-        if(isUsingSetting){//Nếu sử dụng setting thì lấy giá trị ở setting
-
-            if(isTranslate && type == "properties"){
-                this.translateStorage(dom);
-            }
-
-        }else{//Nếu ko sử dụng setting thì lấy giá trị ở cookie
-
-            if(translate_value_bg == 1){
-                if(type == "properties"){
-                    this.translateStorage(dom);
-                }
-            }
-
-        }
-
-    };
-
-    this.translateStorage = function(dom){
-        //write by vanhs | edit_time: 13/06/2015
-        try{
-            var content;
-            try{//for jquery
-                content = dom.text();
-            }catch (m){//for javascript
-                content = dom.textContent;
-            }
-
-            var content_origin = content;
-            var resource = keyword;
-            if(resource != null){
-                var data = resource.resource;
-
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-                    try{
-                        if(content.match(obj.k_c,'g')){
-                            content = content.replace(obj.k_c, obj.k_v+ ' ');
-                        }
-                    }catch(ex){
-                        try{
-                            if(content.match(obj.keyword_china,'g')){
-                                content = content.replace(obj.keyword_china, obj.keyword_vi+ ' ');
-                            }
-                        }catch(ex){
-
-                        }
-
-                    }
-                }
-                try{//for jquery
-                    dom.text(content);
-                    dom.attr('data-text', content_origin);
-                }catch(k){
-                    dom.innerHTML = content;
-                    dom.setAttribute("data-text", content_origin);
-                }
-
-            }
-        }catch(e){
-            console.log("error: " + e.message);
-        }
-    };
-
-    this.ajaxTranslate = function(dom,type){
-        var context = dom.text();
-
-        $.ajax({
-            url : translate_url,
-            type : "POST",
-            contentType: 'application/x-www-form-urlencoded',
-            xhrFields: {
-                withCredentials: true
-            },
-            data : {
-                text: context,
-                type: type
-            },
-            success : function(data){
-                var result = $.parseJSON(data);
-                if(result['data_translate'] && result['data_translate'] !=null) {
-                    dom.attr("data-text",dom.text());
-                    dom.text(result['data_translate']);
-                }
-            }
-        });
-    };
-
-    this.getKeywordSearch = function(){
-        $.ajax({
-            url : translate_keyword_url,
-            type : "POST",
-            contentType: 'application/x-www-form-urlencoded',
-            xhrFields: {
-                withCredentials: true
-            },
-            data : {
-                text: "text",
-                type: "type"
-            },
-
-            success : function(data){
-                var resource = JSON.stringify(data);
-                localStorage.setItem("keyword_search",resource);
-            }
-        });
-        return true;
-    };
-
     /* Hien thi input khi xảy ra lỗi lấy dữ liệu*/
     this.showInputEx = function(site){
         $('.frm-tool').hide();
@@ -587,40 +440,20 @@ var CommonTool = function() {
         return true;
     };
 
-    this.setCookie = function(cname,cvalue,exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        var expires = "expires=" + d.toGMTString();
-        document.cookie = cname+"="+cvalue+"; "+expires;
-        return true;
-    };
-
-    this.getCookie = function(cname) {
-        var name = cname + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0; i<ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) != -1) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    };
 };
 
-var factory = function (cart_url, add_cart_url) {
+var factory = function () {
     var _class;
 
     var url = window.location.href;
     if(url.match(/taobao.com/)){
-        _class = new taobao(cart_url);
+        _class = new taobao();
     }
     if(url.match(/tmall.com|tmall.hk|yao.95095.com/)){
-        _class = new tmall(cart_url);
+        _class = new tmall();
     }
     if(url.match(/1688.com|alibaba/)){
-        _class = new alibaba(cart_url,add_cart_url);
+        _class = new alibaba();
     }
     return _class;
 };
@@ -639,7 +472,7 @@ var AddonTool = function(){
     this.AddToCart = function () {
         var error = 0;
 
-        var object = new factory(cart_url,add_to_cart_url);
+        var object = new factory();
         var is_show = $('#_box_input_exception').attr("data-is-show");
 
         var price_origin = '',
@@ -910,8 +743,6 @@ var taobao =  function(cart_url) {
             $(this).text(common_tool.key_translate_lib(text));
         });
 
-        this.common_tool.loadOptionCategory();
-
         var price = this.getPromotionPrice("TAOBAO");
         var price_html = '<p style="font-size: 16px;margin-top: 15px;">' +
             'Tỉ giá: ' + common.currency_format(common.getExchangeRate(),true)+' VNĐ / 1 CNY</p>';
@@ -931,10 +762,6 @@ var taobao =  function(cart_url) {
         }
 
         var title_content = this.getTitleOrigin();
-
-        //common.setIsTranslateToCookie();
-
-        common.translate_title(title_content,'title', this);
 
         this.translateProperties();
 
@@ -1743,8 +1570,6 @@ var tmall =  function(cart_url) {
             $(this).attr("data-title", text);
         });
 
-        this.common_tool.loadOptionCategory();
-
         $('#J_ButtonWaitWrap').hide();
 
         var price_html = '<p style="font-size: 16px;margin-top: 15px;">Tỉ giá: '+
@@ -1757,10 +1582,6 @@ var tmall =  function(cart_url) {
             $('.tb-btn-buy').html(price_html);
         }
         var title_content = this.getTitleOrigin();
-
-        //common.setIsTranslateToCookie();
-
-        common.translate_title(title_content,'title', this);
 
         this.translateProperties();
 
@@ -2663,8 +2484,6 @@ var alibaba = function (cart_url,add_cart_url) {
         var item_price = this.getPrice(1);
         var table_wrap = $('.table-wrap');
 
-        this.common_tool.loadOptionCategory();
-
         var detail_bd = $('#mod-detail-bd');
 
         if(detail_bd != null){
@@ -2692,8 +2511,6 @@ var alibaba = function (cart_url,add_cart_url) {
         //translate
         var title_content = $('.mod-detail-hd h1');
         title_content.attr('data-origin-title', title_content.text());
-
-        this.common_tool.translate_title(title_content.text(), 'title', this);
 
         this.common_tool.translate_guarantee_type();
 
@@ -4000,332 +3817,8 @@ var alibaba = function (cart_url,add_cart_url) {
 };
 
 var common_tool = new CommonTool();
-
-var origin_site = common_tool.getOriginSite();
 var addon_tool = new AddonTool();
-
-var SessionStorage = {
-    set: function (key, value) {
-        window.sessionStorage.setItem(key, JSON.stringify(value));
-    },
-    get: function(key) {
-        var saved = window.sessionStorage.getItem(key);
-        saved = JSON.parse(saved);
-        return saved;
-    },
-    destroy:function (key) {
-        window.sessionStorage.removeItem(key);
-    }
-};
-
-var Action = {
-    afterGetExchangeRate: function(request){
-        console.info("afterGetExchangeRate");
-        if(request.response){
-            exchange_rate = parseFloat(request.response).toFixed(0);
-            SessionStorage.set("exchange_rate", exchange_rate);
-        }else{
-            exchange_rate = "3560";
-        }
-        if(exchange_rate){
-            $("._addon-exchange-text").text(exchange_rate + "đ");
-        }
-        start();
-    },
-
-    afterAddToFavorite: function(request){
-        console.info("afterAddToFavorite");
-        alert("Lưu sản phẩm thành công!");
-    },
-
-    afterTranslate: function(request){
-        console.info("afterTranslate");
-        try{
-            var object = new factory(cart_url,add_to_cart_url);
-            var result = $.parseJSON(request.response);
-            object.set_translate({title:result['data_translate']});
-        }catch(ex){
-            console.warn(ex.message);
-        }
-    },
-
-    afterGetCategory: function(request){
-        var data = request.response;
-        var option = '<option value="0">Chọn danh mục</option>';
-
-        var ct = new CommonTool();
-        var category_id = ct.getCategorySelected();
-
-        for (var i = 0; i < data.length; i++) {
-            var catalog = data[i];
-            option += '<option value="'+catalog.id+ '"';
-            if(parseInt(category_id) === parseInt(catalog.id)){
-                option += ' selected="selected"';
-            }
-            option += '>';
-            for(var j = 0;j < catalog.level;j++){
-                if(parseInt(catalog.level) > 1){
-                    option += "&#8212;";
-                }
-            }
-            option += catalog.name + "</option>";
-        }
-        option += '<option value="-1">Khác</option>';
-
-        $('._select_category').html(option);
-        $('._select_category').attr('data-loaded', 1);//loaded
-    },
-
-    afterAddToCart: function(request){
-        if(request.response){
-            console.log(request.response);
-
-            var common_tool = new CommonTool();
-            common_tool.removeDisabledButtonCart();
-            if(request.response.html){
-                $('body').append(request.response.html);
-            }else{
-                $('body').append(request.response);
-            }
-
-            // if(request.response.success){
-            //
-            //     alert('Them san pham vao gio hang thanh cong.');
-            // }
-        }else{
-            alert("Không kết nối được tới máy chủ, xin quý khách thử lại sau");
-            return;
-        }
-    },
-
-    request: function (params) {
-        return $.ajax({
-
-            contentType: 'application/x-www-form-urlencoded',
-            xhrFields: {
-                withCredentials: true
-            },
-            headers: {'X-Requested-With': 'XMLHttpRequest'},
-
-            url: params.url,
-            type: params.type == undefined ? 'GET' : params.type,
-            data: params.data == undefined ? {} : params.data
-        });
-    }
-};
-
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        switch (request.action)
-        {
-            case "afterGetExchangeRate":
-                Action.afterGetExchangeRate(request);
-                break;
-
-            case "afterAddToCart":
-                Action.afterAddToCart(request);
-                break;
-
-            case "afterGetCategory":
-                Action.afterGetCategory(request);
-                break;
-
-            case "afterTranslate":
-                Action.afterTranslate(request);
-                break;
-
-            case "afterAddToFavorite":
-                Action.afterAddToFavorite(request);
-                break;
-            case "afterSetTranslateValue":
-                window.location.reload();
-                break;
-            case "afterGetTranslateValue":
-                translate_value_bg = request.value;
-                load_template();
-                break;
-
-            default :
-                break;
-
-        }
-    }
-);
-
-function start() {
-    var str = window.location.href;
-    if (!(str.match(/item.taobao/) || str.match(/detail.ju.taobao.com/) || str.match(/detail.tmall/) || str.match(/detail.1688/)
-        || str.match(/.1688.com\/offer/)
-        || str.match(/.tmall.hk/)
-        || str.match(/.yao.95095.com/)
-        || str.match(/tmall.com\/item\//) || str.match(/taobao.com\/item\//))) {
-        return false;
-    }
-
-    document.querySelectorAll("._addon-template")[0].style.display = 'block';
-
-    var object = new factory(cart_url, add_to_cart_url);
-    object.init();
-
-    var common = new CommonTool();
-
-    $(document).on('change', '._select_category', function () {
-        var catalog_id = $(this).val();
-        $('._select_category').val(catalog_id);
-        common_tool.setCategorySelected(catalog_id);
-        var input_cate = $('._input_category');
-        var $panel_category_other = $("._category-other");
-        if (catalog_id === "-1") {
-            $panel_category_other.removeClass("hidden");
-            input_cate.show();
-            input_cate.focus();
-        } else {
-            $panel_category_other.addClass("hidden");
-            input_cate.hide();
-        }
-    });
-
-    $(document).on('keyup', '._brand_item', function () {
-        var brand = $(this).val();
-        $('._brand_item').val(brand);
-    });
-
-
-    $(document).on('keyup', '._comment_item', function () {
-        var comment = $(this).val();
-        $('._comment_item').val(comment);
-    });
-
-    $(document).on('keyup', '._input_category', function () {
-        var category = $(this).val();
-        $('._input_category').val(category);
-    });
-
-    $(document).on('click', '._addToCart', function () {
-        var object = new factory(cart_url, add_to_cart_url);
-
-        common_tool.addDisabledButtonCart();
-
-        // if(document.getElementsByTagName("html")[0].classList.contains("translated-ltr") == true){
-        //     alert("Yêu cầu tắt google translate để tiếp tục đặt hàng");
-        //     this.common_tool.removeDisabledButtonCart();
-        //     return false;
-        // }
-
-        if (origin_site.match(/1688.com/)) {
-            object.add_to_cart();
-        } else {
-            addon_tool.AddToCart();
-        }
-    });
-
-    $(document).on('click', '#load_exchange_rate', function () {
-        SessionStorage.destroy('exchange_rate');
-        window.location.reload();
-    });
-
-    $(document).on('click', '._is_translate', function () {
-        var value = $(this).is(":checked") ? 1 : 0;
-        chrome.runtime.sendMessage({
-            action: "setTranslateValue",
-            value: value,
-            callback: 'afterSetTranslateValue'
-        });
-    });
-
-    $(document).on('click', '._close-warning-ao', function () {
-        $("._alert-shop-credible").remove();
-    });
-
-    $('._close_tool').click(function () {
-        $('._addon-wrapper').hide();
-        $("._div-block-price-book").fadeIn();
-    });
-
-    $('._minimize_tool').click(function () {
-        $('._addon-wrapper').fadeIn();
-        $("._div-block-price-book").hide();
-    });
-
-    $('#txt-category').change(function () {
-        var value = $(this).val();
-        if (parseInt(value) == -1) {
-            $('.category-other').show();
-            $('.category-other input').focus();
-        } else {
-            $('.category-other').hide();
-        }
-    });
-
-    $(document).on("click", "#_add-to-favorite", function(){
-        var site = common.getHomeLand();
-        var title = site == "1688" ? object.getItemTitle() : object.getTitleOrigin();
-        var avatar = site == "1688" ? object.getItemImage() : object.getImgLink();
-        var item_id = site == "1688" ? object.getItemId() : object.getItemID();
-        var price_promotion = 0;
-        var price_origin = 0;
-
-        if(site == "1688"){
-
-            try{
-
-                var scripts = document.querySelectorAll("script");
-                for(var i = 0; i < scripts.length; i++){
-                    var html = scripts[i].textContent;
-                    var res = html.search("iDetailConfig");
-                    if(res != -1){
-                        eval(html);
-
-                        price_promotion = iDetailConfig.refPrice;
-                        price_origin = iDetailConfig.refPrice;
-
-                        break;
-                    }
-                }
-            }catch(e){
-
-                console.warn(e.message);
-            }
-
-        }else{
-            price_origin = object.getOriginPrice();
-            price_promotion = object.getPromotionPrice();
-        }
-
-        var data = {
-            avatar: avatar ? decodeURIComponent(avatar) : "",
-            item_id: item_id,
-            link: window.location.href,
-            site: site,
-            title: title,
-            price: price_promotion > 0 ? price_promotion : price_origin
-        };
-
-        //data = JSON.stringify(data);
-
-        if(site_using_https){
-            Action.request({
-                url: add_to_favorite_url,
-                type: "POST",
-                data: { send_data: data }
-            }).done(function (response) {
-                Action.afterAddToFavorite({ response : response });
-            });
-        }else{
-            chrome.runtime.sendMessage({
-                action: "addToFavorite",
-                url: add_to_favorite_url,
-                //url: "http://localhost/seudo/www_html/customer/favoriteLink/saveLink",
-                data: { send_data: data },
-                method: 'POST',
-                callback: 'afterAddToFavorite'
-            });
-        }
-
-    });
-
-    return true;
-}
+var origin_site = common_tool.getOriginSite();
 
 Array.prototype.max = function() {
     return Math.max.apply(null, this);

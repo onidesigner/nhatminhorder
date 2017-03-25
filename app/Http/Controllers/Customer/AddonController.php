@@ -19,6 +19,21 @@ class AddonController extends Controller
 //        $this->middleware('auth');
     }
 
+    public function get_template1(Request $request){
+        $exchange_rate = Exchange::getExchange();
+
+        $view = View::make('customer/addon_template', [
+            'exchange_rate' => $exchange_rate
+        ]);
+        $html = $view->render();
+
+
+        return Response::json([
+            'html' => $html,
+            'exchange_rate' => $exchange_rate
+        ]);
+    }
+
     /**
      * @author vanhs
      * @desc API them san pham vao gio hang

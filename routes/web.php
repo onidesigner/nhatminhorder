@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/addon/template1', 'Customer\AddonController@get_template1');
 
 #region quan ly gio hang
 Route::get('/cart/add', 'Customer\AddonController@addCart');
