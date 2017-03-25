@@ -1,31 +1,9 @@
-//region -- LocalStorage --
-var LocalStorage = {
-    set: function (key, value) {
-        localStorage.setItem(key, JSON.stringify(value));
-    },
-    get: function(key) {
-        var saved = localStorage.getItem(key);
-        saved = JSON.parse(saved);
-        return saved;
-    },
-    remove: function(key){
-        if(key){
-            localStorage.removeItem(key);
-        }
-    }
-};
-//endregion
-
 var translate_value_bg;
 
 /* START xử lý template */
-
-//console.info("START");
-
 var elem = document.createElement("div");
 elem.className = '_addon-template';
 document.body.insertBefore(elem,document.body.childNodes[0]);
-
 document.querySelectorAll("._addon-template")[0].style.display = 'none';
 
 function load_template(){
@@ -35,74 +13,23 @@ function load_template(){
         if(xhr.readyState == 4 && xhr.status == 200) {
             con.innerHTML = xhr.responseText;
 
-            var icon = document.querySelectorAll("._icon-button-add-to-cart-custom");
-            if(icon.length && button_add_to_cart_url){
-                icon[0].style.backgroundImage = "url('" + button_add_to_cart_url + "')";
+            chrome.runtime.sendMessage({
+                action: "getExchangeRate",
+                url: exchange_rate_url,
+                callback: 'afterGetExchangeRate'
+            });
+
+            document.querySelectorAll("._addon-version")[0].textContent = "v" + version_tool;
+            if(link_detail_cart){
+                document.querySelectorAll("._link-detail-cart")[0].setAttribute("href", link_detail_cart);
             }
-
-            document.querySelectorAll("._is_translate")[0].disabled = true;
-
-            setTimeout(function(){
-
-                var commonTool = new CommonTool();
-
-                var er = SessionStorage.get("exchange_rate");
-                if(er == null){
-
-                    //if(site_using_https){
-                    //    Action.request({
-                    //        url: exchange_rate_url
-                    //    }).done(function (response) {
-                    //        Action.afterGetExchangeRate({ response : response });
-                    //    });
-                    //}else{
-                    //    chrome.runtime.sendMessage({
-                    //        action: "getExchangeRate",
-                    //        url: exchange_rate_url,
-                    //        callback: 'afterGetExchangeRate'
-                    //    });
-                    //}
-
-                    //Luôn lấy qua background
-                    chrome.runtime.sendMessage({
-                        action: "getExchangeRate",
-                        url: exchange_rate_url,
-                        callback: 'afterGetExchangeRate'
-                    });
-
-                }else{
-                    //console.info("Lấy tỉ giá ở session storage.");
-                    exchange_rate = parseFloat(er).toFixed(0);
-
-                    if(exchange_rate){
-                        document.querySelectorAll("._addon-exchange-text")[0].textContent = exchange_rate + "đ";
-                    }
-                    start();
-                }
-
-                document.querySelectorAll("._addon-version")[0].textContent = "v" + version_tool;
-
-                if(link_detail_cart){
-                    document.querySelectorAll("._link-detail-cart")[0].setAttribute("href", link_detail_cart);
-                }
-
-                document.querySelectorAll("._is_translate")[0].checked = translate_value_bg == 1;
-                document.querySelectorAll("._is_translate")[0].disabled = false;
-
-            }, 2000);
         }
     };
-
     xhr.open("GET", chrome.extension.getURL("../template/index.html"), true);
     xhr.setRequestHeader('Content-type', 'text/html');
     xhr.send();
 }
-
-chrome.runtime.sendMessage({
-    action: "getTranslateValue",
-    callback: 'afterGetTranslateValue'
-});
-
+load_template();
 /* END xử lý template */
 
 var site_images_url = 'http://seudo.vn/';
@@ -4226,7 +4153,6 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
-
 
 function start() {
     var str = window.location.href;
