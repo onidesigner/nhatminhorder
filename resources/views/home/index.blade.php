@@ -77,9 +77,10 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Đặt hàng</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/bieu-phi/">Biểu phí</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/quy-dinh-va-chinh-sach/">Quy định & Chính sách</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">HD đặt hàng</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">HD Tìm nguồn hàng</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Báo giá công đặt</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-van-chuyen/">Báo giá vận chuyển</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
 
 
