@@ -13,3 +13,5 @@ Homestead.yaml
 /hosivan.md
 /public/bower_components/
 /public/addon.zip
+/public/addon.crx
+/public/addon.pem

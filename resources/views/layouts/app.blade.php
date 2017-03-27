@@ -20,15 +20,15 @@
 </head>
 <body>
 
-<a href="javascript: (function () {
-    var jsCode = document.createElement('script');
-        jsCode.setAttribute('src', '{{ asset('bookmarklet/js/jquery.js?v=' . time()) }}');
-        document.body.appendChild(jsCode);
+{{--<a href="javascript: (function () {--}}
+    {{--var jsCode = document.createElement('script');--}}
+        {{--jsCode.setAttribute('src', '{{ asset('bookmarklet/js/jquery.js?v=' . time()) }}');--}}
+        {{--document.body.appendChild(jsCode);--}}
 
-    var jsCode = document.createElement('script');
-        jsCode.setAttribute('src', '{{ asset('bookmarklet/js/script.js?v=' . time()) }}');
-        document.body.appendChild(jsCode);
- }());">Đặt hàng NhatMinh247</a>
+    {{--var jsCode = document.createElement('script');--}}
+        {{--jsCode.setAttribute('src', '{{ asset('bookmarklet/js/script.js?v=' . time()) }}');--}}
+        {{--document.body.appendChild(jsCode);--}}
+ {{--}());">Đặt hàng NhatMinh247</a>--}}
 
 <div class="app app-default">
 
@@ -36,7 +36,7 @@
 
 
         <div class="sidebar-header">
-            <a class="sidebar-brand" href="#"><span class="highlight">NhatMinh</span> 247</a>
+            <a class="sidebar-brand" href="http://nhatminh247.vn" target="_blank"><span class="highlight">NhatMinh</span> 247</a>
             <button type="button" class="sidebar-toggle">
                 <i class="fa fa-times"></i>
             </button>

@@ -21,7 +21,7 @@
     <!-- CSS
     ================================================== -->
 
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
 
     <!-- Fontawesome Icon font -->
     <link rel="stylesheet" href="{{ asset('css/home/font-awesome.min.css') }}">
@@ -505,5 +505,17 @@ End Fixed Navigation
 <script src="{{ asset('js/home/wow.min.js')  }}"></script>
 <!-- Custom Functions -->
 <script src="{{ asset('js/home/main.js')  }}"></script>
+
+
+<!--Start of Zendesk Chat Script-->
+<script type="text/javascript">
+    window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+        d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+    _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+        $.src="https://v2.zopim.com/?4grVN1wU6JRN4tVWeMtZy1bIWYXYwngA";z.t=+new Date;$.
+            type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+</script>
+<!--End of Zendesk Chat Script-->
+
 </body>
 </html>
