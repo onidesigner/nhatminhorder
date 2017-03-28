@@ -450,11 +450,11 @@ End Fixed Navigation
                         <h3>Thông tin liên hệ</h3>
                         <p>
                             <i class="fa fa-pencil"></i>
-                            8/3 Ngõ 198 Lê Trọng Tấn – Định Công – Hà Nội
+                            Văn phòng Hà Nội
                         </p>
                         <br>
                         <p><i class="fa fa-phone"></i>Điện thoại: 0966.986.304 (Zalo, Wechat) </p>
-                        <p><i class="fa fa-phone"></i>Hotline: 04.2262.6699 </p>
+                        <p><i class="fa fa-phone"></i>Hotline: 04.2262.6699 - 04.2265.6699</p>
                         <p><i class="fa fa-envelope"></i>admin@nhatminh247.vn</p>
                     </address>
                 </div>
