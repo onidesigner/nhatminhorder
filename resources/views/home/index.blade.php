@@ -176,7 +176,7 @@ End Fixed Navigation
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.3s">
                     <div class="service-item">
                         <a href="https://world.taobao.com/" target="_blank">
-                            <img src="{{ asset('images/home/taobao.png')  }}">
+                            <img src="{{ asset('images/home/taobao.jpg')  }}">
                         </a>
 
 
@@ -187,7 +187,7 @@ End Fixed Navigation
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.6s">
                     <div class="service-item">
                         <a href="http://tmall.com/" target="_blank">
-                            <img src="{{ asset('images/home/tmall.png')  }}">
+                            <img src="{{ asset('images/home/tmall.jpg')  }}">
                         </a>
 
                         <p>Chất lượng và dịch vụ tốt nhất, đảm bảo uy tín cao...</p>
@@ -198,7 +198,7 @@ End Fixed Navigation
                     <div class="service-item">
 
                         <a href="https://www.1688.com/" target="_blank">
-                            <img src="{{ asset('images/home/1688.png')  }}">
+                            <img src="{{ asset('images/home/1688.jpg')  }}">
                         </a>
 
                         <p>Giá cả cạnh tranh đảm bảo rẻ nhất trên thị trường order...</p>
