@@ -124,7 +124,7 @@ End Fixed Navigation
 									Tư vấn, tìm kiếm nguồn hàng và nhập hàng trực tuyến từ các website hàng đầu Trung Quốc. NhatMinh247 cam kết một dịch vụ vượt trội và cải tiến liên tục. NhatMinh247 là giải pháp nhập hàng tối ưu cho quý khách
 
                                 </span>
-                            <a href="#" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
+                            <a href="https://nhatminh247.wordpress.com/about/" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
                         </div>
                     </div>
 
