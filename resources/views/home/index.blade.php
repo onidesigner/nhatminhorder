@@ -176,7 +176,7 @@ End Fixed Navigation
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.3s">
                     <div class="service-item">
                         <a href="https://world.taobao.com/" target="_blank">
-                            <img src="{{ asset('images/home/taobao.jpg')  }}">
+                            <img class="lazy" data-src="{{ asset('images/home/taobao.jpg')  }}">
                         </a>
 
 
@@ -187,7 +187,7 @@ End Fixed Navigation
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.6s">
                     <div class="service-item">
                         <a href="http://tmall.com/" target="_blank">
-                            <img src="{{ asset('images/home/tmall.jpg')  }}">
+                            <img class="lazy" data-src="{{ asset('images/home/tmall.jpg')  }}">
                         </a>
 
                         <p>Chất lượng và dịch vụ tốt nhất, đảm bảo uy tín cao...</p>
@@ -198,7 +198,7 @@ End Fixed Navigation
                     <div class="service-item">
 
                         <a href="https://www.1688.com/" target="_blank">
-                            <img src="{{ asset('images/home/1688.jpg')  }}">
+                            <img class="lazy" data-src="{{ asset('images/home/1688.jpg')  }}">
                         </a>
 
                         <p>Giá cả cạnh tranh đảm bảo rẻ nhất trên thị trường order...</p>
@@ -318,7 +318,7 @@ End Fixed Navigation
 
                 <ul class="project-wrapper wow animated fadeInUp">
                     <li class="portfolio-item">
-                        <img src="{{ asset('images/home/ld1.png')  }}" class="img-responsive" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat">
+                        <img data-src="{{ asset('images/home/ld1.png')  }}" class="lazy img-responsive" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat">
                         <figcaption class="mask">
 
                             <p>Đặt đơn hàng thuận tiện nhanh chóng với nhiều tiện ích hỗ trợ</p>
@@ -327,7 +327,7 @@ End Fixed Navigation
                     </li>
 
                     <li class="portfolio-item">
-                        <img src="{{ asset('images/home/ld2.png')  }}" class="img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry. ">
+                        <img data-src="{{ asset('images/home/ld2.png')  }}" class="lazy img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry. ">
                         <figcaption class="mask">
                             <p>Quản lý đơn hàng, Vận chuyển, Tài chính chuyên nghiệp, dễ dàng theo dõi.</p>
                         </figcaption>
@@ -335,7 +335,7 @@ End Fixed Navigation
                     </li>
 
                     <li class="portfolio-item">
-                        <img src="{{ asset('images/home/ld3.jpg')  }}" class="img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry. ">
+                        <img data-src="{{ asset('images/home/ld3.jpg')  }}" class="lazy img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry. ">
                         <figcaption class="mask">
                             <p>Có chính sách bảo hiểm rủi ro hàng hóa.</p>
                         </figcaption>
@@ -343,7 +343,7 @@ End Fixed Navigation
                     </li>
 
                     <li class="portfolio-item">
-                        <img src="{{ asset('images/home/ld4.png')  }}" class="img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry.">
+                        <img data-src="{{ asset('images/home/ld4.png')  }}" class="lazy img-responsive" alt="Lorem Ipsum is simply dummy text of the printing and typesetting ndustry.">
                         <figcaption class="mask">
                             <p>Đội ngũ nhân viên hỗ trợ chăm sóc chu đáo nhiệt tình 24/7.</p>
                         </figcaption>
@@ -387,7 +387,7 @@ End Fixed Navigation
                         </div> -->
 
                         <div class="testimonial-item text-center">
-                            <img src="{{ asset('images/home/kh2.jpg')  }}" alt="Our Clients">
+                            <img class="lazy" data-src="{{ asset('images/home/kh2.jpg')  }}" alt="Our Clients">
                             <div class="clearfix">
                                 <span>Đinh Trọng Hoàng</span>
                                 <p>Chi phí rẻ hơn nhiều khi mua tại shop nên mình đã nhen nhóm tí tưởng order hàng online. Công việc ngày càng thuận lợi hiện giờ mình đã có hẳn 1 hệ thống nhân viên riêng cho shop online. Cảm ơn NhatMinh247 đã mang cho mình cơ hội thành công trên con đường mình đã chọn</p>
@@ -395,7 +395,7 @@ End Fixed Navigation
                         </div>
 
                         <div class="testimonial-item text-center">
-                            <img src="{{ asset('images/home/kh1.jpg')  }}" alt="Our Clients">
+                            <img class="lazy" data-src="{{ asset('images/home/kh1.jpg')  }}" alt="Our Clients">
                             <div class="clearfix">
                                 <span>Nguyễn Đức Thành</span>
                                 <p>Mình đã đặt đèn nội thất qua dịch vụ của NhatMinh247. Đèn treo lên rất đẹp. Chi phí thì chỉ bằng phân nửa so với ngoài cửa hàng bán. Sắp tới mình có còn xây tầng tiếp nữa sẽ đặt toàn bộ nội thất bên đó về luôn. Sản phẩm đẹp, đa dạng còn hạt dẻ nữa.</p>
@@ -403,7 +403,7 @@ End Fixed Navigation
                         </div>
 
                         <div class="testimonial-item text-center">
-                            <img src="{{ asset('images/home/kh3.jpg')  }}" alt="Our Clients">
+                            <img class="lazy" data-src="{{ asset('images/home/kh3.jpg')  }}" alt="Our Clients">
                             <div class="clearfix">
                                 <span>Ngô Kim Dung</span>
                                 <p>Các bạn Chăm Sóc Khách Hàng của NhatMinh247 duyệt đơn cho mình rất nhanh. Chỉ 1 lần hướng dẫn mình đã làm quen với cách tạo đơn hàng và chưa đầy 3 ngày hàng đã về tay mình rồi</p>
@@ -510,6 +510,57 @@ End Fixed Navigation
 <script src="{{ asset('js/home/wow.min.js')  }}"></script>
 <!-- Custom Functions -->
 <script src="{{ asset('js/home/main.js')  }}"></script>
+
+<script>
+    /* lazyload.js (c) Lorenzo Giuliani
+     * MIT License (http://www.opensource.org/licenses/mit-license.html)
+     *
+     * jQuery version by Gavin Grubb
+     * (includes a fix for splice(), as the first image in array (index 0) was never getting removed)
+     * (ALSO I would suggest using a loading animation gif image (ALA www.ajaxload.info) in place of blank.gif)
+     *
+     * expects a list of:
+     * `<img src="blank.gif" data-src="my_image.png" width="600" height="400" class="lazy">`
+     */
+
+    !function(window){
+
+        function loadImage($el, $fn) {
+            jQuery($el).attr('src', jQuery($el).attr('data-src'));
+            $fn ? $fn() : null;
+        }
+
+        function elementInViewport($el) {
+            var $rect = $el.getBoundingClientRect();
+            return ($rect.top >= 0 && $rect.left >= 0 && $rect.top <= (window.innerHeight || document.documentElement.clientHeight)
+            );
+        }
+
+        jQuery(document).ready(function() {
+
+            var images = new Array()
+                , query = jQuery('img.lazy')
+                , processScroll = function() {
+                jQuery.each(images, function(i, img) {
+                    if (elementInViewport(img)) {
+                        loadImage(img, function () {
+                            images.splice(i, 1);
+                        });
+                    }
+                });
+            };
+
+            query.each(function() {
+                images.push(this);
+            });
+
+            processScroll();
+            jQuery(window).bind('scroll', processScroll);
+
+        });
+
+    }(this);
+</script>
 
 
 <!--Start of Zendesk Chat Script-->
