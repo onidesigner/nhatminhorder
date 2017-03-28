@@ -77,10 +77,9 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Đặt hàng</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">Tìm nguồn hàng</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">BG công đặt</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-van-chuyen/">BG vận chuyển</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Hướng dẫn</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">Nguồn hàng</a></li>
+                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Biểu phí</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
 
 
@@ -176,7 +175,9 @@ End Fixed Navigation
 
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.3s">
                     <div class="service-item">
-                        <img src="{{ asset('images/home/taobao.png')  }}">
+                        <a href="https://world.taobao.com/" target="_blank">
+                            <img src="{{ asset('images/home/taobao.png')  }}">
+                        </a>
 
 
                         <p>Hàng về HN chỉ 5-7 ngày, về HCM 8-10 ngày sau khi đặt hàng...</p>
@@ -185,7 +186,9 @@ End Fixed Navigation
 
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn" data-wow-delay="0.6s">
                     <div class="service-item">
-                        <img src="{{ asset('images/home/tmall.png')  }}">
+                        <a href="http://tmall.com/" target="_blank">
+                            <img src="{{ asset('images/home/tmall.png')  }}">
+                        </a>
 
                         <p>Chất lượng và dịch vụ tốt nhất, đảm bảo uy tín cao...</p>
                     </div>
@@ -194,8 +197,9 @@ End Fixed Navigation
                 <div class="col-md-4 col-sm-6 col-xs-12 text-center wow animated zoomIn">
                     <div class="service-item">
 
-                        <img src="{{ asset('images/home/1688.png')  }}">
-
+                        <a href="https://www.1688.com/" target="_blank">
+                            <img src="{{ asset('images/home/1688.png')  }}">
+                        </a>
 
                         <p>Giá cả cạnh tranh đảm bảo rẻ nhất trên thị trường order...</p>
                     </div>

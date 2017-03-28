@@ -1,6 +1,6 @@
 var site_using_https = false;
-var site_name = "nhatminhorder.dev:8000";
-// var site_name = "nhatminh247.vn";
+// var site_name = "nhatminhorder.dev:8000";
+var site_name = "nhatminh247.vn";
 
 // append css to page
 var NewStyles = document.createElement("link");
