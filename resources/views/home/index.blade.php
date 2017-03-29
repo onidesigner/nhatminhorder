@@ -455,7 +455,9 @@ End Fixed Navigation
                         <br>
                         <p><i class="fa fa-phone"></i>Điện thoại: 0966.986.304 (Zalo, Wechat) </p>
                         <p><i class="fa fa-phone"></i>Hotline: 04.2262.6699 - 04.2265.6699</p>
-                        <p><i class="fa fa-envelope"></i>admin@nhatminh247.vn</p>
+                        <p><i class="fa fa-envelope"></i>
+                            <a href="mailto:nguyentuanbmb@gmail.com?Subject=Xin chào, NhatMinh247" target="_top">nguyentuanbmb@gmail.com</a>
+                        </p>
                     </address>
                 </div>
 
