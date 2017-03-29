@@ -58,33 +58,33 @@
                         {{$shop->shop_name}}
 
                         <div style="position: absolute;top: 18px;right: 20px;">
-                            @foreach($data['services'] as $service)
-                                <div class="checkbox-inline">
+                            {{--@foreach($data['services'] as $service)--}}
+                                {{--<div class="checkbox-inline">--}}
 
-                                    <form class="___form">
-                                        <input type="hidden" name="action" value="choose_service">
-                                        <input type="hidden" name="method" value="post">
-                                        <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
-                                        <input type="hidden" name="response" value="customer/cart">
-                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                        <input type="hidden" name="service" value="{{$service['code']}}">
+                                    {{--<form class="___form">--}}
+                                        {{--<input type="hidden" name="action" value="choose_service">--}}
+                                        {{--<input type="hidden" name="method" value="post">--}}
+                                        {{--<input type="hidden" name="shop_id" value="{{$shop->shop_id}}">--}}
+                                        {{--<input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">--}}
+                                        {{--<input type="hidden" name="response" value="customer/cart">--}}
+                                        {{--<input type="hidden" name="_token" value="{{ csrf_token()  }}">--}}
+                                        {{--<input type="hidden" name="service" value="{{$service['code']}}">--}}
 
-                                        <input
-                                                @if(in_array($service['code'], $shop->services)) checked @endif
-                                                type="checkbox"
-                                                value="{{$service['code']}}"
-                                                class="___btn-action"
-                                                id="checkbox_{{$service['code']}}_{{$shop->id}}">
+                                        {{--<input--}}
+                                                {{--@if(in_array($service['code'], $shop->services)) checked @endif--}}
+                                                {{--type="checkbox"--}}
+                                                {{--value="{{$service['code']}}"--}}
+                                                {{--class="___btn-action"--}}
+                                                {{--id="checkbox_{{$service['code']}}_{{$shop->id}}">--}}
 
-                                    </form>
+                                    {{--</form>--}}
 
 
-                                    <label for="checkbox_{{$service['code']}}_{{$shop->id}}">
-                                        {{$service['title']}}
-                                    </label>
-                                </div>
-                            @endforeach
+                                    {{--<label for="checkbox_{{$service['code']}}_{{$shop->id}}">--}}
+                                        {{--{{$service['title']}}--}}
+                                    {{--</label>--}}
+                                {{--</div>--}}
+                            {{--@endforeach--}}
                         </div>
                     </div>
                     <div class="card-body no-padding">
