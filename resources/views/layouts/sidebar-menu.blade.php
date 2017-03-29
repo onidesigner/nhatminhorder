@@ -34,8 +34,18 @@ if(Auth::check()){
                 'children' => [
                     [
                         'url' => url('order'),
-                        'title' => 'Đơn hàng & Kiện hàng',
+                        'title' => 'Đơn hàng',
                         'permission' => \App\Permission::PERMISSION_ORDER_LIST_VIEW
+                    ],
+                    [
+                        'url' => url('package'),
+                        'title' => 'Kiện hàng',
+                        'permission' => \App\Permission::PERMISSION_PACKAGE_LIST_VIEW
+                    ],
+                    [
+                        'url' => url('scan'),
+                        'title' => 'Quét mã vạch',
+                        'permission' => \App\Permission::PERMISSION_SCAN_LIST_VIEW
                     ],
                 ]
             ],

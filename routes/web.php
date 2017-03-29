@@ -60,6 +60,15 @@ Route::put('/user/address/delete', 'Customer\UserAddressController@deleteUserAdd
 Route::put('/user/address/default', 'Customer\UserAddressController@setDefaultUserAddress');
 #endregion
 
+#region -- quet ma vach --
+Route::get('/scan', 'ScanController@indexs');
+Route::post('/scan/action', 'ScanController@action');
+#endregion
+
+#region -- kien hang --
+Route::get('/package', 'PackageController@indexs');
+#endregion
+
 #region quan ly don hang
 Route::get('/order', 'OrderController@orders');
 Route::get('/order/{id}', 'OrderController@order');

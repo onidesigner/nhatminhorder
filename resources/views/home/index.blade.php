@@ -69,6 +69,7 @@ Fixed Navigation
 
             <!-- logo -->
             <h1 class="navbar-brand">
+                <img class="logo" src="{{ asset('images/home/logo.png')  }}" alt="">
                 <a href="javascript:void(0)">NhatMinh247</a>
             </h1>
             <!-- /logo -->
@@ -450,7 +451,7 @@ End Fixed Navigation
                         <h3>Thông tin liên hệ</h3>
                         <p>
                             <i class="fa fa-pencil"></i>
-                            Văn phòng Hà Nội
+                            Văn phòng: Số 8, Ngách 3, Ngõ 198 Lê Trọng Tấn - Hà Nội
                         </p>
                         <br>
                         <p><i class="fa fa-phone"></i>Điện thoại: 0966.986.304 (Zalo, Wechat) </p>

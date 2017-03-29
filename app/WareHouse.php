@@ -49,4 +49,14 @@ class WareHouse extends Model
         ->orderBy('ordering', 'asc')
         ->get();
     }
+
+    public static function retrieveByCode($code = null){
+        if(!$code) return null;
+
+        return self::where([ 'code' => $code ])->first();
+    }
+
+    public static function getAllWarehouse(){
+        return self::orderBy('type', 'desc')->get();
+    }
 }

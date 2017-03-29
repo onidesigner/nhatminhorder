@@ -284,6 +284,16 @@ h1.navbar-brand {
     text-transform: uppercase;
 }
 
+h1.navbar-brand {
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+}
+
+.navbar-brand>img.logo {
+    display: inline-block;
+    width: 50px;
+}
+
 .navbar-inverse .navbar-nav > li > a {
     color: #fff;
     font-size: 15px;

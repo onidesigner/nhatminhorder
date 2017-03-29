@@ -43,6 +43,14 @@ class Permission extends Model
     const PERMISSION_ORDER_CHANGE_SERVICE = 'ORDER_CHANGE_SERVICE';
     #endregion
 
+    #regioin -- Package permission --
+    const PERMISSION_PACKAGE_LIST_VIEW = 'PACKAGE_LIST_VIEW';
+    #endregion
+
+    #region -- Scan permission --
+    const PERMISSION_SCAN_LIST_VIEW = 'SCAN_LIST_VIEW';
+    #endregion
+
     #region -- System permission --
     const PERMISSION_UPDATE_SYSTEM_CONFIG = 'UPDATE_SYSTEM_CONFIG';
     const PERMISSION_MANAGER_USER_ORIGINAL_SITE = 'MANAGER_USER_ORIGINAL_SITE';
