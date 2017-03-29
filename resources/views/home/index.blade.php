@@ -118,9 +118,9 @@ End Fixed Navigation
 
                     <div class="slide-caption">
                         <div class="caption-content">
-                            <h2 class="animated fadeInDown">CHUYÊN ĐẶT HÀNG TỪ TRUNG QUỐC!</h2>
+                            <h2 class="animated fadeInDown">TÌM KIẾM NGUỒN HÀNG TRUNG QUỐC CHƯA BAO GIỜ DỄ DÀNG ĐẾN THẾ</h2>
                             <span class="animated fadeInDown" style="font-weight: 100; text-transform: none;">
-									Tư vấn, tìm kiếm nguồn hàng và nhập hàng trực tuyến từ các website hàng đầu Trung Quốc. NhatMinh247 cam kết một dịch vụ vượt trội và cải tiến liên tục. NhatMinh247 là giải pháp nhập hàng tối ưu cho quý khách
+									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc. Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất. "Chuyển càng nhiều chi phí càng thấp, khách càng quen hỗ trợ càng nhiều"
 
                                 </span>
                             <a href="https://nhatminh247.wordpress.com/about/" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
