@@ -42,8 +42,7 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ghfoebiodmbgfhacmjgndbbokipdgloo">
 
     <script>
-        function ExtInstall(e) {
-            e.preventDefault();
+        function ExtInstall() {
             if (chrome.app.isInstalled){
                 alert("already installed!");
             }else{
@@ -91,7 +90,8 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <li><a onclick="ExtInstall()" href="javascript:void(0)">Công cụ</a></li>
+                <button onclick="ExtInstall()" id="install-button">Add to Chrome</button>
+
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Hướng dẫn</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">Nguồn hàng</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Biểu phí</a></li>
