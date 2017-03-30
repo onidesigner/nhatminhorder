@@ -215,8 +215,14 @@ var alibaba = function(){
     };
 
     this.validateBeforeSubmit = function () {
-        if(!this.isEmptyProperty() && this.getTotalQuantityChoose() > 0){
-            return true;
+        if(this.isEmptyProperty()){
+            if(this.getQuantity() > 0){
+                return true;
+            }
+        }else{
+            if(this.getTotalQuantityChoose() > 0){
+                return true;
+            }
         }
         return false;
     };
@@ -258,21 +264,33 @@ var alibaba = function(){
                 var is_end = (i + 1) == price_range.length;
                 var begin = price_range[i].begin;
                 var end = price_range[i].end;
-                var p = price_range[i].price;
+                begin = parseInt(begin);
+                end = parseInt(end);
 
                 if(is_end){
                     if(quantity >= begin){
-                        price = p;
+                        price = price_range[i].price;
+                        break;
                     }
                 }else{
                     if(quantity >= begin && quantity <= end){
-                        price = p;
+                        price = price_range[i].price;
+                        break;
                     }
                 }
             }
         }catch (e){
 
         }
+
+        try{
+            if(!price){
+                price = price_range[0].price;
+            }
+        }catch (e){
+
+        }
+
         return price;
     };
 

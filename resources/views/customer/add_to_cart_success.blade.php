@@ -16,11 +16,11 @@
         z-index: -1;
         font-family: arial;
     }
-    .book-seudo {
+    .book-nhatminh247 {
         z-index: 9999999999;
         position: relative;
     }
-    .book-seudo.in .modal {
+    .book-nhatminh247.in .modal {
         z-index: 99999;
     }
     .modal .modal-dialog {
@@ -29,7 +29,7 @@
         margin: 30px auto;
         width: 400px;
     }
-    .book-seudo.in .modal .modal-dialog {
+    .book-nhatminh247.in .modal .modal-dialog {
         transform: translate(0px, 0px);
     }
     .modal-dialog {
@@ -46,10 +46,10 @@
         position: relative;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     }
-    .book-seudo .modal-backdrop{
+    .book-nhatminh247 .modal-backdrop{
 
     }
-    .book-seudo.in .modal-backdrop {
+    .book-nhatminh247.in .modal-backdrop {
         background-color: #000000;
         bottom: 0;
         left: 0;
@@ -156,13 +156,13 @@
     }
 </style>
 
-<div class="book-seudo in" id="confirm_main">
+<div class="book-nhatminh247 in" id="confirm_main">
     <div class="modal-backdrop"></div>
-    <div class="modal " >
+    <div class="modal">
         <div class="modal-dialog @if(!$success) nhatminh247-error @endif">
             <div class="modal-content">
                 <div class="modal-header">
-                    <span class="close" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.getElementById('confirm_main'))" >×</span>
+                    <span class="close" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.querySelectorAll('.book-nhatminh247')[document.querySelectorAll('.book-nhatminh247').length - 1])" >×</span>
                     <h5 class="modal-title">
                         <span>
 
@@ -196,7 +196,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="next" type="button" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.getElementById('confirm_main'))">
+                    <button class="next" type="button" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.querySelectorAll('.book-nhatminh247')[document.querySelectorAll('.book-nhatminh247').length - 1])">
                         <span>Tiếp tục mua hàng</span>
                     </button>
                     <a class="cart" href="{{ url('gio-hang')  }}">Vào giỏ hàng</a>

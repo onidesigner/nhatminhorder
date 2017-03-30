@@ -300,6 +300,12 @@ class Cart extends Model
         DB::beginTransaction();
 
         try {
+            $price_range = [];
+            if(!empty($params['price_range'])){
+                $price_range = $params['price_range'];
+                unset($params['price_range']);
+            }
+
             $params['site'] = strtolower($params['site']);
             $user_id = Auth::user()->id;
             $insert_id_cart = null;
@@ -340,14 +346,13 @@ class Cart extends Model
                 $params['shop_id'],
                 $user_id,
                 $params['item_id'],
-                @$params['data_value']
+                @$params['property']
             );
 
             if(!$exist_cart_item_with_property):
                 $data_insert_item = $params;
                 $data_insert_item['user_id'] = $user_id;
                 $data_insert_item['cart_id'] = $insert_id_cart;
-//                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['data_value']);//backup
                 $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['property']);
                 $data_insert_item['created_at'] = date('Y-m-d H:i:s');
 
