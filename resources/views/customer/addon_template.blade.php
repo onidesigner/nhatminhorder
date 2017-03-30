@@ -94,7 +94,7 @@
         left: 0;
         padding: 10px 20px;
         color: #a94442;
-        text-align: left;
+        text-align: center;
         z-index: 9999999999999999999999999999;
 
         text-decoration: none!important;

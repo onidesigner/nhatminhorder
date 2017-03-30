@@ -4,6 +4,26 @@ for(var i = 30; i < 150; i++){
 url = url.replace(i + 'x' + i + '.jpg', "150x150.jpg");
 }
 return url;
+},
+getPriceFromString: function(string){
+var price = 0;
+try{
+price = string.replace('¥', '').trim();
+}catch (e){
+
+}
+return price;
+},
+getBackgroundImageOfDiv: function(element){
+// Get the image id, style and the url from it
+var img = element,
+style = img.currentStyle || window.getComputedStyle(img, false),
+bi = style.backgroundImage.slice(4, -1);
+
+// For IE we need to remove quotes to the proper url
+bi = style.backgroundImage.slice(4, -1).replace(/"/g, "");
+
+return bi;
 }
 };
 
@@ -11,7 +31,27 @@ var taobao = function(){
 this.init_data = null;
 
 this.init = function () {
+//nothing
+};
 
+this.isEmptyProperty = function () {
+if(!document.querySelectorAll('#J_SKU > dl').length){
+return true;
+}
+return false;
+};
+
+this.validateBeforeSubmit = function () {
+if(this.isEmptyProperty()){
+return true;
+}else{
+var total_choose = document.querySelectorAll('.J_SKU.tb-selected').length;
+var total_sku = document.querySelectorAll('#J_SKU > dl').length;
+if(total_choose == total_sku){
+return true;
+}
+}
+return false;
 };
 
 /**
@@ -29,19 +69,90 @@ return product_name;
 };
 
 this.getPrice = function(){
+var price = 0;
+try{
+price = document.querySelectorAll('#J_PromoPrice .tb-rmb-num')[0].textContent.trim();
+}catch (e){
 
+}
+
+if(!price){
+try{
+price = document.querySelectorAll('#J_priceStd .tb-rmb-num')[0].textContent.trim();
+}catch (e){
+
+}
+}
+
+if(price){
+price = Common.getPriceFromString(price);
+}
+return price;
 };
 
 this.getPricePromotion = function(){
-
+return this.getPrice();
 };
 
 this.getProperty = function(){
+if(this.isEmptyProperty()){
+return '';
+}
 
+var property = [];
+try{
+var $dom = document.querySelectorAll('.J_SKU.tb-selected > a');
+for(var i = 0; i < $dom.length; i++){
+var property_item = $dom[i].getAttribute('title');
+if(!property_item){
+$dom[i].textContent.trim();
+}
+if(property_item){
+property.push(property_item);
+}
+}
+}catch (e){
+
+}
+
+return property ? property.join(';') : '';
 };
 
 this.getProductImage = function(){
+var product_image = '';
+try{
+product_image = document.querySelectorAll('#J_ThumbView')[0].getAttribute('src');
+}catch (e){
 
+}
+return product_image;
+};
+
+this.getProductImageModel = function () {
+var product_image_model = '';
+
+try{
+var $dom = document.querySelectorAll('.J_SKU.tb-selected > a');
+for(var i = 0; i < $dom.length; i++){
+var background = Common.getBackgroundImageOfDiv($dom[i]);
+if(background){
+product_image_model = background;
+break;
+}
+}
+}catch (e){
+
+}
+
+if(!product_image_model){
+product_image_model = this.getProductImage();
+}
+
+if(product_image_model){
+product_image_model = Common.resizeImage(product_image_model);
+}
+
+return product_image_model;
 };
 
 /**
@@ -75,22 +186,55 @@ return 'taobao';
 };
 
 this.getShopId = function(){
+var shop_id = '';
 
+try{
+var shop_tilte_text;
+if(document.querySelector('.shop-title-text')){
+shop_tilte_text = document.querySelector('.shop-title-text').getAttribute("href");
+}else{
+shop_tilte_text = document.querySelectorAll(".tb-shop-name")[0].getElementsByTagName("h3")[0].getElementsByTagName("a")[0].getAttribute("href")
+}
+shop_tilte_text = shop_tilte_text.replace("//shop", "");
+var tmp = shop_tilte_text.split('.');
+shop_id = tmp[0];
+}catch(e){
+
+}
+
+shop_id = shop_id ? 'taobao_' + shop_id : shop_id;
+
+return shop_id;
 };
 
 this.getQuantity = function(){
+var quantity = 0;
+if(this.isEmptyProperty()){
+try{
+quantity = document.querySelectorAll('#J_IptAmount')[0].value;
+}catch (e){
 
+}
+}else{
+try{
+quantity = document.querySelectorAll('#J_IptAmount')[0].value;
+}catch (e){
+
+}
+}
+return quantity;
 };
 
 this.getDataToSend = function () {
 return {
-product_name: this.getProductName(),
-price: this.getPrice(),
+title_origin: this.getProductName(),
+price_origin: this.getPrice(),
 price_promotion: this.getPricePromotion(),
 property: this.getProperty(),
-product_image: this.getProductImage(),
-product_detail_url: this.getProductDetailUrl(),
-product_id: this.getProductId(),
+image_origin: this.getProductImage(),
+image_model: this.getProductImageModel(),
+link_origin: this.getProductDetailUrl(),
+item_id: this.getProductId(),
 site: this.getSite(),
 shop_id: this.getShopId(),
 quantity: this.getQuantity(),
@@ -510,6 +654,9 @@ sendAjax(data);
 
 }else{
 //site: taobao, tmall
+var data = _className.getDataToSend();
+console.log(data);
+sendAjax(data);
 }
 }
 
