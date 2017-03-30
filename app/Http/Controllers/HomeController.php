@@ -29,14 +29,6 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function homePage(){
-        return view('home/index', [
-            'enable_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_enable_popup'],
-            'title_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_title_popup'],
-            'content_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_content_popup']
-        ]);
-    }
-
     /**
      * Show the application dashboard.
      *

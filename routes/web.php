@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'HomeController@homePage');
+Route::get('/', 'HomePageController@homePage');
 
 Auth::routes();
 
