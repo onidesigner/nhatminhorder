@@ -73,7 +73,7 @@
                                 <div class="col-md-9 col-md-offset-3">
 
 
-                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <button type="submit" class="btn btn-primary">LƯU</button>
 
                                     @if($save == 'success')
                                         <span class="label label-success">Cật nhật thành công!</span>
