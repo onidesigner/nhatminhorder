@@ -138,9 +138,10 @@ End Fixed Navigation
 
                     <div class="slide-caption">
                         <div class="caption-content">
-                            <h2 class="animated fadeInDown">TÌM KIẾM NGUỒN HÀNG TRUNG QUỐC CHƯA BAO GIỜ DỄ DÀNG ĐẾN THẾ</h2>
+                            <h2 class="animated fadeInDown">ĐẶT HÀNG TRUNG QUỐC CHƯA BAO GIỜ DỄ DÀNG ĐẾN THẾ</h2>
                             <span class="animated fadeInDown" style="font-weight: 100; text-transform: none;">
-									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc. Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất. <br>"Gieo chữ tín - gặt niềm tin"
+									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc.  Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất.
+<br>“GIEO CHỮ TÍN- GẶT NIỀM TIN”
 
                                 </span>
                             <a href="https://nhatminh247.wordpress.com/about/" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
