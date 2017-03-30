@@ -39,7 +39,7 @@
     <!-- Modernizer Script for old Browsers -->
     <script src="{{ asset('js/home/modernizr-2.6.2.min.js')  }}"></script>
 
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ghfoebiodmbgfhacmjgndbbokipdgloo">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/inhnmjhbedekbkffcjopnjakeiiclcej">
 
     <script>
         function ExtInstall() {
@@ -90,13 +90,17 @@ Fixed Navigation
         <!-- main nav -->
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
-                <button onclick="ExtInstall()" id="install-button">Add to Chrome</button>
+
+
 
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Hướng dẫn</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">Nguồn hàng</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Biểu phí</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
 
+                <li>
+                    <button class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
+                </li>
 
                 @if (Route::has('login'))
                     @if (Auth::check())
