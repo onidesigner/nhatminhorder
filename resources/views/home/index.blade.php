@@ -82,7 +82,7 @@ Fixed Navigation
             <!-- logo -->
             <h1 class="navbar-brand">
                 <img class="logo" src="{{ asset('images/home/logo.png')  }}" alt="">
-                <a href="javascript:void(0)">NhatMinh247</a>
+                <a href="javascript:void(0)" style="color: #fff!important;">NhatMinh247</a>
             </h1>
             <!-- /logo -->
         </div>
