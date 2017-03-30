@@ -8,6 +8,7 @@ use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Service;
 use App\OrderFreightBill;
 use App\Order;
+use App\SystemConfig;
 use App\User;
 use App\Role;
 use App\UserRole;
@@ -26,6 +27,14 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function homePage(){
+        return view('home/index', [
+            'enable_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_enable_popup'],
+            'title_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_title_popup'],
+            'content_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_content_popup']
+        ]);
     }
 
     /**

@@ -1,150 +1,131 @@
-<link rel="stylesheet" type="text/css" href="{{ asset('bookmarklet/css/main.css')  }}">
+<style>
 
-<div class="addon-wrapper _addon-wrapper">
+    .nhatminh-menubar{
+        text-decoration: none!important;
+        font-size: 15px!important;
 
-    <div class="addon-alert _alert-shop-credible ">
-        <strong>QUÝ KHÁCH VUI LÒNG KHÔNG SỬ DỤNG GOOGLE TRANSLATE KHI CLICK VÀO NÚT ĐẶT HÀNG</strong>
-    </div>
+        position: fixed;
+        height: 80px;
+        background: #4ab825;
+        width: 100%;
+        z-index: 999999999999;
+        left: 0;
+        bottom: 0;
+        text-align: center;
+        line-height: 80px;
+        /* box-shadow: 0 0 10px rgba(58, 240, 46, 0); */
+    }
+    .nhatminh-menubar .nhatminh-button-add-to-cart{
+        background: #fff;
+        padding: 15px 20px;
+        margin-right: 20px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        color: #000;
+    }
+    .nhatminh-menubar .nhatminh-button-add-to-cart:hover{
+        background: rgba(236, 236, 236, 0.56);
+        text-decoration: none!important;
+    }
 
-    <div class="addon-content">
-        <div class="addon-block">
-            <ul class="addon-list-inline">
+    .nhatminh-menubar .nhatminh-button-view-cart{
+        color: #fff;
+    }
 
-                <li style="display: none">
-                    <a id="_add-to-favorite" href="javascript:void(0)" class="save-product-ao"> Lưu sản phẩm </a>
-                </li>
+    .nhatminh-menubar .nhatminh-button-view-cart:hover{
+        text-decoration: underline;
+    }
 
-                <li style="display: none">
-                    <label>
-                        <input type="checkbox" name="is_translate" class="_is_translate"> <span></span>
-                        Dịch tự động
-                    </label>
-                </li>
+    .nhatminh-form-add-to-cart{
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        width: 400px;
+        height: auto;
+        background: #fff;
+        z-index: 99999999999;
+        padding: 10px 30px;
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+        display: none;
 
-                <li style="display: none;">
-                    <ul>
-                        <li class="pos-relative">
-                            <div class="opt-select-ao">
-                                <span class="arr-ao"></span>
-                                <select class="form-control _select_category">
-                                    <option>Chọn danh mục</option>
-                                </select>
-                            </div>
+        text-decoration: none!important;
+        font-size: 15px!important;
+    }
 
-                            <div class="category-other _category-other hidden">
-                                <div class="addon_arrow_box">
-                                    <label class="addon-category-label">Danh mục khác: </label>
-                                    <input type="text" class="form-control _input_category addon-input-category" placeholder="Tự nhập danh mục">
-                                </div>
-                            </div>
-                        </li>
-                        <li style="display: none">
-                            <input class="form-control _brand_item" value="" placeholder="Nhập thương hiệu">
-                        </li>
-                    </ul>
-                </li>
-                <li>
+    .nhatminh-form-add-to-cart .nhatminh-form-input{
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
 
-                    <a href="javascript:void(0)" class="btn btn-danger _addToCart btn-seudo">
-                        ĐẶT HÀNG NHATMINH247
-                    </a>
+    .nhatminh-form-add-to-cart .nhatminh-form-textarea{
+        width: 100%;
+        margin-bottom: 15px;
+        font-size: 14px;
+        padding: 10px 15px;
+    }
 
-                    <a href="{{ url('gio-hang')  }}" target="_blank" class="addon-link _link-detail-cart">
-                        <i class="addon-icon-shopping-cart"></i>
-                        Vào giỏ hàng
-                    </a>
-                    &nbsp;&nbsp;&nbsp;
+    .nhatminh-form-add-to-cart .nhatminh-form-button-add-to-cart{
+        color: #fff;
+        background: #4ab825;
+        border: none;
+        padding: 10px 15px;
+        font-size: 15px;
+    }
 
-                    <a href="javascript:" class="_close_tool open-more hidden">
-                        Mở rộng
-                    </a>
+    .nhatminh-form-add-to-cart .nhatminh-form-button-add-to-cart:hover{
+        background: #5fca3b;
+        text-decoration: none!important;
+    }
 
-                </li>
+    .nhatminh-form-add-to-cart .nhatminh-title-form{
+        margin-top: 20px;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
 
-                <li class="hidden">
-                    <h3 class="addon-title">CÔNG CỤ ĐẶT HÀNG</h3>
-                    <p class="addon-version _addon-version">1.0</p>
-                </li>
+    .nhatminh-notification{
+        position: fixed;
+        bottom: 80px;
+        background: #f6f2dd;
+        width: 100%;
+        left: 0;
+        padding: 10px 20px;
+        color: #a94442;
+        text-align: left;
+        z-index: 9999999999999999999999999999;
 
-                <li class="hidden">
-                    <h6 class="addon-exchange-label">Tỉ giá</h6>
-                    <p class="addon-exchange-text _addon-exchange-text">{{ App\Util::formatNumber($exchange_rate)  }}</p>
-                </li>
-            </ul>
+        text-decoration: none!important;
+        font-size: 15px!important;
+    }
+</style>
 
-        </div>
-    </div>
-
+<div class="nhatminh-notification">
+    VUI LÒNG TẮT GOOGLE DỊCH TRƯỚC KHI CHO SẢN PHẨM VÀO GIỎ HÀNG. XIN CÁM ƠN!
+</div>
+<div class="nhatminh-menubar">
+    <a href="javascript:void(0)" class="nhatminh-button-add-to-cart" id="_add-to-cart">Đặt hàng NhatMinh247</a>
+    <a href="{{ url('gio-hang')  }}" target="_blank" class="nhatminh-button-view-cart">Vào giỏ hàng</a>
 </div>
 
-<div class="div-block-price-book _div-block-price-book" id="li_sd_price">
+<div class="nhatminh-form-add-to-cart">
+    <h3 class="nhatminh-title-form">Công cụ đặt hàng NhatMinh247</h3>
 
-    <a href="javascript:" class="_minimize_tool addon-minimize-tool">
-        Thu gọn
-    </a>
+    <form>
+        <input autofocus class="nhatminh-form-input" type="text" placeholder="Giá sản phẩm NDT" required>
 
-    <h1 class="addon-lg-title">Công Cụ Đặt Hàng</h1>
+        <br>
 
-    <div class="seu-note-book" id="_box_input_exception">
+        <input class="nhatminh-form-input" type="number" placeholder="Số lượng sản phẩm" required>
 
-        <div class="note-item">
-            <span>Giá:</span>
-            <p>
-                <input type="text" id="_price" class="form-control" placeholder="Giá" />
-            </p>
-        </div>
+        <br>
 
-        <div class="note-item">
-            <span>Thuộc tính:</span>
-            <p>
-                <textarea class="addon-width-full form-control" rows="3" id="_properties" placeholder="Nhập màu sắc, kích thước VD:Màu đen; Size 41" name="_properties"></textarea>
-            </p>
-        </div>
-
-        <div class="note-item">
-            <span>Số lượng:</span>
-            <p>
-                <input type="text" class="form-control" id="_quantity" placeholder="Số lượng" />
-            </p>
-        </div>
-    </div>
-
-    <div class="_div_category" style="display: none;">
-
-        <p>Chọn danh mục <span class=text-danger">*</span>: </p>
-
-        <select data-loaded="0" class="_select_category form-control" style="width: 100%;">
-            <option value="0">Chọn danh mục</option>
-        </select>
-
-        <input placeholder="Tự nhập danh mục" class="form-control _input_category addon-margin-top-10" style="display: none; width: 100%;" />
-
-        <p class="addon-lbl-th">Thương Hiệu: </p>
-
-        <input type="text" placeholder="Nhập thương hiệu của sản phẩm" class="form-control _brand_item" style="width: 100%;" />
-    </div>
-
-    <div class="note-text" style="display: none;">
-        <p>Chú thích: </p>
-        <textarea cols="60" class="form-control _comment_item" placeholder="Chú thích cho sản phẩm" name="_comment_item"></textarea>
-    </div>
-
-    <div class="xbTipBlock add-book">
-        <div class="add-button" id="block_button_sd">
-            <!--<button class="_addToCart btnAddToCart" type="button"></button>-->
-
-            <button class="_addToCart btn btn-danger text-uppercase btnAddToCart" style="background: #000;border: none;padding: 5px 10px;cursor: pointer;">Đặt hàng</button>
-
-            <a href="{{ url('gio-hang') }}" class="_link-detail-cart cart" target="_blank" style="display: none;">Vào giỏ hàng</a>
-
-            <div class="note-img"></div>
-        </div>
-    </div>
-
-    <span class="pull-right hidden">
-        <b>
-            Phiên bản <span class="_addon-version">1.0</span>
-        </b>
-    </span>
+        <textarea class="nhatminh-form-textarea" rows="5" placeholder="Nhập thuộc tính của sản phẩm (VD: màu xanh, cỡ XL)"></textarea>
+        <br>
+        <button class="nhatminh-form-button-add-to-cart" type="submit">ĐẶT HÀNG</button>
+        <a href="{{ url('gio-hang')  }}" target="_blank">Vào giỏ hàng</a>
+    </form>
 
 </div>

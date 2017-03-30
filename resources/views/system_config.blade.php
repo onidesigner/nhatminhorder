@@ -7,7 +7,7 @@
 @section('content')
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card">
 
                 @include('partials/__breadcrumb',
@@ -30,7 +30,36 @@
                                     <label class="col-md-4 control-label">{{$data_item['field_name']}}</label>
                                     <div class="col-md-8">
 
-                                        <input @if($key == 0) autofocus @endif type="text" name="{{$data_item['key']}}" class="form-control" placeholder="" value="{{ @$data_inserted[$data_item['key']]  }}">
+                                        @if(@$data_item['tag_name'] == '' || @$data_item['tag_name'] == 'input')
+                                            <input type="text"
+                                                   name="{{$data_item['key']}}"
+                                                   class="form-control"
+                                                   placeholder=""
+                                                   value="{{ @$data_inserted[$data_item['key']]  }}">
+                                        @elseif(@$data_item['tag_name'] == 'textarea')
+                                            <textarea placeholder=""
+                                                      class="form-control"
+                                                      name="{{$data_item['key']}}"
+                                                      id=""
+                                                      cols="30"
+                                                      rows="10">{{ @$data_inserted[$data_item['key']]  }}</textarea>
+
+                                        @elseif(@$data_item['tag_name'] == 'select')
+                                            <select
+                                                    name="{{$data_item['key']}}" id="" class="form-control">
+
+                                                @foreach($data_item['options'] as $key => $value)
+                                                    <option
+                                                            @if(!empty($data_inserted[$data_item['key']])
+                                                            && $key == $data_inserted[$data_item['key']]) selected @endif
+                                                    value="{{$key}}">{{$value}}</option>
+                                                @endforeach
+
+
+                                            </select>
+                                            <br>
+
+                                        @endif
                                     </div>
                                 </div>
 

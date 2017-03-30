@@ -187,11 +187,11 @@
 
                     </p>
 
-                    @if($is_translate == 1)
-                        <p style="text-transform: uppercase;color: red;padding: 10px;">Chúng tôi không khuyến cáo rằng không sử dụng google dịch khi tiến hành đặt hàng, điều này có thể dẫn đến việc các sản phẩm của cùng 1 shop bị tách ra làm nhiều đơn. Trân trọng</p>
-                    @else
+                    {{--@if($is_translate == 1)--}}
+                        {{--<p style="text-transform: uppercase;color: red;padding: 10px;">Chúng tôi không khuyến cáo rằng không sử dụng google dịch khi tiến hành đặt hàng, điều này có thể dẫn đến việc các sản phẩm của cùng 1 shop bị tách ra làm nhiều đơn. Trân trọng</p>--}}
+                    {{--@else--}}
 
-                    @endif
+                    {{--@endif--}}
 
                 </div>
 

@@ -18,3 +18,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/exchange', 'Customer\AddonController@getExchange');
+Route::get('/get_init_data', 'Customer\AddonController@getInitData');

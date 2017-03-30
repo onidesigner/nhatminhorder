@@ -25,6 +25,25 @@ class SystemConfig extends Model
             'key' => 'order_deposit_percent'
         ],
 
+        [
+            'field_name' => 'Hiển thị popup ngoài trang chủ?',
+            'key' => 'home_page_enable_popup',
+            'tag_name' => 'select',
+            'options' => [
+                '' => '-- Mời chọn --',
+                0 => 'Không hiển thị',
+                1 => 'Hiển thị',
+            ]
+        ],
+        [
+            'field_name' => 'Tiêu đề popup ngoài trang chủ',
+            'key' => 'home_page_title_popup'
+        ],
+        [
+            'field_name' => 'Nội dung popup ngoài trang chủ',
+            'key' => 'home_page_content_popup',
+            'tag_name' => 'textarea'
+        ],
     ];
 
     public function updateData($data_insert){

@@ -311,13 +311,13 @@ class Cart extends Model
                 $data_insert_cart = [
                     'user_id' => $user_id,
                     'shop_id' => $params['shop_id'],
-                    'shop_name' => $params['shop_name'],
+                    'shop_name' => @$params['shop_name'],
                     'shop_link' => null,
                     'avatar' => $params['image_model'],
                     'site' => $params['site'],
-                    'seller_id' => $params['seller_id'],
-                    'wangwang' => $params['wangwang'],
-                    'location_sale' => $params['location_sale'],
+                    'seller_id' => @$params['seller_id'],
+                    'wangwang' => @$params['wangwang'],
+                    'location_sale' => @$params['location_sale'],
                     'created_at' => date('Y-m-d H:i:s'),
                     'last_insert_item_at' => date('Y-m-d H:i:s'),
                     'updated_at' => date('Y-m-d H:i:s'),
@@ -340,14 +340,14 @@ class Cart extends Model
                 $params['shop_id'],
                 $user_id,
                 $params['item_id'],
-                $params['data_value']
+                @$params['data_value']
             );
 
             if(!$exist_cart_item_with_property):
                 $data_insert_item = $params;
                 $data_insert_item['user_id'] = $user_id;
                 $data_insert_item['cart_id'] = $insert_id_cart;
-                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], $params['data_value']);
+                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['data_value']);
                 $data_insert_item['created_at'] = date('Y-m-d H:i:s');
 
                 unset($data_insert_item['brand']);

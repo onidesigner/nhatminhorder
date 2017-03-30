@@ -52,6 +52,8 @@
 </div>
 <!-- end preloader -->
 
+
+
 <!--
 Fixed Navigation
 ==================================== -->
@@ -101,6 +103,24 @@ Fixed Navigation
 <!--
 End Fixed Navigation
 ==================================== -->
+@if($enable_popup)
+<div class="modal fade" id="modal-id">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{@$title_popup}}</h4>
+            </div>
+            <div class="modal-body">
+                {{@$content_popup}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 <main class="site-content" role="main">
 
@@ -121,7 +141,7 @@ End Fixed Navigation
                         <div class="caption-content">
                             <h2 class="animated fadeInDown">TÌM KIẾM NGUỒN HÀNG TRUNG QUỐC CHƯA BAO GIỜ DỄ DÀNG ĐẾN THẾ</h2>
                             <span class="animated fadeInDown" style="font-weight: 100; text-transform: none;">
-									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc. Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất. <br>"Chuyển càng nhiều chi phí càng thấp, khách càng quen hỗ trợ càng nhiều"
+									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc. Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất. <br>"Gieo chữ tín - gặt niềm tin"
 
                                 </span>
                             <a href="https://nhatminh247.wordpress.com/about/" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
@@ -565,6 +585,13 @@ End Fixed Navigation
     }(this);
 </script>
 
+<script>
+    $(document).ready(function(){
+        if($('#modal-id').length){
+            $('#modal-id').modal('show');
+        }
+    });
+</script>
 
 <!--Start of Zendesk Chat Script-->
 <script type="text/javascript">
@@ -575,6 +602,7 @@ End Fixed Navigation
             type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
 </script>
 <!--End of Zendesk Chat Script-->
+
 
 </body>
 </html>
