@@ -246,6 +246,14 @@ var tmall = function(){
     this.init_data = null;
 
     this.init = function () {
+        //nothing
+    };
+
+    this.isEmptyProperty = function () {
+
+    };
+
+    this.validateBeforeSubmit = function () {
 
     };
 
@@ -266,6 +274,10 @@ var tmall = function(){
     };
 
     this.getProductImage = function(){
+
+    };
+
+    this.getProductImageModel = function () {
 
     };
 
@@ -291,20 +303,20 @@ var tmall = function(){
 
     this.getDataToSend = function () {
         return {
-            product_name: this.getProductName(),
-            price: this.getPrice(),
+            title_origin: this.getProductName(),
+            price_origin: this.getPrice(),
             price_promotion: this.getPricePromotion(),
             property: this.getProperty(),
-            product_image: this.getProductImage(),
-            product_detail_url: this.getProductDetailUrl(),
-            product_id: this.getProductId(),
+            image_origin: this.getProductImage(),
+            image_model: this.getProductImageModel(),
+            link_origin: this.getProductDetailUrl(),
+            item_id: this.getProductId(),
             site: this.getSite(),
             shop_id: this.getShopId(),
             quantity: this.getQuantity(),
         };
     };
 };
-
 var alibaba = function(){
     this.init_data = null;
 
