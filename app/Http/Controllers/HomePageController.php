@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\SystemConfig;
-use Doctrine\Common\Cache\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
@@ -13,11 +13,19 @@ class HomePageController extends Controller
 
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function homePage(){
-        return view('home/index', [
-            'enable_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_enable_popup'],
-            'title_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_title_popup'],
-            'content_popup' => Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_content_popup']
-        ]);
+        $data_return = [
+            'enable_popup' => false,
+            'title_popup' => null,
+            'content_popup' => null,
+        ];
+        foreach($data_return as $k => $v){
+            $data_return[$k] = !empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_' . $k])
+                ? Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_' . $k] : $v;
+        }
+        return view('home/index', $data_return);
     }
 }
