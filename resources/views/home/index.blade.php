@@ -42,11 +42,13 @@
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ghfoebiodmbgfhacmjgndbbokipdgloo">
 
     <script>
-        function ExtInstall() {
-            if (chrome.app.isInstalled)
+        function ExtInstall(e) {
+            e.preventDefault();
+            if (chrome.app.isInstalled){
                 alert("already installed!");
-            else
+            }else{
                 chrome.webstore.install();
+            }
         }
     </script>
 </head>
