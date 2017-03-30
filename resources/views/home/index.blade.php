@@ -112,7 +112,7 @@ End Fixed Navigation
                 <h4 class="modal-title">{{@$title_popup}}</h4>
             </div>
             <div class="modal-body">
-                {{@$content_popup}}
+                {!! @$content_popup !!}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
