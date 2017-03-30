@@ -22,10 +22,6 @@ chrome.runtime.sendMessage({
     callback: 'after_request_server'
 });
 
-// document.getElementById('_add-to-cart').addEventListener('click', function() {
-//     alert('ok');
-// });
-
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         switch (request.action)
@@ -44,9 +40,12 @@ var Action = {
     after_request_server: function (request) {
         console.log(request);
         var response = request.response;
-        Common.appendHtml(document.body, response.html);
-
-        eval(response.content_script);
+        if(response.html){
+            Common.appendHtml(document.body, response.html);
+        }
+        if(response.content_script){
+            eval(response.content_script);
+        }
     },
 };
 

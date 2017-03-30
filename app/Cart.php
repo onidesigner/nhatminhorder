@@ -347,7 +347,8 @@ class Cart extends Model
                 $data_insert_item = $params;
                 $data_insert_item['user_id'] = $user_id;
                 $data_insert_item['cart_id'] = $insert_id_cart;
-                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['data_value']);
+//                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['data_value']);//backup
+                $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['property']);
                 $data_insert_item['created_at'] = date('Y-m-d H:i:s');
 
                 unset($data_insert_item['brand']);
