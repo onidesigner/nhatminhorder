@@ -98,9 +98,7 @@ Fixed Navigation
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Biểu phí</a></li>
                 <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
 
-                <li>
-                    <button class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
-                </li>
+
 
                 @if (Route::has('login'))
                     @if (Auth::check())
@@ -110,6 +108,10 @@ Fixed Navigation
                         <li><a target="_blank" href="{{ url('/login') }}">Đăng nhập</a></li>
                     @endif
                 @endif
+
+                <li>
+                    <button class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
+                </li>
             </ul>
         </nav>
         <!-- /main nav -->
