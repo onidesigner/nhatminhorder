@@ -30,7 +30,7 @@ class SystemConfig extends Model
             'key' => 'home_page_enable_popup',
             'tag_name' => 'select',
             'options' => [
-                '' => '-- Mời chọn --',
+//                '' => '-- Mời chọn --',
                 0 => 'Không hiển thị',
                 1 => 'Hiển thị',
             ]
