@@ -1,6 +1,6 @@
 //=========== begin config =========
-var sitename = 'nhatminh247.dev:8000';
-// var sitename = 'nhatminh247.vn';
+// var sitename = 'nhatminh247.dev:8000';
+var sitename = 'nhatminh247.vn';
 var url_get_init_data = 'http://' + sitename + '/api/get_init_data';
 //=========== end config =========
 
@@ -52,6 +52,7 @@ if (str.match(/item.taobao/)){
     try{
         var item_id = Common.getURLParameters('id');
         if(item_id){
+            item_id = item_id.split('#')[0];
             window.location.href = 'https://world.taobao.com/item/' + item_id + '.htm';
         }
     }catch (e){

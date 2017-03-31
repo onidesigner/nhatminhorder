@@ -180,7 +180,7 @@
                     <p class="normal">
 
                         @if($success)
-                            Số tiền của sản phẩm phải trả: <span style="color:#a8041f; font-weight: bold;">{{ $price  }}</span> NDT
+                            Số tiền của sản phẩm phải trả: <span style="color:#a8041f; font-weight: bold;">{{ $price  }}</span> NDT (<strong>{{App\Util::formatNumber($price * $exchange_rate)}}đ</strong>)
                         @else
                             {!! $message !!}
                         @endif

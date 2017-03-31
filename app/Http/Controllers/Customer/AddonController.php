@@ -28,7 +28,7 @@ class AddonController extends Controller
         $html = $view->render();
 
         $js_view = View::make('customer/addon_content_script', [
-
+            'exchange_rate' => $exchange_rate
         ]);
         $content_script = $js_view->render();
 
@@ -86,10 +86,12 @@ class AddonController extends Controller
     }
 
     private function __addon_alert_template($success, $message = null, $price = null){
+        $exchange_rate = Exchange::getExchange();
         $view = View::make('customer/add_to_cart_success', [
             'success' => $success,
             'message' => $message,
-            'price' => $price
+            'price' => $price,
+            'exchange_rate' => $exchange_rate,
         ]);
         return $view->render();
     }
