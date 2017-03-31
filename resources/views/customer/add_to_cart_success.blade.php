@@ -139,6 +139,7 @@
         line-height: 1;
         opacity: 0.2;
         text-shadow: 0 1px 0 #FFFFFF;
+        z-index: 9999999999999999999;
     }
     .modal-dialog .close:hover,
     .modal-dialog .close:focus {

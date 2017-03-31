@@ -1,5 +1,6 @@
 //=========== begin config =========
 var sitename = 'nhatminh247.dev:8000';
+// var sitename = 'nhatminh247.vn';
 var url_get_init_data = 'http://' + sitename + '/api/get_init_data';
 //=========== end config =========
 
@@ -44,6 +45,7 @@ var Common = {
         }
     }
 };
+
 //========= end function helper ========
 var str = window.location.href;
 if (str.match(/item.taobao/)){

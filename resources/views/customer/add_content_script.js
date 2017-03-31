@@ -1,9 +1,6 @@
-var Common = {
-    resizeImage: function(url){
-        for(var i = 30; i < 150; i++){
-            url = url.replace(i + 'x' + i + '.jpg', "150x150.jpg");
-        }
-        return url;
+var Helper = {
+    resizeImage: function(image){
+        return image.replace(/[0-9]{2,3}[x][0-9]{2,3}/g, '150x150');
     },
     getPriceFromString: function(string){
         var price = 0;
@@ -24,7 +21,53 @@ var Common = {
         bi = style.backgroundImage.slice(4, -1).replace(/"/g, "");
 
         return bi;
-    }
+    },
+    getURLParameters: function(paramName) {
+        var sURL = window.document.URL.toString();
+        if (sURL.indexOf("?") > 0)
+        {
+            var arrParams = sURL.split("?");
+            var arrURLParams = arrParams[1].split("&");
+            var arrParamNames = new Array(arrURLParams.length);
+            var arrParamValues = new Array(arrURLParams.length);
+
+            var i = 0;
+            for (i = 0; i<arrURLParams.length; i++)
+            {
+                var sParam =  arrURLParams[i].split("=");
+                arrParamNames[i] = sParam[0];
+                if (sParam[1] != "")
+                    arrParamValues[i] = unescape(sParam[1]);
+                else
+                    arrParamValues[i] = "No Value";
+            }
+
+            for (i=0; i<arrURLParams.length; i++)
+            {
+                if (arrParamNames[i] == paramName)
+                {
+                    //alert("Parameter:" + arrParamValues[i]);
+                    return arrParamValues[i];
+                }
+            }
+            return "No Parameters Found";
+        }
+    },
+    processPrice: function (price) {
+        if (price == null || parseFloat(price) == 0)
+            return 0;
+        var p = 0;
+        if(price.constructor === Array){
+            p = String(price[0]).replace(',', '.').match(/[0-9]*[\.]?[0-9]+/g);
+        }else{
+            p = String(price).replace(',', '.').match(/[0-9]*[\.]?[0-9]+/g);
+        }
+
+        if(isNaN(p) || parseFloat(price) == 0){
+            return 0;
+        }
+        return parseFloat(p);
+    },
 };
 
 var taobao = function(){
@@ -85,7 +128,7 @@ var taobao = function(){
         }
 
         if(price){
-            price = Common.getPriceFromString(price);
+            price = Helper.getPriceFromString(price);
         }
         return price;
     };
@@ -134,7 +177,7 @@ var taobao = function(){
         try{
             var $dom = document.querySelectorAll('.J_SKU.tb-selected > a');
             for(var i = 0; i < $dom.length; i++){
-                var background = Common.getBackgroundImageOfDiv($dom[i]);
+                var background = Helper.getBackgroundImageOfDiv($dom[i]);
                 if(background){
                     product_image_model = background;
                     break;
@@ -149,7 +192,7 @@ var taobao = function(){
         }
 
         if(product_image_model){
-            product_image_model = Common.resizeImage(product_image_model);
+            product_image_model = Helper.resizeImage(product_image_model);
         }
 
         return product_image_model;
@@ -254,31 +297,240 @@ var tmall = function(){
     };
 
     this.validateBeforeSubmit = function () {
+        var props = document.getElementsByClassName('J_TSaleProp');
+        if(!((typeof props != 'object' && props != "" && props != null)
+            || (typeof props === 'object' && props.length > 0))){
 
+            props = document.querySelectorAll("ul.tb-cleafix");
+        }
+        var full = true;
+        if (props.length > 0) {
+            var count_selected = 0;
+            for (var i = 0; i < props.length; i++) {
+                var selected_props = props[i].getElementsByClassName('tb-selected');
+                if (selected_props != null && selected_props != 'undefined')
+                    count_selected += selected_props.length;
+            }
+            if (count_selected < props.length) {
+                full = false;
+            }
+        }
+        return full;
     };
 
     this.getProductName = function(){
+        try{
+            var _title = this.getDomTitle();
+            var title_origin = _title.getAttribute("data-text");
+            if(title_origin == "" || typeof title_origin == "undefined" || title_origin == null){
+                title_origin = _title.textContent;
+            }
+            return title_origin;
+        }catch(ex){
+            return "";
+        }
+    };
 
+    this.getDomTitle = function(){
+        var _title = null;
+        if (document.getElementsByClassName("tb-main-title").length > 0) {
+            _title =  document.getElementsByClassName("tb-main-title")[0];
+        }
+
+        if (_title == null && document.getElementsByClassName("tb-detail-hd").length > 0) {
+            var h = document.getElementsByClassName("tb-detail-hd")[0];
+            if (h.getElementsByTagName('h3').length > 0 && h != null) {
+                _title = h.getElementsByTagName('h3')[0];
+            }else{
+                _title = h.getElementsByTagName("h1")[0];
+            }
+        }
+
+        if (_title.textContent == "" && document.getElementsByClassName("tb-tit").length > 0) {
+            _title = document.getElementsByClassName("tb-tit")[0];
+        }
+
+        if (_title.textContent == "") {
+            _title = document.querySelectorAll('h3.tb-item-title');
+            if (_title != null) {
+                _title = _title[0];
+            }else{
+                _title = document.getElementsByClassName('tb-item-title');
+                if(_title.length > 0){
+                    _title = _title[0];
+                }
+            }
+        }
+        return _title;
     };
 
     this.getPrice = function(){
+        try{
+            var origin_price = document.querySelectorAll('#J_StrPrice .tm-price');
 
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_StrPrice .tb-rmb-num');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_priceStd .tb-rmb-num');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_priceStd .tm-price');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_StrPriceModBox .tm-price');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_StrPriceModBox .tb-rmb-num');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_PromoPrice .tm-price');
+            }
+
+            if(origin_price == null || origin_price.length == 0){
+                origin_price = document.querySelectorAll('#J_PromoPrice .tb-rmb-num');
+            }
+
+            var price = origin_price[0].textContent;
+            price = price.match(/[0-9]*[\.,]?[0-9]+/g);
+
+            return Helper.processPrice(price);
+        }catch(ex){
+            return 0;
+        }
     };
 
     this.getPricePromotion = function(){
+        try{
+            var span_price = null;
+            var normal_price = document.getElementById('J_StrPrice');
 
+            if(normal_price == null){
+                normal_price = document.getElementById("J_priceStd");
+            }
+
+            if(normal_price == null) {
+                normal_price = document.getElementById('J_StrPriceModBox');
+            }
+
+            if(normal_price == null){
+                normal_price = document.getElementById('J_PromoPrice');
+            }
+
+            var promotion_price = document.getElementById('J_PromoPrice');
+
+            var price = 0;
+            if(promotion_price == null){
+                promotion_price = normal_price;
+            }
+
+            if(promotion_price != null) {
+                try{
+                    if(promotion_price.getElementsByClassName('tm-price').length > 0) {
+                        span_price = promotion_price.getElementsByClassName('tm-price');
+                        if(span_price != null && span_price != "" && span_price != "undefined"){
+                            price = span_price[0].textContent.match(/[0-9]*[\.,]?[0-9]+/g);
+                        }
+                    }else if(promotion_price.getElementsByClassName('tb-rmb-num').length > 0){
+                        span_price = promotion_price.getElementsByClassName('tb-rmb-num');
+                        if(span_price != null && span_price != "" && span_price != "undefined"){
+                            price = span_price[0].textContent.match(/[0-9]*[\.,]?[0-9]+/g);
+                        }
+                    }else if(promotion_price.getElementsByClassName('tb-wrTuan-num').length > 0){
+                        price = document.getElementById('J_PromoPrice').getElementsByClassName('tb-wrTuan-num')[0].childNodes[1].textContent.match(/[0-9]*[\.,]?[0-9]+/g);
+                    }
+                }catch(e){
+                    price = 0;
+                }
+
+            }
+            if(price > 0){
+                return Helper.processPrice(price);
+            }
+        }catch(ex){
+
+        }
+        return this.getPrice();
     };
 
     this.getProperty = function(){
+        var selected_props = document.getElementsByClassName('J_TSaleProp');
+        var color_size = '';
 
+        if(!((typeof selected_props !== 'object' && selected_props != "" && selected_props != null)
+            || (typeof selected_props === 'object' && selected_props.length > 0))){
+            selected_props = document.querySelectorAll("ul.tb-cleafix");
+        }
+        if(selected_props.length > 0) {
+            for(var i = 0; i < selected_props.length; i++) {
+                var li_origin = selected_props[i].getElementsByClassName('tb-selected')[0];
+                if(li_origin != null){
+                    var c_s = li_origin.getElementsByTagName('span')[0].getAttribute("data-text");
+                    if(c_s == "" || c_s == null || typeof c_s == "undefined"){
+                        c_s = li_origin.getElementsByTagName('span')[0].textContent;
+                    }
+                    color_size+=c_s+';';
+                }
+            }
+        }
+        return color_size;
     };
 
     this.getProductImage = function(){
+        var img_src = "";
+        try {
+            var img_obj = document.getElementById('J_ImgBooth');
+            if (img_obj != null) { // Image taobao and t
+                img_src = img_obj.getAttribute("src");
+                img_src = Helper.resizeImage(img_src);
+                return encodeURIComponent(img_src);
+            }
 
+            img_obj = document.getElementById('J_ThumbView');
+
+            if(img_obj != null && img_obj != ""){
+                img_src = img_obj.getAttribute("src");
+                img_src = Helper.resizeImage(img_src);
+                return encodeURIComponent(img_src);
+            }
+
+            if (document.getElementById('J_ImgBooth').tagName == "IMG") {
+                // Find thumb image
+                var thumbs_img_tag = document.getElementById('J_UlThumb');
+                try {
+                    if (thumbs_img_tag != null) {
+                        img_src = thumbs_img_tag.getElementsByTagName("img")[0].src;
+                    } else {
+                        img_src = document.getElementById('J_ImgBooth').src;
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            } else {
+                // Find thumb image
+                var thumbs_a_tag = document.getElementById('J_UlThumb');
+                if (thumbs_a_tag != null) {
+                    img_src = thumbs_a_tag.getElementsByTagName("li")[0].style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                } else {
+                    img_src = document.getElementById('J_ImgBooth').style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                }
+            }
+
+        } catch (e) {
+            img_src = "";
+        }
+
+        img_src = Helper.resizeImage(img_src);
+        return encodeURIComponent(img_src);
     };
 
     this.getProductImageModel = function () {
-
+        return this.getProductImage();
     };
 
     this.getProductDetailUrl = function(){
@@ -286,7 +538,34 @@ var tmall = function(){
     };
 
     this.getProductId = function(){
+        try{
+            var home = window.location.href;
+            var item_id = Helper.getURLParameters('id');
+            var dom_id = document.getElementsByName("item_id");
+            if(item_id <= 0 || isNaN(item_id)){
+                if (dom_id.length > 0) {
+                    dom_id = dom_id[0];
+                    item_id = dom_id.value;
+                } else item_id = 0;
 
+                if (item_id == 0 || item_id == null || item_id == '') {
+                    dom_id = document.getElementsByName("item_id_num");
+                    if (dom_id.length > 0) {
+                        dom_id = dom_id[0];
+                        item_id = dom_id.value;
+                    } else item_id = 0;
+                }
+            }
+
+            if(parseInt(item_id) <= 0 || isNaN(item_id)){
+                item_id = home.split('.htm')[0];
+                item_id = item_id.split('item/')[1];
+            }
+
+            return item_id;
+        }catch(ex){
+            return "";
+        }
     };
 
     this.getSite = function(){
@@ -294,11 +573,58 @@ var tmall = function(){
     };
 
     this.getShopId = function(){
+        var shop_id = '';
+        try{
+            var string = document.querySelector('meta[name="microscope-data"]').getAttribute("content");
+            if(string){
+                var array = string.split(';');
+                if(array.length > 0){
+                    for(var i = 0; i < array.length; i++){
+                        var str = array[i];
+                        str = str.trim();
+                        var params = str.split('=');
+                        var key = params[0];
+                        var value = params[1];
+                        if(key == 'shopId'){
+                            shop_id = value;
+                            break;
+                        }
+                    }
+                }
+            }
+        }catch(ex){
 
+        }
+
+        if(!shop_id){
+            try{
+                var href = document.querySelectorAll(".tb-booth")[0].getElementsByTagName("a")[0].getAttribute('href');
+                var a = href.split('?');
+                var b = a[1].split('&');
+                for(var j = 0; j < b.length; j++){
+                    var c = b[j].split('=');
+                    if(c[0] == 'shopId'){
+                        shop_id = c[1];
+                        break;
+                    }
+                }
+            }catch(ex){
+
+            }
+        }
+        shop_id = 'tmall_' + shop_id;
+        return shop_id;
     };
 
     this.getQuantity = function(){
 
+        var quantity = 0;
+        try{
+            quantity = document.querySelectorAll('#J_Amount input')[0].value;
+        }catch (e){
+
+        }
+        return quantity;
     };
 
     this.getDataToSend = function () {
@@ -551,7 +877,7 @@ var alibaba = function(){
         }
 
         if(product_image_model){
-            product_image_model = Common.resizeImage(product_image_model);
+            product_image_model = Helper.resizeImage(product_image_model);
         }
 
         if(!product_image_model){
