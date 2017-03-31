@@ -1,3 +1,9 @@
+//=========== begin config =========
+// var sitename = 'nhatminh247.dev:8000';
+var sitename = 'nhatminh247.vn';
+var url_add_to_cart = 'http://' + sitename + '/cart/add';
+//=========== end config =========
+
 var Helper = {
 resizeImage: function(image){
 return image.replace(/[0-9]{2,3}[x][0-9]{2,3}/g, '150x150');
@@ -1003,7 +1009,7 @@ chrome.runtime.sendMessage({
 action: "request_server",
 method: 'get',
 data: data,
-url: 'http://nhatminh247.dev:8000/cart/add',
+url: url_add_to_cart,
 callback: 'after_request_server',
 });
 }
