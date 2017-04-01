@@ -213,7 +213,7 @@
                                     Hiện số tiền trong tài khoản không đủ để đặt cọc. <br>
                                     Hiện bạn còn thiếu {{  App\Util::formatNumber(abs(Auth::user()->account_balance - $deposit_amount)) }} <sup>d</sup> <br>
                                     Vui lòng nạp tiền vào tài khoản để tiến hành đặt cọc đơn hàng. <br>
-                                    Liên hệ HOTLINE để được hỗ trợ!
+                                    Liên hệ HOTLINE 04.2262.6699 - 04.2265.6699 để được hỗ trợ!
                                 </p>
 
                             @endif

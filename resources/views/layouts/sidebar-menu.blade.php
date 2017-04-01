@@ -38,9 +38,14 @@ if(Auth::check()){
                         'permission' => \App\Permission::PERMISSION_ORDER_LIST_VIEW
                     ],
                     [
-                        'url' => url('package'),
+                        'url' => url('packages'),
                         'title' => 'Kiện hàng',
                         'permission' => \App\Permission::PERMISSION_PACKAGE_LIST_VIEW
+                    ],
+                    [
+                        'url' => url('package'),
+                        'title' => 'Tạo kiện',
+                        'permission' => \App\Permission::PERMISSION_PACKAGE_ADD
                     ],
                     [
                         'url' => url('scan'),

@@ -45,6 +45,7 @@ class Permission extends Model
 
     #regioin -- Package permission --
     const PERMISSION_PACKAGE_LIST_VIEW = 'PACKAGE_LIST_VIEW';
+    const PERMISSION_PACKAGE_ADD = 'PACKAGE_ADD';
     #endregion
 
     #region -- Scan permission --
@@ -92,6 +93,20 @@ class Permission extends Model
                 ],
                 self::PERMISSION_ORDER_CHANGE_SERVICE => [
                     'label' => 'Thêm/bỏ dịch vụ trên chi tiết đơn hàng',
+                    'description' => '',
+                ],
+            ]
+        ],
+
+        'package_permission' => [
+            'label' => 'Kiện hàng',
+            'permissions' => [
+                self::PERMISSION_PACKAGE_LIST_VIEW => [
+                    'label' => 'Xem trang danh sách kiện hàng',
+                    'description' => '',
+                ],
+                self::PERMISSION_PACKAGE_ADD => [
+                    'label' => 'Tạo kiện hàng',
                     'description' => '',
                 ],
             ]

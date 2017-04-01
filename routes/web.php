@@ -64,12 +64,16 @@ Route::post('/scan/action', 'ScanController@action');
 #endregion
 
 #region -- kien hang --
-Route::get('/package', 'PackageController@indexs');
+Route::get('/packages', 'PackageController@indexs');
+Route::get('/package', 'PackageController@index');
+Route::post('/package/action', 'PackageController@action');
+Route::get('/package/{code}', 'PackageController@detail');
 #endregion
 
 #region quan ly don hang
 Route::get('/order', 'OrderController@orders');
 Route::get('/order/{id}', 'OrderController@order');
+Route::get('/order/detail/{id}', 'OrderController@order');
 Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
 Route::put('/order/{id}/freight_bill', 'OrderController@removeFreightBill');
 Route::post('/order/{id}/original_bill', 'OrderController@insertOriginalBill');

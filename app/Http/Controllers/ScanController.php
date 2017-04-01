@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
+use App\OrderFreightBill;
+use App\Package;
 use App\Scan;
 use App\User;
 use App\WareHouse;
@@ -94,6 +97,10 @@ class ScanController extends Controller
     private function __in(Request $request, WareHouse $warehouse, User $currentUser){
         //Neu la nhap kho TQ: tao kien voi ma quet + chuyen trang thai don hang sang "Nhatminh247 nhan hang"
         //Neu la nhap kho phan phoi: tien hanh gui tin nhan cho khach hang + chuyen trang thai don sang "Cho giao hang"
+        $barcode = $request->get('barcode');
+        $action = $request->get('action');
+        $warehouse = $request->get('warehouse');
+
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){

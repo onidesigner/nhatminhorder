@@ -1,3 +1,21 @@
+
+<?php
+//$apiKey = 'AIzaSyD5tuwKXICTwV9sMBStKI7MOLabIMmq0XE';
+//$text = 'Hello world!';
+//$url = 'https://www.googleapis.com/language/translate/v2?key=' . $apiKey . '&q=' . rawurlencode($text) . '&source=en&target=fr';
+//
+//$handle = curl_init($url);
+//curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+//$response = curl_exec($handle);
+//$responseDecoded = json_decode($response, true);
+//curl_close($handle);
+//
+//echo 'Source: ' . $text . '<br>';
+//var_dump($responseDecoded);
+//echo 'Translation: ' . $responseDecoded['data']['translations'][0]['translatedText'];
+
+?>
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]-->

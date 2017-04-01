@@ -152,8 +152,11 @@ class OrderController extends Controller
             }
         }
 
+        $packages = $order->package;
+
         return [
             'order_id' => $order->id,
+            'packages' => $packages,
             'freight_bill' => $order->freight_bill()->where([ 'is_deleted' => 0 ])->get(),
             'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
             'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),

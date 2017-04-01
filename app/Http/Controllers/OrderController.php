@@ -159,6 +159,7 @@ class OrderController extends Controller
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_view_package_list' => Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW),
         ];
 
         $fee = $order->fee($customer);
@@ -200,7 +201,10 @@ class OrderController extends Controller
             }
         }
 
+        $packages = $order->package;
+
         return [
+            'packages' => $packages,
             'order_id' => $order->id,
             'freight_bill' => $order->freight_bill()->where([ 'is_deleted' => 0 ])->get(),
             'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),

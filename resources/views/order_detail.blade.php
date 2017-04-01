@@ -65,13 +65,15 @@
                                             <tr>
                                                 <td width="50%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
-                                                    <code>{{$order->code}}</code> <br> ({{ App\Order::getStatusTitle($order->status)  }})
+                                                    <code style="font-size: 20px;">{{$order->code}}</code>
+
+                                                    <br> ({{ App\Order::getStatusTitle($order->status)  }})
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Khách hàng: </td>
                                                 <td>
-                                                    {{$customer->email}} <code>{{$customer->code}}</code>
+                                                    {{$customer->email}} (<code>{{$customer->code}}</code>)
                                                 </td>
                                             </tr>
                                             <tr>
@@ -154,31 +156,31 @@
                                                 <td>Tỉ giá</td>
                                                 <td>{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></td>
                                             </tr>
-                                            <tr>
-                                                <td>Người bán</td>
-                                                <td>
-                                                    <img src="{{ App\Order::getFavicon($order->site)  }}" width="16px" alt="">
-                                                    <span>{{$order->seller_id}}</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Wangwang</td>
-                                                <td>
-                                                    <!-- aliwangwang -->
-                                                    <a style="padding: 0 45px;position: relative;" target="_blank"
-                                                       href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid={{ $order->wangwang  }}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8">
-                                                        <img style="position: absolute;left: 3px;top: -4px;" border="0"
-                                                             src="http://amos.alicdn.com/realonline.aw?v=2&amp;uid={{ $order->wangwang  }}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8"
-                                                             title="Click vào đây để chat với người bán">
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Địa điểm bán</td>
-                                                <td>
-                                                    {{$order->location_sale}}
-                                                </td>
-                                            </tr>
+                                            {{--<tr>--}}
+                                                {{--<td>Người bán</td>--}}
+                                                {{--<td>--}}
+                                                    {{--<img src="{{ App\Order::getFavicon($order->site)  }}" width="16px" alt="">--}}
+                                                    {{--<span>{{$order->seller_id}}</span>--}}
+                                                {{--</td>--}}
+                                            {{--</tr>--}}
+                                            {{--<tr>--}}
+                                                {{--<td>Wangwang</td>--}}
+                                                {{--<td>--}}
+                                                    {{--<!-- aliwangwang -->--}}
+                                                    {{--<a style="padding: 0 45px;position: relative;" target="_blank"--}}
+                                                       {{--href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid={{ $order->wangwang  }}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8">--}}
+                                                        {{--<img style="position: absolute;left: 3px;top: -4px;" border="0"--}}
+                                                             {{--src="http://amos.alicdn.com/realonline.aw?v=2&amp;uid={{ $order->wangwang  }}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8"--}}
+                                                             {{--title="Click vào đây để chat với người bán">--}}
+                                                    {{--</a>--}}
+                                                {{--</td>--}}
+                                            {{--</tr>--}}
+                                            {{--<tr>--}}
+                                                {{--<td>Địa điểm bán</td>--}}
+                                                {{--<td>--}}
+                                                    {{--{{$order->location_sale}}--}}
+                                                {{--</td>--}}
+                                            {{--</tr>--}}
                                             <tr>
                                                 <td>Hóa đơn gốc</td>
                                                 <td>
@@ -474,6 +476,85 @@
 
             <br>
 
+            @if($permission['can_view_package_list'])
+
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table no-padding-leftright">
+                            <thead>
+                            <tr>
+                                <th class="text-uppercase">Kiện hàng</th>
+                                <th class="text-uppercase">Vận đơn</th>
+                                <th class="text-uppercase">Trạng thái</th>
+                                <th class="text-uppercase">Người tạo</th>
+                                <th class="text-uppercase">Thời gian</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if(!empty($packages))
+                                @foreach($packages as $package)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('package', $package->code)  }}" target="_blank">{{$package->code}}</a>
+
+                                            @if($package->weight)
+                                                <br>
+                                                <small>
+                                                    {{ $package->weight }} kg
+                                                </small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{$package->freight_bill}}
+                                        </td>
+                                        <td>
+                                            {{ App\Package::getStatusTitle($package->status)  }}
+                                            <br>
+
+                                            <small>
+                                                @if($package->current_warehouse)
+                                                    Kho hiện tại: {{$package->current_warehouse}} <br>
+                                                @endif
+
+                                                @if($package->warehouse_status)
+                                                    Tình trạng: {{ App\Package::getWarehouseStatusName($package->warehouse_status) }}
+                                                    @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_IN)
+                                                        ({{ App\Util::formatDate($package->warehouse_status_in_at)}})
+                                                    @endif
+
+                                                    @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_OUT)
+                                                        ({{ App\Util::formatDate($package->warehouse_status_out_at)}})
+                                                    @endif
+                                                @endif
+
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $created_user = App\User::find($package->created_by);
+                                            ?>
+                                            <a href="{{ url('user/detail', $package->created_by)  }}" target="_blank">
+                                                {{ $created_user->email  }}
+                                            </a>
+                                            <br>
+                                            {{ $created_user->name  }}
+                                        </td>
+                                        <td>{{  App\Util::formatDate($package->created_at)}}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <br>
+
+            @else
+                <h5>Bạn không có quyền xem kiện hàng trên đơn!</h5>
+            @endif
+
+
             <div class="card">
 
                 <div class="card-body">
@@ -490,6 +571,8 @@
                     }
 
                     ?>
+
+
 
                     <table class="table table-striped no-padding-leftright">
                         <thead>

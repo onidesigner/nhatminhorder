@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends($layout)
 
 @section('page_title')
-    {{$page_title}}
+    {{@$page_title}}
 @endsection
 
 @section('content')
@@ -12,12 +12,14 @@
                     [
                         'urls' => [
                             ['name' => 'Trang chủ', 'link' => url('home')],
-                            ['name' => 'Kiện hàng', 'link' => null],
+                            ['name' => 'Kiện hàng', 'link' => url('packages')],
+                            ['name' => 'Thông tin kiện hàng ' . $package_code, 'link' => null],
                         ]
                     ]
                 )
                 <div class="card-body">
-                    page blank
+
+
                 </div>
             </div>
         </div>

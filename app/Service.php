@@ -21,7 +21,7 @@ class Service extends Model
     public static $serviceNaming = [
         self::TYPE_BUYING => 'Mua Hàng',
         self::TYPE_CHECKING => 'Kiểm Hàng',
-        self::TYPE_SHIPPING_CHINA_VIETNAM => 'VCT Quốc Tế',
+        self::TYPE_SHIPPING_CHINA_VIETNAM => 'VC Quốc Tế',
         self::TYPE_WOOD_CRATING => 'Đóng Gỗ',
     ];
 

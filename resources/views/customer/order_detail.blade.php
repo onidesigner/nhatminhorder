@@ -229,6 +229,68 @@
             <br>
 
             <div class="card">
+                <div class="card-body">
+                    <table class="table no-padding-leftright">
+                        <thead>
+                        <tr>
+                            <th class="text-uppercase">Kiện hàng</th>
+                            <th class="text-uppercase">Vận đơn</th>
+                            <th class="text-uppercase">Trạng thái</th>
+                            <th class="text-uppercase">Thời gian</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if(!empty($packages))
+                            @foreach($packages as $package)
+                                <tr>
+                                    <td>
+                                        <code>{{$package->code}}</code>
+
+                                        @if($package->weight)
+                                            <br>
+                                            <small>
+                                                {{ $package->weight }} kg
+                                            </small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{$package->freight_bill}}
+                                    </td>
+                                    <td>
+                                        {{ App\Package::getStatusTitle($package->status)  }}
+                                        <br>
+
+                                        <small>
+                                            @if($package->current_warehouse)
+                                                Kho hiện tại: {{$package->current_warehouse}} <br>
+                                            @endif
+
+                                            @if($package->warehouse_status)
+                                                Tình trạng: {{ App\Package::getWarehouseStatusName($package->warehouse_status) }}
+                                                @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_IN)
+                                                    ({{ App\Util::formatDate($package->warehouse_status_in_at)}})
+                                                @endif
+
+                                                @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_OUT)
+                                                    ({{ App\Util::formatDate($package->warehouse_status_out_at)}})
+                                                @endif
+                                            @endif
+
+                                        </small>
+                                    </td>
+
+                                    <td>{{  App\Util::formatDate($package->created_at)}}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="card">
 
                 <div class="card-body">
                     <?php

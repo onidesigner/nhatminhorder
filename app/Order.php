@@ -480,11 +480,9 @@ class Order extends Model
 
     public static $fee_field_order_detail = [
         'amount_vnd' => 'Tiền hàng',
-        'shipping_china_vietnam_fee' => 'VC quốc tế',
         'buying_fee' => 'Mua hàng',
-        'checking_fee' => 'Kiểm hàng',
-        'wood_crating_fee' => 'Đóng gỗ',
         'domestic_shipping_fee_vnd' => 'VC nội địa TQ',
+        'shipping_china_vietnam_fee' => 'VC quốc tế',
         'total_amount_all' => 'Tổng chi phí',
         'customer_payment_amount' => 'Đã thanh toán',
         'need_payment_amount' => 'Cần thanh toán',
@@ -496,16 +494,8 @@ class Order extends Model
         $weight = 0;
         $buying_fee = $this->getBuyingFee($total_amount_vnd);
         $shipping_china_vietnam_fee = $this->getShippingChinaVietnam($weight);
-        $checking_fee = 0;
-        if($this->existService(Service::TYPE_CHECKING)){
-            $checking_fee = $this->getCheckingFee();
-        }
-        $wood_crating_fee = 0;
-        if($this->existService(Service::TYPE_WOOD_CRATING)) {
-            $wood_crating_fee = $this->getWoodCrating($shipping_china_vietnam_fee, 10, 10);
-        }
 
-        $total_fee_vnd = $buying_fee + $checking_fee + $wood_crating_fee + $shipping_china_vietnam_fee;
+        $total_fee_vnd = $buying_fee + $shipping_china_vietnam_fee;
         $total_amount_all = $total_amount_vnd + $total_fee_vnd;
         $customer_payment_amount = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
         $need_payment_amount = $total_amount_all > $customer_payment_amount
@@ -518,9 +508,7 @@ class Order extends Model
             'deposit_amount_vnd' => $this->deposit_amount,
 
             'buying_fee' => $buying_fee,
-            'checking_fee' => $checking_fee,
             'shipping_china_vietnam_fee' => $shipping_china_vietnam_fee,
-            'wood_crating_fee' => $wood_crating_fee,
 
             'total_amount_all' => $total_amount_all,
             'customer_payment_amount' => $customer_payment_amount,
