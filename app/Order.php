@@ -21,8 +21,6 @@ class Order extends Model
     const STATUS_SELLER_DELIVERY = 'SELLER_DELIVERY';
     const STATUS_RECEIVED_FROM_SELLER = 'RECEIVED_FROM_SELLER';
     const STATUS_TRANSPORTING = 'TRANSPORTING';
-//    const STATUS_CHECKING = '';
-//    const STATUS_CHECKED = '';
     const STATUS_WAITING_DELIVERY = 'WAITING_DELIVERY';
     const STATUS_DELIVERING = 'DELIVERING';
     const STATUS_RECEIVED = 'RECEIVED';
@@ -42,8 +40,6 @@ class Order extends Model
         self::STATUS_SELLER_DELIVERY => "Người bán giao",
         self::STATUS_RECEIVED_FROM_SELLER => "NhatMinh247 Nhận",
         self::STATUS_TRANSPORTING => "Vận chuyển",
-//        self::STATUS_CHECKING => 'Đang kiểm hàng',
-//        self::STATUS_CHECKED => 'Đã kiểm hàng',
         self::STATUS_WAITING_DELIVERY => "Chờ giao hàng",
         self::STATUS_DELIVERING => "Đang giao hàng",
         self::STATUS_RECEIVED => 'Đã giao hàng',
@@ -676,23 +672,31 @@ class Order extends Model
             $customer = User::find($this->user_id);
 
             if($this->status == self::STATUS_RECEIVED_FROM_SELLER){
-                if($this->isOrderTransportStraight()){
-                    $this->changeStatus(self::STATUS_DELIVERING, false);
-                    $this->save();
+//                if($this->isOrderTransportStraight()){
+//                    $this->changeStatus(self::STATUS_DELIVERING, false);
+//                    $this->save();
+//
+//                    $status_title_after_change = self::getStatusTitle(self::STATUS_DELIVERING);
+//
+//                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+//                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+//                }else{
+//                    $this->changeStatus(self::STATUS_TRANSPORTING, false);
+//                    $this->save();
+//
+//                    $status_title_after_change = self::getStatusTitle(self::STATUS_TRANSPORTING);
+//
+//                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+//                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+//                }
 
-                    $status_title_after_change = self::getStatusTitle(self::STATUS_DELIVERING);
+                $this->changeStatus(self::STATUS_TRANSPORTING, false);
+                $this->save();
 
-                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
-                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
-                }else{
-                    $this->changeStatus(self::STATUS_TRANSPORTING, false);
-                    $this->save();
+                $status_title_after_change = self::getStatusTitle(self::STATUS_TRANSPORTING);
 
-                    $status_title_after_change = self::getStatusTitle(self::STATUS_TRANSPORTING);
-
-                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
-                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
-                }
+                Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+                Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
                 $order_amount_vnd = $this->amountWithItems(true);
                 $order_buying_fee = $this->getBuyingFee($order_amount_vnd);

@@ -65,6 +65,39 @@ class Package extends Model
     }
 
     /**
+     * Generate barcode
+     * Get number of day since "epoch" for first 4 number
+     * Make a random number for next package, check if already existed then random again
+     */
+    public static function generateBarcode()
+    {
+        $epoch = new \DateTime('2014-06-01 00:00:00', new \DateTimeZone('Asia/Ho_Chi_Minh'));
+
+        $now = new \DateTime();
+
+        $valid = false;
+        $code = '';
+
+        while (!$valid) {
+            $datediff = $now->getTimestamp() - $epoch->getTimestamp();
+            $first_four = floor($datediff / (60 * 60 * 24));
+            $first_four = sprintf("%04d", $first_four);
+
+            $last_four = rand(1, 9999);
+            $last_four = sprintf("%04d", $last_four);
+            $code = $first_four . $last_four;
+
+            // check if already existed in database
+            $package = self::where([ 'logistic_package_barcode' => $code ])->first();
+            if(!$package || !$package instanceof Package){
+                $valid = true;
+            }
+        }
+
+        return $code;
+    }
+
+    /**
      * @author vanhs
      * @desc Ham kiem tra ma kien da ton tai tren he thong hay chua?
      * @param $code
@@ -131,4 +164,37 @@ class Package extends Model
         }
         return '';
     }
+
+    public function inputWarehouseReceive($warehouse){
+        $this->status = Package::STATUS_RECEIVED_FROM_SELLER;
+        $this->current_warehouse = $warehouse;
+        $this->warehouse_status = Package::WAREHOUSE_STATUS_IN;
+        $this->warehouse_status_in_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
+    public function outputWarehouseReceive($warehouse){
+        $this->status = Package::STATUS_TRANSPORTING;
+        $this->current_warehouse = $warehouse;
+        $this->warehouse_status = Package::WAREHOUSE_STATUS_OUT;
+        $this->warehouse_status_out_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
+    public function inputWarehouseDistribution($warehouse){
+        $this->status = Package::STATUS_WAITING_FOR_DELIVERY;
+        $this->current_warehouse = $warehouse;
+        $this->warehouse_status = Package::WAREHOUSE_STATUS_IN;
+        $this->warehouse_status_in_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
+    public function outputWarehouseDistribution($warehouse){
+        $this->status = Package::STATUS_DELIVERING;
+        $this->current_warehouse = $warehouse;
+        $this->warehouse_status = Package::WAREHOUSE_STATUS_OUT;
+        $this->warehouse_status_out_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
 }

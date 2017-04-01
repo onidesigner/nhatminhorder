@@ -38,10 +38,8 @@
                             @foreach($packages as $package)
                                 <tr>
                                     <td>
-                                        @if($package->code)
-                                            <a href="{{ url('package', $package->code)  }}" target="_blank">{{$package->code}}</a>
-                                        @else
-                                            <a href="{{ url('package', $package->code)  }}" target="_blank">Chi tiết</a>
+                                        @if($package->logistic_package_barcode)
+                                            <a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
                                         @endif
 
                                         @if($package->weight)

@@ -36,7 +36,7 @@
                                         name="barcode"
                                         class="form-control ___input-action"
                                         data-key-global="barcode-scan-input-create-package"
-                                        placeholder="Quét mã">
+                                        placeholder="Quét mã vận đơn...">
 
                             </form>
                         </div>

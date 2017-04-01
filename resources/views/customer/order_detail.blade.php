@@ -244,7 +244,7 @@
                             @foreach($packages as $package)
                                 <tr>
                                     <td>
-                                        <code>{{$package->code}}</code>
+                                        <code>{{$package->logistic_package_barcode}}</code>
 
                                         @if($package->weight)
                                             <br>

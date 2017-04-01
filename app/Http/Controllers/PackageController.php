@@ -80,6 +80,7 @@ class PackageController extends Controller
 
         }
 
+        $package->logistic_package_barcode = Package::generateBarcode();
         $package->status = Package::STATUS_INIT;
         $package->freight_bill = $barcode;
         $package->created_by = Auth::user()->id;

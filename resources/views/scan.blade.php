@@ -54,7 +54,7 @@
                                         name="barcode"
                                         class="form-control ___input-action"
                                         data-key-global="barcode-scan-input"
-                                        placeholder="Nhập mã vạch">
+                                        placeholder="Quét mã kiện">
 
                             </form>
 

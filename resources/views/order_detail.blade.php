@@ -184,7 +184,7 @@
                                             <tr>
                                                 <td>Hóa đơn gốc</td>
                                                 <td>
-                                                    <form class="___form">
+                                                    <form class="___form" onsubmit="return false;">
                                                         <input type="hidden" name="action" value="insert_original_bill">
                                                         <input type="hidden" name="method" value="post">
                                                         <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
@@ -226,7 +226,7 @@
                                                 <td>Vận đơn</td>
                                                 <td>
 
-                                                    <form class="___form">
+                                                    <form class="___form" onsubmit="return false;">
                                                         <input type="hidden" name="action" value="insert_freight_bill">
                                                         <input type="hidden" name="method" value="post">
                                                         <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
@@ -477,7 +477,9 @@
             <br>
 
             @if($permission['can_view_package_list'])
+                @if(!count($packages))
 
+                @else
                 <div class="card">
                     <div class="card-body">
                         <table class="table no-padding-leftright">
@@ -491,11 +493,11 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @if(!empty($packages))
+
                                 @foreach($packages as $package)
                                     <tr>
                                         <td>
-                                            <a href="{{ url('package', $package->code)  }}" target="_blank">{{$package->code}}</a>
+                                            <a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
 
                                             @if($package->weight)
                                                 <br>
@@ -542,14 +544,14 @@
                                         <td>{{  App\Util::formatDate($package->created_at)}}</td>
                                     </tr>
                                 @endforeach
-                            @endif
+
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <br>
-
+                @endif
             @else
                 <h5>Bạn không có quyền xem kiện hàng trên đơn!</h5>
             @endif
