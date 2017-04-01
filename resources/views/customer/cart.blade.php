@@ -208,7 +208,6 @@
                     <div class="card-body text-center">
                         <h3>Giỏ hàng hiện đang trống!</h3>
 
-                        <img src="{{ asset('images/empty/cart-empty.png') }}" alt="">
                         {{--Click vào <a href="">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!--}}
                     </div>
                 </div>

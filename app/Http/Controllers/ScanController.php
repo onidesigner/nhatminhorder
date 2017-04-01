@@ -161,6 +161,7 @@ class ScanController extends Controller
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
+
         return true;
     }
 

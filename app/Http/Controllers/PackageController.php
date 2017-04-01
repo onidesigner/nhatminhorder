@@ -50,8 +50,11 @@ class PackageController extends Controller
 
             DB::commit();
 
-            $view = View::make($request->get('response'), $this->__getInitData('layouts/app_blank'));
-            $html = $view->render();
+            $html = null;
+            if($request->get('response')){
+                $view = View::make($request->get('response'), $this->__getInitData('layouts/app_blank'));
+                $html = $view->render();
+            }
 
             return response()->json([
                 'success' => true,
@@ -116,16 +119,49 @@ class PackageController extends Controller
         return true;
     }
 
-    private function __getInitData($layout = null){
+    private function __getInitData($layout = null, $barcode = null){
+        $packages = null;
+        if($barcode){
+            $packages = Package::where([
+                'freight_bill' => $barcode,
+                'status' => Package::STATUS_INIT,
+            ])->orderBy('id', 'desc')
+                ->get();
+
+            if(count($packages)){
+                foreach($packages as $key => $package){
+                    if(!$package instanceof Package){
+                        continue;
+                    }
+
+                    $packages[$key]->order = null;
+                    $packages[$key]->customer = null;
+
+                    $order = Order::find($package->order_id);
+                    $customer = User::find($package->buyer_id);
+
+                    if($order instanceof Order){
+                        $packages[$key]->order = Order::find($package->order_id);
+                    }
+                    if($customer instanceof User){
+                        $packages[$key]->customer = Order::find($package->buyer_id);
+                    }
+
+                }
+            }
+        }
+
         return [
             'page_title' => 'Tạo kiện',
-            'layout' => $layout
+            'layout' => $layout,
+            'packages' => $packages,
+            'barcode' => $barcode,
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->__getInitData('layouts.app');
+        $data = $this->__getInitData('layouts.app', $request->get('barcode'));
 
         return view('package_add', $data);
     }

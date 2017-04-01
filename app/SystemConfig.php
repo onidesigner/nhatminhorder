@@ -24,6 +24,10 @@ class SystemConfig extends Model
             'field_name' => 'Tỉ lệ đặt cọc đơn hàng',
             'key' => 'order_deposit_percent'
         ],
+        [
+            'field_name' => 'Nếu kiện hàng >= ?kg thì tiến hành chuyển thẳng, không thì sẽ về kho phân phối tại Việt Nam',
+            'key' => 'package_weight_transport_straight'
+        ],
 
         [
             'field_name' => 'Hiển thị popup ngoài trang chủ?',

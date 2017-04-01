@@ -158,7 +158,7 @@
                 <div class="card-body">
                     <h4>Giỏ hàng hiện đang trống!</h4>
 
-                    Click vào <a href="">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!
+                    Click vào <a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">đây</a> để được huớng dẫn đặt hàng một cách chi tiết nhất!
                 </div>
             </div>
         </div>

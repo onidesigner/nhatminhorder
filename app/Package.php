@@ -28,7 +28,7 @@ class Package extends Model
     );
 
     public static $statusTitle = array(
-        self::STATUS_INIT => 'Khởi tạo',
+        self::STATUS_INIT => '',
         self::STATUS_RECEIVED_FROM_SELLER => 'NhatMinh247 nhận',//tao kien & nhap kho TQ
         self::STATUS_TRANSPORTING => 'Vận chuyển',//kien xuat kho TQ
         self::STATUS_WAITING_FOR_DELIVERY => 'Chờ giao hàng',//kien nhap kho phan phoi
@@ -71,7 +71,7 @@ class Package extends Model
      */
     public static function generateBarcode()
     {
-        $epoch = new \DateTime('2014-06-01 00:00:00', new \DateTimeZone('Asia/Ho_Chi_Minh'));
+        $epoch = new \DateTime('2017-04-01 00:00:00', new \DateTimeZone('Asia/Ho_Chi_Minh'));
 
         $now = new \DateTime();
 

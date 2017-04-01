@@ -128,7 +128,7 @@ Fixed Navigation
                 @endif
 
                 <li>
-                    <button style="line-height: 20px;padding: 15px 20px;" class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
+                    <button style="line-height: 20px;padding: 15px 20px;" class="btn btn-primary" onclick="ExtInstall()" id="install-button">Công cụ</button>
                 </li>
             </ul>
         </nav>
@@ -238,7 +238,7 @@ End Fixed Navigation
                         </a>
 
 
-                        <p>Hàng về HN chỉ 5-7 ngày, về HCM 8-10 ngày sau khi đặt hàng...</p>
+                        <p>Hàng về HN chỉ 2-4 ngày, về HCM 5-7 ngày sau khi đặt hàng...</p>
                     </div>
                 </div>
 

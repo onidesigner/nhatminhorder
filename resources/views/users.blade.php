@@ -33,6 +33,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Đối tượng</th>
                                         <th>Họ & tên</th>
                                         <th>Trạng thái</th>
                                         <th>Email</th>
@@ -45,10 +46,13 @@
                                     @foreach($users as $key => $user)
                                         <tr>
                                             <td>{{$user->id}}</td>
+                                            <td>{{ App\User::getSectionName($user->section)  }}</td>
                                             <td>
-                                                [{{ App\User::getSectionName($user->section)  }}]
+
 
                                                 <a href="{{ url('user/detail', $user->id)  }}">{{$user->name}}</a>
+
+                                                (<code>{{$user->code}}</code>)
                                             </td>
                                             <td>{{ App\User::getStatusName($user->status)  }}</td>
                                             <td>
