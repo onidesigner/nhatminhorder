@@ -30,7 +30,6 @@ class SystemConfig extends Model
             'key' => 'home_page_enable_popup',
             'tag_name' => 'select',
             'options' => [
-//                '' => '-- Mời chọn --',
                 0 => 'Không hiển thị',
                 1 => 'Hiển thị',
             ]
@@ -61,10 +60,10 @@ class SystemConfig extends Model
             return null;
         endif;
 
-        $system_config_cache = (array)Cache::get(self::CACHE_SYSTEM_CONFIG_KEY);
-        if(!empty($system_config_cache[$key])):
-            return $system_config_cache[$key];
-        endif;
+        $system_config_row = SystemConfig::where(['config_key' => $key])->first();
+        if($system_config_row instanceof SystemConfig){
+            return $system_config_row->config_value;
+        }
 
         return null;
     }

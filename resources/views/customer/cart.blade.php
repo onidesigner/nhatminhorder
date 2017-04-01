@@ -18,6 +18,8 @@
         </div>
     </div>
 
+    <br>
+
     @if(!empty($data['shops']))
         @foreach($data['shops'] as $shop)
 

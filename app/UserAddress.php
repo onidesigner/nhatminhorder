@@ -12,9 +12,10 @@ class UserAddress extends Model
     protected $table = 'user_address';
 
     public static function getUserAddressMax(){
-        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_address_max'])):
-            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_address_max'];
-        endif;
+        $user_address_max = SystemConfig::getConfigValueByKey('user_address_max');
+        if($user_address_max){
+            return $user_address_max;
+        }
         return 5;
     }
 

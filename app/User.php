@@ -89,10 +89,10 @@ class User extends Authenticatable
     }
 
     public static function getMaxMobile(){
-        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_mobile_max'])):
-            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['user_mobile_max'];
-        endif;
-
+        $user_mobile_max = SystemConfig::getConfigValueByKey('user_mobile_max');
+        if($user_mobile_max){
+            return $user_mobile_max;
+        }
         return 3;
     }
 

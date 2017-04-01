@@ -22,19 +22,9 @@ class Cart extends Model
      * @return int
      */
     public static function getDepositPercent($apply_time = null){
-        if(!empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['order_deposit_percent'])):
-            return Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['order_deposit_percent'];
-        endif;
-
-        $value = 100;
-        $row = SystemConfig::where(['config_key' => SystemConfig::CACHE_SYSTEM_CONFIG_KEY])->first();
-        if($row && $row->config_value){
-            $value = $row->config_value;
-            Cache::forever(SystemConfig::CACHE_SYSTEM_CONFIG_KEY, $value);
-        }
-        return $value;
+        return SystemConfig::getConfigValueByKey('order_deposit_percent');
     }
-
+    
     /**
      * @author vanhs
      * @desc Dem tong so san pham nam trong gio

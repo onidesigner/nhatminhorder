@@ -23,8 +23,8 @@ class HomePageController extends Controller
             'content_popup' => null,
         ];
         foreach($data_return as $k => $v){
-            $data_return[$k] = !empty(Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_' . $k])
-                ? Cache::get(SystemConfig::CACHE_SYSTEM_CONFIG_KEY)['home_page_' . $k] : $v;
+            $config = SystemConfig::getConfigValueByKey('home_page_' . $k);
+            $data_return[$k] = $config ? $config : $v;
         }
         return view('home/index', $data_return);
     }

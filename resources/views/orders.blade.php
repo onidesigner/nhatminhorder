@@ -67,12 +67,10 @@
 
                                 <td>
 
-                                    <img src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
+                                    <img class="lazy" src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
 
                                     <strong>[{{strtoupper($order->site)}}]</strong>
                                     <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
-
-
 
                                     <p>
                                         {{ App\Order::getStatusTitle($order->status)  }}
@@ -167,6 +165,8 @@
             });
 
         });
+
+
 
     </script>
 @endsection
