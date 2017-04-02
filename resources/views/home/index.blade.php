@@ -128,7 +128,7 @@ Fixed Navigation
                 @endif
 
                 <li>
-                    <button style="line-height: 20px;padding: 15px 20px;" class="btn btn-primary" onclick="ExtInstall()" id="install-button">Công cụ</button>
+                    <button style="line-height: 20px;padding: 15px 20px;" class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
                 </li>
             </ul>
         </nav>
