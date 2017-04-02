@@ -70,7 +70,7 @@
                         </li>
                         <li>
                             <button type="button" class="navbar-toggle">
-                                <img class="profile-img" src="{{ asset('images/home/logo.png')  }}">
+                                <img class="profile-img" src="{{ asset('images/home/_logo.png')  }}">
                             </button>
                         </li>
                     </ul>
@@ -148,7 +148,7 @@
 
                         <li class="dropdown profile">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                <img class="profile-img" src="{{ asset('images/home/logo.png')  }}">
+                                <img class="profile-img" src="{{ asset('images/home/_logo.png')  }}">
                                 <div class="title">Profile</div>
                             </a>
                             <div class="dropdown-menu">
