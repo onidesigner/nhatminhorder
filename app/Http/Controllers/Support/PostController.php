@@ -22,9 +22,7 @@ class PostController extends Controller
             return redirect('404');
         }
 
-        $posts_newest = Post::where([
-            [ 'id', '!=', $post_id ]
-        ])->get();
+        $posts_newest = Post::orderBy('id', 'desc');
 
         return view('support/post', [
             'page_title' => 'Bài viết',
