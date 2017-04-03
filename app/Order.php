@@ -658,6 +658,30 @@ class Order extends Model
 
     /**
      * @author vanhs
+     * @desc Ham lay dia chi nhan hang day du cua khach hang
+     * @return null
+     */
+    public function getCustomerReceiveAddress(){
+        if(empty($this->user_address_id)){
+            return null;
+        }
+
+        $user_address = UserAddress::find($this->user_address_id);
+        if($user_address && $user_address instanceof UserAddress){
+            $district = Location::find($user_address->district_id);
+            if($district && $district instanceof Location){
+                $user_address->district_label = $district->label;
+            }
+            $province = Location::find($user_address->province_id);
+            if($province && $province instanceof Location){
+                $user_address->province_label = $province->label;
+            }
+        }
+        return $user_address;
+    }
+
+    /**
+     * @author vanhs
      * @desc Chuyen trang thai don sang van chuyen:
      * - neu la don khong chuyen thang thi trang thai don di tuan tu la: nhatminh247 nhan > van chuyen > cho giao hang > dang giao hang
      * - neu la don chuyen thang thi trang thai don tuan tu la: nhatminh247 nhan > dang giao hang

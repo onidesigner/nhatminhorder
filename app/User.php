@@ -199,6 +199,19 @@ class User extends Authenticatable
 
     /**
      * @author vanhs
+     * @desc Ham lay ra 1 so dien thoai cua khach hang (so lien lac moi nhat duoc tao)
+     * @return mixed|string
+     */
+    public function getMobile(){
+        $row = UserMobile::orderBy('id', 'desc')->first();
+        if($row instanceof UserMobile){
+            return $row->mobile;
+        }
+        return '';
+    }
+
+    /**
+     * @author vanhs
      * @desc Hàm lấy ra kho đích của đơn hàng khách
      * 1. Lấy theo cấu hình bằng tay, nếu có
      * 2. Lấy tự động theo location mapping

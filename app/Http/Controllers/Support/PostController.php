@@ -7,12 +7,18 @@ use App\Post;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     public function index(Request $request){
         $post_id = $request->route('id');
-        $can_edit_post = Permission::isAllow(Permission::PERMISSION_MANAGER_POST);
+        $can_edit_post = false;
+
+        if(Auth::check()){
+            $can_edit_post = Permission::isAllow(Permission::PERMISSION_MANAGER_POST);
+        }
+
 
         $post = Post::find($post_id);
         if(!$post || !$post instanceof Post){

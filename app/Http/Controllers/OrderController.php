@@ -129,17 +129,6 @@ class OrderController extends Controller
     }
 
     private function __getOrderInitData(Order $order, User $customer, $layout){
-        $user_address = UserAddress::find($order->user_address_id);
-        if($user_address && $user_address instanceof UserAddress){
-            $district = Location::find($user_address->district_id);
-            if($district && $district instanceof Location){
-                $user_address->district_label = $district->label;
-            }
-            $province = Location::find($user_address->province_id);
-            if($province && $province instanceof Location){
-                $user_address->province_label = $province->label;
-            }
-        }
 
         $order_item_comments_data = [];
         $order_item_comments = Order::findByOrderItemComments($order->id);
@@ -210,7 +199,7 @@ class OrderController extends Controller
             'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
             'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
             'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
-            'user_address' => $user_address,
+            'user_address' => $order->getCustomerReceiveAddress(),
             'order' => $order,
             'services' => $services,
             'order_item_comments' => $order_item_comments_data,

@@ -136,15 +136,17 @@ class PackageController extends Controller
 
                     $packages[$key]->order = null;
                     $packages[$key]->customer = null;
+                    $packages[$key]->customer_address = null;
 
                     $order = Order::find($package->order_id);
                     $customer = User::find($package->buyer_id);
 
                     if($order instanceof Order){
-                        $packages[$key]->order = Order::find($package->order_id);
+                        $packages[$key]->order = $order;
+                        $packages[$key]->customer_address = $order->getCustomerReceiveAddress();
                     }
                     if($customer instanceof User){
-                        $packages[$key]->customer = Order::find($package->buyer_id);
+                        $packages[$key]->customer = $customer;
                     }
 
                 }
@@ -161,6 +163,20 @@ class PackageController extends Controller
 
     public function index(Request $request)
     {
+        $action = $request->get('action');
+        $logistic_package_barcode = $request->get('logistic_package_barcode');
+        if($action){
+            switch ($action){
+                case 'print':
+                    $logistic_package_barcode_array = explode(',', $logistic_package_barcode);
+                    foreach($logistic_package_barcode_array as $logistic_package_barcode_item){
+                        echo "$logistic_package_barcode_item<br>";
+                    }
+                    break;
+            }
+            exit;
+        }
+
         $data = $this->__getInitData('layouts.app', $request->get('barcode'));
 
         return view('package_add', $data);

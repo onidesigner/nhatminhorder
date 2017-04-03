@@ -59,3 +59,17 @@
 ._shop{
     margin-bottom: 30px!important;
 }
+
+/** page create package **/
+.form-list-item{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* margin-bottom: 20px; */
+}
+.form-list-item li{
+    margin-bottom: 20px;
+}
+.form-list-item li:last-child{
+    margin-bottom: 0;
+}
