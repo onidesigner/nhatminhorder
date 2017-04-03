@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Support;
 
+use App\Permission;
 use App\Post;
 use App\User;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ class PostController extends Controller
 {
     public function index(Request $request){
         $post_id = $request->route('id');
+        $can_edit_post = Permission::isAllow(Permission::PERMISSION_MANAGER_POST);
 
         $post = Post::find($post_id);
         if(!$post || !$post instanceof Post){
@@ -29,6 +31,7 @@ class PostController extends Controller
             'posts_newest' => $posts_newest,
             'post' => $post,
             'author' => $author,
+            'can_edit_post' => $can_edit_post,
         ]);
     }
 }

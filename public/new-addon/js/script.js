@@ -5,6 +5,7 @@ var url_get_init_data = 'http://' + sitename + '/api/get_init_data';
 //=========== end config =========
 
 //========= begin function helper ========
+
 var Common = {
     appendHtml: function(el, str){
         var div = document.createElement('div');
@@ -84,6 +85,9 @@ chrome.runtime.onMessage.addListener(
         {
             case "after_request_server":
                 Action.after_request_server(request);
+                break;
+            case "after_get_tab_id":
+                console.log(request.tab_id);
                 break;
             default :
                 break;

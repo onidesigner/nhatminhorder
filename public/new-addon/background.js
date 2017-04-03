@@ -5,12 +5,21 @@ chrome.runtime.onMessage.addListener(
             case "request_server":
                 request_server(request, sender, sendResponse);
                 break;
+            case "get_tab_id":
+                get_tab_id(request, sender, sendResponse);
+                break;
             default :
                 break;
 
         }
     }
 );
+
+function get_tab_id(request, sender, sendResponse) {
+    chrome.tabs.sendMessage(sender.tab.id, { action: request.callback, tab_id: sender.tab.id }, function(response) {
+
+    });
+}
 
 function request_server(request, sender, sendResponse){
     $.ajax({

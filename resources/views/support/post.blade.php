@@ -4,6 +4,10 @@
     <!-- Page Heading -->
     <h1 class="my-4">{{ $post->post_title  }}</h1>
 
+    @if($can_edit_post)
+        <a href="{{ url('post', $post->id)  }}">Sửa bài viết</a>
+    @endif
+
     <!-- Project Four -->
     <div class="row">
         <div class="col-md-12">
