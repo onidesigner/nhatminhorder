@@ -15,15 +15,27 @@
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('css/support/bootstrap.min.css')  }}" rel="stylesheet">
 
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/inhnmjhbedekbkffcjopnjakeiiclcej">
+
+    <script>
+        function ExtInstall() {
+            if (chrome.app.isInstalled){
+                alert("already installed!");
+            }else{
+                chrome.webstore.install();
+            }
+        }
+    </script>
+
     <!-- Temporary fix for navbar responsiveness -->
     <style>
         body {
-            padding-top: 54px;
+            padding-top: 100px;
         }
 
         @media (min-width: 992px) {
             body {
-                padding-top: 56px;
+                padding-top: 100px;
             }
         }
 
@@ -52,15 +64,33 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="container">
-        <a class="navbar-brand" href="http://nhatminh247.vn/">NhatMinh247</a>
+        <a class="navbar-brand" href="http://nhatminh247.vn/">
+            <img width="50px" class="logo" src="http://nhatminh247.dev:8000/images/home/logo.png" alt="">
+            NhatMinh247
+        </a>
         <div class="collapse navbar-collapse" id="navbarExample">
             <ul class="navbar-nav ml-auto">
+
                 <li class="nav-item active">
                     <a class="nav-link" href="http://nhatminh247.vn/">Trang chủ <span class="sr-only">(current)</span></a>
                 </li>
-                {{--<li class="nav-item">--}}
-                    {{--<a class="nav-link" href="#">About</a>--}}
-                {{--</li>--}}
+                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
+                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
+                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
+                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
+
+                @if (Route::has('login'))
+                    @if (Auth::check())
+                        <li class="nav-item active"><a class="nav-link" href="{{ url('/home') }}">Vào hệ thống</a></li>
+                    @else
+                        <li class="nav-item active"><a class="nav-link" href="{{ url('/register') }}">Tạo tài khoản</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{{ url('/login') }}">Đăng nhập</a></li>
+                    @endif
+                @endif
+
+                <li>
+                    <button class="btn btn-danger" onclick="ExtInstall()" id="install-button">Công cụ</button>
+                </li>
 
             </ul>
         </div>
@@ -69,7 +99,15 @@
 
 <!-- Page Content -->
 <div class="container">
-    @yield('content')
+    <div class="row">
+        <div class="col-sm-8 col-xs-12">
+            @yield('content')
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            @yield('sidebar')
+        </div>
+    </div>
+
 </div>
 <!-- /.container -->
 

@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'HomePageController@homePage');
+Route::get('/ho-tro/', 'HomePageController@homePage');
 
 Auth::routes();
 
@@ -152,7 +153,7 @@ Route::post('/post/action', 'PostController@action');
 #endregion
 
 #region -- ho tro --
-Route::get('/ho-tro/danh-muc-{name?}_{id}', 'Support\TaxonomyController@indexs');
-Route::get('/ho-tro/{name?}_{id}', 'Support\PostController@index');
+Route::get('/ho-tro/danh-muc/{id}', 'Support\TaxonomyController@indexs');
+Route::get('/ho-tro/{id}', 'Support\PostController@index');
 #endregion
 

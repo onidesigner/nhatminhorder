@@ -22,8 +22,13 @@ class PostController extends Controller
             return redirect('404');
         }
 
+        $posts_newest = Post::where([
+            [ 'id', '!=', $post_id ]
+        ])->get();
+
         return view('support/post', [
             'page_title' => 'Bài viết',
+            'posts_newest' => $posts_newest,
             'post' => $post,
             'author' => $author,
         ]);

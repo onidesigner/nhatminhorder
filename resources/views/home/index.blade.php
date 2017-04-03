@@ -111,11 +111,10 @@ Fixed Navigation
 
 
 
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-dat-coc-don-hang/">Hướng dẫn</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-tu-tim-san-pham-tren-cac-trang-thuong-mai-dien-tu-trung-quoc-taobao-com-tmall-com-1688-com/">Nguồn hàng</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/27/bao-gia-cong-dat/">Biểu phí</a></li>
-                <li><a target="_blank" href="https://nhatminh247.wordpress.com/2017/03/24/huong-dan-nap-tien-vao-tai-khoan-tren-nhatminh247-vn/">Nạp tiền</a></li>
-
+                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
+                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
+                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
+                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
 
 
                 @if (Route::has('login'))
