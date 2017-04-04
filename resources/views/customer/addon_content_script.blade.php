@@ -351,6 +351,10 @@ this.init = function () {
 //nothing
 };
 
+this.previewPrice = function(){
+console.log('previewPrice tmall');
+};
+
 this.isEmptyProperty = function () {
 
 };
@@ -704,6 +708,10 @@ quantity: this.getQuantity(),
 };
 var alibaba = function(){
 this.init_data = null;
+
+this.previewPrice = function(){
+console.log('previewPrice alibaba');
+};
 
 this.init = function(){
 if(this.init_data){
