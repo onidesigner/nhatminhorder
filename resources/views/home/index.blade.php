@@ -180,7 +180,7 @@ End Fixed Navigation
 <br><br>“GIEO CHỮ TÍN- GẶT NIỀM TIN”
 
                                 </span>
-                            <a href="https://nhatminh247.wordpress.com/about/" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
+                            <a href="http://nhatminh247.vn/ho-tro/8" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
                         </div>
                     </div>
 
