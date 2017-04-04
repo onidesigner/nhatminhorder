@@ -41,9 +41,49 @@ class Package extends Model
         self::WAREHOUSE_STATUS_OUT => 'Xuất kho',
     ];
 
+    public static $fieldTime = [
+        self::STATUS_INIT => 'created_at',
+        self::STATUS_RECEIVED_FROM_SELLER => 'received_from_seller_at',
+        self::STATUS_TRANSPORTING => 'transporting_at',
+        self::STATUS_WAITING_FOR_DELIVERY => 'waiting_delivery_at',
+        self::STATUS_DELIVERING => 'delivering_at',
+        self::STATUS_RECEIVED => 'received_at',
+    ];
+
+    public static $timeListOrderDetail = [
+        'created_at' => 'Tạo',
+        'received_from_seller_at' => 'NhatMinh247 nhận',
+        'transporting_at' => 'Vận chuyển',
+        'waiting_delivery_at' => 'Chờ giao hàng',
+        'delivering_at' => 'Bắt đầu giao hàng',
+        'received_at' => 'Đã giao hàng',
+    ];
+
+    /**
+     * @author vanhs
+     * @desc Lay ra toan bo kien cung 1 don hang
+     * @return null
+     */
+    public function getPackagesWithOrder(){
+        if(!$this->order_id) return null;
+
+        return self::where([
+            'order_id' => $this->order_id,
+            'is_deleted' => 0
+        ])->get();
+    }
+
     protected static $_endingStatus = [
         self::STATUS_RECEIVED
     ];
+
+    public function setStatusWithTime($status){
+        $this->status = $status;
+        $field_time = isset(self::$fieldTime[$status]) ? self::$fieldTime[$status] : null;
+        if($field_time){
+            $this->$field_time = date('Y-m-d H:i:s');
+        }
+    }
 
     public static function getWarehouseStatusName($warehouse_status){
         if(!empty(self::$warehouseStatusName[$warehouse_status])){
@@ -62,6 +102,14 @@ class Package extends Model
     public function getWeightCalculator(){
         return $this->weight_manual > $this->weight_equivalent
             ? $this->weight_manual : $this->weight_equivalent;
+    }
+
+    public static function retrieveByCode($logistic_package_barcode){
+        if(empty($logistic_package_barcode)) return null;
+
+        return self::where([
+            'logistic_package_barcode' => $logistic_package_barcode,
+        ])->first();
     }
 
     /**
@@ -165,32 +213,56 @@ class Package extends Model
         return '';
     }
 
+    /**
+     * @author vanhs
+     * @desc Nhap kho Trung Quoc
+     * @param $warehouse
+     * @return bool
+     */
     public function inputWarehouseReceive($warehouse){
-        $this->status = Package::STATUS_RECEIVED_FROM_SELLER;
+        $this->setStatusWithTime(Package::STATUS_RECEIVED_FROM_SELLER);
         $this->current_warehouse = $warehouse;
         $this->warehouse_status = Package::WAREHOUSE_STATUS_IN;
         $this->warehouse_status_in_at = date('Y-m-d H:i:s');
         return $this->save();
     }
 
+    /**
+     * @author vanhs
+     * @desc Xuat kho Trung Quoc
+     * @param $warehouse
+     * @return bool
+     */
     public function outputWarehouseReceive($warehouse){
-        $this->status = Package::STATUS_TRANSPORTING;
+        $this->setStatusWithTime(Package::STATUS_TRANSPORTING);
         $this->current_warehouse = $warehouse;
         $this->warehouse_status = Package::WAREHOUSE_STATUS_OUT;
         $this->warehouse_status_out_at = date('Y-m-d H:i:s');
         return $this->save();
     }
 
+    /**
+     * @author vanhs
+     * @desc Nhap kho Viet Nam
+     * @param $warehouse
+     * @return bool
+     */
     public function inputWarehouseDistribution($warehouse){
-        $this->status = Package::STATUS_WAITING_FOR_DELIVERY;
+        $this->setStatusWithTime(Package::STATUS_WAITING_FOR_DELIVERY);
         $this->current_warehouse = $warehouse;
         $this->warehouse_status = Package::WAREHOUSE_STATUS_IN;
         $this->warehouse_status_in_at = date('Y-m-d H:i:s');
         return $this->save();
     }
 
+    /**
+     * @author vanhs
+     * @desc Xuat kho Viet Nam
+     * @param $warehouse
+     * @return bool
+     */
     public function outputWarehouseDistribution($warehouse){
-        $this->status = Package::STATUS_DELIVERING;
+        $this->setStatusWithTime(Package::STATUS_DELIVERING);
         $this->current_warehouse = $warehouse;
         $this->warehouse_status = Package::WAREHOUSE_STATUS_OUT;
         $this->warehouse_status_out_at = date('Y-m-d H:i:s');

@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card">
                 @include('partials/__breadcrumb',
                     [
@@ -43,7 +43,9 @@
 
                             </form>
 
-                            <h5>Mã quét: {{$barcode}}</h5>
+                            @if($barcode)
+                                <h5>Mã quét: {{$barcode}}</h5>
+                            @endif
                         </div>
 
                     </div>
@@ -52,9 +54,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             @if(!empty($barcode))
-
 
                 @if(count($packages))
                     @foreach($packages as $package)
@@ -104,7 +105,7 @@
                                                         <input type="radio" name="weight_type_{{$package->id}}" value="1">
                                                     @endif
 
-                                                    <input value="{{$package->weight}}" name="weight" type="text" style="width: 15%;" class="!form-control">
+                                                    <input value="{{ $package->weight  }}" name="weight" type="text" style="width: 15%;" class="!form-control">
 
                                                     Quy đổi
                                                     @if($package->weight_type == 2)
@@ -113,7 +114,7 @@
                                                         <input type="radio" name="weight_type_{{$package->id}}" value="2">
                                                     @endif
 
-                                                    <input value="{{$package->converted_weight}}" name="converted_weight" disabled type="text" style="width: 15%;" class="!form-control">
+                                                    <input value="{{ $package->converted_weight  }}" name="converted_weight" disabled type="text" style="width: 15%;" class="!form-control">
                                                 </li>
 
                                                 <li>
@@ -200,6 +201,7 @@
                   success:function(response) {
                       if(response.success){
 
+                          $('._package[data-package-id="' + response.result.package.id + '"]').find('input[name="converted_weight"]').val(response.result.package.converted_weight);
                       }else{
                           if(response.message){
                               bootbox.alert(response.message);

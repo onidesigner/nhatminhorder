@@ -7,6 +7,7 @@ use App\OrderFreightBill;
 use App\Package;
 use App\Permission;
 use App\User;
+use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,8 @@ class PackageController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'success',
-                'html' => $html
+                'html' => $html,
+                'result' => $result,
             ]);
 
         }catch(\Exception $e){
@@ -68,7 +70,7 @@ class PackageController extends Controller
      * @author vanhs
      * @desc Cap nhat thong tin kien hang
      * @param Request $request
-     * @return bool
+     * @return bool | array
      */
     private function __update_package(Request $request){
         $package_id = $request->get('package_id');
@@ -78,13 +80,26 @@ class PackageController extends Controller
             return false;
         }
 
+        $height_package = doubleval($request->get('height_package'));
+        $width_package = doubleval($request->get('width_package'));
+        $length_package = doubleval($request->get('length_package'));
+
         $package->note = $request->get('note');
-        $package->height_package = $request->get('height_package');
-        $package->width_package = $request->get('width_package');
-        $package->length_package = $request->get('length_package');
+        $package->height_package = $height_package;
+        $package->width_package = $width_package;
+        $package->length_package = $length_package;
         $package->weight = $request->get('weight');
         $package->weight_type = $request->get('weight_type_' . $package_id);
-        return $package->save();
+
+        $converted_weight = ($length_package * $width_package * $height_package) / 6000;
+        $package->converted_weight = $converted_weight;
+
+        if($package->save()){
+            return [
+                'package' => $package,
+            ];
+        }
+        return false;
     }
 
     private function __delete_package(Request $request){
@@ -103,6 +118,18 @@ class PackageController extends Controller
         return true;
     }
 
+    /**
+     * @author vanhs
+     * @desc Tao kien hang khi quet ma van don
+     * - Neu kien khop voi don hang thi tien hanh cap nhat cac thong tin
+     *      + ma kien
+     *      + id don hang
+     *      + id khach hang
+     *      + id dia chi dat hang
+     * @param $order
+     * @param null $barcode
+     * @return bool|null
+     */
     private function __create_package_item($order, $barcode = null){
         if(empty($barcode)) return null;
 
@@ -223,10 +250,35 @@ class PackageController extends Controller
 
     private function __getDetailData(Request $request, $layout = null){
         $package_code = $request->route('code');
+        $package = Package::retrieveByCode($package_code);
+        if(!$package instanceof Package){
+            return redirect('403');
+        }
+
+        $order = null;
+        $customer = null;
+        $customer_address = null;
+        $packages_order = null;
+
+        $order = Order::find($package->order_id);
+        $customer = User::find($package->buyer_id);
+
+        if($order instanceof Order){
+            $package->order = $order;
+            $package->customer_address = $order->getCustomerReceiveAddress();
+
+            $packages_order = $package->getPackagesWithOrder();
+        }
+        if($customer instanceof User){
+            $package->customer = $customer;
+        }
+
         return [
             'page_title' => 'Thông tin kiện hàng ' . $package_code,
             'package_code' => $package_code,
-            'layout' => $layout
+            'layout' => $layout,
+            'package' => $package,
+            'packages_order' => $packages_order,
         ];
     }
 
@@ -254,10 +306,13 @@ class PackageController extends Controller
             }
         }
 
+        $can_create_package = Permission::isAllow(Permission::PERMISSION_PACKAGE_ADD);
+
         return [
             'page_title' => 'Danh sách kiện hàng',
             'packages' => $packages,
             'total_packages' => $total_packages,
+            'can_create_package' => $can_create_package,
             'layout' => $layout
         ];
     }

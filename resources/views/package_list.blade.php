@@ -19,6 +19,10 @@
                 <div class="card-body">
                     <h3>Danh sách kiện hàng</h3>
 
+                    @if($can_create_package)
+                        <a href="{{ url('package')  }}" class="btn btn-danger pull-right">Tạo kiện</a>
+                    @endif
+
                     <p>Tìm thấy <strong>{{$total_packages}}</strong> kiện hàng</p>
 
                     <table class="table no-padding-leftright">
@@ -104,7 +108,15 @@
                                         <br>
                                         <small>{{ $created_user->name  }}</small>
                                     </td>
-                                    <td>{{  App\Util::formatDate($package->created_at)}}</td>
+                                    <td>
+
+                                        @foreach(App\Package::$timeListOrderDetail as $key => $value)
+                                            @if($package->$key)
+                                                {{$value}}: {{ App\Util::formatDate($package->$key) }}<br>
+                                            @endif
+                                        @endforeach
+
+                                    </td>
                                 </tr>
                             @endforeach
                         @endif
