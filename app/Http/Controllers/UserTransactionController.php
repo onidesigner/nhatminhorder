@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\UserTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -36,14 +37,43 @@ class UserTransactionController extends Controller
 
         $can_create_transaction = Permission::isAllow(Permission::PERMISSION_TRANSACTION_CREATE);
 
+        $condition = Input::all();
+
         $per_page = 20;
-        $transactions = UserTransaction::orderBy('id', 'desc')
-            ->paginate($per_page);
+        $where = [];
+
+        if(!empty($condition['customer_code'])){
+            $customer = User::retrieveByCode($condition['customer_code']);
+            if($customer instanceof User){
+                $where['user_id'] = $customer->id;
+            }else{
+                $where['user_id'] = 0;
+            }
+        }
+
+        if(!empty($condition['order_code'])){
+            $order = Order::retrieveByCode($condition['order_code']);
+            if($order instanceof Order){
+                $where['object_id'] = $order->id;
+            }else{
+                $where['object_id'] = 0;
+            }
+            $where['object_type'] = UserTransaction::OBJECT_TYPE_ORDER;
+        }
+
+        if(!empty($condition['transaction_type'])){
+            $where['transaction_type'] = $condition['transaction_type'];
+        }
+
+        $transactions = UserTransaction::where($where);
+        $transactions = $transactions->orderBy('id', 'desc');
+        $transactions = $transactions->paginate($per_page);
 
         return view('transactions', [
             'page_title' => 'Lịch sử giao dịch ',
             'can_create_transaction' => $can_create_transaction,
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'condition' => $condition,
         ]);
     }
 

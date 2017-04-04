@@ -100,7 +100,16 @@
         text-decoration: none!important;
         font-size: 15px!important;
     }
+
+    .nhatminh247-preview-price{
+        background: #4ab825;
+        padding: 10px 30px;
+        font-size: 30px;
+        color: #fff;
+    }
 </style>
+
+<input type="hidden" id="_nhatminh247-exchange-rate" value="{{$exchange_rate}}">
 
 <div class="nhatminh-notification">
     <p>VUI LÒNG TẮT GOOGLE DỊCH TRƯỚC KHI CHO SẢN PHẨM VÀO GIỎ HÀNG. XIN CÁM ƠN!</p>

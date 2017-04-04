@@ -74,13 +74,66 @@ var Helper = {
         }
         return parseFloat(p);
     },
+    getExchangeRate: function(){
+        var exchange_rate = 0;
+        var $dom = document.querySelectorAll('#_nhatminh247-exchange-rate');
+        if($dom.length){
+            exchange_rate = parseFloat($dom[0].value);
+        }
+        return exchange_rate;
+    },
+    formatPrice: function(price){
+        return price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1.");
+    },
 };
+
+/* Adds Element BEFORE NeighborElement */
+Element.prototype.appendBefore = function (element) {
+    element.parentNode.insertBefore(this, element);
+}, false;
+
+/* Adds Element AFTER NeighborElement */
+Element.prototype.appendAfter = function (element) {
+    element.parentNode.insertBefore(this, element.nextSibling);
+}, false;
+
+Element.prototype.remove = function() {
+    this.parentElement.removeChild(this);
+}
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+        if(this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+}
 
 var taobao = function(){
     this.init_data = null;
 
     this.init = function () {
         //nothing
+        console.log('init taobao');
+    };
+
+    this.previewPrice = function () {
+        var $anchor = document.querySelectorAll('#J_PromoWrap');
+        if($anchor.length){
+            document.querySelectorAll('.nhatminh247-preview-price').remove();
+
+            var price_cny = this.getPrice();
+            if(isNaN(price_cny)) price_cny = 0;
+            var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
+            if(price_vnd){
+                price_vnd = Helper.formatPrice(price_vnd);
+            }
+            // console.log('price_vnd: ' + this.getPrice());
+            // console.log('exchange_rate: ' + Helper.getExchangeRate());
+            var NewElement = document.createElement('div');
+            NewElement.className = "nhatminh247-preview-price";
+            NewElement.innerHTML = 'Giá: ' + price_vnd + 'đ';
+            NewElement.appendAfter($anchor[0]);
+        }
     };
 
     this.isEmptyProperty = function () {
@@ -968,6 +1021,10 @@ var factory = function () {
 
 var _className = new factory();
 _className.init();
+
+setInterval(function(){
+    _className.previewPrice();
+}, 1000);
 
 function addToCart(e){
     var current_site = _className.getSite();

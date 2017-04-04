@@ -94,6 +94,14 @@ class Order extends Model
 
     #region -- begin function static --
 
+    public static function retrieveByCode($code){
+        if(empty($code)) return null;
+
+        return self::where([
+            'code' => $code
+        ])->first();
+    }
+
     /**
      * @author vanhs
      * @desc Lay danh sach ma hoa don goc + link chi tiet don hang TQ

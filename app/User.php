@@ -96,6 +96,12 @@ class User extends Authenticatable
         return 3;
     }
 
+    public static function retrieveByCode($code){
+        if(empty($code)) return null;
+
+        return self::where(['code' => $code])->first();
+    }
+
     protected static function statusList(){
         return self::$status_list;
     }

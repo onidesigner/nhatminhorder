@@ -28,6 +28,21 @@
                             TẠO GIAO DỊCH</a>
                     @endif
 
+                        <form onchange="this.submit();" action="{{ url('transactions')  }}" method="get">
+                            <input value="{{ @$condition['customer_code']  }}" name="customer_code" type="text" placeholder="Mã khách...">
+                            <input value="{{ @$condition['order_code']  }}" name="order_code" type="text" placeholder="Mã đơn...">
+                            <select name="transaction_type" id="">
+                                <option value="">-- Loại giao dịch --</option>
+
+                                @foreach(App\UserTransaction::$transaction_type as $key => $value)
+                                    <option @if(isset($condition['transaction_type'])
+                                    && $key == $condition['transaction_type']) selected @endif
+
+                                    value="{{$key}}">{{$value}}</option>
+                                @endforeach
+                            </select>
+                            <button class="">Tìm kiếm</button>
+                        </form>
                     <table class="table no-padding-leftright">
                         <thead>
                         <tr>
