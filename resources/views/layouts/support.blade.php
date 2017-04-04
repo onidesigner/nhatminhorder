@@ -64,15 +64,15 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="container">
-        <a class="navbar-brand" href="http://nhatminh247.vn/">
-            <img width="50px" class="logo" src="http://nhatminh247.dev:8000/images/home/logo.png" alt="">
+        <a class="navbar-brand" href="{{ url('')  }}">
+            <img width="50px" class="logo" src="{{ asset('images/home/logo.png')  }}" alt="">
             NhatMinh247
         </a>
         <div class="collapse navbar-collapse" id="navbarExample">
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item active">
-                    <a class="nav-link" href="http://nhatminh247.vn/">Trang chủ <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{{ url('')  }}">Trang chủ <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
                 <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>

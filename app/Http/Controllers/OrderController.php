@@ -190,7 +190,9 @@ class OrderController extends Controller
             }
         }
 
-        $packages = $order->package;
+        $packages = $order->package()->where([
+            'is_deleted' => 0,
+        ])->get();
 
         return [
             'packages' => $packages,

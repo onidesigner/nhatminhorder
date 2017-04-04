@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnToPackages4 extends Migration
+class AddColumnToPackages7 extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddColumnToPackages4 extends Migration
     public function up()
     {
         Schema::table('packages', function (Blueprint $table) {
-            $table->timestamp('weight_type')->nullable()->after('note');
+            $table->tinyInteger('is_deleted')->default(0)->nullable()->after('note');
         });
     }
 

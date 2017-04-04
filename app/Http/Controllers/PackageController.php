@@ -33,11 +33,6 @@ class PackageController extends Controller
             DB::beginTransaction();
 
             $action = '__' . $request->get('action');
-            $barcode = $request->get('barcode');
-
-            if(empty($barcode)){
-                return response()->json(['success' => false, 'message' => 'Mã quét không để trống!']);
-            }
 
             if (!method_exists($this, $action)) {
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
@@ -69,6 +64,45 @@ class PackageController extends Controller
 
     }
 
+    /**
+     * @author vanhs
+     * @desc Cap nhat thong tin kien hang
+     * @param Request $request
+     * @return bool
+     */
+    private function __update_package(Request $request){
+        $package_id = $request->get('package_id');
+        $package = Package::find($package_id);
+        if(!$package instanceof Package){
+            $this->action_error[] = 'Không tìm thấy package #' . $package_id;
+            return false;
+        }
+
+        $package->note = $request->get('note');
+        $package->height_package = $request->get('height_package');
+        $package->width_package = $request->get('width_package');
+        $package->length_package = $request->get('length_package');
+        $package->weight = $request->get('weight');
+        $package->weight_type = $request->get('weight_type_' . $package_id);
+        return $package->save();
+    }
+
+    private function __delete_package(Request $request){
+        $package_id = $request->get('package_id');
+        $package = Package::find($package_id);
+        if(!$package instanceof Package){
+            $this->action_error[] = 'Không tìm thấy package #' . $package_id;
+            return false;
+        }
+
+        if(!$package->order_id){
+            $package->is_deleted = 1;
+            return $package->save();
+        }
+
+        return true;
+    }
+
     private function __create_package_item($order, $barcode = null){
         if(empty($barcode)) return null;
 
@@ -91,6 +125,12 @@ class PackageController extends Controller
     }
 
     private function __create_package(Request $request){
+        $barcode = $request->get('barcode');
+
+        if(empty($barcode)){
+            $this->action_error[] = 'Mã quét không để trống!';
+        }
+
         $can_create = Permission::isAllow(Permission::PERMISSION_PACKAGE_ADD);
         if(!$can_create){
             $this->action_error[] = 'Bạn không có quyền!';
@@ -99,8 +139,6 @@ class PackageController extends Controller
         if(count($this->action_error)){
             return false;
         }
-
-        $barcode = $request->get('barcode');
 
         $orders_freight_bill = OrderFreightBill::select('order_id')->where([
             'freight_bill' => $barcode,
@@ -125,6 +163,7 @@ class PackageController extends Controller
             $packages = Package::where([
                 'freight_bill' => $barcode,
                 'status' => Package::STATUS_INIT,
+                'is_deleted' => 0,
             ])->orderBy('id', 'desc')
                 ->get();
 
@@ -200,7 +239,11 @@ class PackageController extends Controller
     private function __getListData($layout = null){
         $per_page = 50;
 
-        $packages = Package::select('*')->orderBy('id', 'desc');
+        $packages = Package::select('*')
+            ->where([
+                'is_deleted' => 0,
+            ])
+            ->orderBy('id', 'desc');
         $total_packages = $packages->count();
         $packages = $packages->paginate($per_page);
 

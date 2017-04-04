@@ -19,7 +19,7 @@
                                             )
 
                 <div class="card-body">
-                    <h3>Bảng điều khiển!</h3>
+                    <h3>Bảng chung</h3>
                 </div>
             </div>
 

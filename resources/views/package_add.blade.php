@@ -58,7 +58,7 @@
 
                 @if(count($packages))
                     @foreach($packages as $package)
-                        <div class="card">
+                        <div class="card _package" data-package-id="{{ $package->id  }}">
                             <div class="card-header">
                                 <h3 style="margin: 0">
                                     Kiện hàng #<a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
@@ -69,52 +69,76 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-xs-12">
 
-                                        <ul class="form-list-item">
-                                            @if($package->order)
+                                        <form class="_package-item-form" action="" method="post" onsubmit="return false;">
+                                            {{csrf_field()}}
+
+                                            <input type="hidden" name="action" value="update_package">
+                                            <input type="hidden" name="package_id" value="{{ $package->id  }}">
+
+                                            <ul class="form-list-item">
+                                                @if($package->order)
+                                                    <li>
+                                                        <strong>Đơn hàng</strong>: <a href="{{ url('order', $package->order->id)  }}" target="_blank">{{$package->order->code}}</a>, kho đích {{$package->order->destination_warehouse}}
+                                                    </li>
+                                                    <li>
+                                                        <strong>Thông tin nhận hàng</strong>:
+                                                        <i class="fa fa-user"></i> {{$package->customer_address->reciver_name}} - <i class="fa fa-phone"></i> {{$package->customer_address->reciver_phone}}
+                                                        <i class="fa fa-map-marker"></i> {{$package->customer_address->detail}}, {{$package->customer_address->district_label}}, {{$package->customer_address->province_label}}
+                                                    </li>
+                                                @else
+                                                    <li>
+                                                        <strong>Đơn hàng</strong>: --
+                                                    </li>
+                                                    <li>
+                                                        <strong>Thông tin nhận hàng</strong>: ---
+                                                    </li>
+                                                @endif
+
                                                 <li>
-                                                    <strong>Đơn hàng</strong>: <a href="{{ url('order', $package->order->id)  }}" target="_blank">{{$package->order->code}}</a>, kho đích {{$package->order->destination_warehouse}}
+                                                    <strong>Cân nặng (kg):</strong>
+
+                                                    Tịnh
+                                                    @if(!$package->weight_type || $package->weight_type == 1)
+                                                        <input type="radio" checked="checked" name="weight_type_{{$package->id}}" value="1">
+                                                    @else
+                                                        <input type="radio" name="weight_type_{{$package->id}}" value="1">
+                                                    @endif
+
+                                                    <input value="{{$package->weight}}" name="weight" type="text" style="width: 15%;" class="!form-control">
+
+                                                    Quy đổi
+                                                    @if($package->weight_type == 2)
+                                                        <input type="radio" checked="checked" name="weight_type_{{$package->id}}" value="2">
+                                                    @else
+                                                        <input type="radio" name="weight_type_{{$package->id}}" value="2">
+                                                    @endif
+
+                                                    <input value="{{$package->converted_weight}}" name="converted_weight" disabled type="text" style="width: 15%;" class="!form-control">
+                                                </li>
+
+                                                <li>
+                                                    <strong>Thể tích (cm):</strong>
+                                                    <input value="{{$package->length_package}}" name="length_package" type="text" style="width: 10%;" class="!form-control" placeholder="Dài">
+                                                    x<input value="{{$package->width_package}}" name="width_package" type="text" style="width: 10%;" class="!form-control" placeholder="Rộng">
+                                                    x<input value="{{$package->height_package}}" name="height_package" type="text" style="width: 10%;" class="!form-control" placeholder="Cao">
+
                                                 </li>
                                                 <li>
-                                                    <strong>Thông tin nhận hàng</strong>:
-                                                    <i class="fa fa-user"></i> {{$package->customer_address->reciver_name}} - <i class="fa fa-phone"></i> {{$package->customer_address->reciver_phone}}
-                                                    <i class="fa fa-map-marker"></i> {{$package->customer_address->detail}}, {{$package->customer_address->district_label}}, {{$package->customer_address->province_label}}
-                                                </li>
-                                            @else
-                                                <li>
-                                                    <strong>Đơn hàng</strong>: --
+                                                    <strong>Ghi chú:</strong>
+                                                    <textarea name="note" id="" cols="30" rows="3" class="form-control">{{ $package->note  }}</textarea>
                                                 </li>
                                                 <li>
-                                                    <strong>Thông tin nhận hàng</strong>: ---
+                                                    <a class="btn-link" target="_blank" href="{{ url('package?action=print&logistic_package_barcode=' . $package->logistic_package_barcode)  }}"><i class="fa fa-print"></i> In tem</a>
+                                                    &nbsp;&nbsp;&nbsp;
+                                                    @if(!$package->order)
+                                                    <a class="btn-link _delete-package"
+                                                       data-package-id="{{$package->id}}"
+                                                       href="javascript:void(0)">Xóa</a>
+                                                    @endif
+                                                    &nbsp;&nbsp;&nbsp;
                                                 </li>
-                                            @endif
-
-                                            <li>
-                                                <strong>Cân nặng (kg):</strong>
-
-                                                Tịnh
-                                                <input type="radio" checked="checked" name="weight_type_{{$package->id}}" value="1">
-                                                <input type="text" style="width: 15%;" class="!form-control">
-
-                                                Quy đổi <input type="radio" name="weight_type_{{$package->id}}" value="2">
-                                                <input disabled type="text" style="width: 15%;" class="!form-control">
-                                            </li>
-
-                                            <li>
-                                                <strong>Thể tích (cm):</strong>
-                                                <input type="text" style="width: 10%;" class="!form-control" placeholder="Dài">
-                                                x<input type="text" style="width: 10%;" class="!form-control" placeholder="Rộng">
-                                                x<input type="text" style="width: 10%;" class="!form-control" placeholder="Cao">
-
-                                            </li>
-                                            <li>
-                                                <strong>Ghi chú:</strong>
-                                                <textarea name="" id="" cols="30" rows="3" class="form-control"></textarea>
-                                            </li>
-                                            <li>
-                                                <a class="btn-link" target="_blank" href="{{ url('package?action=print&logistic_package_barcode=' . $package->logistic_package_barcode)  }}"><i class="fa fa-print"></i> In tem</a>
-                                            </li>
-                                        </ul>
-
+                                            </ul>
+                                        </form>
 
                                     </div>
                                 </div>
@@ -149,7 +173,6 @@
                          barcode:barcode,
                          _token: "{{csrf_token()}}",
                          action: 'create_package',
-                         response: 'package_add',
                      },
                      success:function(response) {
 
@@ -166,6 +189,52 @@
                      }
                    });
                }
+            });
+
+            $(document).on('change', '._package-item-form', function(){
+                var data_send = $(this).serializeObject();
+                $.ajax({
+                  url: "{{ url('package/action')  }}",
+                  method: 'post',
+                  data: data_send,
+                  success:function(response) {
+                      if(response.success){
+
+                      }else{
+                          if(response.message){
+                              bootbox.alert(response.message);
+                          }
+                      }
+                  },
+                  error: function(){
+
+                  }
+                });
+            });
+
+            $(document).on('click', '._delete-package', function(){
+                var package_id = $(this).data('package-id');
+                $.ajax({
+                    url: "{{ url('package/action')  }}",
+                    method: 'post',
+                    data: {
+                        _token: "{{csrf_token()}}",
+                        action: 'delete_package',
+                        package_id:package_id,
+                    },
+                    success:function(response) {
+                        if(response.success){
+                            $('._package[data-package-id="' + package_id + '"]').remove();
+                        }else{
+                            if(response.message){
+                                bootbox.alert(response.message);
+                            }
+                        }
+                    },
+                    error: function(){
+
+                    }
+                });
             });
         });
 

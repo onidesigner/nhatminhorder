@@ -7,7 +7,7 @@ if(Auth::check()){
             [
                 'url' => url('home'),
                 'icon' => 'fa-home',
-                'title' => 'Trang chủ',
+                'title' => 'Bảng chung',
             ],
             [
                 'url' => url('don-hang'),

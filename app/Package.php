@@ -28,7 +28,7 @@ class Package extends Model
     );
 
     public static $statusTitle = array(
-        self::STATUS_INIT => '',
+        self::STATUS_INIT => 'Khởi tạo',
         self::STATUS_RECEIVED_FROM_SELLER => 'NhatMinh247 nhận',//tao kien & nhap kho TQ
         self::STATUS_TRANSPORTING => 'Vận chuyển',//kien xuat kho TQ
         self::STATUS_WAITING_FOR_DELIVERY => 'Chờ giao hàng',//kien nhap kho phan phoi
