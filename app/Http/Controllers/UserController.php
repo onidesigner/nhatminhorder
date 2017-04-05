@@ -333,6 +333,7 @@ class UserController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getUsers(Request $request){
+        $can_view_cart_customer = Permission::isAllow(Permission::PERMISSION_VIEW_CART_CUSTOMER);
 
         $can_view = Permission::isAllow(Permission::PERMISSION_USER_VIEW_LIST);
         if(!$can_view):
@@ -351,7 +352,8 @@ class UserController extends Controller
         return view('users', [
             'page_title' => 'Danh sách nhân viên ',
             'users' => $users,
-            'total_users' => $total_users
+            'total_users' => $total_users,
+            'can_view_cart_customer' => $can_view_cart_customer,
         ]);
     }
 

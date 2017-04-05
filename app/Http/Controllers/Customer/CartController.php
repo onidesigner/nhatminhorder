@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Permission;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\CartItem;
@@ -261,12 +262,13 @@ class CartController extends Controller
      */
     public function showCart(Request $request){
         $customer = User::find(Auth::user()->id);
+        $can_view_cart_customer = Permission::isAllow(Permission::PERMISSION_VIEW_CART_CUSTOMER);
 
-        if($customer->section == User::SECTION_CRANE){
-            $user_id = $request->get('hosivan_user_id');
-            if($user_id){
-                $customer = User::find($user_id);
-            }
+        $hosivan_user_id = $request->get('hosivan_user_id');
+        if($customer->section == User::SECTION_CRANE
+            && $hosivan_user_id
+            && $can_view_cart_customer){
+            $customer = User::find($hosivan_user_id);
         }
 
         if(!$customer || !$customer instanceof User){

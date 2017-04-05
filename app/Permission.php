@@ -20,6 +20,7 @@ class Permission extends Model
     const PERMISSION_VIEW_LIST_ROLE = 'VIEW_LIST_ROLE';
     const PERMISSION_USER_ADD_MOBILE = 'USER_ADD_MOBILE';
     const PERMISSION_USER_REMOVE_MOBILE = 'USER_REMOVE_MOBILE';
+    const PERMISSION_VIEW_CART_CUSTOMER = 'VIEW_CART_CUSTOMER';
     #endregion
 
     #region -- Transaction permission --
@@ -158,6 +159,10 @@ class Permission extends Model
                 self::PERMISSION_USER_REMOVE_MOBILE => array(
                     'label' => 'Xóa số điện thoại cho nhân viên',
                     'description' => '',
+                ),
+                self::PERMISSION_VIEW_CART_CUSTOMER => array(
+                    'label' => 'Cho phép quản trị viên xem được giỏ hàng của người khác',
+                    'description' => 'Lưu ý: chỉ được phép xem giỏ hàng, không được phép thao tác bất cứ hành động gì!',
                 ),
                 self::PERMISSION_USER_EDIT => array(
                     'label' => 'Sửa thông tin người dùng',

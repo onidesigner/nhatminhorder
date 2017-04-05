@@ -54,6 +54,13 @@
 
                                                 <br>
                                                 <small>{{$user->email}}</small>
+                                                <br>
+
+                                                @if($can_view_cart_customer)
+                                                <small>
+                                                    <a href="{{ url('gio-hang?hosivan_user_id=' . $user->id)  }}">Xem giỏ hàng</a>
+                                                </small>
+                                                @endif
                                             </td>
                                             <td>{{ App\User::getStatusName($user->status)  }}</td>
                                             <td>
