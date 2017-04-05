@@ -143,8 +143,8 @@ class UserTransactionController extends Controller
             $exists = User::select('id')
                 ->where([
                     'id' => $value,
-                    'status' => User::STATUS_ACTIVE,
-                    'section' => User::SECTION_CUSTOMER
+//                    'status' => User::STATUS_ACTIVE,
+//                    'section' => User::SECTION_CUSTOMER
                 ])
                 ->first();
             if($exists):
