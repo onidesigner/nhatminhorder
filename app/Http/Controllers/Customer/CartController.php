@@ -305,6 +305,8 @@ class CartController extends Controller
                             $order_deposit_percent = $order->deposit_percent;
                             $total_amount = $order->amountWithItems(true);
                             $deposit_amount = 0 - ($total_amount * $order_deposit_percent / 100);
+                            $order->deposit_amount = abs($deposit_amount);
+                            $order->save();
 
                             $transaction_note = sprintf('Đặt cọc đơn hàng %s', $order->code);
 
