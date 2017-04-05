@@ -93,7 +93,7 @@
                                 <td>
                                     <?php
                                     $customer = App\User::find($order->user_id);
-                                    echo '<p><strong>' . $customer->email . '</strong> <code>'. $customer->code .'</code></p>';
+                                    echo '<p><strong><a href="' . url('user/detail', $customer->id) . '">' . $customer->email . '</a></strong> <code>'. $customer->code .'</code></p>';
                                     ?>
 
                                     <p>
