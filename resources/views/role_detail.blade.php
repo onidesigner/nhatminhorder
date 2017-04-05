@@ -157,10 +157,10 @@
                     },
                     success: function(response){
 
-                        bootbox.alert({
-                            message: response.message,
-                            size: 'small'
-                        });
+//                        bootbox.alert({
+//                            message: response.message,
+//                            size: 'small'
+//                        });
 
                         $that.prop('disabled', false);
                     },

@@ -352,7 +352,7 @@ var tmall = function(){
     };
 
     this.previewPrice = function(){
-        console.log('previewPrice tmall');
+        // console.log('previewPrice tmall');
     };
 
     this.isEmptyProperty = function () {
@@ -710,7 +710,7 @@ var alibaba = function(){
     this.init_data = null;
 
     this.previewPrice = function(){
-        console.log('previewPrice alibaba');
+        // console.log('previewPrice alibaba');
     };
 
     this.init = function(){
@@ -1034,6 +1034,8 @@ setInterval(function(){
     _className.previewPrice();
 }, 1000);
 
+var product_send_data_list = [];
+
 function addToCart(e){
     var current_site = _className.getSite();
     if(!_className.validateBeforeSubmit()){
@@ -1046,35 +1048,65 @@ function addToCart(e){
         var is_empty_property = _className.isEmptyProperty();
         if(is_empty_property){
             var data = _className.getDataToSend();
-            console.log(data);
             sendAjax(data);
         }else{
+            product_send_data_list = [];
             var $dom = document.querySelectorAll('.obj-sku .amount-input');
             for(var i = 0; i < $dom.length; i++){
                 var amount_input = $dom[i].value;
                 if(amount_input > 0){
-                    _className.setProductId(i);
-                    var data = _className.getDataToSend();
-                    console.log(data);
-                    sendAjax(data);
+                    product_send_data_list.push(i);
                 }
+            }
+
+            if(product_send_data_list.length){
+                _className.setProductId(product_send_data_list[0]);
+                var data = _className.getDataToSend();
+                sendAjax(data, 'after_add_to_cart_1688');
             }
         }
 
     }else{
         //site: taobao, tmall
         var data = _className.getDataToSend();
-        console.log(data);
         sendAjax(data);
     }
 }
 
-function sendAjax(data){
+function sendAjax(data, function_callback){
+    if(!function_callback){
+        function_callback = 'after_request_server';
+    }
     chrome.runtime.sendMessage({
         action: "request_server",
-        method: 'get',
+        method: 'post',
         data: data,
         url: url_add_to_cart,
-        callback: 'after_request_server',
+        callback: function_callback,
     });
 }
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        switch (request.action)
+        {
+            case "after_add_to_cart_1688":
+                //alert when success
+                var response = request.response;
+                if(response.html){
+                    Common.appendHtml(document.body, response.html);
+                }
+
+                product_send_data_list.shift();
+                if(product_send_data_list.length){
+                    _className.setProductId(product_send_data_list[0]);
+                    var data = _className.getDataToSend();
+                    sendAjax(data, 'after_add_to_cart_1688');
+                }
+                break;
+            default :
+                break;
+
+        }
+    }
+);
