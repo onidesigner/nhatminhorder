@@ -41,7 +41,7 @@
 
                                     <div class="_form-item _form-item-sub ADJUSTMENT GIFT hidden">
 
-                                        <select class="form-control _selectpicker"  name="user_id" id="">
+                                        <select data-live-search="true" class="form-control _selectpicker"  name="user_id" id="">
                                             <option value="">Khách hàng </option>
                                             @if(!empty($users_customer))
                                                 @foreach($users_customer as $users_customer_item)

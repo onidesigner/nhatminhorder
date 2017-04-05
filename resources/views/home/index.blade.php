@@ -68,6 +68,8 @@
             }
         }
     </script>
+
+    @include('partials/__facebook_pixel')
 </head>
 
 <body id="body">

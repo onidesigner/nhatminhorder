@@ -37,14 +37,14 @@ class UserTransaction extends Model
     const OBJECT_TYPE = 'USER_TRANSACTION';
 
     public static $transaction_type = array(
-        self::TRANSACTION_TYPE_DEPOSIT => 'Nạp tiền',
+//        self::TRANSACTION_TYPE_DEPOSIT => 'Nạp tiền',
         self::TRANSACTION_TYPE_ORDER_DEPOSIT => 'Đặt cọc',
         self::TRANSACTION_TYPE_ORDER_PAYMENT => 'Thanh toán',
         self::TRANSACTION_TYPE_PAYMENT => 'Truy thu',
         self::TRANSACTION_TYPE_REFUND => 'Trả lại',
-        self::TRANSACTION_TYPE_REFUND_COMPLAINT => 'Trả lại theo khiếu nại',
-        self::TRANSACTION_TYPE_PROMOTION => 'Khuyến mại',
-        self::TRANSACTION_TYPE_WITHDRAWAL => 'Rút tiền',
+//        self::TRANSACTION_TYPE_REFUND_COMPLAINT => 'Trả lại theo khiếu nại',
+//        self::TRANSACTION_TYPE_PROMOTION => 'Khuyến mại',
+//        self::TRANSACTION_TYPE_WITHDRAWAL => 'Rút tiền',
         self::TRANSACTION_TYPE_ADJUSTMENT => "Điều chỉnh",
         self::TRANSACTION_TYPE_GIFT => "Quà tặng",
         self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT => "Điều chỉnh đặt cọc"

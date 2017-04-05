@@ -12,6 +12,8 @@
     <meta name="author" content="">
     <title>NhatMinh247 - HoTro</title>
 
+    @include('partials/__facebook_pixel')
+
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('css/support/bootstrap.min.css')  }}" rel="stylesheet">
 
@@ -74,10 +76,10 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{{ url('')  }}">Trang chủ <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
-                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
-                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
-                <li class="nav-item active"><a class="nav-link" href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
+                <li class="nav-item active"><a class="nav-link" href="{{ url('ho-tro', 4)  }}">Hướng dẫn</a></li>
+                <li class="nav-item active"><a class="nav-link" href="{{ url('ho-tro', 5)  }}">Nguồn hàng</a></li>
+                <li class="nav-item active"><a class="nav-link" href="{{ url('ho-tro', 3)  }}">Biểu phí</a></li>
+                <li class="nav-item active"><a class="nav-link" href="{{ url('ho-tro', 1)  }}">Nạp tiền</a></li>
 
                 @if (Route::has('login'))
                     @if (Auth::check())
