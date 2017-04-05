@@ -11,12 +11,12 @@
             <div class="card">
 
                 @include('partials/__breadcrumb',
-                                                [
-                                                    'urls' => [
-                                                        ['name' => 'Trang chủ', 'link' => null],
-                                                    ]
-                                                ]
-                                            )
+                    [
+                        'urls' => [
+                            ['name' => 'Bảng chung', 'link' => null],
+                        ]
+                    ]
+                )
 
                 <div class="card-body">
                     <h3>Hướng dẫn dành cho khách hàng mới</h3>

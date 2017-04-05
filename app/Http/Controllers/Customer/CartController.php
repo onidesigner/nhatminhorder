@@ -262,6 +262,13 @@ class CartController extends Controller
     public function showCart(Request $request){
         $customer = User::find(Auth::user()->id);
 
+        if($customer->section == User::SECTION_CRANE){
+            $user_id = $request->get('hosivan_user_id');
+            if($user_id){
+                $customer = User::find($user_id);
+            }
+        }
+
         if(!$customer || !$customer instanceof User){
             return redirect('404');
         }
