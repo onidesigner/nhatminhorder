@@ -24,6 +24,49 @@
                     <div class="row">
                         <div class="col-md-12">
 
+                            <form onchange="this.submit();" class="form-inline" method="get" action="{{ url('user')  }}">
+                                <div class="form-group">
+                                    <input value="{{@$condition['code']}}" placeholder="Mã NV" autofocus type="text" name="code" class="form-control1">
+                                </div>
+                                <div class="form-group">
+                                    <input value="{{@$condition['email']}}" placeholder="Email" type="text" name="email" class="form-control1">
+                                </div>
+
+                                <div class="form-group">
+                                    <select class="form-control1" name="section" id="">
+                                        <option value="">Đối tượng</option>
+                                        @foreach(App\User::$section_list as $k => $v)
+                                            <option
+
+                                                    @if(isset($condition['section']) && $k == $condition['section'])
+                                                        selected
+                                                    @endif
+
+                                                    value="{{$k}}">{{$v}}</option>
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control1" name="status" id="">
+                                        <option value="">Trạng thái</option>
+                                        @foreach(App\User::$status_list as $k => $v)
+                                            <option
+
+                                                    @if(isset($condition['status']) && $k == $condition['status'])
+                                                    selected
+                                                    @endif
+
+                                                    value="{{$k}}">{{$v}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="">Tìm kiếm</button>
+                            </form>
+
+
+                            <br>
 
                             <p>
                                 Tìm thấy ({{ $total_users }}) nhân viên

@@ -7,6 +7,7 @@ use App\UserAddress;
 use App\UserOriginalSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use App\User;
 use App\UserTransaction;
@@ -340,20 +341,42 @@ class UserController extends Controller
             return redirect('403');
         endif;
 
+        $condition = input::all();
+
         $per_page = 20;
         if($request->get('per_page')):
             $per_page = $request->get('per_page');
         endif;
 
-        $users = User::orderby('id', 'desc')->paginate($per_page);
+        $where = [];
 
-        $total_users = User::count();
+        if(!empty($condition['code'])){
+            $where['code'] = $condition['code'];
+        }
+
+        if(!empty($condition['email'])){
+            $where['email'] = $condition['email'];
+        }
+
+        if(!empty($condition['section'])){
+            $where['section'] = $condition['section'];
+        }
+
+        if(!empty($condition['status'])){
+            $where['status'] = $condition['status'];
+        }
+
+        $users = User::where($where);
+        $users = $users->orderBy('id', 'desc');
+        $total_users = $users->count();
+        $users = $users->paginate($per_page);
 
         return view('users', [
             'page_title' => 'Danh sách nhân viên ',
             'users' => $users,
             'total_users' => $total_users,
             'can_view_cart_customer' => $can_view_cart_customer,
+            'condition' => $condition,
         ]);
     }
 
