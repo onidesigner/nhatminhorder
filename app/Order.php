@@ -94,6 +94,20 @@ class Order extends Model
 
     #region -- begin function static --
 
+    /**
+     * @author vanhs
+     * @desc Lay tong so don dat coc theo ngay
+     * @param $day
+     * @return int
+     */
+    public static function getTotalDepositByDay($day){//Y-m-d
+        $total = self::select('id')->where([
+            [ 'deposited_at', '>=', $day . ' 00:00:00' ],
+            [ 'deposited_at', '<=', $day . ' 23:59:59' ],
+        ])->count();
+        return $total;
+    }
+
     public static function retrieveByCode($code){
         if(empty($code)) return null;
 

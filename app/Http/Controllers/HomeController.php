@@ -109,8 +109,29 @@ class HomeController extends Controller
 
 //        die('hello');
 
+        $current_user = User::find($user_id);
+
+        $total_order_deposit_today = 0;
+        $total_customer_register_today = 0;
+        $home_statistic = null;
+
+        if($current_user->section == User::SECTION_CRANE){
+            $total_order_deposit_today = Order::getTotalDepositByDay(date('Y-m-d'));
+            $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
+
+            $home_statistic = [
+                'Tổng tiền hàng khách' => 0,
+                'Phí VC nội địa TQ' => 0,
+                'Khách đã thanh toán' => 0,
+            ];
+        }
+
         return view('home', [
-            'page_title' => 'Trang chủ'
+            'page_title' => 'Trang chủ',
+            'current_user' => $current_user,
+            'total_order_deposit_today' => $total_order_deposit_today,
+            'total_customer_register_today' => $total_customer_register_today,
+            'home_statistic' => $home_statistic,
         ]);
     }
 }

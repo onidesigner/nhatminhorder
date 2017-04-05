@@ -66,6 +66,20 @@ class User extends Authenticatable
 
     /**
      * @author vanhs
+     * @desc Lay tong so user dang ky moi theo ngay
+     * @param $day
+     * @return int
+     */
+    public static function getTotalRegisterByDay($day){//Y-m-d
+        $total = self::select('id')->where([
+            [ 'created_at', '>=', $day . ' 00:00:00' ],
+            [ 'created_at', '<=', $day . ' 23:59:59' ],
+        ])->count();
+        return $total;
+    }
+
+    /**
+     * @author vanhs
      * @desc Kiem tra xem user hien tai co dang hoat dong hay khong?
      * @return bool
      */
