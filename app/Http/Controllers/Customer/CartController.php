@@ -265,81 +265,81 @@ class CartController extends Controller
         $customer = User::find(Auth::user()->id);
 
         //is cherry admin
-        if($customer->email == 'cherry@gmail.com'){
-            try{
-
-//            $user_deposit_error = [18, 23];
-                //----user_id-------amount
-                $user_deposit_error = [
-                    23 => 1400000,
-                    18 => 20000000,
-                ];
-
-                $create_user = $customer;
-                foreach($user_deposit_error as $user_id => $amount){
-
-                    User::whereIn('id', [$user_id])->update([
-                        'account_balance' => 0,
-                    ]);
-                    UserTransaction::whereIn('user_id', [$user_id])->delete();
-
-                    $customer_info = User::find($user_id);
-
-                    UserTransaction::createTransaction(
-                        UserTransaction::TRANSACTION_TYPE_ADJUSTMENT,
-                        'Nạp tiền vào tài khoản',
-                        $create_user,
-                        $customer_info,
-                        null,
-                        $amount
-                    );
-
-                    //all order of customer
-                    $orders = Order::where(['user_id' => $user_id])->get();
-                    if($orders){
-                        foreach($orders as $order){
-                            if(!$order instanceof Order){
-                                continue;
-                            }
-
-                            $order_deposit_percent = $order->deposit_percent;
-                            $total_amount = $order->amountWithItems(true);
-                            $deposit_amount = 0 - ($total_amount * $order_deposit_percent / 100);
-                            $order->deposit_amount = abs($deposit_amount);
-                            $order->save();
-
-                            $transaction_note = sprintf('Đặt cọc đơn hàng %s', $order->code);
-
-                            User::where(['id' => $user_id])->update([
-                                'account_balance' => DB::raw("account_balance+$deposit_amount")
-                            ]);
-
-                            $user_after = User::find($user_id);
-
-                            UserTransaction::insert([
-                                'user_id' => $user_id,
-                                'state' => UserTransaction::STATE_COMPLETED,
-                                'transaction_code' => UserTransaction::generateTransactionCode(),
-                                'transaction_type' => UserTransaction::TRANSACTION_TYPE_ORDER_DEPOSIT,
-                                'ending_balance' => $user_after->account_balance,
-                                'created_by' => $user_id,
-                                'object_id' => $order->id,
-                                'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
-                                'amount' => $deposit_amount,
-                                'transaction_detail' => json_encode($order),
-                                'transaction_note' => $transaction_note,
-                                'created_at' => date('Y-m-d H:i:s')
-                            ]);
-
-                        }
-                    }
-                }
-
-                DB::commit();
-            }catch(\Exception $e){
-                DB::rollback();
-            }
-        }
+//        if($customer->email == 'cherry@gmail.com'){
+//            try{
+//
+////            $user_deposit_error = [18, 23];
+//                //----user_id-------amount
+//                $user_deposit_error = [
+//                    23 => 1400000,
+//                    18 => 20000000,
+//                ];
+//
+//                $create_user = $customer;
+//                foreach($user_deposit_error as $user_id => $amount){
+//
+//                    User::whereIn('id', [$user_id])->update([
+//                        'account_balance' => 0,
+//                    ]);
+//                    UserTransaction::whereIn('user_id', [$user_id])->delete();
+//
+//                    $customer_info = User::find($user_id);
+//
+//                    UserTransaction::createTransaction(
+//                        UserTransaction::TRANSACTION_TYPE_ADJUSTMENT,
+//                        'Nạp tiền vào tài khoản',
+//                        $create_user,
+//                        $customer_info,
+//                        null,
+//                        $amount
+//                    );
+//
+//                    //all order of customer
+//                    $orders = Order::where(['user_id' => $user_id])->get();
+//                    if($orders){
+//                        foreach($orders as $order){
+//                            if(!$order instanceof Order){
+//                                continue;
+//                            }
+//
+//                            $order_deposit_percent = $order->deposit_percent;
+//                            $total_amount = $order->amountWithItems(true);
+//                            $deposit_amount = 0 - ($total_amount * $order_deposit_percent / 100);
+//                            $order->deposit_amount = abs($deposit_amount);
+//                            $order->save();
+//
+//                            $transaction_note = sprintf('Đặt cọc đơn hàng %s', $order->code);
+//
+//                            User::where(['id' => $user_id])->update([
+//                                'account_balance' => DB::raw("account_balance+$deposit_amount")
+//                            ]);
+//
+//                            $user_after = User::find($user_id);
+//
+//                            UserTransaction::insert([
+//                                'user_id' => $user_id,
+//                                'state' => UserTransaction::STATE_COMPLETED,
+//                                'transaction_code' => UserTransaction::generateTransactionCode(),
+//                                'transaction_type' => UserTransaction::TRANSACTION_TYPE_ORDER_DEPOSIT,
+//                                'ending_balance' => $user_after->account_balance,
+//                                'created_by' => $user_id,
+//                                'object_id' => $order->id,
+//                                'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
+//                                'amount' => $deposit_amount,
+//                                'transaction_detail' => json_encode($order),
+//                                'transaction_note' => $transaction_note,
+//                                'created_at' => date('Y-m-d H:i:s')
+//                            ]);
+//
+//                        }
+//                    }
+//                }
+//
+//                DB::commit();
+//            }catch(\Exception $e){
+//                DB::rollback();
+//            }
+//        }
 
         $can_view_cart_customer = Permission::isAllow(Permission::PERMISSION_VIEW_CART_CUSTOMER);
 
