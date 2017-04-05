@@ -6,7 +6,7 @@ if(Auth::check()){
         $menus = [
             [
                 'url' => url('home'),
-                'icon' => 'fa-home',
+                'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
             ],
             [
@@ -24,7 +24,7 @@ if(Auth::check()){
         $menus = [
             [
                 'url' => url('home'),
-                'icon' => 'fa-home',
+                'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
             ],
             [
