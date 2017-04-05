@@ -45,7 +45,11 @@
                                             <option value="">Khách hàng </option>
                                             @if(!empty($users_customer))
                                                 @foreach($users_customer as $users_customer_item)
-                                                    <option value="{{$users_customer_item['id']}}">{{$users_customer_item['email']}} - {{$users_customer_item['name']}}</option>
+                                                    <option value="{{$users_customer_item['id']}}">
+                                                        [{{ App\User::getSectionName($users_customer_item['section'])  }}]
+                                                        &nbsp;&nbsp;&nbsp;
+                                                        {{$users_customer_item['email']}} - {{$users_customer_item['name']}}
+                                                    </option>
                                                 @endforeach
                                             @endif
                                         </select>

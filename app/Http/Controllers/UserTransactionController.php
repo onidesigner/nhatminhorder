@@ -275,8 +275,8 @@ class UserTransactionController extends Controller
 
     public function renderTransactionAdjustment(){
         $users_customer = User::where([
-            'status' => User::STATUS_ACTIVE,
-            'section' => User::SECTION_CUSTOMER,
+//            'status' => User::STATUS_ACTIVE,
+//            'section' => User::SECTION_CUSTOMER,
         ])->orderBy('name', 'asc')->get()->toArray();
 
         return view('transaction_adjustment', [

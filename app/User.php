@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public static $god = [
         'hosivan90@gmail.com',
-        'nguyenhoanggiangdhxd@gmail.com',
+//        'nguyenhoanggiangdhxd@gmail.com',
         'cherry@gmail.com',
     ];
 
