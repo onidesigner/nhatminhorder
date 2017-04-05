@@ -83,7 +83,14 @@ var Helper = {
         return exchange_rate;
     },
     formatPrice: function(price){
-        return price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1.");
+        if(Helper.isFloat(price)){
+            return price.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1.");
+        }else{
+            return price.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1.");
+        }
+    },
+    isFloat: function(n){
+        return n === +n && n !== (n|0);
     },
 };
 
@@ -353,6 +360,50 @@ var tmall = function(){
 
     this.previewPrice = function(){
         // console.log('previewPrice tmall');
+        var origin_price = document.querySelectorAll('#J_StrPrice');
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPrice');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_priceStd');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_priceStd');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPriceModBox');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPriceModBox');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_PromoPrice');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_PromoPrice');
+        }
+
+        document.querySelectorAll('.nhatminh247-preview-price').remove();
+
+        var price_cny = this.getPricePromotion();
+        if(isNaN(price_cny)) price_cny = 0;
+        var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
+        if(price_vnd){
+            price_vnd = Helper.formatPrice(price_vnd);
+        }
+        // console.log('price_vnd: ' + this.getPrice());
+        // console.log('exchange_rate: ' + Helper.getExchangeRate());
+        var NewElement = document.createElement('div');
+        NewElement.className = "nhatminh247-preview-price";
+        NewElement.innerHTML = 'Giá: ' + price_vnd + 'đ';
+        NewElement.appendAfter(origin_price[0]);
     };
 
     this.isEmptyProperty = function () {
@@ -427,37 +478,42 @@ var tmall = function(){
         return _title;
     };
 
+    this.getPriceAnchor = function(){
+        var origin_price = document.querySelectorAll('#J_StrPrice .tm-price');
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPrice .tb-rmb-num');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_priceStd .tb-rmb-num');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_priceStd .tm-price');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPriceModBox .tm-price');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_StrPriceModBox .tb-rmb-num');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_PromoPrice .tm-price');
+        }
+
+        if(origin_price == null || origin_price.length == 0){
+            origin_price = document.querySelectorAll('#J_PromoPrice .tb-rmb-num');
+        }
+        return origin_price;
+    };
+
     this.getPrice = function(){
         try{
-            var origin_price = document.querySelectorAll('#J_StrPrice .tm-price');
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_StrPrice .tb-rmb-num');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_priceStd .tb-rmb-num');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_priceStd .tm-price');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_StrPriceModBox .tm-price');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_StrPriceModBox .tb-rmb-num');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_PromoPrice .tm-price');
-            }
-
-            if(origin_price == null || origin_price.length == 0){
-                origin_price = document.querySelectorAll('#J_PromoPrice .tb-rmb-num');
-            }
+            var origin_price = this.getPriceAnchor();
 
             var price = origin_price[0].textContent;
             price = price.match(/[0-9]*[\.,]?[0-9]+/g);

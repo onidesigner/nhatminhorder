@@ -57,7 +57,11 @@
                             <span class="label label-warning">taobao</span>&nbsp;
                         @endif
 
-                        {{$shop->shop_name}}
+                        @if($shop->shop_name)
+                            {{$shop->shop_name}}
+                        @elseif($shop->shop_id)
+                            {{$shop->shop_id}}
+                        @endif
 
                         <div style="position: absolute;top: 18px;right: 20px;">
                             {{--@foreach($data['services'] as $service)--}}
