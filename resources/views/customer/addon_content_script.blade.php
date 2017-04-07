@@ -1,6 +1,6 @@
 //=========== begin config =========
-var sitename = 'nhatminh247.dev:8000';
-// var sitename = 'nhatminh247.vn';
+// var sitename = 'nhatminh247.dev:8000';
+var sitename = 'nhatminh247.vn';
 var url_add_to_cart = 'http://' + sitename + '/cart/add';
 //=========== end config =========
 
