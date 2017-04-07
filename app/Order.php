@@ -704,11 +704,18 @@ class Order extends Model
 
     /**
      * @author vanhs
-     * @desc Chuyen trang thai don sang van chuyen:
-     * - neu la don khong chuyen thang thi trang thai don di tuan tu la: nhatminh247 nhan > van chuyen > cho giao hang > dang giao hang
-     * - neu la don chuyen thang thi trang thai don tuan tu la: nhatminh247 nhan > dang giao hang
-     * - neu kien dau tien xuat kho thi thu so tien hang con lai + phi mua hang + toan bo cac phi cua kien dau tien,
-     *  cac kien con lai thi thu toan bo cac phi cua tung kien
+     * @desc phi van chuyen noi dia TQ - VND
+     * @return float
+     */
+    public function getDomesticShippingFeeVnd(){
+        return (float)($this->domestic_shipping_fee * $this->exchange_rate);
+    }
+
+    /**
+     * @author vanhs
+     * @desc
+     * - Chuyen trang thai don sang van chuyen:
+     * - Truy thu tien hang con lai + phi mua hang
      * @return bool
      */
     public function changeOrderTransporting(){
@@ -747,9 +754,12 @@ class Order extends Model
                 $order_amount_vnd = $this->amountWithItems(true);
                 $order_buying_fee = $this->getBuyingFee($order_amount_vnd);
                 $total_customer_payment = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
-                $total_need_payment = ($order_amount_vnd + $order_buying_fee) - $total_customer_payment;
+                $total_need_payment = ($order_amount_vnd + $order_buying_fee + $this->getDomesticShippingFeeVnd()) - $total_customer_payment;
                 $total_need_payment = 0 - abs($total_need_payment);
-                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc + phí mua hàng %s, đơn %s', $order_buying_fee, $this->code);
+
+                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc + phí VC nội địa TQ %sđ + phí mua hàng %sđ',
+                    Util::formatNumber($this->getDomesticShippingFeeVnd()),
+                    Util::formatNumber($order_buying_fee));
 
                 UserTransaction::createTransaction(
                     UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
@@ -764,8 +774,6 @@ class Order extends Model
                 Comment::createComment($create_user, $this, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
             }
-
-            //todo::thu toan bo phi cua tung kien hang
 
             DB::commit();
             return true;

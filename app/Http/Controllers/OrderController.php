@@ -47,6 +47,19 @@ class OrderController extends Controller
 
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
+
+        if(!empty($params['order_code'])){
+            $orders = $orders->where('code', $params['order_code']);
+        }
+
+        if(!empty($params['customer_code_email'])){
+            $user_ids = User::where(function($query) use ($params){
+                $query->where('code', '=', $params['customer_code_email'])
+                        ->orWhere('email', '=', $params['customer_code_email']);
+            })->pluck('id');
+            $orders = $orders->whereIn('user_id', $user_ids);
+        }
+
         if(!empty($params['status'])){
             $orders = $orders->whereIn('status', explode(',', $params['status']));
         }
@@ -659,10 +672,8 @@ class OrderController extends Controller
                 $text = 'trả lại';
             }
 
-            $message = sprintf("Hệ thống tiến hành %s số tiền %s để đảm bảo tỉ lệ đặt cọc %s phần trăm",
-                $text,
-                Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new)),
-                $deposit_percent_new);
+            $money = Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new));
+            $message = "Hệ thống tiến hành {$text} số tiền {$money} để đảm bảo tỉ lệ đặt cọc {$deposit_percent_new}%";
 
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);

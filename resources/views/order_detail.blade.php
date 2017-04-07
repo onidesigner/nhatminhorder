@@ -502,7 +502,7 @@
                                             @if($package->weight)
                                                 <br>
                                                 <small>
-                                                    {{ $package->weight }} kg
+                                                    {{ $package->getWeightCalFee() }} kg
                                                 </small>
                                             @endif
                                         </td>
@@ -510,7 +510,9 @@
                                             {{$package->freight_bill}}
                                         </td>
                                         <td>
-                                            {{ App\Package::getStatusTitle($package->status)  }}
+                                            <span class=" label label-success ">
+                                                {{ App\Package::getStatusTitle($package->status)  }}
+                                            </span>
                                             <br>
 
                                             <small>

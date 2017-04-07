@@ -34,12 +34,23 @@ class PackageController extends Controller
             DB::beginTransaction();
 
             $action = '__' . $request->get('action');
+            $package_id = $request->get('package_id');
+            $package = null;
+            if($package_id){
+                $package = Package::find($package_id);
+                if(!$package instanceof Package){
+                    return response()->json(['success' => false, 'message' => 'Không tìm thấy package #' . $package_id]);
+                }
+                if($package->isEndingStatus()){
+                    return response()->json(['success' => false, 'message' => sprintf('Kiện hàng hiện đã ở trạng thái cuối (%s), không thể thay đổi thông tin!', Package::getStatusTitle($package->status))]);
+                }
+            }
 
             if (!method_exists($this, $action)) {
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
 
-            $result = $this->$action($request);
+            $result = $this->$action($request, $package);
             if(!$result){
                 return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
             }
@@ -70,16 +81,10 @@ class PackageController extends Controller
      * @author vanhs
      * @desc Cap nhat thong tin kien hang
      * @param Request $request
-     * @return bool | array
+     * @param $package
+     * @return array|bool
      */
-    private function __update_package(Request $request){
-        $package_id = $request->get('package_id');
-        $package = Package::find($package_id);
-        if(!$package instanceof Package){
-            $this->action_error[] = 'Không tìm thấy package #' . $package_id;
-            return false;
-        }
-
+    private function __update_package(Request $request, $package){
         $height_package = doubleval($request->get('height_package'));
         $width_package = doubleval($request->get('width_package'));
         $length_package = doubleval($request->get('length_package'));
@@ -89,7 +94,7 @@ class PackageController extends Controller
         $package->width_package = $width_package;
         $package->length_package = $length_package;
         $package->weight = $request->get('weight');
-        $package->weight_type = $request->get('weight_type_' . $package_id);
+        $package->weight_type = $request->get('weight_type_' . $package->id);
 
         $converted_weight = ($length_package * $width_package * $height_package) / 6000;
         $package->converted_weight = $converted_weight;
@@ -102,19 +107,18 @@ class PackageController extends Controller
         return false;
     }
 
-    private function __delete_package(Request $request){
-        $package_id = $request->get('package_id');
-        $package = Package::find($package_id);
-        if(!$package instanceof Package){
-            $this->action_error[] = 'Không tìm thấy package #' . $package_id;
-            return false;
-        }
-
+    /**
+     * @author vanhs
+     * @desc Ham xoa kien, chi ap dung voi nhung kien khong map voi don hang
+     * @param Request $request
+     * @param $package
+     * @return bool
+     */
+    private function __delete_package(Request $request, $package){
         if(!$package->order_id){
             $package->is_deleted = 1;
             return $package->save();
         }
-
         return true;
     }
 
@@ -151,7 +155,14 @@ class PackageController extends Controller
         return $package->save();
     }
 
-    private function __create_package(Request $request){
+    /**
+     * @author vanhs
+     * @desc Tao kien bang ma van don
+     * @param Request $request
+     * @param $package
+     * @return bool
+     */
+    private function __create_package(Request $request, $package){
         $barcode = $request->get('barcode');
 
         if(empty($barcode)){

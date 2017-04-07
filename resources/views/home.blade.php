@@ -85,7 +85,7 @@
 
                     <br>
 
-                    Click vào <a href="{{ url('')  }}">đây</a> để về trang chủ NhatMinh247.
+                    <a href="{{ url('')  }}"><< Về trang chủ</a>
                 </div>
             </div>
 

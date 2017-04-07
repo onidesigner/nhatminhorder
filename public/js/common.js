@@ -214,6 +214,14 @@ $(document).on('change', '.___select-action', function(){
 //============= end event global ===========
 
 //============= begin function global ===========
+function request(url, method, data){
+    return $.ajax({
+      url: url,
+      method: method,
+      data: data,
+    });
+}
+
 function call_ajax($that, data_send){
     return $.ajax({
         url: data_send.url,

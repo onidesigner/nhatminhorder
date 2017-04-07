@@ -23,7 +23,7 @@
                             <h3>Quét mã vạch</h3>
 
 
-                            <form class="___form">
+                            <form onsubmit="return false;" class="___form" id="_from-scan-barcode">
 
                                 <select name="action" id="" class="form-control">
                                     @if(!empty($action_list))
@@ -46,13 +46,12 @@
                                 <input type="hidden" name="method" value="post">
                                 <input type="hidden" name="url" value="{{ url('scan/action') }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                <input type="hidden" name="response" value="scan">
 
                                 <input
                                         autofocus
                                         type="text"
                                         name="barcode"
-                                        class="form-control ___input-action"
+                                        class="form-control _scan-barcode"
                                         data-key-global="barcode-scan-input"
                                         placeholder="Quét mã kiện">
 
@@ -63,32 +62,7 @@
                         <div class="col-sm-8 col-xs-12">
                             <h3>Kết quả quét</h3>
 
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>TT</th>
-                                        <th>Mã quét</th>
-                                        <th>Hành động</th>
-                                        <th>Người quét</th>
-                                        <th>Lúc</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(!empty($history_scan_list))
-                                        @foreach($history_scan_list as $k => $v)
-                                            <tr>
-                                                <td>{{$k + 1}}</td>
-                                                <td>
-                                                    <code>{{$v['barcode']}}</code>
-                                                </td>
-                                                <td>{{ App\Scan::getActionName($v['action']) }} - {{$v['warehouse']}}</td>
-                                                <td>{{ Auth::user()->email  }}</td>
-                                                <td>{{ App\Util::formatDate($v['created_at'])  }}</td>
-                                            </tr>
-                                        @endforeach
-                                    @endif
-                                </tbody>
-                            </table>
+
                         </div>
                     </div>
 
@@ -103,8 +77,23 @@
     @parent
     <script>
         $(document).ready(function(){
+            $(document).on('keypress', '._scan-barcode', function(e){
+                var that = this;
+                if(e.keyCode == 13){
+                    var barcode = $(this).val();
+                    if(!barcode) return false;
 
-
+                    request("{{ url('scan/action') }}", "post", $('#_from-scan-barcode').serializeObject()).done(function(response){
+                         if(response.success){
+                             $(that).val('').focus();
+                         }else{
+                             if(response.message){
+                                 bootbox.alert(response.message);
+                             }
+                         }
+                    });
+                }
+            });
         });
 
     </script>

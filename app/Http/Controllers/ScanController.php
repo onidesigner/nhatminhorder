@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
 use App\OrderFreightBill;
 use App\Package;
 use App\Scan;
+use App\Service;
+use App\SystemConfig;
 use App\User;
+use App\UserTransaction;
+use App\Util;
 use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +38,8 @@ class ScanController extends Controller
     private function __getInitData($layout = null){
         $warehouse_list = WareHouse::getAllWarehouse();
 
-        $history_scan_list = Scan::findByUser(Auth::user()->id);
+//        $history_scan_list = Scan::findByUser(Auth::user()->id);
+        $history_scan_list = null;
 
         return [
             'action_list' => Scan::$action_list,
@@ -79,13 +85,17 @@ class ScanController extends Controller
 
             DB::commit();
 
-            $view = View::make($request->get('response'), $this->__getInitData('layouts/app_blank'));
-            $html = $view->render();
+            $html = null;
+            if($request->get('response')){
+                $view = View::make($request->get('response'), $this->__getInitData('layouts/app_blank'));
+                $html = $view->render();
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'success',
-                'html' => $html
+                'html' => $html,
+                'result' => $result,
             ]);
 
         }catch(\Exception $e){
@@ -117,24 +127,19 @@ class ScanController extends Controller
 
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
 
-            $packages = Package::where([
+            $package = Package::where([
                 'logistic_package_barcode' => $barcode,
                 'status' => Package::STATUS_INIT,
-            ])->get();
-            if($packages){
-                foreach($packages as $package){
-                    if(!$package instanceof Package){
-                        continue;
-                    }
-                    $package->inputWarehouseReceive($warehouse->code);
+            ])->first();
+            if($package && $package instanceof Package){
+                $package->inputWarehouseReceive($warehouse->code);
 
-                    $order = Order::find($package->order_id);
-                    if($order instanceof Order){
-                        $order->changeOrderReceivedFromSeller();
+                $order = Order::find($package->order_id);
+                if($order instanceof Order){
+                    $order->changeOrderReceivedFromSeller();
 
-                        $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
-                        Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    }
+                    $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
+                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                 }
             }
 
@@ -171,9 +176,11 @@ class ScanController extends Controller
      * - Xuat kho Trung Quoc
      *      + Chuyen trang thai kien hang sang "Van Chuyen"
      *      + Chuyen trang thai don hang sang "Van Chuyen" (neu la kien dau tien xuat kho TQ)
+     *      + Thu phi kien, neu la kien chuyen thang
      * - Xuat kho phan phoi tai Viet Nam
      *      + Chuyen trang thai kien hang sang "Dang giao hang"
      *      + Chuyen trang thai don hang sang "Dang giao hang" (neu la kien dau tien xuat kho phan phoi tai VN)
+     *      + Thu phi kien, neu khong phai kien chuyen thang
      *
      * @param Request $request
      * @param WareHouse $warehouse
@@ -186,25 +193,25 @@ class ScanController extends Controller
 
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
 
-            $packages = Package::where([
+            $package = Package::where([
                 'logistic_package_barcode' => $barcode,
                 'status' => Package::STATUS_RECEIVED_FROM_SELLER,
                 'warehouse_status' => Package::WAREHOUSE_STATUS_IN,
                 'current_warehouse' => $warehouse->code,
-            ])->get();
-            if($packages){
-                foreach($packages as $package){
-                    if(!$package instanceof Package){
-                        continue;
-                    }
-                    $package->outputWarehouseReceive($warehouse->code);
+            ])->first();
+            if($package && $package instanceof Package){
+                $package->outputWarehouseReceive($warehouse->code);
 
-                    $order = Order::find($package->order_id);
-                    if($order instanceof Order){
-                        $order->changeOrderTransporting();
+                $order = Order::find($package->order_id);
+                if($order instanceof Order){
+                    $customer = User::find($order->user_id);
+                    $order->changeOrderTransporting();
 
-                        $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
-                        Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
+                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    if($package->isTransportStraight()){
+                        $this->__packageChargeFee($package, $order, $create_user, $customer);
                     }
                 }
             }
@@ -222,16 +229,59 @@ class ScanController extends Controller
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
+                    $customer = User::find($order->user_id);
                     $order->changeOrderDelivering();
 
                     $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    if(!$package->isTransportStraight()){
+                        $this->__packageChargeFee($package, $order, $create_user, $customer);
+                    }
                 }
             }
+
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
         return true;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Thu phi kien hang
+     * @param Package $package
+     * @param Order $order
+     * @param User $create_user
+     * @param User $customer
+     */
+    private function __packageChargeFee(Package $package, Order $order, User $create_user, User $customer){
+        $factoryMethodInstance = new ServiceFactoryMethod();
+
+        $service = $factoryMethodInstance->makeService([
+            'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+            'weight' => $package->getWeightCalFee(),
+            'destination_warehouse' => $order->destination_warehouse,
+            'apply_time' => $order->deposited_at,
+        ]);
+        $money_charge = (float)$service->calculatorFee();
+        if($money_charge > 0){
+            $money_charge = 0 - abs($money_charge);
+        }
+
+        $message = sprintf("Thu phí kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber(abs($money_charge)));
+
+        Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+        Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+        UserTransaction::createTransaction(
+            UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+            $message,
+            $create_user,
+            $customer,
+            $order,
+            $money_charge
+        );
     }
 
     private function __writeActionScanLog(Request $request, WareHouse $warehouse, User $currentUser){
