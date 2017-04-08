@@ -84,10 +84,21 @@
 
 
 
+@if($enable_popup)
+    <div class="alert alert-warning alert-dismissible" role="alert" style="    margin: 0;
+    font-size: 15px;
+    padding: 10px;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">x</span>
+        </button>
+        <h4>{{@$title_popup}}</h4>
+        {!! @$content_popup !!}
+    </div>
+@endif
 <!--
 Fixed Navigation
 ==================================== -->
-<header id="navigation" class="navbar-inverse navbar-fixed-top animated-header">
+<header id="navigation" class="navbar-inverse animated-header">
     <div class="container">
         <div class="navbar-header">
             <!-- responsive nav button -->
@@ -140,26 +151,28 @@ Fixed Navigation
 <!--
 End Fixed Navigation
 ==================================== -->
-@if($enable_popup)
-<div class="modal fade" id="modal-id">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">{{@$title_popup}}</h4>
-            </div>
-            <div class="modal-body">
-                {!! @$content_popup !!}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
+{{--@if($enable_popup)--}}
+{{--<div class="modal fade" id="modal-id">--}}
+    {{--<div class="modal-dialog">--}}
+        {{--<div class="modal-content">--}}
+            {{--<div class="modal-header">--}}
+                {{--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>--}}
+                {{--<h4 class="modal-title">{{@$title_popup}}</h4>--}}
+            {{--</div>--}}
+            {{--<div class="modal-body">--}}
+                {{--{!! @$content_popup !!}--}}
+            {{--</div>--}}
+            {{--<div class="modal-footer">--}}
+                {{--<button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+{{--</div>--}}
+{{--@endif--}}
 
 <main class="site-content" role="main">
+
+
 
     <!--
     Home Slider
