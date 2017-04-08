@@ -766,6 +766,7 @@ var alibaba = function(){
 this.init_data = null;
 
 this.previewPrice = function(){
+//th1: sp co khoang gia cu the
 try{
 var $anchor = document.querySelectorAll('.mod-detail-price');
 if($anchor.length){
@@ -805,7 +806,32 @@ NewElement.appendAfter($anchor[0]);
 }catch (e){
 
 }
+//th2: sp co gia tu - den
+try{
 
+var $anchor = document.querySelectorAll('.price-discount-sku');
+if(!$anchor.length){
+$anchor = document.querySelectorAll('.price-original-sku');
+}
+if($anchor.length){
+var price_begin = parseFloat($anchor[0].getElementsByClassName('value')[0].textContent.trim()) * Helper.getExchangeRate();
+var price_end = parseFloat($anchor[0].getElementsByClassName('value')[1].textContent.trim()) * Helper.getExchangeRate();
+
+var $target = document.querySelectorAll('.mod-detail-price');
+
+if($target.length
+&& !isNaN(price_begin) && !isNaN(price_end)){
+var html = 'Giá ' + Helper.formatPrice(price_begin) + 'đ ~ ' + Helper.formatPrice(price_end) + 'đ';
+var NewElement = document.createElement('div');
+NewElement.className = "nhatminh247-preview-price";
+NewElement.innerHTML = html;
+NewElement.appendAfter($target[0]);
+}
+
+}
+}catch (e){
+
+}
 };
 
 this.init = function(){
