@@ -125,6 +125,7 @@
     <a href="javascript:void(0)" class="nhatminh-button-add-to-cart" id="_add-to-cart">Đặt hàng NhatMinh247</a>
 
     <span data-exchange-rage="{{$exchange_rate}}">Tỉ giá: {{  App\Util::formatNumber($exchange_rate) }} đ</span>
+    &nbsp;&nbsp;&nbsp;
 
     <a href="{{ url('gio-hang')  }}" target="_blank" class="nhatminh-button-view-cart">Vào giỏ hàng</a>
 </div>

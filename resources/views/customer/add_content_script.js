@@ -123,23 +123,72 @@ var taobao = function(){
         console.log('init taobao');
     };
 
-    this.previewPrice = function () {
-        var $anchor = document.querySelectorAll('#J_PromoWrap');
-        if($anchor.length){
-            document.querySelectorAll('.nhatminh247-preview-price').remove();
-
-            var price_cny = this.getPrice();
-            if(isNaN(price_cny)) price_cny = 0;
-            var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
-            if(price_vnd){
-                price_vnd = Helper.formatPrice(price_vnd);
+    this.getPriceRangePromotion = function () {
+        var html = '';
+        if(document.querySelectorAll('#J_priceStd span[itemprop="lowPrice"]').length
+            && document.querySelectorAll('#J_priceStd span[itemprop="highPrice"]').length){
+            var lowPricePromo = parseFloat(document.querySelectorAll('#J_priceStd span[itemprop="lowPrice"]')[0].textContent)
+                * Helper.getExchangeRate();
+            var highPricePromo = parseFloat(document.querySelectorAll('#J_priceStd span[itemprop="highPrice"]')[0].textContent)
+                * Helper.getExchangeRate();
+            if(!isNaN(lowPricePromo) && !isNaN(highPricePromo)){
+                html = 'Giá: ' + Helper.formatPrice(lowPricePromo) + 'đ ~ ' + Helper.formatPrice(highPricePromo) + 'đ';
             }
-            // console.log('price_vnd: ' + this.getPrice());
-            // console.log('exchange_rate: ' + Helper.getExchangeRate());
-            var NewElement = document.createElement('div');
-            NewElement.className = "nhatminh247-preview-price";
-            NewElement.innerHTML = 'Giá: ' + price_vnd + 'đ';
-            NewElement.appendAfter($anchor[0]);
+        }
+        return html;
+    };
+
+    this.getPriceRange = function () {
+        var html = '';
+        if(document.querySelectorAll('#J_priceStd span[itemprop="lowPrice"]').length
+            && document.querySelectorAll('#J_priceStd span[itemprop="highPrice"]').length){
+            var lowPrice = parseFloat(document.querySelectorAll('#J_priceStd span[itemprop="lowPrice"]')[0].textContent)
+                * Helper.getExchangeRate();
+            var highPrice = parseFloat(document.querySelectorAll('#J_priceStd span[itemprop="highPrice"]')[0].textContent)
+                * Helper.getExchangeRate();
+
+            if(!isNaN(lowPrice) && !isNaN(highPrice)){
+                html = 'Giá: ' + Helper.formatPrice(lowPrice) + 'đ ~ ' + Helper.formatPrice(highPrice) + 'đ';
+            }
+        }
+        return html;
+    };
+
+    this.previewPrice = function () {
+        try{
+            var $anchor = document.querySelectorAll('#J_PromoWrap');
+            if($anchor.length){
+                document.querySelectorAll('.nhatminh247-preview-price').remove();
+
+                var html = '';
+
+                //gia cua tung cap thuoc tinh
+                var price_cny = this.getPrice();
+                if(isNaN(price_cny)) price_cny = 0;
+                var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
+                if(!isNaN(price_cny) && price_cny > 0){
+                    html = 'Giá: ' + Helper.formatPrice(price_vnd) + 'đ';
+                }
+
+                if(!html){
+                    //ton tai khoang gia khuyen mai?
+                    html = this.getPriceRangePromotion();
+                }
+
+                if(!html){
+                    //ton tai khoang gia?
+                    html = this.getPriceRange();
+                }
+
+                if(html){
+                    var NewElement = document.createElement('div');
+                    NewElement.className = "nhatminh247-preview-price";
+                    NewElement.innerHTML = html;
+                    NewElement.appendAfter($anchor[0]);
+                }
+            }
+        }catch (e){
+
         }
     };
 

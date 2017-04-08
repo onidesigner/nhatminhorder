@@ -282,6 +282,8 @@ class ScanController extends Controller
             $order,
             $money_charge
         );
+
+        $package->setDone();
     }
 
     private function __writeActionScanLog(Request $request, WareHouse $warehouse, User $currentUser){

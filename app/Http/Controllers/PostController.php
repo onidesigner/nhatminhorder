@@ -130,6 +130,6 @@ class PostController extends Controller
         $post->create_user_id = $current_user->id;
         $post->save();
 
-        return true;
+        return $post;
     }
 }

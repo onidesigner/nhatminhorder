@@ -113,6 +113,19 @@ class Package extends Model
 
     /**
      * @author vanhs
+     * @desc Ham danh dau kien da ket thuc:
+     * - Kien chuyen thang xuat khoi kho TQ
+     * - Kien khong chuyen thang xuat khoi kho phan phoi tai VN
+     * @return bool
+     */
+    public function setDone(){
+        $this->is_done = 1;
+        $this->is_done_at = date('Y-m-d H:i:s');
+        return $this->save();
+    }
+
+    /**
+     * @author vanhs
      * @desc Ham lay ra can nang de tinh phi dua tren can nang quy doi va can nang tinh
      * @return mixed
      */
