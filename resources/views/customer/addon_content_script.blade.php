@@ -1,6 +1,6 @@
 //=========== begin config =========
-// var sitename = 'nhatminh247.dev:8000';
-var sitename = 'nhatminh247.vn';
+var sitename = 'nhatminh247.dev:8000';
+// var sitename = 'nhatminh247.vn';
 var url_add_to_cart = 'http://' + sitename + '/cart/add';
 //=========== end config =========
 
@@ -766,7 +766,46 @@ var alibaba = function(){
 this.init_data = null;
 
 this.previewPrice = function(){
-// console.log('previewPrice alibaba');
+try{
+var $anchor = document.querySelectorAll('.mod-detail-price');
+if($anchor.length){
+document.querySelectorAll('.nhatminh247-preview-price').remove();
+
+var price_range = this.getProductPriceRange();
+var html = '';
+for(var i = 0; i < price_range.length; i++){
+var is_end = (i + 1) == price_range.length;
+var price_vnd = parseFloat(price_range[i].price) * Helper.getExchangeRate();
+if(price_vnd){
+price_vnd = Helper.formatPrice(price_vnd);
+}
+
+if(is_end){
+html += 'Mua số lượng từ '
++ price_range[i].begin + ' sp trở lên giá ' + price_vnd + 'đ<br>';
+}else{
+html += 'Mua số lượng từ '
++ price_range[i].begin + '-'
++ price_range[i].end
++ ' sp giá ' + price_vnd + 'đ<br>';
+}
+}
+
+if(price_range.length && price_range[0].begin > 1){
+html += 'Yêu cầu mua tối thiếu ' + price_range[0].begin + ' sp';
+}
+
+if(html){
+var NewElement = document.createElement('div');
+NewElement.className = "nhatminh247-preview-price font-small";
+NewElement.innerHTML = html;
+NewElement.appendAfter($anchor[0]);
+}
+}
+}catch (e){
+
+}
+
 };
 
 this.init = function(){

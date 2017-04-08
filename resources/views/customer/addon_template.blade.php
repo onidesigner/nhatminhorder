@@ -107,6 +107,10 @@
         font-size: 30px;
         color: #fff;
     }
+
+    .nhatminh247-preview-price.font-small{
+        font-size: 15px!important;
+    }
 </style>
 
 <input type="hidden" id="_nhatminh247-exchange-rate" value="{{$exchange_rate}}">
@@ -115,12 +119,12 @@
     <p>VUI LÒNG TẮT GOOGLE DỊCH TRƯỚC KHI CHO SẢN PHẨM VÀO GIỎ HÀNG. XIN CÁM ƠN!</p>
 
 </div>
+
 <div class="nhatminh-menubar">
+
     <a href="javascript:void(0)" class="nhatminh-button-add-to-cart" id="_add-to-cart">Đặt hàng NhatMinh247</a>
 
     <span data-exchange-rage="{{$exchange_rate}}">Tỉ giá: {{  App\Util::formatNumber($exchange_rate) }} đ</span>
-
-    &nbsp;&nbsp;&nbsp;
 
     <a href="{{ url('gio-hang')  }}" target="_blank" class="nhatminh-button-view-cart">Vào giỏ hàng</a>
 </div>
