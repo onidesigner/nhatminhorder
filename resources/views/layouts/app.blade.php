@@ -38,7 +38,7 @@
 
 
         <div class="sidebar-header">
-            <a class="sidebar-brand" href="http://nhatminh247.vn" target="_blank"><span class="highlight">NhậtMinh</span> 247</a>
+            <a class="sidebar-brand" href="{{ url('')  }}"><span class="highlight">NhậtMinh</span> 247</a>
             <button type="button" class="sidebar-toggle">
                 <i class="fa fa-times"></i>
             </button>

@@ -113,18 +113,18 @@ Fixed Navigation
 
 
 
-                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
-                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
-                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
-                <li><a target="_blank" href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
+                <li><a href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
+                <li><a href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
+                <li><a href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
+                <li><a href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
 
 
                 @if (Route::has('login'))
                     @if (Auth::check())
-                        <li><a target="_blank" href="{{ url('/home') }}">Vào hệ thống</a></li>
+                        <li><a href="{{ url('/home') }}">Vào hệ thống</a></li>
                     @else
-                        <li><a target="_blank" href="{{ url('/register') }}">Tạo tài khoản</a></li>
-                        <li><a target="_blank" href="{{ url('/login') }}">Đăng nhập</a></li>
+                        <li><a href="{{ url('/register') }}">Tạo tài khoản</a></li>
+                        <li><a href="{{ url('/login') }}">Đăng nhập</a></li>
                     @endif
                 @endif
 

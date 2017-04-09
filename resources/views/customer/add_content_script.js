@@ -408,7 +408,6 @@ var tmall = function(){
     };
 
     this.previewPrice = function(){
-        // console.log('previewPrice tmall');
         var origin_price = document.querySelectorAll('#J_StrPrice');
 
         if(origin_price == null || origin_price.length == 0){
@@ -442,13 +441,13 @@ var tmall = function(){
         document.querySelectorAll('.nhatminh247-preview-price').remove();
 
         var price_cny = this.getPricePromotion();
+        console.log('price_cny: ' + price_cny);
         if(isNaN(price_cny)) price_cny = 0;
         var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
         if(price_vnd){
             price_vnd = Helper.formatPrice(price_vnd);
         }
-        // console.log('price_vnd: ' + this.getPrice());
-        // console.log('exchange_rate: ' + Helper.getExchangeRate());
+
         var NewElement = document.createElement('div');
         NewElement.className = "nhatminh247-preview-price";
         NewElement.innerHTML = 'Giá: ' + price_vnd + 'đ';
@@ -815,71 +814,73 @@ var alibaba = function(){
     this.init_data = null;
 
     this.previewPrice = function(){
-        //th1: sp co khoang gia cu the
+        var $target = document.querySelectorAll('.mod-detail-price');
+        document.querySelectorAll('.nhatminh247-preview-price').remove();
+
+        //th1: sp co khoang gia di kem so luong
         try{
-            var $anchor = document.querySelectorAll('.mod-detail-price');
-            if($anchor.length){
-                document.querySelectorAll('.nhatminh247-preview-price').remove();
-
-                var price_range = this.getProductPriceRange();
-                var html = '';
-                for(var i = 0; i < price_range.length; i++){
-                    var is_end = (i + 1) == price_range.length;
-                    var price_vnd = parseFloat(price_range[i].price) * Helper.getExchangeRate();
-                    if(price_vnd){
-                        price_vnd = Helper.formatPrice(price_vnd);
-                    }
-
-                    if(is_end){
-                        html += 'Mua số lượng từ '
-                            + price_range[i].begin + ' sp trở lên giá ' + price_vnd + 'đ<br>';
-                    }else{
-                        html += 'Mua số lượng từ '
-                            + price_range[i].begin + '-'
-                            + price_range[i].end
-                            + ' sp giá ' + price_vnd + 'đ<br>';
-                    }
+            var price_range = this.getProductPriceRange();
+            var html = '';
+            for(var i = 0; i < price_range.length; i++){
+                var is_end = (i + 1) == price_range.length;
+                var price_vnd = parseFloat(price_range[i].price) * Helper.getExchangeRate();
+                if(price_vnd){
+                    price_vnd = Helper.formatPrice(price_vnd);
                 }
 
-                if(price_range.length && price_range[0].begin > 1){
-                    html += 'Yêu cầu mua tối thiếu ' + price_range[0].begin + ' sp';
-                }
-
-                if(html){
-                    var NewElement = document.createElement('div');
-                    NewElement.className = "nhatminh247-preview-price font-small";
-                    NewElement.innerHTML = html;
-                    NewElement.appendAfter($anchor[0]);
+                if(is_end){
+                    html += 'Mua số lượng từ '
+                        + price_range[i].begin + ' sp trở lên giá ' + price_vnd + 'đ<br>';
+                }else{
+                    html += 'Mua số lượng từ '
+                        + price_range[i].begin + '-'
+                        + price_range[i].end
+                        + ' sp giá ' + price_vnd + 'đ<br>';
                 }
             }
+
+            if(price_range.length && price_range[0].begin > 1){
+                html += 'Yêu cầu mua tối thiếu ' + price_range[0].begin + ' sp';
+            }
+
+            if($target.length && html){
+                var NewElement = document.createElement('div');
+                NewElement.className = "nhatminh247-preview-price font-small";
+                NewElement.innerHTML = html;
+                NewElement.appendAfter($target[0]);
+            }
+
         }catch (e){
-
+            console.log(e.message);
         }
-        //th2: sp co gia tu - den
+        //th2: sp co gia tu - den (VD: 100k ~ 200k)
         try{
-
             var $anchor = document.querySelectorAll('.price-discount-sku');
             if(!$anchor.length){
                 $anchor = document.querySelectorAll('.price-original-sku');
             }
             if($anchor.length){
-                var price_begin = parseFloat($anchor[0].getElementsByClassName('value')[0].textContent.trim()) * Helper.getExchangeRate();
-                var price_end = parseFloat($anchor[0].getElementsByClassName('value')[1].textContent.trim()) * Helper.getExchangeRate();
+                var price_begin = $anchor[0].getElementsByClassName('value')[0] != undefined
+                    ? parseFloat($anchor[0].getElementsByClassName('value')[0].textContent.trim()) * Helper.getExchangeRate() : undefined;
+                var price_end = $anchor[0].getElementsByClassName('value')[1] != undefined
+                    ? parseFloat($anchor[0].getElementsByClassName('value')[1].textContent.trim()) * Helper.getExchangeRate() : undefined;
 
-                var $target = document.querySelectorAll('.mod-detail-price');
+                var html = '';
+                if(!isNaN(price_begin) && !isNaN(price_end)){
+                    html = 'Giá ' + Helper.formatPrice(price_begin) + 'đ ~ ' + Helper.formatPrice(price_end) + 'đ';
+                }else if(!isNaN(price_begin)){
+                    html = 'Giá ' + Helper.formatPrice(price_begin) + 'đ';
+                }
 
-                if($target.length
-                    && !isNaN(price_begin) && !isNaN(price_end)){
-                    var html = 'Giá ' + Helper.formatPrice(price_begin) + 'đ ~ ' + Helper.formatPrice(price_end) + 'đ';
+                if($target.length && html){
                     var NewElement = document.createElement('div');
                     NewElement.className = "nhatminh247-preview-price";
                     NewElement.innerHTML = html;
                     NewElement.appendAfter($target[0]);
                 }
-
             }
         }catch (e){
-
+            console.log(e.message);
         }
     };
 
