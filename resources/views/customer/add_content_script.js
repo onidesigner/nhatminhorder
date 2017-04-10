@@ -1,7 +1,5 @@
 //=========== begin config =========
-// var sitename = 'nhatminh247.dev:8000';
-var sitename = 'nhatminh247.vn';
-var url_add_to_cart = 'http://' + sitename + '/cart/add';
+
 //=========== end config =========
 
 var Helper = {
@@ -441,7 +439,7 @@ var tmall = function(){
         document.querySelectorAll('.nhatminh247-preview-price').remove();
 
         var price_cny = this.getPricePromotion();
-        console.log('price_cny: ' + price_cny);
+        // console.log('price_cny: ' + price_cny);
         if(isNaN(price_cny)) price_cny = 0;
         var price_vnd = parseFloat(price_cny) * Helper.getExchangeRate();
         if(price_vnd){
@@ -1182,6 +1180,34 @@ document.getElementById('_add-to-cart').addEventListener('click', function(e) {
     addToCart(e);
 });
 
+var classname = document.getElementsByClassName("_btn-action");
+
+var myFunction = function() {
+    var action = this.getAttribute('data-action');
+    var send_url = this.getAttribute('data-url');
+    var method = this.getAttribute('data-method');
+
+    var current_url = window.location.origin;
+    if(window.location.pathname){
+        current_url += window.location.pathname;
+    }
+
+    chrome.runtime.sendMessage({
+        action: "request_server",
+        method: method,
+        data: {
+            current_url:current_url,
+            action:action,
+        },
+        url: send_url,
+        callback: 'after_execute_action_success',
+    });
+};
+
+for (var i = 0; i < classname.length; i++) {
+    classname[i].addEventListener('click', myFunction, false);
+}
+
 var factory = function () {
     var _class;
 
@@ -1248,6 +1274,7 @@ function sendAjax(data, function_callback){
     if(!function_callback){
         function_callback = 'after_request_server';
     }
+    var url_add_to_cart = document.querySelectorAll('#_nhatminh247-api-cart-url')[0].value;
     chrome.runtime.sendMessage({
         action: "request_server",
         method: 'post',
@@ -1259,15 +1286,14 @@ function sendAjax(data, function_callback){
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
+        var response = request.response;
         switch (request.action)
         {
             case "after_add_to_cart_1688":
                 //alert when success
-                var response = request.response;
                 if(response.html){
                     Common.appendHtml(document.body, response.html);
                 }
-
                 product_send_data_list.shift();
                 if(product_send_data_list.length){
                     _className.setProductId(product_send_data_list[0]);
@@ -1275,6 +1301,13 @@ chrome.runtime.onMessage.addListener(
                     sendAjax(data, 'after_add_to_cart_1688');
                 }
                 break;
+
+            case "after_execute_action_success":
+                if(response.html){
+                    Common.appendHtml(document.body, response.html);
+                }
+                break;
+
             default :
                 break;
 

@@ -120,6 +120,7 @@
 </style>
 
 <input type="hidden" id="_nhatminh247-exchange-rate" value="{{$exchange_rate}}">
+<input type="hidden" id="_nhatminh247-api-cart-url" value="{{ url('cart/add')  }}">
 
 <div class="nhatminh-notification">
     <p>VUI LÒNG TẮT GOOGLE DỊCH TRƯỚC KHI CHO SẢN PHẨM VÀO GIỎ HÀNG. XIN CÁM ƠN!</p>
@@ -144,9 +145,17 @@
 
     <a href="javascript:void(0)" class="nhatminh-button-add-to-cart" id="_add-to-cart">Thêm vào giỏ</a>
 
-    {{--<a style="color: #fff; margin-right: 15px;" href="#">Lưu SP</a>--}}
+    {{--<a style="color: #fff; margin-right: 15px;"--}}
+       {{--href="javascript:void(0)" class="_btn-action"--}}
+       {{--data-url="{{ url('api/cart/action')  }}"--}}
+       {{--data-method="post"--}}
+       {{--data-action="save-product">Lưu SP</a>--}}
 
-    {{--<a style="color: #fff; margin-right: 15px;" href="#">Báo lỗi</a>--}}
+    {{--<a style="color: #fff; margin-right: 15px;"--}}
+       {{--href="javascript:void(0)" class="_btn-action"--}}
+       {{--data-url="{{ url('api/cart/action')  }}"--}}
+       {{--data-method="post"--}}
+       {{--data-action="send-link-error">Báo lỗi</a>--}}
 
 </div>
 
