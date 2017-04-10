@@ -13,7 +13,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-offset-4 col-md-3">
+        <div class="col-md-6">
             <div class="card">
 
                 <div class="card-body">
@@ -33,9 +33,9 @@
                             @foreach($orders as $order)
                                 <tr>
                                     <td>
-                                        <img style="float: left;
+                                        <img class="lazy" style="float: left;
                                                 margin-right: 10px;
-                                                margin-top: 10px;" src="{{ $order->avatar  }}" width="50px" alt="">
+                                                margin-top: 10px;" data-src="{{ $order->avatar  }}" width="50px" alt="">
 
                                         <h4>
                                             <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
@@ -61,6 +61,14 @@
 
 @section('js_bottom')
     @parent
+
+    <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
+    <script>
+        $(function() {
+            $('.lazy').lazy();
+        });
+    </script>
+
     <script>
         $(document).ready(function(){
 

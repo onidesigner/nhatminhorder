@@ -367,6 +367,7 @@ class CartController extends Controller
 
     private function __getInitDataCart(User $customer){
         $data = [];
+        $shop_ids = [];
 
         $customer_id = $customer->id;
 
@@ -433,6 +434,9 @@ class CartController extends Controller
                 $cart->services = $services;
                 $data['shops'][] = $cart;
 
+
+                $shop_ids[] = $cart->shop_id;
+
                 $total_shops++;
             endforeach;
         endif;
@@ -445,6 +449,8 @@ class CartController extends Controller
             ];
         }
         $data['services'] = $services_data;
+
+        $data['shop_ids'] = $shop_ids;
 
         $data['statistic'] = [
             'total_shops' => $total_shops,

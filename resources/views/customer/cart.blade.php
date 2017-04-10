@@ -14,7 +14,13 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <strong>{{$data['statistic']['total_shops']}}</strong> shop / <strong>{{$data['statistic']['total_items']}}</strong> sản phẩm / <strong><span class="">{{ App\Util::formatNumber($data['statistic']['total_amount'])  }}</span></strong>đ tiền hàng
+            <div class="pull-left">
+                <strong>{{$data['statistic']['total_shops']}}</strong> shop / <strong>{{$data['statistic']['total_items']}}</strong> sản phẩm / <strong><span class="">{{ App\Util::formatNumber($data['statistic']['total_amount'])  }}</span></strong>đ tiền hàng
+            </div>
+
+            {{--<a href="{{ url('dat-coc?shop_id=' . implode(',', $data['shop_ids']))  }}" class="btn btn-danger pull-right text-uppercase">--}}
+                {{--Đặt cọc {{$data['statistic']['total_shops']}} shop--}}
+            {{--</a>--}}
         </div>
     </div>
 
@@ -133,9 +139,8 @@
 
                                     <td>
                                         <img style="margin-right: 10px;"
-                                             data-src="{{ urldecode($item->image_model) }}"
-                                             src=""
-                                             class="pull-left lazy"
+                                             src="{{ urldecode($item->image_model) }}"
+                                             class="pull-left"
                                              width="50px" />
                                         <a href="{{$item->link_origin}}" target="_blank">
                                             {{$item->title_origin}}
