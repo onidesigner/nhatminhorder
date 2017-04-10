@@ -181,8 +181,9 @@ End Fixed Navigation
 									NhatMinh247 sẵn sàng hỗ trợ quý khách tìm kiếm nguồn hàng và nhập trực tiếp từ các website hàng đầu Trung Quốc.  Chúng tôi cam kết dịch vụ đặt hàng rẻ nhất, vận chuyển an toàn nhất với mức phí tốt nhất.
 <br><br>“GIEO CHỮ TÍN- GẶT NIỀM TIN”
 
-                                </span>
-                            <a href="http://nhatminh247.vn/ho-tro/8" target="_blank" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
+                            </span>
+
+                            <a href="{{ 'ho-tro/8' }}" class="btn btn-blue btn-effect">Tìm hiểu thêm</a>
                         </div>
                     </div>
 

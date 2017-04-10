@@ -24,64 +24,68 @@
 
                     @if(count($orders))
 
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Đơn hàng</th>
-                                <th>Đặt cọc</th>
-                                <th>Tỉ giá</th>
-                                <th>Tiền hàng</th>
-                                <th>Thời gian</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            @foreach($orders as $order)
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
                                 <tr>
-                                    <td>
-
-                                        <img src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
-
-                                        <strong>[{{strtoupper($order->site)}}]</strong>
-                                        <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
-                                        <p>
-                                            {{ App\Order::getStatusTitle($order->status)  }}
-                                        </p>
-
-                                    </td>
-                                    <td>
-                                        <p>
-                                            Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)  }} <sup>đ</sup></span>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
-                                    </td>
-                                    <td>
-                                        <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
-                                    </td>
-                                    <td>
-
-                                        <ul style="list-style: none; margin: 0; padding: 0;">
-
-
-                                            <?php
-                                            foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                            if(empty($order->$k)){
-                                                continue;
-                                            }
-                                            ?>
-                                            <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
-                                            <?php } ?>
-
-                                        </ul>
-
-                                    </td>
+                                    <th>Đơn hàng</th>
+                                    <th>Đặt cọc</th>
+                                    <th>Tỉ giá</th>
+                                    <th>Tiền hàng</th>
+                                    <th>Thời gian</th>
                                 </tr>
-                            @endforeach
+                                </thead>
+                                <tbody>
 
-                            </tbody>
-                        </table>
+                                @foreach($orders as $order)
+                                    <tr>
+                                        <td>
+
+                                            <img src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
+
+                                            <strong>[{{strtoupper($order->site)}}]</strong>
+                                            <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+                                            <p>
+                                                {{ App\Order::getStatusTitle($order->status)  }}
+                                            </p>
+
+                                        </td>
+                                        <td>
+                                            <p>
+                                                Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)  }} <sup>đ</sup></span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
+                                        </td>
+                                        <td>
+                                            <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
+                                        </td>
+                                        <td>
+
+                                            <ul style="list-style: none; margin: 0; padding: 0;">
+
+
+                                                <?php
+                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                if(empty($order->$k)){
+                                                    continue;
+                                                }
+                                                ?>
+                                                <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
+                                                <?php } ?>
+
+                                            </ul>
+
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
 
                         {{ $orders->links() }}
 

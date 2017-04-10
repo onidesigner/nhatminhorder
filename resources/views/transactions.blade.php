@@ -24,8 +24,13 @@
 
 
                     @if($can_create_transaction)
-                        <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">
-                            TẠO GIAO DỊCH</a>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <a href="{{ url('transaction/adjustment')  }}" class="btn btn-danger text-uppercase pull-right">
+                                    TẠO GIAO DỊCH</a>
+                            </div>
+                        </div>
+
                     @endif
 
                         <form onchange="this.submit();" action="{{ url('transactions')  }}" method="get">
@@ -43,66 +48,70 @@
                             </select>
                             <button class="">Tìm kiếm</button>
                         </form>
-                    <table class="table no-padding-leftright">
-                        <thead>
-                        <tr>
-                            <th width="5%">ID</th>
-                            <th width="20%">Khách</th>
-                            <th width="20%">Mã GD</th>
-                            <th width="10%">Trạng thái</th>
-                            <th width="10%">Đối tượng</th>
-                            <th width="15%">Thời gian</th>
-                            <th class="text-right">Giá trị</th>
-                            <th class="text-right">Số dư cuối</th>
-                        </tr>
-                        </thead>
-                        <tbody>
 
-                        @foreach($transactions as $transaction)
-                        <?php
 
-                            $user = App\User::find($transaction->user_id);
-                            $order = App\Order::find($transaction->object_id);
+                        <div class="table-responsive">
 
-                            if(!$user) $user = new App\User();
-                            if(!$order) $order = new App\Order();
-                        ?>
-                        <tr>
-                            <td>
-                                {{$transaction->id}}
-                            </td>
-                            <td>
-                                <a href="{{ url('user/detail', $user->id)  }}">
-                                    <strong>{{$user->email}}</strong>
-                                </a><br>
+                            <table class="table no-padding-leftright">
+                                <thead>
+                                <tr>
+                                    <th width="5%">ID</th>
+                                    <th width="20%">Khách</th>
+                                    <th width="20%">Mã GD</th>
+                                    <th width="10%">Trạng thái</th>
+                                    <th width="10%">Đối tượng</th>
+                                    <th width="15%">Thời gian</th>
+                                    <th class="text-right">Giá trị</th>
+                                    <th class="text-right">Số dư cuối</th>
+                                </tr>
+                                </thead>
+                                <tbody>
 
-                                <small>{{$user->name}}</small>
+                                @foreach($transactions as $transaction)
+                                    <?php
 
-                                <code>{{$user->code}}</code>
-                            </td>
-                            <td>
-                                {{$transaction->transaction_code}}<br>
-                            <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
-                                <p>
-                                    Loại GD: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
-                                </p>
-                            </td>
+                                    $user = App\User::find($transaction->user_id);
+                                    $order = App\Order::find($transaction->object_id);
 
-                            <td>
+                                    if(!$user) $user = new App\User();
+                                    if(!$order) $order = new App\Order();
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            {{$transaction->id}}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url('user/detail', $user->id)  }}">
+                                                <strong>{{$user->email}}</strong>
+                                            </a><br>
+
+                                            <small>{{$user->name}}</small>
+
+                                            <code>{{$user->code}}</code>
+                                        </td>
+                                        <td>
+                                            {{$transaction->transaction_code}}<br>
+                                            <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
+                                            <p>
+                                                Loại GD: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
+                                            </p>
+                                        </td>
+
+                                        <td>
 
 
                                     <span class="@if($transaction->state == App\UserTransaction::STATE_COMPLETED) label label-success @endif">
                                 {{ App\UserTransaction::$transaction_state[$transaction->state]  }}
                                     </span>
-                            </td>
-                            <td>
-                                @if($transaction->object_type == App\UserTransaction::OBJECT_TYPE_ORDER)
-                                    <a href="{{  url('order', $order->id) }}">{{$order->code}}</a>
-                                @endif
-                            </td>
+                                        </td>
+                                        <td>
+                                            @if($transaction->object_type == App\UserTransaction::OBJECT_TYPE_ORDER)
+                                                <a href="{{  url('order', $order->id) }}">{{$order->code}}</a>
+                                            @endif
+                                        </td>
 
-                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
-                            <td class="text-right">
+                                        <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
+                                        <td class="text-right">
                                 <span class="text-danger">
                                     {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
                                 </span>
@@ -110,17 +119,19 @@
 
 
 
-                            </td>
-                            <td class="text-right">
-                                <strong>
-                                    {{ App\Util::formatNumber($transaction->ending_balance) }} <sup>d</sup>
-                                </strong>
-                            </td>
+                                        </td>
+                                        <td class="text-right">
+                                            <strong>
+                                                {{ App\Util::formatNumber($transaction->ending_balance) }} <sup>d</sup>
+                                            </strong>
+                                        </td>
 
-                        </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+
+                        </div>
 
                     {{ $transactions->links() }}
                 </div>
