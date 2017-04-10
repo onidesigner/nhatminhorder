@@ -2,6 +2,19 @@ var xhr = null;
 
 $(document).ready(function() {
 
+    // show - hide menu sidebar mobile
+    $(document).on('click', '.sidebar-toggle', function(){
+        var $dom = $('.app.app-default');
+        var $sidebar = $('.app-sidebar');
+        if($dom.hasClass('active')){
+            $dom.removeClass('active');
+            $sidebar.removeClass('active');
+        }else{
+            $dom.addClass('active');
+            $sidebar.addClass('active');
+        }
+    });
+
     // $('.sidebar-nav > li').each(function(i){
     //     var len = $(this).find('.dropdown-menu > ul > li').length;
     //     if(!len){
