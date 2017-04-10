@@ -12,30 +12,30 @@
             @if($current_user->section == App\User::SECTION_CRANE)
 
                 <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <div class="card card-mini">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    <h3>Thống kê tài chính</h3>
-                                </div>
-                            </div>
-                            <div class="card-body no-padding table-responsive">
-                                <table class="table card-table">
-                                    <tbody>
-                                        @if($home_statistic)
-                                            @foreach($home_statistic as $key => $val)
-                                                <tr>
-                                                    <td>{{$key}}</td>
-                                                    <td class="right">{{ App\Util::formatNumber($val)  }} <sup>đ</sup></td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
+                    {{--<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">--}}
+                        {{--<div class="card card-mini">--}}
+                            {{--<div class="card-header">--}}
+                                {{--<div class="card-title">--}}
+                                    {{--<h3>Thống kê tài chính</h3>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                            {{--<div class="card-body no-padding table-responsive">--}}
+                                {{--<table class="table card-table">--}}
+                                    {{--<tbody>--}}
+                                        {{--@if($home_statistic)--}}
+                                            {{--@foreach($home_statistic as $key => $val)--}}
+                                                {{--<tr>--}}
+                                                    {{--<td>{{$key}}</td>--}}
+                                                    {{--<td class="right">{{ App\Util::formatNumber($val)  }} <sup>đ</sup></td>--}}
+                                                {{--</tr>--}}
+                                            {{--@endforeach--}}
+                                        {{--@endif--}}
 
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                                    {{--</tbody>--}}
+                                {{--</table>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <a class="card card-banner card-green-light">
                             <div class="card-body">

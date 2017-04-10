@@ -130,8 +130,13 @@
                                         </form>
 
                                     </td>
+
                                     <td>
-                                        <img style="margin-right: 10px;" src="{{ urldecode($item->image_model) }}" class="pull-left" width="50px" />
+                                        <img style="margin-right: 10px;"
+                                             data-src="{{ urldecode($item->image_model) }}"
+                                             src=""
+                                             class="pull-left lazy"
+                                             width="50px" />
                                         <a href="{{$item->link_origin}}" target="_blank">
                                             {{$item->title_origin}}
                                         </a>
@@ -223,9 +228,10 @@
 
 @section('js_bottom')
     @parent
+    <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
     <script>
-        $(document).ready(function(){
-            //todo
+        $(function() {
+            $('.lazy').lazy();
         });
     </script>
 @endsection

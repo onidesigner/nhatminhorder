@@ -74,7 +74,10 @@
 
                                         <td>
 
-                                            <img class="lazy" src="{{$order->avatar}}" style="width: 50px; float: left; margin-right: 15px;" alt="">
+                                            <img
+                                                    class="lazy"
+                                                    data-src="{{$order->avatar}}"
+                                                    style="width: 50px; float: left; margin-right: 15px;" alt="">
 
                                             <strong>[{{strtoupper($order->site)}}]</strong>
                                             <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
@@ -154,6 +157,14 @@
 
 @section('js_bottom')
     @parent
+
+    <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
+    <script>
+        $(function() {
+            $('.lazy').lazy();
+        });
+    </script>
+
     <script>
         $(document).ready(function(){
 
@@ -176,8 +187,6 @@
             });
 
         });
-
-
 
     </script>
 @endsection
