@@ -160,13 +160,8 @@
                                             $current_user = App\User::find(Auth::user()->id);
                                         ?>
 
-                                        @if(Auth::user()->section == App\User::SECTION_CRANE)
-                                            [Quản trị viên]
-                                        @else
-
-                                        @endif
-
-                                        {{ Auth::user()->name }} <code>{{ $current_user->code }}</code>
+                                        <span style="@if(Auth::user()->section == App\User::SECTION_CRANE)color: orangered;@endif">{{ Auth::user()->name }}</span>
+                                        ({{ $current_user->code }})
                                     </h4>
                                 </div>
                                 <ul class="action">
