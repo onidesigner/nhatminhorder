@@ -28,7 +28,7 @@
                             <th>TT</th>
                             <th>Site</th>
                             <th>Sản phẩm</th>
-                            <th>Lưu lúc</th>
+                            <th>Thời gian lưu</th>
                         </tr>
                         </thead>
                         <tbody>
