@@ -171,6 +171,9 @@
                                 </div>
                                 <ul class="action">
                                     <li>
+                                        <a href="{{ url('san-pham-da-luu')  }}">Sản phẩm đã lưu</a>
+                                    </li>
+                                    <li>
 
 
                                         @if(Auth::user()->section == App\User::SECTION_CRANE)

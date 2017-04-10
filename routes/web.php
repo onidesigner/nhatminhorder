@@ -18,6 +18,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 Route::get('/addon/template1', 'Customer\AddonController@get_template1');
+Route::post('/cart/action', 'Customer\AddonController@executeAction');
+Route::get('/san-pham-da-luu', 'Customer\ProductFavoriteController@indexs');
 
 #region quan ly gio hang
 //Route::get('/cart/add', 'Customer\AddonController@addCart');

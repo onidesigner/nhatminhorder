@@ -167,11 +167,8 @@
                     <h5 class="modal-title">
                         <span>
 
-                            @if($success)
-                                Thêm giỏ hàng thành công
-                            @else
-                                Thông báo lỗi thêm giỏ hàng
-                            @endif
+                            {!! $header !!}
+
 
                         </span>
                     </h5>
@@ -179,12 +176,7 @@
                 <div class="modal-body">
                     <p class="normal">
 
-                        @if($success)
-                            Số tiền của sản phẩm phải trả: <span style="color:#a8041f; font-weight: bold;">{{ $price  }}</span> NDT (<strong>{{App\Util::formatNumber($price * $exchange_rate)}}đ</strong>)
-                        @else
-                            {!! $message !!}
-                        @endif
-
+                        {!! $body !!}
 
                     </p>
 
@@ -197,10 +189,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="next" type="button" onclick="document.getElementById('confirm_main').parentNode.removeChild(document.querySelectorAll('.book-nhatminh247')[document.querySelectorAll('.book-nhatminh247').length - 1])">
-                        <span>Tiếp tục mua hàng</span>
-                    </button>
-                    <a class="cart" href="{{ url('gio-hang')  }}">Vào giỏ hàng</a>
+                    {!! $footer !!}
+
                 </div>
             </div>
         </div>

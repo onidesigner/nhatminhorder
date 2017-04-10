@@ -1180,34 +1180,6 @@ document.getElementById('_add-to-cart').addEventListener('click', function(e) {
 addToCart(e);
 });
 
-var classname = document.getElementsByClassName("_btn-action");
-
-var myFunction = function() {
-var action = this.getAttribute('data-action');
-var send_url = this.getAttribute('data-url');
-var method = this.getAttribute('data-method');
-
-var current_url = window.location.origin;
-if(window.location.pathname){
-current_url += window.location.pathname;
-}
-
-chrome.runtime.sendMessage({
-action: "request_server",
-method: method,
-data: {
-current_url:current_url,
-action:action,
-},
-url: send_url,
-callback: 'after_execute_action_success',
-});
-};
-
-for (var i = 0; i < classname.length; i++) {
-classname[i].addEventListener('click', myFunction, false);
-}
-
 var factory = function () {
 var _class;
 
@@ -1226,6 +1198,37 @@ return _class;
 
 var _className = new factory();
 _className.init();
+
+var classname = document.getElementsByClassName("_btn-action");
+
+var myFunction = function() {
+var action = this.getAttribute('data-action');
+var send_url = this.getAttribute('data-url');
+var method = this.getAttribute('data-method');
+
+var current_url = window.location.origin;
+if(window.location.pathname){
+current_url += window.location.pathname;
+}
+
+chrome.runtime.sendMessage({
+action: "request_server",
+method: method,
+data: {
+current_url:current_url,
+action:action,
+site:_className.getSite(),
+avatar:_className.getProductImage(),
+product_name: _className.getProductName(),
+},
+url: send_url,
+callback: 'after_execute_action_success',
+});
+};
+
+for (var i = 0; i < classname.length; i++) {
+classname[i].addEventListener('click', myFunction, false);
+}
 
 setInterval(function(){
 _className.previewPrice();

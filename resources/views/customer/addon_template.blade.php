@@ -145,17 +145,17 @@
 
     <a href="javascript:void(0)" class="nhatminh-button-add-to-cart" id="_add-to-cart">Thêm vào giỏ</a>
 
-    {{--<a style="color: #fff; margin-right: 15px;"--}}
-       {{--href="javascript:void(0)" class="_btn-action"--}}
-       {{--data-url="{{ url('api/cart/action')  }}"--}}
-       {{--data-method="post"--}}
-       {{--data-action="save-product">Lưu SP</a>--}}
+    <a style="color: #fff; margin-right: 15px;"
+       href="javascript:void(0)" class="_btn-action"
+       data-url="{{ url('cart/action')  }}"
+       data-method="post"
+       data-action="save_product">Lưu SP</a>
 
-    {{--<a style="color: #fff; margin-right: 15px;"--}}
-       {{--href="javascript:void(0)" class="_btn-action"--}}
-       {{--data-url="{{ url('api/cart/action')  }}"--}}
-       {{--data-method="post"--}}
-       {{--data-action="send-link-error">Báo lỗi</a>--}}
+    <a style="color: #fff; margin-right: 15px;"
+       href="javascript:void(0)" class="_btn-action"
+       data-url="{{ url('cart/action')  }}"
+       data-method="post"
+       data-action="send_link_error">Báo lỗi</a>
 
 </div>
 
