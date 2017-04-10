@@ -20,7 +20,11 @@ $(function() {
              return false;
          }
 
-         window.open(href , '_blank');
+         if($(this).attr('target') == '_blank'){
+             window.open(href , '_blank');
+         }else{
+             window.location.href = href;
+         }
     });
 
     var Page = (function() {
