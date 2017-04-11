@@ -164,7 +164,11 @@ class OrderController extends Controller
             'can_view_package_list' => Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW),
         ];
 
-        $fee = $order->fee($customer);
+        $packages = $order->package()->where([
+            'is_deleted' => 0,
+        ])->get();
+
+        $fee = $order->fee($customer, $packages);
 
         $order_fee = [];
         foreach(Order::$fee_field_order_detail as $key => $label){
@@ -202,10 +206,6 @@ class OrderController extends Controller
                 ];
             }
         }
-
-        $packages = $order->package()->where([
-            'is_deleted' => 0,
-        ])->get();
 
         return [
             'packages' => $packages,

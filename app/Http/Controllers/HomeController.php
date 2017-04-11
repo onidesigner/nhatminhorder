@@ -13,6 +13,7 @@ use App\User;
 use App\Role;
 use App\UserRole;
 use App\Permission;
+use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
@@ -119,10 +120,17 @@ class HomeController extends Controller
             $total_order_deposit_today = Order::getTotalDepositByDay(date('Y-m-d'));
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
 
-            $home_statistic = [
-                'Tổng tiền hàng khách' => 0,
-                'Phí VC nội địa TQ' => 0,
-                'Khách đã thanh toán' => 0,
+            $amount1 = 0;
+            $amount2 = 0;
+
+            $home_statistic[] = [
+                'title' => sprintf('Tổng tiền hàng của khách: %sđ', Util::formatNumber($amount1)),
+                'content' => '',
+            ];
+
+            $home_statistic[] = [
+                'title' => sprintf('Tổng tiền khách đã thanh toán: %sđ', Util::formatNumber($amount2)),
+                'content' => '',
             ];
         }
 

@@ -506,12 +506,20 @@ class Order extends Model
         'need_payment_amount' => 'Cần thanh toán',
     ];
 
-    public function fee(User $customer){
+    public function fee(User $customer, $packages = []){
         $total_amount_vnd = $this->amount(true);
 
-        $weight = 0;
         $buying_fee = $this->getBuyingFee($total_amount_vnd);
-        $shipping_china_vietnam_fee = $this->getShippingChinaVietnam($weight);
+        $shipping_china_vietnam_fee = 0;
+
+        if(count($packages)){
+            foreach($packages as $package){
+                if(!$package instanceof Package){
+                    continue;
+                }
+                $shipping_china_vietnam_fee += $this->getShippingChinaVietnam($package->getWeightCalFee());
+            }
+        }
 
         $total_fee_vnd = $buying_fee + $shipping_china_vietnam_fee;
         $total_amount_all = $total_amount_vnd + $total_fee_vnd;

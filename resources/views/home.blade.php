@@ -13,32 +13,58 @@
 
                 <div class="row">
                     {{--<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">--}}
+
+
                         {{--<div class="card card-mini">--}}
                             {{--<div class="card-header">--}}
                                 {{--<div class="card-title">--}}
-                                    {{--<h3>Thống kê tài chính</h3>--}}
+                                    {{--<h3>--}}
+                                        {{--Thống kê tài chính--}}
+                                        {{--<select name="" id="">--}}
+                                            {{--<option value="">-- Chọn khách --</option>--}}
+                                        {{--</select>--}}
+                                    {{--</h3>--}}
                                 {{--</div>--}}
                             {{--</div>--}}
-                            {{--<div class="card-body no-padding table-responsive">--}}
-                                {{--<table class="table card-table">--}}
-                                    {{--<tbody>--}}
-                                        {{--@if($home_statistic)--}}
-                                            {{--@foreach($home_statistic as $key => $val)--}}
-                                                {{--<tr>--}}
-                                                    {{--<td>{{$key}}</td>--}}
-                                                    {{--<td class="right">{{ App\Util::formatNumber($val)  }} <sup>đ</sup></td>--}}
-                                                {{--</tr>--}}
-                                            {{--@endforeach--}}
-                                        {{--@endif--}}
+                            {{--<div class="card-body no-padding">--}}
 
-                                    {{--</tbody>--}}
-                                {{--</table>--}}
+                                {{--<div class="panel-group" id="accordion">--}}
+
+                                    {{--@if($home_statistic)--}}
+                                        {{--@foreach($home_statistic as $key => $val)--}}
+                                            {{--<div class="panel panel-default">--}}
+                                                {{--<div class="panel-heading">--}}
+                                                    {{--<h4 class="panel-title">--}}
+                                                        {{--<a data-toggle="collapse" data-parent="#accordion" href="#collapse{{$key}}">--}}
+                                                            {{--{{$val['title']}}--}}
+                                                        {{--</a>--}}
+                                                    {{--</h4>--}}
+                                                {{--</div>--}}
+
+                                                {{--<div id="collapse{{$key}}" class="panel-collapse collapse">--}}
+                                                    {{--<div class="panel-body">--}}
+                                                        {{--{!! $val['content'] !!}--}}
+                                                    {{--</div>--}}
+                                                {{--</div>--}}
+
+                                            {{--</div>--}}
+                                        {{--@endforeach--}}
+                                    {{--@endif--}}
+
+
+                                {{--</div>--}}
                             {{--</div>--}}
                         {{--</div>--}}
                     {{--</div>--}}
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <a class="card card-banner card-green-light">
+
+
+
                             <div class="card-body">
+
+
+
                                 <i class="icon fa fa-shopping-basket fa-4x"></i>
                                 <div class="content">
                                     <div class="title">Đơn đặt cọc trong ngày</div>

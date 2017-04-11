@@ -129,10 +129,20 @@
                                                     <textarea name="note" id="" cols="30" rows="3" class="form-control">{{ $package->note  }}</textarea>
                                                 </li>
                                                 <li>
-                                                    <a class="btn-link" target="_blank" href="{{ url('package?action=print&logistic_package_barcode=' . $package->logistic_package_barcode)  }}"><i class="fa fa-print"></i> In tem</a>
+                                                    <iframe
+                                                            style="display: none!important;" src="" frameborder="0"></iframe>
+
+                                                    <a style="margin-right: 10px;"
+                                                       class="btn-link _print"
+                                                       href="javascript:void(0)"><i class="fa fa-print"></i> In tem</a>
+
+                                                    <a style="margin-right: 10px;"
+                                                       class="btn-link _link-in"
+                                                       target="_blank"
+                                                       href="{{ url('package?action=print&logistic_package_barcode=' . $package->logistic_package_barcode)  }}">Link In</a>
                                                     &nbsp;&nbsp;&nbsp;
                                                     @if(!$package->order)
-                                                    <a class="btn-link _delete-package"
+                                                    <a style="margin-right: 10px;" class="btn-link _delete-package"
                                                        data-package-id="{{$package->id}}"
                                                        href="javascript:void(0)">Xóa</a>
                                                     @endif
@@ -161,6 +171,14 @@
     @parent
     <script>
         $(document).ready(function(){
+
+            $(document).on('click', '._print', function(e){
+                var parent = $(this).parents('._package');
+                var href = parent.find('._link-in').attr('href');
+                if(href){
+                    parent.find('iframe').attr('src', href);
+                }
+            });
 
             $(document).on('keypress', '#_barcode', function(e){
                if(e.keyCode == 13){

@@ -113,7 +113,11 @@ class OrderController extends Controller
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
         ];
 
-        $fee = $order->fee($customer);
+        $packages = $order->package()->where([
+            'is_deleted' => 0,
+        ])->get();
+
+        $fee = $order->fee($customer, $packages);
 
         $order_fee = [];
         foreach(Order::$fee_field_order_detail as $key => $label){
@@ -151,10 +155,6 @@ class OrderController extends Controller
                 ];
             }
         }
-
-        $packages = $order->package()->where([
-            'is_deleted' => 0,
-        ])->get();
 
         return [
             'order_id' => $order->id,

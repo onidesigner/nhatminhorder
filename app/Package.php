@@ -193,13 +193,26 @@ class Package extends Model
      * @return int
      */
     public function getWeightCalFee(){
-        $weight = 0;
+        $weight = (float)$this->weight;
+        $converted_weight = (float)$this->converted_weight;
+
         if($this->weight_type == 1){
-            return (float)$this->weight;
+            return $weight;
         }else if($this->weight_type == 2){
-            return (float)$this->converted_weight;
+            if($converted_weight > $weight){
+                return $converted_weight;
+            }else{
+                return $weight;
+            }
         }
-        return $weight;
+        return 0;
+    }
+
+    public function getOrder(){
+        if($this->order_id){
+            return Order::find($this->order_id);
+        }
+        return null;
     }
 
     /**

@@ -245,9 +245,23 @@ class PackageController extends Controller
         if($action){
             switch ($action){
                 case 'print':
+                    $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+
                     $logistic_package_barcode_array = explode(',', $logistic_package_barcode);
                     foreach($logistic_package_barcode_array as $logistic_package_barcode_item){
-                        echo "$logistic_package_barcode_item<br>";
+
+                        $package = Package::retrieveByCode($logistic_package_barcode_item);
+                        if($package instanceof Package){
+                            $view = View::make('logistic_package_barcode_print', [
+                                'package' => $package,
+                                'img_base_64' => base64_encode($generator->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_11))
+                            ]);
+                            $html = $view->render();
+                            echo $html;
+                        }else{
+                            echo '<br>Khong tim thay kien #' . $logistic_package_barcode_item;
+                        }
+
                     }
                     break;
             }
