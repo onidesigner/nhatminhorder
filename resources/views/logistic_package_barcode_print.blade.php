@@ -25,9 +25,10 @@
     <br>
     <span style="font-size: 11px; display: inline-block; text-align: left; width: 100%; padding: 0 5px;">
         @if($package->isTransportStraight())
-            CT&nbsp;@endif
-        @if($package->getOrder()){{$package->getOrder()->destination_warehouse}}&nbsp;@endif
-        {{$package->getWeightCalFee()}}kg
+            CT
+        @endif
+        @if($package->getOrder()){{$package->getOrder()->destination_warehouse}} @endif
+        <span style="padding-left: 5px;">{{$package->getWeightCalFee()}}kg</span>
     </span>
 </div>
 
