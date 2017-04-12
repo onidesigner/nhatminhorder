@@ -1,7 +1,7 @@
 <style>
     @media print {
         @page {
-            size: 70mm 22mm; /* landscape */
+            size: 70mm 20mm; /* landscape */
             /* you can also specify margins here: */
             font-size: 80px;
             margin: 0;
