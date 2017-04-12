@@ -45,13 +45,13 @@
                                             <tr>
                                                 <td width="30%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
-                                                    {{$order->code}}
+                                                    <h4 style="margin-top: 0;">{{$order->code}}</h4>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Trạng thái</td>
                                                 <td>
-                                                    {{ App\Order::getStatusTitle($order->status)  }}
+                                                    <h4 style="margin-top: 0;">{{ App\Order::getStatusTitle($order->status)  }}</h4>
                                                 </td>
                                             </tr>
 

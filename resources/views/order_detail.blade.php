@@ -109,7 +109,7 @@
                                             <tr>
                                                 <td>Khách hàng: </td>
                                                 <td>
-                                                    {{$customer->email}} ({{$customer->code}})
+                                                    <a href="{{ url('user/detail', $customer->id)  }}">{{$customer->email}}</a> ({{$customer->code}})
                                                 </td>
                                             </tr>
                                             <tr>
