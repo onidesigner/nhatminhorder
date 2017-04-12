@@ -254,9 +254,15 @@ class PackageController extends Controller
 
                         $package = Package::retrieveByCode($logistic_package_barcode_item);
                         if($package instanceof Package){
+                            $svg = $generatorSVG->getBarcode(
+                                $logistic_package_barcode_item,
+                                $generator::TYPE_CODE_128,
+                                1,
+                                30
+                            );
                             $view = View::make('logistic_package_barcode_print', [
                                 'package' => $package,
-                                'svg' => $generatorSVG->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_128),
+                                'svg' => $svg,
                                 'img_base_64' => base64_encode(
                                     $generator->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_128))
                             ]);
