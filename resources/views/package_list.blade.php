@@ -43,7 +43,7 @@
                                 <tr>
                                     <td>
                                         @if($package->logistic_package_barcode)
-                                            <a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
+                                            <a href="{{ url('package', $package->logistic_package_barcode)  }}">{{$package->logistic_package_barcode}}</a>
                                         @endif
 
                                         @if($package->weight)
@@ -80,7 +80,7 @@
                                     </td>
                                     <td>
                                         @if($package->order instanceof App\Order)
-                                            <a href="{{ url('order', $package->order->id) }}" target="_blank">{{$package->order->code}}</a>
+                                            <a href="{{ url('order', $package->order->id) }}">{{$package->order->code}}</a>
                                             <br>
                                             <small>
                                                 {{  App\Order::getStatusTitle($package->order->status) }}
@@ -91,7 +91,7 @@
                                     </td>
                                     <td>
                                         @if($package->customer instanceof App\User)
-                                            <a href="{{ url('user/detail', $package->customer->id) }}" target="_blank">{{$package->customer->email}}</a>
+                                            <a href="{{ url('user/detail', $package->customer->id) }}">{{$package->customer->email}}</a>
                                             <br>
                                             <small>{{$package->customer->name}}</small>
                                         @else
@@ -102,7 +102,7 @@
                                         <?php
                                         $created_user = App\User::find($package->created_by);
                                         ?>
-                                        <a href="{{ url('user/detail', $package->created_by)  }}" target="_blank">
+                                        <a href="{{ url('user/detail', $package->created_by)  }}">
                                             {{ $created_user->email  }}
                                         </a>
                                         <br>

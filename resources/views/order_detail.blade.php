@@ -97,19 +97,19 @@
                                             <tr>
                                                 <td width="30%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
-                                                    {{$order->code}}
+                                                    <h4 style="margin-top: 0;">{{$order->code}}</h4>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Trạng thái: </td>
                                                 <td>
-                                                    {{ App\Order::getStatusTitle($order->status)  }}
+                                                    <h4 style="margin-top: 0;">{{ App\Order::getStatusTitle($order->status)  }}</h4>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Khách hàng: </td>
                                                 <td>
-                                                    {{$customer->email}} (<code>{{$customer->code}}</code>)
+                                                    {{$customer->email}} ({{$customer->code}})
                                                 </td>
                                             </tr>
                                             <tr>
@@ -276,13 +276,16 @@
                                                         @if(count($freight_bill))
                                                             @foreach($freight_bill as $key => $val)
                                                                 <li class="_freight-bill-list-item">
-                                                                    {{$val->freight_bill}}
+
 
                                                                     @if($val->orders)
-                                                                        &nbsp;&nbsp;&nbsp; Mã đã tồn tại ở đơn
+                                                                        <span class="text-danger">{{$val->freight_bill}}</span>
+                                                                        &nbsp;&nbsp;&nbsp; Mã đã tồn tại ở đơn:
                                                                         @foreach($val->orders as $kkk => $o)
-                                                                            <a href="{{ url('order/detail', $o->order_id) }}">{{$o->code}}</a>@if($kkk + 1 < count($val->orders)), @endif
+                                                                            <a href="{{ url('order/detail', $o->id) }}">{{$o->code}}</a>@if($kkk + 1 < count($val->orders)), @endif
                                                                         @endforeach
+                                                                    @else
+                                                                        {{$val->freight_bill}}
                                                                     @endif
 
                                                                     <form class="___form" style="display: inline;">

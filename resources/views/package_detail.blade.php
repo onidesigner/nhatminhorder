@@ -40,7 +40,7 @@
                                         <td>Đơn hàng: </td>
                                         <td>
                                             @if($package->order)
-                                                <a href="{{ url('order/detail', $package->order->id)  }}" target="_blank">{{ $package->order->code }}</a>
+                                                <a href="{{ url('order/detail', $package->order->id)  }}">{{ $package->order->code }}</a>
                                             @endif
 
                                         </td>
