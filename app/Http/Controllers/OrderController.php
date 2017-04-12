@@ -207,26 +207,12 @@ class OrderController extends Controller
             }
         }
 
-        $freight_bill = $order->freight_bill()->where([ 'is_deleted' => 0 ])->get();
-        $freight_bill_list = [];
-        if($freight_bill){
-            foreach($freight_bill as $freight_bill_item){
-                if(!$freight_bill_item instanceof OrderFreightBill){
-                    continue;
-                }
-                $orders = OrderFreightBill::where([
-                    [ 'freight_bill', '=', $freight_bill_item ],
-                    [ 'is_deleted', '=', 0 ],
-                ])->pluck('order_id');
-                $freight_bill_item->orders = $orders;
-                $freight_bill_list[] = $freight_bill_item;
-            }
-        }
+
 
         return [
             'packages' => $packages,
             'order_id' => $order->id,
-            'freight_bill' => $freight_bill_list,
+            'freight_bill' => $this->__order_freight_bill_list($order),
             'original_bill' => $order->original_bill()->where([ 'is_deleted' => 0 ])->get(),
             'warehouse_distribution' => WareHouse::findByType(WareHouse::TYPE_DISTRIBUTION),
             'warehouse_receive' => WareHouse::findByType(WareHouse::TYPE_RECEIVE),
@@ -243,6 +229,30 @@ class OrderController extends Controller
             'permission' => $permission,
             'layout' => $layout,
         ];
+    }
+
+    private function __order_freight_bill_list(Order $order){
+        $freight_bill = $order->freight_bill()->where([ 'is_deleted' => 0 ])->get();
+        $freight_bill_list = [];
+        if($freight_bill){
+            foreach($freight_bill as $freight_bill_item){
+                if(!$freight_bill_item instanceof OrderFreightBill){
+                    continue;
+                }
+                $orders_list = [];
+                $orders_freight_bill = OrderFreightBill::where([
+                    [ 'freight_bill', '=', $freight_bill_item->freight_bill ],
+                    [ 'is_deleted', '=', 0 ],
+                    [ 'order_id', '<>', $order->id ]
+                ])->get();
+                foreach($orders_freight_bill as $order_freight_bill){
+                    $orders_list[] = Order::find($order_freight_bill->order_id);
+                }
+                $freight_bill_item->orders = $orders_list;
+                $freight_bill_list[] = $freight_bill_item;
+            }
+        }
+        return $freight_bill_list;
     }
 
     /**

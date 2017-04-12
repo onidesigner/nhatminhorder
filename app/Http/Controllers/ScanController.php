@@ -23,6 +23,8 @@ class ScanController extends Controller
 {
     protected $action_error = [];
 
+    protected $message = null;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -93,7 +95,7 @@ class ScanController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'success',
+                'message' => $this->message,
                 'html' => $html,
                 'result' => $result,
             ]);
@@ -140,6 +142,7 @@ class ScanController extends Controller
 
                     $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    $this->message = $message_internal;
                 }
             }
 
@@ -160,6 +163,7 @@ class ScanController extends Controller
                     $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
+                    $this->message = $message_internal;
                     //todo:: gui tin nhan bao hang da ve kho phan phoi tai viet nam
                 }
             }
@@ -210,6 +214,8 @@ class ScanController extends Controller
                     $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
+                    $this->message = $message_internal;
+
                     if($package->isTransportStraight()){
                         $this->__packageChargeFee($package, $order, $create_user, $customer);
                     }
@@ -234,6 +240,8 @@ class ScanController extends Controller
 
                     $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    $this->message = $message_internal;
 
                     if(!$package->isTransportStraight()){
                         $this->__packageChargeFee($package, $order, $create_user, $customer);

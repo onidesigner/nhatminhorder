@@ -48,6 +48,7 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
                                 <input
+                                        id="_scan-logistic-package-barcode"
                                         autofocus
                                         type="text"
                                         name="barcode"
@@ -60,7 +61,7 @@
 
                         </div>
                         <div class="col-sm-8 col-xs-12">
-                            <h3>Kết quả quét</h3>
+                            {{--<h3>Kết quả quét</h3>--}}
 
 
                         </div>
@@ -75,6 +76,7 @@
 
 @section('js_bottom')
     @parent
+    <script src="{{asset('js/notify.min.js')}}"></script>
     <script>
         $(document).ready(function(){
             $(document).on('keypress', '._scan-barcode', function(e){
@@ -85,6 +87,9 @@
 
                     request("{{ url('scan/action') }}", "post", $('#_from-scan-barcode').serializeObject()).done(function(response){
                          if(response.success){
+                             if(response.message){
+                                 $.notify(response.message, "success", {autoHide:false});
+                             }
                              $(that).val('').focus();
                          }else{
                              if(response.message){

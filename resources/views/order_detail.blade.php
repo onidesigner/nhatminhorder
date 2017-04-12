@@ -35,7 +35,7 @@
                                     'urls' => [
                                         ['name' => 'Trang chủ', 'link' => url('home')],
                                         ['name' => 'Đơn hàng', 'link' => url('order')],
-                                        ['name' => 'Đơn ' . $order->code . ' ('.App\Order::getStatusTitle($order->status).')', 'link' => null],
+                                        ['name' => 'Đơn ' . $order->code, 'link' => null],
                                     ]
                                 ]
                             )
@@ -47,6 +47,9 @@
                             <li role="presentation" class="active">
                                 <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Thông tin chung</a>
                             </li>
+                            <li role="presentation" class="">
+                                <a href="#order-history" aria-controls="home" role="tab" data-toggle="tab">Lịch sử</a>
+                            </li>
                             <li role="presentation">
                                 <a href="#order-transaction" aria-controls="tab" role="tab" data-toggle="tab">Phí & LS Giao dịch</a>
                             </li>
@@ -55,19 +58,52 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
 
+                            <div role="tabpanel" class="tab-pane" id="order-history">
+                                <table class="table no-padding-leftright">
+                                    <tbody>
+                                    <?php $count = 0; ?>
+
+                                    <?php
+                                    foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                    $count++;
+                                    if(empty($order->$k)){
+                                        continue;
+                                    }
+                                    ?>
+
+                                    @if($count == 1)
+
+                                        <tr>
+                                            <td width="30%" class="border-top-none">{{$v}}</td>
+                                            <td class="border-top-none">{{ App\Util::formatDate($order->$k) }}</td>
+                                        </tr>
+
+                                    @else
+                                        <tr>
+                                            <td>{{$v}}</td>
+                                            <td>{{ App\Util::formatDate($order->$k)  }}</td>
+                                        </tr>
+                                    @endif
+
+                                    <?php } ?>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
                             <div role="tabpanel" class="tab-pane active" id="home">
-
-
-                                <div class="row">
-                                    <div class="col-sm-6 col-xs-12">
-                                        <table class="table no-padding-leftright">
+                                <table class="table no-padding-leftright">
                                             <tbody>
                                             <tr>
-                                                <td width="50%" class="border-top-none">Mã đơn: </td>
+                                                <td width="30%" class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
-                                                    <code style="font-size: 20px;">{{$order->code}}</code>
-
-                                                    <br> ({{ App\Order::getStatusTitle($order->status)  }})
+                                                    {{$order->code}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Trạng thái: </td>
+                                                <td>
+                                                    {{ App\Order::getStatusTitle($order->status)  }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -242,6 +278,13 @@
                                                                 <li class="_freight-bill-list-item">
                                                                     {{$val->freight_bill}}
 
+                                                                    @if($val->orders)
+                                                                        &nbsp;&nbsp;&nbsp; Mã đã tồn tại ở đơn
+                                                                        @foreach($val->orders as $kkk => $o)
+                                                                            <a href="{{ url('order/detail', $o->order_id) }}">{{$o->code}}</a>@if($kkk + 1 < count($val->orders)), @endif
+                                                                        @endforeach
+                                                                    @endif
+
                                                                     <form class="___form" style="display: inline;">
                                                                         <input type="hidden" name="action" value="remove_freight_bill">
                                                                         <input type="hidden" name="method" value="post">
@@ -363,43 +406,6 @@
 
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div class="col-sm-6 col-xs-12">
-
-                                        <table class="table no-padding-leftright">
-                                            <tbody>
-                                            <?php $count = 0; ?>
-
-                                            <?php
-                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                                $count++;
-                                                if(empty($order->$k)){
-                                                    continue;
-                                                }
-                                            ?>
-
-                                                @if($count == 1)
-
-                                                    <tr>
-                                                        <td width="50%" class="border-top-none">{{$v}}</td>
-                                                        <td class="border-top-none">{{ App\Util::formatDate($order->$k) }}</td>
-                                                    </tr>
-
-                                                @else
-                                                    <tr>
-                                                        <td>{{$v}}</td>
-                                                        <td>{{ App\Util::formatDate($order->$k)  }}</td>
-                                                    </tr>
-                                                @endif
-
-                                            <?php } ?>
-
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                </div>
-
                             </div>
                             <div role="tabpanel" class="tab-pane" id="order-transaction">
                                 <h4>Phí trên đơn</h4>
