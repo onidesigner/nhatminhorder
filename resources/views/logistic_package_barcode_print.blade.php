@@ -10,10 +10,8 @@
 </style>
 
 <div class="content">
-    <span style='font-weight: bold;
-                font-family: Helvetica Neue, Helvetica, Arial, San-Serif;
-                text-align: right;'>
-        &nbsp;{{$package->logistic_package_barcode}}
+    <span>
+        &nbsp;<strong>{{$package->logistic_package_barcode}}</strong>
     </span>
     <br>
 
