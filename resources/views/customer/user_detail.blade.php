@@ -26,10 +26,63 @@
                             <li role="presentation" class="active">
                                 <a href="#userInfo" aria-controls="home" role="tab" data-toggle="tab"><h4>Thông tin cá nhân</h4></a>
                             </li>
+
+                            <li role="presentation">
+                                <a href="#userIntroduce" aria-controls="home" role="tab" data-toggle="tab"><h4>Giới thiệu khách hàng</h4></a>
+                            </li>
                         </ul>
 
                         <!-- Tab panes -->
                         <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane" id="userIntroduce">
+                                <div class="row">
+                                    <div class="col-sm-4 col-xs-12">
+
+                                        <h4>Link giới thiệu KH</h4>
+                                        <!-- 1. Define some markup -->
+                                        <span id="_link-user-register">{{ $user_refer['link']  }}</span>
+                                        <br>
+
+                                        <button class="btn btn-danger" data-clipboard-action="copy">Copy link</button>
+
+                                    </div>
+                                    <div class="col-sm-8 col-xs-12">
+                                        <h4>Khách hàng đã giới thiệu</h4>
+
+                                        @if($user_refer['total'] > 0)
+                                            <p>Có {{$user_refer['total']}} khách đã được bạn giới thiệu</p>
+
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>TT</th>
+                                                    <th>Khách hàng</th>
+                                                    <th>Số đơn đạt yêu cầu</th>
+                                                    <th>Hoa hồng tháng {{ date('m/Y')  }}</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach($user_refer['data'] as $key => $val)
+                                                <tr>
+                                                    <td>{{$key+1}}</td>
+                                                    <td>
+
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+                                        @else
+
+                                            <p>Hiện ban chưa giới thiệu khách nào!</p>
+                                        @endif
+
+
+                                    </div>
+                                </div>
+                            </div>
                             <div role="tabpanel" class="tab-pane active" id="userInfo">
                                 <div class="row">
                                     <div class="col-sm-4 col-xs-12">
@@ -57,6 +110,8 @@
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Gia nhập</strong>: {{ App\Util::formatDate($user->created_at)  }}</td>
                                             </tr>
+
+
 
                                             </tbody>
                                         </table>
@@ -113,6 +168,27 @@
 
 @section('js_bottom')
     @parent
+
+    <!-- 2. Include library -->
+    <script src="{{ asset('js/clipboard.min.js')  }}"></script>
+
+    <!-- 3. Instantiate clipboard -->
+    <script>
+        var clipboard = new Clipboard('.btn', {
+            target: function() {
+                return document.getElementById('_link-user-register');
+            }
+        });
+
+        clipboard.on('success', function(e) {
+            console.log(e);
+        });
+
+        clipboard.on('error', function(e) {
+            console.log(e);
+        });
+    </script>
+
     <script>
         $(document).ready(function(){
 

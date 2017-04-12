@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Permission;
 use App\User;
+use App\UserRefer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -36,11 +37,14 @@ class UserController extends Controller
             return redirect('403');
         }
 
+        $user_refer = $this->__user_refer($user);
+
         return view('customer/user_detail', [
             'page_title' => "Thông tin cá nhân",
             'user' => $user,
             'user_id' => $user_id,
             'user_mobiles' => $user->mobile,
+            'user_refer' => $user_refer,
             'permission' => [
                 'can_add_mobile' => true,
                 'can_remove_mobile' => true,
@@ -48,6 +52,31 @@ class UserController extends Controller
             ]
         ]);
 
+    }
+
+    private function __user_refer(User $user){
+        $user_refer_data = UserRefer::where([
+            'user_refer_id' => $user->id
+        ]);
+        $user_refer_total = (int)$user_refer_data->count();
+        $user_refer_data_list = [];
+        if($user_refer_total > 0){
+            $user_refer_data_object = $user_refer_data->get();
+            foreach($user_refer_data_object as $user_refer_data_object_item){
+                if(!$user_refer_data_object_item instanceof UserRefer){
+                    continue;
+                }
+                $user_refer_data_object_item->user = User::find($user_refer_data_object_item->user_id);
+                $user_refer_data_object_item->user_refer = User::find($user_refer_data_object_item->user_refer_id);
+                $user_refer_data_list[] = $user_refer_data_object_item;
+            }
+        }
+
+        return [
+            'link' => url('register?user_refer=' . $user->code),
+            'total' => $user_refer_total,
+            'data' => $user_refer_data_list
+        ];
     }
 
     /**

@@ -198,7 +198,7 @@
                                                         @if(count($original_bill))
                                                             @foreach($original_bill as $key => $val)
                                                                 <li class="_original-bill-list-item">
-                                                                    <a style="color: black;" href="{{  App\Order::originalBillWithLink($order->site, $val->original_bill) }}" target="_blank">{{$val->original_bill}}</a>
+                                                                    <a style="color: #337ab7;" href="{{  App\Order::originalBillWithLink($order->site, $val->original_bill) }}" target="_blank">{{$val->original_bill}}</a>
 
                                                                     &nbsp;&nbsp;&nbsp;
 

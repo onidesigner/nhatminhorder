@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 list-packages-view">
             @if(!empty($barcode))
 
                 @if(count($packages))
@@ -64,7 +64,6 @@
                                 <h3 style="margin: 0">
                                     Kiện hàng #<a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
                                 </h3>
-
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -158,7 +157,6 @@
                             </div>
 
                         </div>
-                        <br>
                     @endforeach
                 @endif
             @endif
@@ -259,5 +257,19 @@
         });
 
     </script>
+@endsection
+
+@section('css_bottom')
+    @parent
+    <style>
+        .list-packages-view .card{
+            margin-bottom: 15px;
+        }
+
+        .list-packages-view .card:nth-child(2n) .card-header{
+            /*background: #29c75f!important;*/
+            /*color: #fff!important;*/
+        }
+    </style>
 @endsection
 

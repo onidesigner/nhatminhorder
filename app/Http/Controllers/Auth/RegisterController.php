@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use App\UserRefer;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -70,5 +71,14 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    protected function registered($request, $user)
+    {
+        //add user refer if exists
+        $user_refer = User::retrieveByCode($request->get('user_refer'));
+        if($user_refer instanceof User){
+            UserRefer::addNew($user_refer, $user);
+        }
     }
 }

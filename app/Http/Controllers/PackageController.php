@@ -245,6 +245,8 @@ class PackageController extends Controller
         if($action){
             switch ($action){
                 case 'print':
+                    $generatorSVG = new \Picqer\Barcode\BarcodeGeneratorSVG();
+
                     $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
 
                     $logistic_package_barcode_array = explode(',', $logistic_package_barcode);
@@ -254,7 +256,9 @@ class PackageController extends Controller
                         if($package instanceof Package){
                             $view = View::make('logistic_package_barcode_print', [
                                 'package' => $package,
-                                'img_base_64' => base64_encode($generator->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_11))
+                                'svg' => $generatorSVG->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_128),
+                                'img_base_64' => base64_encode(
+                                    $generator->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_128))
                             ]);
                             $html = $view->render();
                             echo $html;

@@ -1,3 +1,8 @@
+<?php
+//die(phpinfo());
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,16 +26,6 @@
     @show
 </head>
 <body>
-
-{{--<a href="javascript: (function () {--}}
-    {{--var jsCode = document.createElement('script');--}}
-        {{--jsCode.setAttribute('src', '{{ asset('bookmarklet/js/jquery.js?v=' . time()) }}');--}}
-        {{--document.body.appendChild(jsCode);--}}
-
-    {{--var jsCode = document.createElement('script');--}}
-        {{--jsCode.setAttribute('src', '{{ asset('bookmarklet/js/script.js?v=' . time()) }}');--}}
-        {{--document.body.appendChild(jsCode);--}}
- {{--}());">Đặt hàng NhatMinh247</a>--}}
 
 <div class="app app-default">
 

@@ -8,6 +8,9 @@
     </div>
 
     <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
+
+        <input type="hidden" name="user_refer" value="{{$user_refer}}">
+
         {{ csrf_field() }}
 
         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\UserAddress;
 use App\UserOriginalSite;
+use App\UserRefer;
+use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
@@ -222,12 +224,25 @@ class UserController extends Controller
             $can_add_mobile = $can_remove_mobile = $can_edit_user = true;
         endif;
 
+        $user_refer_data = UserRefer::where([
+            'user_id' => $user->id
+        ]);
+        $user_refer_total = (int)$user_refer_data->count();
+        $user_refer_data = $user_refer_data->get();
+
+        $user_refer = [
+            'link' => url('register', $user->code),
+            'total' => $user_refer_total,
+            'data' => $user_refer_data
+        ];
+
         return view('user_detail', [
             'page_title' => "Thông tin nhân viên [" . $user->email . "]",
             'user' => $user,
             'user_id' => $user_id,
             'transactions' => $transactions,
             'user_mobiles' => $user->mobile,
+            'user_refer' => $user_refer,
             'permission' => [
                 'can_add_mobile' => $can_add_mobile,
                 'can_remove_mobile' => $can_remove_mobile,

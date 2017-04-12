@@ -13,6 +13,10 @@ class SystemConfig extends Model
 
     public static $system_config_data = [
         [
+            'field_name' => 'Thời gian hưởng hoa hồng của khách giới thiệu & sử dụng hệ thống (tính bằng tháng)',
+            'key' => 'user_refer_time_enjoyment'
+        ],
+        [
             'field_name' => 'Tối đa địa chỉ nhận hàng khách',
             'key' => 'user_address_max'
         ],
