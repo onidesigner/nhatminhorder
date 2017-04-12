@@ -162,6 +162,8 @@ class OrderController extends Controller
             'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_view_package_list' => Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW),
+            'can_add_freight_bill_to_order' => Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL)
+                && $order->isAfterStatus(Order::STATUS_BOUGHT, true),
         ];
 
         $packages = $order->package()->where([
@@ -324,21 +326,25 @@ class OrderController extends Controller
         $can_execute = Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL);
         if(!$can_execute):
             $this->action_error[] = 'Not permission!';
+            return false;
         endif;
+
+        if(!$order->isAfterStatus(Order::STATUS_BOUGHT, true)){
+            $this->action_error[] = sprintf('Không được phép thêm mã vận đơn khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+            return false;
+        }
 
         if(empty($freight_bill)):
             $this->action_error[] = 'Mã vận đơn không để trống!';
+            return false;
         endif;
 
         $order_freight_bill_exists = $order->has_freight_bill($freight_bill);
 
         if($order_freight_bill_exists):
             $this->action_error[] = sprintf('Mã hóa đơn %s đã tồn tại', $freight_bill);
-        endif;
-
-        if(count($this->action_error)){
             return false;
-        }
+        endif;
 
 //        $freight_bill_exists = OrderFreightBill::where([
 //            'freight_bill' => $freight_bill,

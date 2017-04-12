@@ -258,10 +258,14 @@
 
                                                 </td>
                                             </tr>
+
+
+
                                             <tr>
                                                 <td>Vận đơn</td>
                                                 <td>
 
+                                                    @if($permission['can_add_freight_bill_to_order'])
                                                     <form class="___form" onsubmit="return false;">
                                                         <input type="hidden" name="action" value="insert_freight_bill">
                                                         <input type="hidden" name="method" value="post">
@@ -271,6 +275,7 @@
                                                         <input placeholder="" type="text" name="freight_bill" value="">
                                                         <a href="javascript:void(0)" class="___btn-action">Lưu</a>
                                                     </form>
+                                                    @endif
 
                                                     <ul style="margin: 0;padding: 0;list-style: none;" id="_freight-bill-list">
                                                         @if(count($freight_bill))

@@ -51,7 +51,7 @@
                                                 <td class="no-padding-leftright"><strong>Họ & tên</strong>: {{$user->name}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="no-padding-leftright"><strong>Mã</strong>: <code>{{$user->code}}</code></td>
+                                                <td class="no-padding-leftright"><strong>Mã</strong>: {{$user->code}}</td>
                                             </tr>
                                             @if($user->section == App\User::SECTION_CUSTOMER)
                                                 <tr>
