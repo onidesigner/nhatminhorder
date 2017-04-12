@@ -91,12 +91,12 @@
                                             <td>{{$user->id}}</td>
                                             <td>{{ App\User::getSectionName($user->section)  }}</td>
                                             <td>
-                                                <a href="{{ url('user/detail', $user->id)  }}">{{$user->name}}</a>
+                                                <a href="{{ url('user/detail', $user->id)  }}">{{$user->email}}</a>
 
-                                                (<code>{{$user->code}}</code>)
+                                                ({{$user->code}})
 
                                                 <br>
-                                                <small>{{$user->email}}</small>
+                                                <small>{{$user->name}}</small>
                                                 <br>
 
                                                 @if($can_view_cart_customer)

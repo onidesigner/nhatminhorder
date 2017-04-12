@@ -62,7 +62,7 @@
                         <div class="card _package" data-package-id="{{ $package->id  }}">
                             <div class="card-header">
                                 <h3 style="margin: 0">
-                                    Kiện hàng #<a href="{{ url('package', $package->logistic_package_barcode)  }}" target="_blank">{{$package->logistic_package_barcode}}</a>
+                                    Kiện hàng #<a href="{{ url('package', $package->logistic_package_barcode)  }}">{{$package->logistic_package_barcode}}</a>
                                 </h3>
                             </div>
                             <div class="card-body">

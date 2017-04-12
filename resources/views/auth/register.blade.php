@@ -9,7 +9,7 @@
 
     <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
 
-        <input type="hidden" name="user_refer" value="{{$user_refer}}">
+        <input type="hidden" name="user_refer" value="{{@$user_refer}}">
 
         {{ csrf_field() }}
 
