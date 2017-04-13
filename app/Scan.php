@@ -12,7 +12,6 @@ class Scan extends Model
     const ACTION_OUT = 'OUT';
 
     public static $action_list = [
-
         self::ACTION_IN => 'Nhập',
         self::ACTION_OUT => 'Xuất',
     ];

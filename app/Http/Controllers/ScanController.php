@@ -76,6 +76,12 @@ class ScanController extends Controller
                 return response()->json(['success' => false, 'message' => sprintf('Kho %s không tồn tại!', $request->get('warehouse'))]);
             }
 
+            //check barcode exists
+            $package = Package::retrieveByCode($request->get('barcode'));
+            if(!$package instanceof Package){
+                return response()->json(['success' => false, 'message' => sprintf('Không tìm thấy kiện hàng với mã %s', $request->get('barcode'))]);
+            }
+
             if (!method_exists($this, $action)) {
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }

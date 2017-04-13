@@ -28,7 +28,9 @@
                                 <select name="action" id="" class="form-control">
                                     @if(!empty($action_list))
                                         @foreach($action_list as $key => $val)
-                                            <option value="{{$key}}">{{$val}}</option>
+                                            <option value="{{$key}}">
+                                                {{$val}}
+                                            </option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -37,7 +39,9 @@
                                 <select name="warehouse" id="" class="form-control">
                                     @if(!empty($warehouse_list))
                                         @foreach($warehouse_list as $key => $val)
-                                            <option value="{{$val['code']}}">{{$val['name']}} - {{$val['description']}}</option>
+                                            <option
+                                                    data-warehouse-type="{{$val['type']}}"
+                                                    value="{{$val['code']}}">{{$val['name']}} - {{$val['description']}}</option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -86,20 +90,36 @@
                     if(!barcode) return false;
 
                     request("{{ url('scan/action') }}", "post", $('#_from-scan-barcode').serializeObject()).done(function(response){
-                         if(response.success){
-                             if(response.message){
-                                 $.notify(response.message, "success", {autoHide:false});
-                             }
-                             $(that).val('').focus();
-                         }else{
-                             if(response.message){
-                                 bootbox.alert(response.message);
-                             }
-                         }
+                        var msg_type = response.success ? 'success' : 'error';
+                        if(response.message){
+                            $.notify(response.message, msg_type);
+                        }
+                        $(that).val('').focus();
                     });
                 }
             });
+
+//            $(document).on('change', 'select[name="warehouse"]', function(){
+//                var warehouse_type = $(this).data('warehouse-type');
+//                Action.chooseWarehouse(warehouse_type);
+//            });
+
         });
+
+        {{--var Action = {--}}
+            {{--chooseWarehouse: function (warehouse_type) {--}}
+                {{--var $dom = $('select[name="action"]');--}}
+                {{--$dom.find('option').remove();--}}
+                {{--if(warehouse_type == "{{ App\WareHouse::TYPE_DISTRIBUTION  }}"){--}}
+                    {{--$dom.append('<option value="IN">Nhập</option>');--}}
+                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
+                {{--}else if(warehouse_type == "{{ App\WareHouse::TYPE_RECEIVE  }}"){--}}
+                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
+                {{--}--}}
+            {{--}--}}
+        {{--};--}}
+
+        {{--Action.chooseWarehouse("{{ App\WareHouse::TYPE_RECEIVE  }}");--}}
 
     </script>
 @endsection
