@@ -58,6 +58,8 @@ class OrderController extends Controller
             $orders = $orders->whereIn('user_id', $user_ids);
         }
 
+        $orders = $orders->where('user_id', Auth::user()->id);
+
         if(!empty($params['status'])){
             $orders = $orders->whereIn('status', explode(',', $params['status']));
         }
