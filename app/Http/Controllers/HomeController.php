@@ -110,10 +110,10 @@ class HomeController extends Controller
 
 //        die('hello');
 
-        $orders = Order::all();
-        foreach($orders as $order){
-            $order->save();
-        }
+//        $orders = Order::all();
+//        foreach($orders as $order){
+//            $order->save();
+//        }
 
         $current_user = User::find($user_id);
 
