@@ -90,7 +90,13 @@
                     if(!barcode) return false;
 
                     request("{{ url('scan/action') }}", "post", $('#_from-scan-barcode').serializeObject()).done(function(response){
-                        var msg_type = response.success ? 'success' : 'error';
+                        var msg_type = 'success';
+                        if(response.success){
+
+                        }else{
+                            msg_type = 'error';
+                        }
+
                         if(response.message){
                             $.notify(response.message, msg_type);
                         }

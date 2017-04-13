@@ -134,6 +134,7 @@ class ScanController extends Controller
         $create_user = User::find(Auth::user()->id);
 
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
+            $message_internal = sprintf("Kiện hàng %s nhập kho %s", $barcode, $warehouse->code);
 
             $package = Package::where([
                 'logistic_package_barcode' => $barcode,
@@ -145,14 +146,15 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $order->changeOrderReceivedFromSeller();
-
-                    $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    $this->message = $message_internal;
                 }
             }
 
+            $this->message = $message_internal;
+
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
+            $message_internal = sprintf("Kiện hàng %s nhập kho phân phối %s", $barcode, $warehouse->code);
+
             $package = Package::where([
                 'logistic_package_barcode' => $barcode,
                 'status' => Package::STATUS_TRANSPORTING,
@@ -165,14 +167,12 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $order->changeOrderWaitingDelivery();
-
-                    $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-                    $this->message = $message_internal;
                     //todo:: gui tin nhan bao hang da ve kho phan phoi tai viet nam
                 }
             }
+
+            $this->message = $message_internal;
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
@@ -202,6 +202,7 @@ class ScanController extends Controller
         $create_user = User::find(Auth::user()->id);
 
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
+            $message_internal = sprintf("Kiện hàng %s xuất kho %s", $barcode, $warehouse->code);
 
             $package = Package::where([
                 'logistic_package_barcode' => $barcode,
@@ -217,10 +218,7 @@ class ScanController extends Controller
                     $customer = User::find($order->user_id);
                     $order->changeOrderTransporting();
 
-                    $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-                    $this->message = $message_internal;
 
                     if($package->isTransportStraight()){
                         $this->__packageChargeFee($package, $order, $create_user, $customer);
@@ -228,7 +226,11 @@ class ScanController extends Controller
                 }
             }
 
+            $this->message = $message_internal;
+
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
+            $message_internal = sprintf("Kiện hàng %s xuất kho phân phối %s", $barcode, $warehouse->code);
+
             $package = Package::where([
                 'logistic_package_barcode' => $barcode,
                 'status' => Package::STATUS_WAITING_FOR_DELIVERY,
@@ -244,10 +246,7 @@ class ScanController extends Controller
                     $customer = User::find($order->user_id);
                     $order->changeOrderDelivering();
 
-                    $message_internal = sprintf("Kiện hàng %s xuất kho %s", $package->logistic_package_barcode, $warehouse->code);
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
-                    $this->message = $message_internal;
 
                     if(!$package->isTransportStraight()){
                         $this->__packageChargeFee($package, $order, $create_user, $customer);
@@ -255,6 +254,7 @@ class ScanController extends Controller
                 }
             }
 
+            $this->message = $message_internal;
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);

@@ -73,3 +73,7 @@
 .form-list-item li:last-child{
     margin-bottom: 0;
 }
+
+.notifyjs-corner{
+    z-index: 300008!important;
+}
