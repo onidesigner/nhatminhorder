@@ -110,28 +110,19 @@ class HomeController extends Controller
 
 //        die('hello');
 
+        $orders = Order::all();
+        foreach($orders as $order){
+            $order->save();
+        }
+
         $current_user = User::find($user_id);
 
         $total_order_deposit_today = 0;
         $total_customer_register_today = 0;
-        $home_statistic = null;
 
         if($current_user->section == User::SECTION_CRANE){
             $total_order_deposit_today = Order::getTotalDepositByDay(date('Y-m-d'));
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
-
-            $amount1 = 0;
-            $amount2 = 0;
-
-            $home_statistic[] = [
-                'title' => sprintf('Tổng tiền hàng của khách: %sđ', Util::formatNumber($amount1)),
-                'content' => '',
-            ];
-
-            $home_statistic[] = [
-                'title' => sprintf('Tổng tiền khách đã thanh toán: %sđ', Util::formatNumber($amount2)),
-                'content' => '',
-            ];
         }
 
         return view('home', [
@@ -139,7 +130,6 @@ class HomeController extends Controller
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,
-            'home_statistic' => $home_statistic,
         ]);
     }
 }

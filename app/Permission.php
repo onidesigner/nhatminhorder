@@ -26,6 +26,7 @@ class Permission extends Model
     #region -- Transaction permission --
     const PERMISSION_TRANSACTION_VIEW = 'TRANSACTION_VIEW';
     const PERMISSION_TRANSACTION_CREATE = 'TRANSACTION_CREATE';
+    const PERMISSION_TRANSACTION_STATISTIC = 'TRANSACTION_STATISTIC';
     #endregion
 
     #region -- Taxonomy & post --
@@ -136,6 +137,10 @@ class Permission extends Model
                 ),
                 self::PERMISSION_TRANSACTION_CREATE => array(
                     'label' => 'Tạo giao dịch ',
+                    'description' => '',
+                ),
+                self::PERMISSION_TRANSACTION_STATISTIC => array(
+                    'label' => 'Thống kê tài chính',
                     'description' => '',
                 ),
             ),

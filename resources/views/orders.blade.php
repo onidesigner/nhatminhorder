@@ -25,7 +25,9 @@
                     <form onchange="this.submit();" action="{{ url('order')  }}" method="get" id="_form-orders">
 
                         <input type="text" placeholder="Mã đơn..." name="order_code" value="{{  @$params['order_code'] }}">
-                        <input type="text" placeholder="Mã khách hoặc email..." name="customer_code_email" value="{{ @$params['customer_code_email']  }}">
+                        <input type="text" placeholder="Mã khách hoặc email..."
+                               class="hidden"
+                               name="customer_code_email" value="{{ @$params['customer_code_email']  }}">
 
                         <br><br>
 

@@ -24,6 +24,67 @@ class UserTransactionController extends Controller
 
     }
 
+    public function statisticTransaction(){
+        $users = User::where([
+            'section' => User::SECTION_CUSTOMER
+        ])->orderBy('id', 'desc')->get();
+
+        $users_data = [];
+
+        $resultSumOrderAmount = DB::table('order')
+            ->selectRaw('user_id, sum(amount_vnd) as amount_vnd')
+            ->groupBy('user_id')
+            ->get();
+        $amount_vnd = [];
+        if($resultSumOrderAmount){
+            foreach($resultSumOrderAmount as $resultSumOrderAmountItem){
+                $amount_vnd[$resultSumOrderAmountItem->user_id] = $resultSumOrderAmountItem->amount_vnd;
+            }
+        }
+
+        $resultSumOrderPayment = DB::table('order')
+            ->selectRaw('user_id, sum(payment_vnd) as payment_vnd')
+            ->groupBy('user_id')
+            ->get();
+        $payment_vnd = [];
+        if($resultSumOrderPayment){
+            foreach($resultSumOrderPayment as $resultSumOrderPaymentItem){
+                $payment_vnd[$resultSumOrderPaymentItem->user_id] = $resultSumOrderPaymentItem->payment_vnd;
+            }
+        }
+
+        $total_amount_vnd = 0;
+        $total_payment_vnd = 0;
+        $total_need_payment_vnd = 0;
+
+        if($users){
+            foreach($users as $user){
+                if(!$user instanceof User){
+                    continue;
+                }
+
+                $user->amount_vnd = empty($amount_vnd[$user->id]) ? 0 : $amount_vnd[$user->id];
+                $user->payment_vnd = empty($payment_vnd[$user->id]) ? 0 : $payment_vnd[$user->id];
+                $user->need_payment_vnd = $user->amount_vnd - $user->payment_vnd;
+                $users_data[] = $user;
+
+                $total_amount_vnd += $user->amount_vnd;
+                $total_payment_vnd += $user->payment_vnd;
+                $total_need_payment_vnd += $user->need_payment_vnd;
+            }
+        }
+
+        return view('statistic_transaction', [
+            'page_title' => 'Thống kê tài chính',
+            'users' => $users_data,
+            'total' => [
+                'total_amount_vnd' => $total_amount_vnd,
+                'total_payment_vnd' => $total_payment_vnd,
+                'total_need_payment_vnd' => $total_need_payment_vnd,
+            ]
+        ]);
+    }
+
     /**
      * @author vanhs
      * @desc Danh sach giao dich

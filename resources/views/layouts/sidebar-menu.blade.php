@@ -80,7 +80,12 @@ if(Auth::check()){
                         'url' => url('transaction/adjustment'),
                         'title' => 'Tạo điều chỉnh tài chính',
                         'permission' => \App\Permission::PERMISSION_TRANSACTION_CREATE
-                    ]
+                    ],
+                    [
+                        'url' => url('transaction/statistic'),
+                        'title' => 'Thông kê tài chính',
+                        'permission' => \App\Permission::PERMISSION_TRANSACTION_STATISTIC
+                    ],
                 ]
             ],
             [

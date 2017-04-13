@@ -114,6 +114,7 @@ Route::put('/warehouses_manually/delete', 'WarehouseController@delete_manually')
 #endregion
 
 #region -- giao dich --
+Route::get('transaction/statistic', 'UserTransactionController@statisticTransaction');
 Route::get('transactions', 'UserTransactionController@getTransactions');
 Route::get('transaction/adjustment', 'UserTransactionController@renderTransactionAdjustment');
 Route::post('transaction/adjustment', 'UserTransactionController@createTransactionAdjustment');
