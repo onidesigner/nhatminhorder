@@ -81,8 +81,25 @@
 @section('js_bottom')
     @parent
     <script src="{{asset('js/notify.min.js')}}"></script>
+    <script src="{{asset('js/ion.sound.min.js')}}"></script>
+
     <script>
         $(document).ready(function(){
+
+            // init bunch of sounds
+            ion.sound({
+                sounds: [
+                    {name: "success"},
+                    {name: "error"}
+                ],
+
+                // main config
+                path: "{{ asset('sounds')  }}/",
+                preload: true,
+                multiplay: true,
+                volume: 0.9
+            });
+
             $(document).on('keypress', '._scan-barcode', function(e){
                 var that = this;
                 if(e.keyCode == 13){
@@ -92,9 +109,10 @@
                     request("{{ url('scan/action') }}", "post", $('#_from-scan-barcode').serializeObject()).done(function(response){
                         var msg_type = 'success';
                         if(response.success){
-
+                            ion.sound.play("success");
                         }else{
                             msg_type = 'error';
+                            ion.sound.play("error");
                         }
 
                         if(response.message){
