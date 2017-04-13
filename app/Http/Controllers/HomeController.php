@@ -115,9 +115,9 @@ class HomeController extends Controller
 //            $order->save();
 //        }
 
-        $order = Order::find(83);
-        $order->domestic_shipping_fee = 9;
-        $order->save();
+//        $order = Order::find(83);
+//        $order->domestic_shipping_fee = 9;
+//        $order->save();
 
         $current_user = User::find($user_id);
 
