@@ -19,6 +19,7 @@ use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\View;
 
 class OrderController extends Controller
@@ -38,19 +39,52 @@ class OrderController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function orders(Request $request){
+        $params = Input::all();
         $exchange_rage = Exchange::getExchange();
+
         $per_page = 50;
-        $orders = Order::select('*')
-            ->where([
-                'user_id' => Auth::user()->id
-            ])
-            ->orderBy('id', 'desc')
-            ->paginate($per_page);
+        $orders = Order::select('*');
+        $orders = $orders->orderBy('id', 'desc');
+
+        if(!empty($params['order_code'])){
+            $orders = $orders->where('code', $params['order_code']);
+        }
+
+        if(!empty($params['customer_code_email'])){
+            $user_ids = User::where(function($query) use ($params){
+                $query->where('code', '=', $params['customer_code_email'])
+                    ->orWhere('email', '=', $params['customer_code_email']);
+            })->pluck('id');
+            $orders = $orders->whereIn('user_id', $user_ids);
+        }
+
+        if(!empty($params['status'])){
+            $orders = $orders->whereIn('status', explode(',', $params['status']));
+        }
+        $total_orders = $orders->count();
+        $orders = $orders->paginate($per_page);
+
+
+        $status_list = [];
+        foreach(Order::$statusTitle as $key => $val){
+            $selected = false;
+            if(!empty($params['status'])){
+                $selected = in_array($key, explode(',', $params['status']));
+            }
+            $status_list[] = [
+                'key' => $key,
+                'val' => $val,
+                'selected' => $selected
+            ];
+        }
 
         return view('customer/orders', [
             'page_title' => 'Danh sách đơn hàng',
+            'status_list' => $status_list,
             'exchange_rage' => $exchange_rage,
             'orders' => $orders,
+            'params' => $params,
+            'total_orders' => $total_orders,
         ]);
     }
 

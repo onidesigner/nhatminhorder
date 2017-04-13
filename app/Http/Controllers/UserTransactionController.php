@@ -33,6 +33,7 @@ class UserTransactionController extends Controller
 
         $resultSumOrderAmount = DB::table('order')
             ->selectRaw('user_id, sum(amount_vnd) as amount_vnd')
+            ->whereNotIn('status', [ Order::STATUS_CANCELLED ])
             ->groupBy('user_id')
             ->get();
         $amount_vnd = [];
@@ -44,6 +45,7 @@ class UserTransactionController extends Controller
 
         $resultSumOrderPayment = DB::table('order')
             ->selectRaw('user_id, sum(payment_vnd) as payment_vnd')
+            ->whereNotIn('status', [ Order::STATUS_CANCELLED ])
             ->groupBy('user_id')
             ->get();
         $payment_vnd = [];

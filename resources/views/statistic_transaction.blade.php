@@ -33,7 +33,8 @@
                                 @foreach($users as $user)
                                     <tr class="no-padding-leftright">
                                         <td>
-                                            <a href="{{ url('transaction/statistic?customer_id=' . $user->id)  }}">{{$user->email}}</a>
+{{--                                            <a href="{{ url('transaction/statistic?customer_id=' . $user->id)  }}">{{$user->email}}</a>--}}
+                                            <a href="{{ url('user/detail', $user->id)  }}">{{$user->email}}</a>
                                         </td>
                                         <td class="text-danger text-right">
                                             {{App\Util::formatNumber($user->amount_vnd)}}đ
