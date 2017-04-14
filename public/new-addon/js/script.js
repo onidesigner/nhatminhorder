@@ -48,18 +48,32 @@ var Common = {
 };
 
 //========= end function helper ========
+var key_taobao = null;
 var str = window.location.href;
+/**
+ * - neu la site item.taobao thi redirect ve world.taobao.com > bat thanh cong cu len
+ * - neu khong redirect ve world.taobao.com thi de nguyen la item.taobao > bat thanh cong cu len
+ */
 if (str.match(/item.taobao/)){
     try{
         var item_id = Common.getURLParameters('id');
         if(item_id){
             item_id = item_id.split('#')[0];
-            window.location.href = 'https://world.taobao.com/item/' + item_id + '.htm';
+            key_taobao = 'taobao_' + item_id;
+            if(localStorage.getItem(key_taobao) == null){
+                localStorage.setItem(key_taobao, true);
+                window.location.href = 'https://world.taobao.com/item/' + item_id + '.htm';
+            }else{
+                start();
+            }
         }
     }catch (e){
 
     }
 }else{
+    if(key_taobao){
+        localStorage.removeItem(key_taobao);
+    }
     start();
 }
 

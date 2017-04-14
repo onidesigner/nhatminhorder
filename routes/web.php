@@ -161,3 +161,4 @@ Route::get('/ho-tro/danh-muc/{id}', 'Support\TaxonomyController@indexs');
 Route::get('/ho-tro/{id}', 'Support\PostController@index');
 #endregion
 
+//Route::get('/tinh-phi', '');

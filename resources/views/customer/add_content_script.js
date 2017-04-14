@@ -155,6 +155,10 @@ var taobao = function(){
     this.previewPrice = function () {
         try{
             var $anchor = document.querySelectorAll('#J_PromoWrap');
+            if(!$anchor.length){
+                $anchor = document.querySelectorAll('#J_PromoPrice');
+            }
+
             if($anchor.length){
                 document.querySelectorAll('.nhatminh247-preview-price').remove();
 
@@ -191,7 +195,26 @@ var taobao = function(){
     };
 
     this.isEmptyProperty = function () {
-        if(!document.querySelectorAll('#J_SKU > dl').length){
+        if(document.querySelectorAll('#J_SKU').length){
+            //world.taobao.com
+
+            if(!document.querySelectorAll('#J_SKU > dl').length){
+                return true;
+            }
+            return false;
+
+        }else if(document.querySelectorAll('.J_Prop').length){
+            //item.taobao.com
+            if(!document.querySelectorAll('.J_Prop').length){
+                return true;
+            }
+            return false;
+        }
+    };
+
+    this.isItemTaobao = function () {
+        var str = window.location.href;
+        if(str.match(/item.taobao/)){
             return true;
         }
         return false;
@@ -201,10 +224,19 @@ var taobao = function(){
         if(this.isEmptyProperty()){
             return true;
         }else{
-            var total_choose = document.querySelectorAll('.J_SKU.tb-selected').length;
-            var total_sku = document.querySelectorAll('#J_SKU > dl').length;
-            if(total_choose == total_sku){
-                return true;
+
+            if(this.isItemTaobao()){
+                var total_choose = document.querySelectorAll('.J_Prop .tb-selected').length;
+                var total_sku = document.querySelectorAll('.J_Prop').length;
+                if(total_choose == total_sku){
+                    return true;
+                }
+            }else{
+                var total_choose = document.querySelectorAll('.J_SKU.tb-selected').length;
+                var total_sku = document.querySelectorAll('#J_SKU > dl').length;
+                if(total_choose == total_sku){
+                    return true;
+                }
             }
         }
         return false;
@@ -220,6 +252,13 @@ var taobao = function(){
             product_name = document.querySelectorAll('meta[property="og:title"]')[0].getAttribute('content');
         }catch (e){
 
+        }
+        if(!product_name && document.querySelectorAll('.tb-main-title').length){
+            try{
+                product_name = document.querySelectorAll('.tb-main-title')[0].textContent.trim();
+            }catch (e){
+
+            }
         }
         return product_name;
     };
@@ -256,19 +295,35 @@ var taobao = function(){
         }
 
         var property = [];
-        try{
-            var $dom = document.querySelectorAll('.J_SKU.tb-selected > a');
-            for(var i = 0; i < $dom.length; i++){
-                var property_item = $dom[i].getAttribute('title');
-                if(!property_item){
-                    $dom[i].textContent.trim();
+        if(document.querySelectorAll('.J_SKU').length){
+            //using for world.taobao.com
+            try{
+                var $dom = document.querySelectorAll('.J_SKU.tb-selected > a');
+                for(var i = 0; i < $dom.length; i++){
+                    var property_item = $dom[i].getAttribute('title');
+                    if(!property_item){
+                        $dom[i].textContent.trim();
+                    }
+                    if(property_item){
+                        property.push(property_item);
+                    }
                 }
-                if(property_item){
-                    property.push(property_item);
-                }
-            }
-        }catch (e){
+            }catch (e){
 
+            }
+        }else if(document.querySelectorAll('.J_Prop').length){
+            //using for item.taobao.com
+            try{
+                var $dom1 = document.querySelectorAll('.J_Prop .tb-selected > a');
+                for(var j = 0; j < $dom1.length; j++){
+                    var property_item1 = $dom1[j].textContent.trim();
+                    if(property_item1){
+                        property.push(property_item1);
+                    }
+                }
+            }catch (e){
+
+            }
         }
 
         return property ? property.join(';') : '';
@@ -280,6 +335,9 @@ var taobao = function(){
             product_image = document.querySelectorAll('#J_ThumbView')[0].getAttribute('src');
         }catch (e){
 
+        }
+        if(!product_image && document.querySelectorAll('#J_ImgBooth').length){
+            product_image = document.querySelectorAll('#J_ImgBooth')[0].getAttribute('src');
         }
         return product_image;
     };
@@ -298,6 +356,15 @@ var taobao = function(){
             }
         }catch (e){
 
+        }
+
+        //using for item.taobao.com
+        if(!product_image_model){
+            try{
+                product_image_model = Helper.getBackgroundImageOfDiv(document.querySelectorAll('.J_Prop .tb-selected > a')[0]);
+            }catch (e){
+
+            }
         }
 
         if(!product_image_model){
@@ -356,6 +423,22 @@ var taobao = function(){
             shop_id = tmp[0];
         }catch(e){
 
+        }
+
+        //using for item.taobao.com
+        if(!shop_id){
+            try{
+                var content = document.querySelectorAll('meta[name="microscope-data"]')[0].getAttribute('content').trim().split(';');
+                for(var i = 0; i < content.length; i++){
+                    var array = content[i].split('=');
+                    if(array[0] == 'shopId'){
+                        shop_id = array[1];
+                        break;
+                    }
+                }
+            }catch (e){
+
+            }
         }
 
         shop_id = shop_id ? 'taobao_' + shop_id : shop_id;

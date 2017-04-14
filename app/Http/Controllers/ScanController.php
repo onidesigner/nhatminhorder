@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Jobs\SendSms;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
 use App\OrderFreightBill;
@@ -11,9 +12,11 @@ use App\Scan;
 use App\Service;
 use App\SystemConfig;
 use App\User;
+use App\UserAddress;
 use App\UserTransaction;
 use App\Util;
 use App\WareHouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -168,7 +171,15 @@ class ScanController extends Controller
                 if($order instanceof Order){
                     $order->changeOrderWaitingDelivery();
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    //todo:: gui tin nhan bao hang da ve kho phan phoi tai viet nam
+
+                    $user_address = UserAddress::find($order->user_address_id);
+                    if($user_address instanceof UserAddress){
+                        $job = (new SendSms([
+                            'phone' => $user_address->reciver_phone,
+                            'content' => sprintf('Don hang %s da ve kho phan phoi tai VN', $order->code)
+                        ]));
+                        dispatch($job);
+                    }
                 }
             }
 
@@ -221,7 +232,17 @@ class ScanController extends Controller
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
                     if($package->isTransportStraight()){
-                        $this->__packageChargeFee($package, $order, $create_user, $customer);
+                        $this->__packageChargeFee($package, $order,
+                            $create_user, $customer);
+
+                        $user_address = UserAddress::find($order->user_address_id);
+                        if($user_address instanceof UserAddress){
+                            $job = (new SendSms([
+                                'phone' => $user_address->reciver_phone,
+                                'content' => sprintf('Don hang %s da bat dau van chuyen ve VN', $order->code)
+                            ]));
+                            dispatch($job);
+                        }
                     }
                 }
             }
@@ -269,7 +290,8 @@ class ScanController extends Controller
      * @param User $create_user
      * @param User $customer
      */
-    private function __packageChargeFee(Package $package, Order $order, User $create_user, User $customer){
+    private function __packageChargeFee(Package $package, Order $order,
+                                        User $create_user, User $customer){
         $factoryMethodInstance = new ServiceFactoryMethod();
 
         $service = $factoryMethodInstance->makeService([

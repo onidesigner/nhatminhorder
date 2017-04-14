@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendSms;
 use App\Library\ServiceFee\AbstractService;
 use App\Library\ServiceFee\Buying;
 use App\Library\ServiceFee\ServiceFactoryMethod;
@@ -118,6 +119,9 @@ class HomeController extends Controller
 //        $order = Order::find(83);
 //        $order->domestic_shipping_fee = 9;
 //        $order->save();
+
+//        $job = new SendSms([]);
+//        dispatch($job);
 
         $current_user = User::find($user_id);
 
