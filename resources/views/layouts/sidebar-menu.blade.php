@@ -120,6 +120,7 @@ if(Auth::check()){
                 'icon' => 'fa-gear',
                 'title' => 'Hệ thống',
                 'children' => [
+
                     [
                         'url' => url('setting/roles'),
                         'title' => 'Nhóm & phân quyền',
@@ -144,7 +145,12 @@ if(Auth::check()){
                         'url' => url('setting'),
                         'title' => 'Cấu hình chung',
                         'permission' => \App\Permission::PERMISSION_UPDATE_SYSTEM_CONFIG
-                    ]
+                    ],
+                    [
+                        'url' => url('manager_addon_link_error'),
+                        'title' => 'Quản lý link đặt hàng báo lỗi',
+                        'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
+                    ],
                 ]
             ]
         ];

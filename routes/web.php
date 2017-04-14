@@ -91,16 +91,16 @@ Route::post('/comment', 'CommentController@action');
 #endregion
 
 #region he thong
-Route::get('/setting', 'SystemConfigController@getList');
-Route::post('/setting', 'SystemConfigController@update');
+Route::get('/setting', 'SystemController@getList');
+Route::post('/setting', 'SystemController@update');
 
-Route::get('/setting/roles', 'SystemConfigController@roles');
-Route::get('/setting/role/{id}', 'SystemConfigController@roleDetail');
-Route::post('/setting/role/update/{id}', 'SystemConfigController@updateRole');
-Route::post('/setting/role', 'SystemConfigController@addRole');
-Route::post('/setting/role/permission', 'SystemConfigController@savePermission');
-Route::post('/setting/role/user', 'SystemConfigController@updateUserRole');
-Route::put('/setting/role/delete', 'SystemConfigController@deleteRole');
+Route::get('/setting/roles', 'SystemController@roles');
+Route::get('/setting/role/{id}', 'SystemController@roleDetail');
+Route::post('/setting/role/update/{id}', 'SystemController@updateRole');
+Route::post('/setting/role', 'SystemController@addRole');
+Route::post('/setting/role/permission', 'SystemController@savePermission');
+Route::post('/setting/role/user', 'SystemController@updateUserRole');
+Route::put('/setting/role/delete', 'SystemController@deleteRole');
 
 //======== Warehouse ==========
 Route::get('/warehouses', 'WarehouseController@render');
@@ -162,3 +162,5 @@ Route::get('/ho-tro/{id}', 'Support\PostController@index');
 #endregion
 
 //Route::get('/tinh-phi', '');
+Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError');
+Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');

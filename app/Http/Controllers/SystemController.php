@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Permission;
+use App\ProductLinkError;
 use App\SystemConfig;
 
 use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use App\Role;
@@ -17,12 +19,54 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class SystemConfigController extends Controller
+class SystemController extends Controller
 {
 
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function setDoneLinkError(Request $request){
+        $id = $request->get('id');
+        $product_link_error = ProductLinkError::find($id);
+        $product_link_error->is_done = 1;
+        $product_link_error->save();
+        return Response::json(['success' => true, 'message' => '']);
+    }
+
+    public function managerAddonLinkError(){
+        $is_done_list = [
+            0 => 'Chờ xử lý',
+            1 => 'Đã xử lý'
+        ];
+
+        $condition = Input::all();
+        $query = ProductLinkError::orderBy('created_at', 'desc');
+        $where = [];
+
+        if(isset($condition['is_done'])){
+            $where['is_done'] = $condition['is_done'];
+        }
+
+        $query = $query->where($where);
+        $total_records = $query->count();
+        $result = $query->get();
+        $data = [];
+        if($result){
+            foreach($result as $k => $v){
+                $v->create_user = User::find($v->create_user_id);
+                $data[] = $v;
+            }
+        }
+
+        return view('manager_addon_link_error', [
+            'is_done_list' => $is_done_list,
+            'data' => $data,
+            'condition' => $condition,
+            'total_records' => $total_records,
+            'page_title' => 'Quản lý link đặt hàng báo lỗi'
+        ]);
     }
 
     /**

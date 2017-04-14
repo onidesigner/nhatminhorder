@@ -62,6 +62,7 @@ class Permission extends Model
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_VIEW = 'MANAGER_WAREHOUSE_MANUALLY_VIEW';
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_INSERT = 'MANAGER_WAREHOUSE_MANUALLY_INSERT';
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE = 'MANAGER_WAREHOUSE_MANUALLY_DELETE';
+    const PERMISSION_MANAGER_ADDON_LINK_ERROR = 'MANAGER_ADDON_LINK_ERROR';
     #endregion
 
     public static $permissions = array(
@@ -199,7 +200,7 @@ class Permission extends Model
         ),
 
         'system_permission' => array(
-            'label' => 'Cấu hình hệ thống ',
+            'label' => 'Hệ thống ',
             'permissions' => array(
                 self::PERMISSION_UPDATE_SYSTEM_CONFIG => array(
                     'label' => 'Chỉnh sửa cấu hình chung trên hệ thống ',
@@ -225,6 +226,10 @@ class Permission extends Model
                 self::PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE => array(
                     'label' => 'Xóa cấu hình kho',
                     'description' => 'Cấu hình kho bằng tay, mức ưu tiên cao nhất',
+                ),
+                self::PERMISSION_MANAGER_ADDON_LINK_ERROR => array(
+                    'label' => 'Quản lý link đặt hàng báo lỗi',
+                    'description' => ''
                 ),
             ),
         ),
