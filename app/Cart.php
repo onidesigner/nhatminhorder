@@ -374,4 +374,6 @@ class Cart extends Model
     public function cart_item(){
         return $this->hasMany('App\CartItem', 'cart_id');
     }
+
+    public function giangtest(){}
 }
