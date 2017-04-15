@@ -161,6 +161,7 @@ Route::get('/ho-tro/danh-muc/{id}', 'Support\TaxonomyController@indexs');
 Route::get('/ho-tro/{id}', 'Support\PostController@index');
 #endregion
 
-//Route::get('/tinh-phi', '');
+Route::get('/tinh-phi', 'PreviewFeeController@index');
+Route::get('/calculator_fee', 'PreviewFeeController@calculatorFee');
 Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError');
 Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');

@@ -26,11 +26,77 @@
     <meta charset="utf-8">
     <!-- Always force latest IE rendering engine or request Chrome Frame -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>NhatMinh247 HomePage</title>
+    <title>NhatMinh247 Trang chủ</title>
     <!-- Meta Description -->
-    <meta name="description" content="Blue One Page Creative HTML5 Template">
-    <meta name="keywords" content="one page, single page, onepage, responsive, parallax, creative, business, html5, css3, css3 animation">
-    <meta name="author" content="Muhammad Morshed">
+    <meta name="description" content="NhatMinh247 chuyên cung cấp dịch vụ đặt hàng, vận chuyển và phân phối hàng chuyên tuyến Trung Quốc – Việt Nam.">
+    <meta name="keywords" content="nhập hàng trung quốc, đặt hàng trung quốc
+,nhaphangtrungquoc
+,mua hàng trung quốc
+,chuyển hàng trung quốc
+,vận chuyển hàng trung quốc
+,order hàng trung quốc
+,dat hang trung quoc
+,vận chuyển hàng từ trung quốc về việt nam
+,chuyển hàng từ trung quốc về việt nam
+,ship hàng trung quốc
+,bán hàng order
+,vận chuyển hàng hóa từ trung quốc về việt nam
+,đặt hàng trung quốc giá rẻ
+,vận chuyển hàng trung quốc về việt nam
+,chuyển hàng trung quốc về việt nam
+,vận chuyển hàng trung quốc việt nam
+,order trung quốc
+,nguồn hàng trung quốc
+,van chuyen hang trung quoc
+,vận chuyển hàng trung quốc giá rẻ
+,mua hàng trung quốc online
+,chuyển hàng trung quốc việt nam
+,vận chuyển trung quốc việt nam
+,vận chuyển trung quốc việt nam giá rẻ
+,order hàng trung quốc giá rẻ
+,nhận order hàng trung quốc
+,vận chuyển việt trung
+,chuyển tiền từ trung quốc về việt nam
+,nhập hàng trung quốc giá rẻ
+,lấy hàng trung quốc
+,nhập hàng từ trung quốc
+,đánh hàng trung quốc
+,dịch vụ order hàng trung quốc
+,web mua hàng trung quốc
+,web bán hàng trung quốc
+,chuyển phát nhanh trung quốc việt nam
+,gửi hàng đi trung quốc
+,van chuyen trung quoc
+,nhập hàng trung quốc về bán
+,mua hàng từ trung quốc
+,mua hàng trung quốc giá rẻ
+,ship hàng trung quốc về việt nam
+,vận chuyển hàng hóa trung quốc việt nam
+,order hàng trung quốc uy tín
+,mua hộ hàng trung quốc
+,vận chuyển trung việt
+,mua hang tren taobao
+,mua hang trung quoc gia si
+,ship hàng từ trung quốc về việt nam
+,dịch vụ chuyển hàng từ trung quốc về việt nam
+,van chuyen viet trung
+,nguồn hàng trung quốc giá rẻ
+,mua hàng online trung quốc
+,nhập khẩu hàng hóa từ trung quốc về việt nam
+,buôn hàng điện tử trung quốc
+,mua hang trung quoc qua mang
+,vận chuyển hàng từ trung quốc về hà nội
+,nhận chuyển hàng từ trung quốc về việt nam
+,nhận đặt hàng trung quốc
+,chuyển hàng từ trung quốc về hà nội
+,ship hàng từ trung quốc
+,gửi hàng từ trung quốc về việt nam
+,nhập hàng trung quốc ở đâu
+,chuyen tien trung quoc ve viet nam
+,dịch vụ mua hộ hàng trung quốc
+,công ty vận chuyển hàng hóa trung việt
+vận chuyển hàng từ trung quốc">
+    <meta name="author" content="NhatMinh247">
 
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -111,12 +177,10 @@ Fixed Navigation
         <nav class="collapse navbar-collapse navbar-right" role="navigation">
             <ul id="nav" class="nav navbar-nav _menu-header">
 
-
-
-                <li><a href="http://nhatminh247.vn/ho-tro/4">Hướng dẫn</a></li>
-                <li><a href="http://nhatminh247.vn/ho-tro/5">Nguồn hàng</a></li>
-                <li><a href="http://nhatminh247.vn/ho-tro/3">Biểu phí</a></li>
-                <li><a href="http://nhatminh247.vn/ho-tro/1">Nạp tiền</a></li>
+                <li><a href="{{ url('ho-tro', 4)  }}">Hướng dẫn</a></li>
+                <li><a href="{{ url('ho-tro', 5)  }}">Nguồn hàng</a></li>
+                <li><a href="{{ url('ho-tro', 3)  }}">Biểu phí</a></li>
+                <li><a href="{{ url('ho-tro', 1)  }}">Nạp tiền</a></li>
 
 
                 @if (Route::has('login'))

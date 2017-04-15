@@ -85,9 +85,9 @@
                                                 <strong>{{$user->email}}</strong>
                                             </a><br>
 
-                                            <small>{{$user->name}}</small>
+                                            <small>{{$user->name}} ({{$user->code}})</small>
 
-                                            <code>{{$user->code}}</code>
+
                                         </td>
                                         <td>
                                             {{$transaction->transaction_code}}<br>

@@ -110,22 +110,15 @@
                     return false;
                 }
 
-                $.ajax({
-                  url: "{{ url('set_done_link_error')  }}",
-                  method: "post",
-                  data: {
-                      _token: "{{csrf_token()}}",
-                      id:id
-                  },
-                  success:function(response) {
-                      if(response.success){
-                          $(that).parent().text('Đã xử lý xong');
-                      }
-                  },
-                  error: function(){
-                    
-                  }
+                request("{{ url('set_done_link_error')  }}", "post", {
+                    _token: "{{csrf_token()}}",
+                    id:id
+                }).done(function(response){
+                    if(response.success){
+                        $(that).parent().text('Đã xử lý xong');
+                    }
                 });
+
             });
         });
 
