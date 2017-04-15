@@ -159,6 +159,8 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
+                                                    data-toggle="tooltip"
+                                                    title="Ấn enter để lưu"
                                                     data-shop-id="{{$shop->shop_id}}"
                                                     data-item-id="{{$item->id}}"
                                                     placeholder="Ghi chú sản phẩm..."
@@ -184,6 +186,8 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
+                                                    data-toggle="tooltip"
+                                                    title="Ấn enter để lưu"
                                                     style="width: 80px"
                                                     type="number"
                                                     data-key-global="cart-item-quantity-{{$shop->shop_id}}-{{$item->id}}"

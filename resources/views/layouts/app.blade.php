@@ -94,15 +94,13 @@
                             </a>
                         </li>
 
-                        {{--<li class="arrow-none dropdown notification danger">--}}
-                            {{--<a href="{{ url('thong-bao') }}" class="dropdown-toggle" data-toggle="dropdown2222">--}}
-                                {{--<div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>--}}
-                                {{--<div class="title">System Notifications</div>--}}
-                                {{--<div class="count width-auto">--}}
-                                    {{--0--}}
-                                {{--</div>--}}
-                            {{--</a>--}}
-                        {{--</li>--}}
+                        <li class="arrow-none dropdown notification danger">
+                            <a href="{{ url('thong-bao') }}" class="dropdown-toggle" data-toggle="dropdown1111">
+                                <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
+                                <div class="title">System Notifications</div>
+                                <div class="count width-auto">0</div>
+                            </a>
+                        </li>
 
                         {{--<li class="dropdown notification danger">--}}
                             {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">--}}

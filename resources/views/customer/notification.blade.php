@@ -18,7 +18,7 @@
                                             )
 
                 <div class="card-body">
-                    page notification
+                    Chức năng này đang trong quá trình hoàn thiện, bạn quay lại sau nhé!
                 </div>
             </div>
         </div>

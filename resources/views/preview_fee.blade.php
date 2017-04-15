@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="row">
-                            <label for="">Quận / huyện:</label>
+                            <label for="">Quận/huyện:</label>
                             <select style="width: 200px;" required id="district_id" name="district_id" class="form-control">
                                 <option value="">Mời chọn</option>
                                 @foreach($all_districts as $district)
