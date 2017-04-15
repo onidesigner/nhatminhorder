@@ -204,7 +204,8 @@
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="5">
-                                        Tổng tiền hàng: <span class="">{{ App\Util::formatNumber($shop->total_amount_items)  }}</span>đ
+                                        Tiền hàng: <span class="">{{ App\Util::formatNumber($shop->total_amount_items)  }}đ</span> ;
+                                        Phí mua hàng <span>{{ App\Util::formatNumber($shop->buying_fee)  }}đ</span>
 
                                         <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
                                     </td>

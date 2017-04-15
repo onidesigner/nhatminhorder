@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Permission;
 use App\UserTransaction;
 use Illuminate\Http\Request;
@@ -366,6 +367,8 @@ class CartController extends Controller
     }
 
     private function __getInitDataCart(User $customer){
+        $factoryMethodInstance = new ServiceFactoryMethod();
+
         $data = [];
         $shop_ids = [];
 
@@ -420,6 +423,15 @@ class CartController extends Controller
 
                 $cart->items = $items;
                 $cart->total_amount_items = $total_amount_items;
+
+                //============phi mua hang===========
+                $service = $factoryMethodInstance->makeService([
+                    'service_code' => Service::TYPE_BUYING,
+                    'total_amount' => $cart->total_amount_items,
+                    'apply_time' => date('Y-m-d H:i:s')
+                ]);
+                $cart->buying_fee = $service->calculatorFee();
+
                 $cart->fee_temp = 0;
                 $cart->total_amount_finish = $cart->total_amount_items + $cart->fee_temp;
 
