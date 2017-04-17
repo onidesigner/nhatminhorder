@@ -424,7 +424,7 @@
                                     @foreach($order_fee as $order_fee_item)
                                     <li>
                                         <label for="">{{$order_fee_item['label']}}</label>
-                                        <div>{{$order_fee_item['value']}} <sup>đ</sup></div>
+                                        <div class="text-danger">{{$order_fee_item['value']}} <sup>đ</sup></div>
                                     </li>
                                     @endforeach
                                 </ul>
