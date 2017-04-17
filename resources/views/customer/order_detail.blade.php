@@ -345,7 +345,7 @@
                                                     Mẫu: {{$order_item->property}}
                                                 </p>
 
-                                                <form class="___form">
+                                                <form class="___form" onsubmit="return false;">
                                                     <input type="hidden" name="action" value="order_item_comment">
                                                     <input type="hidden" name="method" value="post">
                                                     <input type="hidden" name="item_id" value="{{$order_item->id}}">

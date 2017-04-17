@@ -60,7 +60,7 @@
 
                         <div class="table-responsive">
 
-                            <table class="table no-padding-leftright">
+                            <table class="table no-padding-leftright table-striped">
                                 <thead>
                                     <tr>
 
@@ -128,20 +128,18 @@
                                         <td>
                                             {{--<span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>--}}
 
-                                            <small>
                                                 @foreach($order->order_fee as $order_fee_item)
-                                                    <div>
+                                                    <p>
                                                         {{$order_fee_item['label']}}:
                                                         <span class="text-danger">
                                                             {{$order_fee_item['value']}}<sup>đ</sup>
                                                         </span>
-                                                    </div>
+                                                    </p>
                                                 @endforeach
-                                            </small>
+
                                         </td>
                                         <td>
                                             <ul style="list-style: none; margin: 0; padding: 0;">
-                                                <small>
                                                     <?php
                                                     foreach(App\Order::$timeListOrderDetail as $k => $v){
                                                     if(empty($order->$k)){
@@ -150,7 +148,6 @@
                                                     ?>
                                                     <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
                                                     <?php } ?>
-                                                </small>
                                             </ul>
                                         </td>
                                     </tr>

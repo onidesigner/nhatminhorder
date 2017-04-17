@@ -636,7 +636,7 @@
                                                 Mẫu: {{$order_item->property}}
                                             </p>
 
-                                            <form class="___form">
+                                            <form class="___form" onsubmit="return false;">
                                                 <input type="hidden" name="action" value="order_item_comment">
                                                 <input type="hidden" name="method" value="post">
                                                 <input type="hidden" name="item_id" value="{{$order_item->id}}">
@@ -689,7 +689,7 @@
                                 <td>
                                     @if($permission['can_change_order_item_quantity'])
 
-                                        <form class="___form">
+                                        <form class="___form" onsubmit="return false;">
                                             <input type="hidden" name="action" value="change_order_item_quantity">
                                             <input type="hidden" name="method" value="post">
                                             <input type="hidden" name="item_id" value="{{$order_item->id}}">

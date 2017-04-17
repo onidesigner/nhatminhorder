@@ -118,6 +118,9 @@ class CartController extends Controller
             $user = User::find($user_id);
             $destination_warehouse = $user->destination_warehouse();
 
+            //todo:: chua tim duoc loi, vi the chi cho phep dat coc 1 shop trong 1 thoi diem
+            $shop_id = [ $shop_id[0] ];
+
             #region lay ra tong so tien hang theo danh sach shop
             $total_shop_amount = 0;
             $cart_items = CartItem::select('*')

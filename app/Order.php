@@ -728,6 +728,22 @@ class Order extends Model
 
     /**
      * @author vanhs
+     * @desc Ham cap nhat thong tin don hang
+     * @param array $data
+     * @return bool
+     */
+    public function updateInfo($data = []){
+        if(count($data)){
+            foreach($data as $key => $value){
+                $this->$key = $value;
+            }
+            $this->save();
+        }
+        return true;
+    }
+
+    /**
+     * @author vanhs
      * @desc
      * - Chuyen trang thai don sang van chuyen:
      * - Truy thu tien hang con lai + phi mua hang

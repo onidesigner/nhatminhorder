@@ -25,7 +25,7 @@
 
             ?>
 
-        <form class="___form">
+        <form class="___form" onsubmit="return false;">
             <input type="hidden" name="action" value="comment">
             <input type="hidden" name="method" value="post">
             <input type="hidden" name="url" value="{{ url('comment')  }}">
@@ -88,7 +88,7 @@
 
             ?>
 
-        <form class="___form">
+        <form class="___form" onsubmit="return false;">
             <input type="hidden" name="action" value="comment">
             <input type="hidden" name="method" value="post">
             <input type="hidden" name="url" value="{{ url('comment')  }}">

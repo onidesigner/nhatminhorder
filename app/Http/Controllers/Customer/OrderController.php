@@ -42,7 +42,7 @@ class OrderController extends Controller
         $params = Input::all();
         $exchange_rage = Exchange::getExchange();
 
-        $per_page = 50;
+        $per_page = 20;
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
 

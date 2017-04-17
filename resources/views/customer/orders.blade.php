@@ -22,41 +22,38 @@
 
                     <h3>{{$page_title}}</h3>
 
+                    <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
+
+                        <input type="text" placeholder="Mã đơn..." name="order_code" value="{{  @$params['order_code'] }}">
+                        <input type="text" placeholder="Mã khách hoặc email..."
+                               class="hidden"
+                               name="customer_code_email" value="{{ @$params['customer_code_email']  }}">
+
+                        <br><br>
+
+                        @foreach($status_list as $status_list_item)
+                            @if($status_list_item['selected'])
+                                <a class="_select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                    <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}</span>
+                                </a>
+                            @else
+                                <a class="_select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                    <span class="label label-success"><span>{{ $status_list_item['val']  }}</span></span>
+                                </a>
+                            @endif
+                        @endforeach
+
+                        <input type="hidden" name="status" value="">
+
+                    </form>
+                    <br>
+
                     @if(count($orders))
-
-                        <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
-
-                            <input type="text" placeholder="Mã đơn..." name="order_code" value="{{  @$params['order_code'] }}">
-                            <input type="text" placeholder="Mã khách hoặc email..."
-                                   class="hidden"
-                                   name="customer_code_email" value="{{ @$params['customer_code_email']  }}">
-
-                            <br><br>
-
-                            @foreach($status_list as $status_list_item)
-                                @if($status_list_item['selected'])
-                                    <a class="_select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                        <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}</span>
-                                    </a>
-                                @else
-                                    <a class="_select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                        <span class="label label-success"><span>{{ $status_list_item['val']  }}</span></span>
-                                    </a>
-                                @endif
-
-                            @endforeach
-
-
-
-                            <input type="hidden" name="status" value="">
-
-                        </form>
-                        <br>
 
                         <p>Tìm thấy {{ $total_orders }} đơn hàng</p>
 
                         <div class="table-responsive">
-                            <table class="table no-padding-leftright">
+                            <table class="table no-padding-leftright table-striped">
                                 <thead>
                                     <tr>
 
@@ -96,23 +93,20 @@
 
                                         <td>
 
-                                            <small>
                                                 @foreach($order->order_fee as $order_fee_item)
-                                                    <div>
+                                                    <p>
                                                         {{$order_fee_item['label']}}:
                                                         <span class="text-danger">
                                                             {{$order_fee_item['value']}}<sup>đ</sup>
                                                         </span>
-                                                    </div>
+                                                    </p>
                                                 @endforeach
-                                            </small>
 
                                         </td>
                                         <td>
 
                                             <ul style="list-style: none; margin: 0; padding: 0;">
 
-                                                <small>
                                                     <?php
                                                     foreach(App\Order::$timeListOrderDetail as $k => $v){
                                                     if(empty($order->$k)){
@@ -121,7 +115,6 @@
                                                     ?>
                                                     <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
                                                     <?php } ?>
-                                                </small>
 
                                             </ul>
 

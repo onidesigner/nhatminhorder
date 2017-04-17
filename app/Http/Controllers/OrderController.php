@@ -43,7 +43,7 @@ class OrderController extends Controller
      */
     public function orders(){
         $params = Input::all();
-        $per_page = 50;
+        $per_page = 20;
 
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');

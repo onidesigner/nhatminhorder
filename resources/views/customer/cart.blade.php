@@ -139,7 +139,7 @@
                                         <small>{{$item->property}}</small>
                                         <br>
 
-                                        <form class="___form">
+                                        <form class="___form" onsubmit="return false;">
                                             <input type="hidden" name="action" value="comment">
                                             <input type="hidden" name="method" value="post">
                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
@@ -149,8 +149,7 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
-                                                    data-toggle="tooltip"
-                                                    title="Ấn enter để lưu"
+                                                    data-toggle="_tooltip"
                                                     data-shop-id="{{$shop->shop_id}}"
                                                     data-item-id="{{$item->id}}"
                                                     placeholder="Ghi chú sản phẩm..."
@@ -166,7 +165,7 @@
                                     <td><span class="">{{ App\Util::formatNumber($item->price_calculator_vnd)  }}</span>đ / ¥{{$item->price_calculator}}</td>
                                     <td>
 
-                                        <form class="___form">
+                                        <form class="___form" onsubmit="return false;">
                                             <input type="hidden" name="action" value="update_quantity">
                                             <input type="hidden" name="method" value="post">
                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
@@ -176,12 +175,12 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
-                                                    data-toggle="tooltip"
-                                                    title="Ấn enter để lưu"
+                                                    data-toggle="_tooltip"
                                                     style="width: 80px"
                                                     type="number"
                                                     data-key-global="cart-item-quantity-{{$shop->shop_id}}-{{$item->id}}"
-                                                    name="quantity" class="form-control text-center ___input-action" value="{{$item->quantity}}" />
+                                                    name="quantity"
+                                                    class="form-control text-center ___input-action" value="{{$item->quantity}}" />
                                         </form>
 
                                     </td>
