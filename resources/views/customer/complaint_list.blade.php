@@ -34,7 +34,7 @@
         </tbody>
     </table>
     @if(!empty($data))
-        {{ $data->links() }}
+
     @else
         <h3 align="center">Bạn chưa có khiếu nại !</h3>
     @endif

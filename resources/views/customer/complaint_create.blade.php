@@ -80,14 +80,8 @@
             </fieldset>
         </form>
     </div><!-- /.container -->
-    <div class="col-sm-4 col-xs-12" id="anchor-box-comment">
-        @include('partials/__comment', [
-            'object_id' => $data->id,
-            'object_type' => App\Comment::TYPE_OBJECT_COMPLAINT,
-            'scope_view' => App\Comment::TYPE_EXTERNAL
-        ])
 
-    </div>
+
 
 
 
