@@ -39,6 +39,4 @@ class OrderItem extends Model
         return $this->price;
     }
 
-
-
 }

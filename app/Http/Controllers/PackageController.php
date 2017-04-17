@@ -260,6 +260,11 @@ class PackageController extends Controller
                                 1,
                                 30
                             );
+                            $order = null;
+                            $o = Order::find($package->order_id);
+                            if($o instanceof Order){
+                                $package->order = $o;
+                            }
                             $view = View::make('logistic_package_barcode_print', [
                                 'package' => $package,
                                 'svg' => $svg,

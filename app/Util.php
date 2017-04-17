@@ -24,6 +24,22 @@ class Util extends Model
         }
     }
 
+    public static function showSite($site){
+        $html = '';
+        switch (strtolower($site)){
+            case 'taobao':
+                $html = '<span class="label label-warning">taobao</span>&nbsp;';
+                break;
+            case 'tmall':
+                $html = '<span class="label label-danger">tmall</span>&nbsp;';
+                break;
+            case '1688':
+                $html = '<span class="label label-success">1688</span>&nbsp;';
+                break;
+        }
+        return $html;
+    }
+
     public static function cleanVietnamese($str)
     {
         $unicode = array(

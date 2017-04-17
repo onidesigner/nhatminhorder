@@ -19,6 +19,7 @@ class Comment extends Model
 
     const TYPE_OBJECT_ORDER = 'ORDER';
     const TYPE_OBJECT_ORDER_ITEM = 'ORDER_ITEM';
+    const TYPE_OBJECT_PACKAGE = 'PACKAGE';
 
     public static function createComment(User $create, $object, $message, $scope, $type_context, $parent_object = null){
         $object_id = null;

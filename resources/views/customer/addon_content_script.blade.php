@@ -212,6 +212,53 @@ return false;
 }
 };
 
+this.getShopName = function(){
+try{
+var shop_name = '';
+if(document.getElementsByClassName('tb-seller-name').length > 0){
+shop_name = document.getElementsByClassName('tb-seller-name')[0].textContent;
+
+if(shop_name == '' || shop_name == null) {
+
+var shop_card = document.getElementsByClassName('shop-card');
+var data_nick = shop_card.length > 0 ? shop_card[0].getElementsByClassName('ww-light') : '';
+shop_name = (data_nick.length > 0 ? data_nick[0].getAttribute('data-nick') : '');
+if(shop_name == '') {
+/* Find base info*/
+if( document.getElementsByClassName('base-info').length > 0) {
+for(var i =0; i < document.getElementsByClassName('base-info').length; i++) {
+if(document.getElementsByClassName('base-info')[i].getElementsByClassName('seller').length > 0) {
+if(document.getElementsByClassName('base-info')[i].getElementsByClassName('seller')[0].getElementsByClassName('J_WangWang').length > 0) {
+shop_name = document.getElementsByClassName('base-info')[i].getElementsByClassName('seller')[0].getElementsByClassName('J_WangWang')[0].getAttribute('data-nick');
+break;
+}
+if(document.getElementsByClassName('base-info')[i].getElementsByClassName('seller')[0].getElementsByClassName('ww-light').length > 0) {
+shop_name = document.getElementsByClassName('base-info')[i].getElementsByClassName('seller')[0].getElementsByClassName('ww-light')[0].getAttribute('data-nick');
+break;
+}
+}
+}
+}
+}
+}
+}else if(document.querySelectorAll('#J_tab_shopDetail').length > 0
+&& document.querySelectorAll('#J_tab_shopDetail span').length){
+shop_name = document.querySelectorAll('#J_tab_shopDetail span')[0].getAttribute('data-nick');
+}
+shop_name = shop_name.trim();
+
+if(!shop_name){
+shop_name = document.querySelectorAll(".tb-shop-name")[0].getElementsByTagName("h3")[0].getElementsByTagName("a")[0].getAttribute("title");
+}
+
+return shop_name;
+}catch(ex){
+console.log('taobao - shop_name: ' + ex.message);
+return "";
+}
+
+};
+
 this.isItemTaobao = function () {
 var str = window.location.href;
 if(str.match(/item.taobao/)){
@@ -476,6 +523,7 @@ link_origin: this.getProductDetailUrl(),
 item_id: this.getProductId(),
 site: this.getSite(),
 shop_id: this.getShopId(),
+shop_name: this.getShopName(),
 quantity: this.getQuantity(),
 };
 };
@@ -864,6 +912,36 @@ shop_id = 'tmall_' + shop_id;
 return shop_id;
 };
 
+this.getShopName = function(){
+var shop_name = '';
+try{
+shop_name = document.getElementsByClassName('hd-shop-name')[0].getElementsByTagName('a')[0].innerText;
+if(shop_name == '' || shop_name == undefined) {
+shop_name = document.getElementsByClassName('shop-intro')[0].getElementsByTagName('a')[0].innerText;
+}
+}catch(ex){
+
+}
+
+if(!shop_name){
+try{
+shop_name = document.getElementsByClassName('slogo-shopname')[0].getElementsByTagName('strong')[0].innerText;
+}catch(ex){
+
+}
+}
+
+if(!shop_name){
+try{
+shop_name = document.querySelectorAll('[type="hidden"][name="seller_nickname"]')[0].value;
+}catch(ex){
+
+}
+}
+
+return shop_name;
+};
+
 this.getQuantity = function(){
 
 var quantity = 0;
@@ -887,6 +965,7 @@ link_origin: this.getProductDetailUrl(),
 item_id: this.getProductId(),
 site: this.getSite(),
 shop_id: this.getShopId(),
+shop_name: this.getShopName(),
 quantity: this.getQuantity(),
 };
 };
@@ -1241,6 +1320,35 @@ return this.init_data.iDetailConfig.userId;
 return '';
 };
 
+this.getShopName = function () {
+var shop_name = '';
+try {
+var dom = document.getElementsByName("sellerId");
+if (dom.length) {
+shop_name = dom[0].value;
+}
+
+if(!shop_name){
+dom = document.getElementsByClassName('contact-div');
+if (dom.length) {
+shop_name = dom[0].getElementsByTagName('a')[0].innerHTML;
+}
+}
+
+if(!shop_name){
+dom = document.querySelectorAll("meta[property='og:product:nick']")[0].getAttribute("content");
+dom = dom.split(';');
+dom = dom[0];
+dom = dom.split('=');
+shop_name = dom[1];
+}
+} catch (e) {
+
+}
+//console.info('shop_name: ' + shop_name);
+return shop_name;
+};
+
 this.getDataToSend = function () {
 return {
 title_origin: this.getProductName(),
@@ -1253,6 +1361,7 @@ link_origin: this.getProductDetailUrl(),
 item_id: this.getItemId(),
 site: this.getSite(),
 shop_id: this.getShopId(),
+shop_name: this.getShopName(),
 quantity: this.getQuantity(),
 price_range: this.getProductPriceRange(),
 };

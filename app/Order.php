@@ -497,13 +497,13 @@ class Order extends Model
     }
 
     public static $fee_field_order_detail = [
-        'amount_vnd' => 'Tiền hàng',
-        'buying_fee' => 'Mua hàng',
-        'domestic_shipping_fee_vnd' => 'VC nội địa TQ',
-        'shipping_china_vietnam_fee' => 'VC quốc tế',
-        'total_amount_all' => 'Tổng chi phí',
-        'customer_payment_amount' => 'Đã thanh toán',
-        'need_payment_amount' => 'Cần thanh toán',
+        'amount_vnd' => 'Tiền hàng (1)',
+        'buying_fee' => 'Mua hàng (2)',
+        'domestic_shipping_fee_vnd' => 'VC nội địa TQ (3)',
+        'shipping_china_vietnam_fee' => 'VC quốc tế (4)',
+        'total_amount_all' => 'Tổng chi phí (5) = (1) + (2) + (3) + (4)',
+        'customer_payment_amount' => 'Đã thanh toán (6)',
+        'need_payment_amount' => 'Cần thanh toán (7) = (5) - (6)',
     ];
 
     public function fee(User $customer, $packages = []){
@@ -511,6 +511,7 @@ class Order extends Model
 
         $buying_fee = $this->getBuyingFee($total_amount_vnd);
         $shipping_china_vietnam_fee = 0;
+        $domestic_shipping_fee_vnd = $this->domestic_shipping_fee * $this->exchange_rate;
 
         if(count($packages)){
             foreach($packages as $package){
@@ -521,7 +522,7 @@ class Order extends Model
             }
         }
 
-        $total_fee_vnd = $buying_fee + $shipping_china_vietnam_fee;
+        $total_fee_vnd = $buying_fee + $domestic_shipping_fee_vnd + $shipping_china_vietnam_fee;
         $total_amount_all = $total_amount_vnd + $total_fee_vnd;
         $customer_payment_amount = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
         $need_payment_amount = $total_amount_all > $customer_payment_amount
@@ -529,7 +530,7 @@ class Order extends Model
 
         return [
             'amount_vnd' => $total_amount_vnd,
-            'domestic_shipping_fee_vnd' => $this->domestic_shipping_fee * $this->exchange_rate,
+            'domestic_shipping_fee_vnd' => $domestic_shipping_fee_vnd,
             'deposit_percent' => $this->deposit_percent,
             'deposit_amount_vnd' => $this->deposit_amount,
 
@@ -724,6 +725,22 @@ class Order extends Model
      */
     public function getDomesticShippingFeeVnd(){
         return (float)($this->domestic_shipping_fee * $this->exchange_rate);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Ham cap nhat thong tin don hang
+     * @param array $data
+     * @return bool
+     */
+    public function updateInfo($data = []){
+        if(count($data)){
+            foreach($data as $key => $value){
+                $this->$key = $value;
+            }
+            $this->save();
+        }
+        return true;
     }
 
     /**

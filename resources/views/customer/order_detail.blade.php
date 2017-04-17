@@ -167,7 +167,7 @@
                                     @foreach($order_fee as $order_fee_item)
                                         <li>
                                             <label for="">{{$order_fee_item['label']}}</label>
-                                            <div>{{$order_fee_item['value']}} <sup>đ</sup></div>
+                                            <div class="text-danger">{{$order_fee_item['value']}} <sup>đ</sup></div>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -392,7 +392,7 @@
                                                     Mẫu: {{$order_item->property}}
                                                 </p>
 
-                                                <form class="___form">
+                                                <form class="___form" onsubmit="return false;">
                                                     <input type="hidden" name="action" value="order_item_comment">
                                                     <input type="hidden" name="method" value="post">
                                                     <input type="hidden" name="item_id" value="{{$order_item->id}}">

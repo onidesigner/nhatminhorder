@@ -44,9 +44,12 @@
 
                         @endforeach
 
+                        <?php
+//                        var_dump($params);
+                        ?>
 
 
-                        <input type="hidden" name="status" value="">
+                        <input type="hidden" name="status" value="{{ @$params['status']  }}">
 
                     </form>
                     <br>
@@ -57,17 +60,15 @@
 
                         <div class="table-responsive">
 
-                            <table class="table">
+                            <table class="table no-padding-leftright table-striped">
                                 <thead>
-                                <tr>
+                                    <tr>
 
-                                    <th>Đơn hàng</th>
-                                    <th>Dịch vụ</th>
-                                    <th>Khách hàng</th>
-                                    <th>Tỉ giá</th>
-                                    <th>Tiền hàng</th>
-                                    <th>Thời gian</th>
-                                </tr>
+                                        <th width="25%">Đơn hàng</th>
+                                        <th width="30%">Khách hàng</th>
+                                        <th width="25%">Phí</th>
+                                        <th width="20%">Thời gian</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
 
@@ -79,29 +80,37 @@
                                             <img
                                                     class="lazy"
                                                     data-src="{{$order->avatar}}"
-                                                    style="width: 50px; float: left; margin-right: 15px;" alt="">
+                                                    alt="" style="float: left; margin-right: 10px;" width="100px">
 
-                                            <strong>[{{strtoupper($order->site)}}]</strong>
-                                            <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+                                            <div>
+                                                {!! App\Util::showSite($order->site) !!}
+                                                <br>
 
-                                            <p>
-                                                {{ App\Order::getStatusTitle($order->status)  }}
-                                            </p>
+                                                <a href="{{ url('order', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
 
-                                        </td>
-                                        <td>
-                                            @if(isset($services[$order->id]))
-                                                @foreach($services[$order->id] as $service)
-
-                                                    <span class="" data-code="{{ $service['code']  }}">
-
-                                                <i class="fa {{ $service['icon']  }}"></i>
-                                                <span>{{ $service['name']  }}</span>
-                                            </span>
+                                                <p>
+                                                    {{ App\Order::getStatusTitle($order->status)  }}
                                                     <br>
-                                                @endforeach
-                                            @endif
+                                                    @if(isset($services[$order->id]))
+                                                        @foreach($services[$order->id] as $service)
+
+                                                            <span data-toggle="tooltip"
+                                                                  title="{{ $service['name']  }}"
+                                                                  class=""
+                                                                  data-code="{{ $service['code']  }}">
+
+                                                        <i class="fa {{ $service['icon']  }}"></i>
+
+                                                    </span>
+
+                                                        @endforeach
+                                                    @endif
+                                                </p>
+                                            </div>
+
+
                                         </td>
+
                                         <td>
                                             <?php
                                             $customer = App\User::find($order->user_id);
@@ -111,26 +120,34 @@
                                             <p>
                                                 Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount) }} <sup>đ</sup></span>
                                             </p>
+                                            <p>
+                                                Số dư: {{App\Util::formatNumber($order->customer->account_balance)}} <sup>đ</sup>
+                                            </p>
                                         </td>
+
                                         <td>
-                                            <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
-                                        </td>
-                                        <td>
-                                            <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
+                                            {{--<span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>--}}
+
+                                                @foreach($order->order_fee as $order_fee_item)
+                                                    <p>
+                                                        {{$order_fee_item['label']}}:
+                                                        <span class="text-danger">
+                                                            {{$order_fee_item['value']}}<sup>đ</sup>
+                                                        </span>
+                                                    </p>
+                                                @endforeach
+
                                         </td>
                                         <td>
                                             <ul style="list-style: none; margin: 0; padding: 0;">
-
-
-                                                <?php
-                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                                if(empty($order->$k)){
-                                                    continue;
-                                                }
-                                                ?>
-                                                <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
-                                                <?php } ?>
-
+                                                    <?php
+                                                    foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                    if(empty($order->$k)){
+                                                        continue;
+                                                    }
+                                                    ?>
+                                                    <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
+                                                    <?php } ?>
                                             </ul>
                                         </td>
                                     </tr>
@@ -142,8 +159,12 @@
                         </div>
 
 
+                    {{--{{ $orders->links() }}--}}
+                    <?php
 
-                    {{ $orders->links() }}
+//                    var_dump(request()->input());
+                    ?>
+                    {{ $orders->appends(request()->input())->links() }}
 
                     @else
 

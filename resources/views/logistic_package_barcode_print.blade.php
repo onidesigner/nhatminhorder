@@ -37,11 +37,14 @@ for($i = 0; $i < 2; $i++){
 
     <div class="content module-float" style="width: 40%;">
         <div class="module-float" style="padding: 0 5px;">
-            <div style='
-                    font-family: Helvetica Neue, Helvetica, Arial, San-Serif;
-                    font-weight: 500; display: inline-block; text-align: left; width: 100%; padding: 0 5px;'>
-                {{$package->logistic_package_barcode}}
-            </div>
+            @if($package->order)
+                <div style='
+                        font-family: Helvetica Neue, Helvetica, Arial, San-Serif;
+                        font-size: 10px;
+                        font-weight: 500; display: inline-block; text-align: left; width: 100%; padding: 0 5px;'>
+                    {{$package->order->code}}
+                </div>
+            @endif
 
             <div class="module-float" style="padding: 0 5px;">
                 {!!$svg!!}

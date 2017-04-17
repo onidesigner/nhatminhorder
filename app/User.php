@@ -258,6 +258,15 @@ class User extends Authenticatable
         $district_id = $user_address->district_id;
         $province_id = $user_address->province_id;
 
+        $warehouse = self::getDestinationWarehouseWithLocation($province_id, $district_id);
+        if($warehouse){
+            return $warehouse;
+        }
+
+        return null;
+    }
+
+    public static function getDestinationWarehouseWithLocation($province_id = null, $district_id = null){
         if($district_id):
             $location = Location::where([
                 'id' => $district_id,

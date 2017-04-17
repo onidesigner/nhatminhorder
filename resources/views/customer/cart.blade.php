@@ -51,17 +51,7 @@
                             </a>
                         </form>
 
-                        @if($shop->site == 'tmall')
-                        <span class="label label-danger">tmall</span>&nbsp;
-                        @endif
-
-                        @if($shop->site == '1688')
-                            <span class="label label-success">1688</span>&nbsp;
-                        @endif
-
-                        @if($shop->site == 'taobao')
-                            <span class="label label-warning">taobao</span>&nbsp;
-                        @endif
+                        {!! App\Util::showSite($shop->site) !!}
 
                         @if($shop->shop_name)
                             {{$shop->shop_name}}
@@ -149,7 +139,7 @@
                                         <small>{{$item->property}}</small>
                                         <br>
 
-                                        <form class="___form">
+                                        <form class="___form" onsubmit="return false;">
                                             <input type="hidden" name="action" value="comment">
                                             <input type="hidden" name="method" value="post">
                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
@@ -159,6 +149,7 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
+                                                    data-toggle="_tooltip"
                                                     data-shop-id="{{$shop->shop_id}}"
                                                     data-item-id="{{$item->id}}"
                                                     placeholder="Ghi chú sản phẩm..."
@@ -174,7 +165,7 @@
                                     <td><span class="">{{ App\Util::formatNumber($item->price_calculator_vnd)  }}</span>đ / ¥{{$item->price_calculator}}</td>
                                     <td>
 
-                                        <form class="___form">
+                                        <form class="___form" onsubmit="return false;">
                                             <input type="hidden" name="action" value="update_quantity">
                                             <input type="hidden" name="method" value="post">
                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
@@ -184,10 +175,12 @@
                                             <input type="hidden" name="response" value="customer/cart">
 
                                             <input
+                                                    data-toggle="_tooltip"
                                                     style="width: 80px"
                                                     type="number"
                                                     data-key-global="cart-item-quantity-{{$shop->shop_id}}-{{$item->id}}"
-                                                    name="quantity" class="form-control text-center ___input-action" value="{{$item->quantity}}" />
+                                                    name="quantity"
+                                                    class="form-control text-center ___input-action" value="{{$item->quantity}}" />
                                         </form>
 
                                     </td>
@@ -200,7 +193,8 @@
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="5">
-                                        Tổng tiền hàng: <span class="">{{ App\Util::formatNumber($shop->total_amount_items)  }}</span>đ
+                                        Tiền hàng: <span class="">{{ App\Util::formatNumber($shop->total_amount_items)  }}đ</span> ;
+                                        Phí mua hàng <span>{{ App\Util::formatNumber($shop->buying_fee)  }}đ</span>
 
                                         <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
                                     </td>

@@ -43,7 +43,7 @@ class OrderController extends Controller
         $params = Input::all();
         $exchange_rage = Exchange::getExchange();
 
-        $per_page = 50;
+        $per_page = 20;
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
 
@@ -79,6 +79,35 @@ class OrderController extends Controller
                 'val' => $val,
                 'selected' => $selected
             ];
+        }
+
+        foreach($orders as $order){
+            if(!$order instanceof Order){
+                continue;
+            }
+
+            $packages = $order->package()->where([
+                'is_deleted' => 0,
+            ])->get();
+
+            $customer = User::find($order->user_id);
+
+            $fee = $order->fee($customer, $packages);
+
+            $order_fee = [];
+            foreach(Order::$fee_field_order_detail as $key => $label){
+                $value = $key;
+                if(isset($fee[$key])){
+                    $value = Util::formatNumber($fee[$key]);
+                }
+                $order_fee[] = [
+                    'label' => $label,
+                    'value' => $value,
+                ];
+            }
+
+            $order->customer = $customer;
+            $order->order_fee = $order_fee;
         }
 
         return view('customer/orders', [

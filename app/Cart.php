@@ -137,7 +137,8 @@ class Cart extends Model
 
                 foreach($shops as $shop):
 
-                    if(!$shop || !$shop instanceof Cart):
+                    if(!$shop
+                        || !$shop instanceof Cart):
                         continue;
                     endif;
 
@@ -167,14 +168,17 @@ class Cart extends Model
                         'created_at' => date('Y-m-d H:i:s'),
                     ]);
 
-                    $order_item_insert = [];
+                    $order = Order::find($insert_id_order);
+                    /** @var Order $order */
+
                     if($cart_items):
                         foreach($cart_items as $cart_item):
-                            if(!$cart_item || !$cart_item instanceof CartItem):
+                            if(!$cart_item
+                                || !$cart_item instanceof CartItem):
                                 continue;
                             endif;
 
-                            $order_item_insert[] = [
+                            $insert_id_order_item = OrderItem::insertGetId([
                                 'item_id' => $cart_item->item_id,
                                 'user_id' => $cart_item->user_id,
                                 'order_id' => $insert_id_order,
@@ -192,25 +196,29 @@ class Cart extends Model
                                 'step' => $cart_item->step,
                                 'require_min' => $cart_item->require_min,
                                 'stock' => $cart_item->stock,
-                                'site' => strtolower($cart_item->site),
-                                'created_at' => date('Y-m-d H:i:s'),
-                            ];
+                                'site' => strtolower($cart_item->site)
+                            ]);
+
+                            if($cart_item->comment){
+                                $order_item = OrderItem::find($insert_id_order_item);
+                                Comment::createComment(
+                                    $user,
+                                    $order_item,
+                                    $cart_item->comment,
+                                    Comment::TYPE_NONE,
+                                    Comment::TYPE_CONTEXT_CHAT,
+                                    $order
+                                );
+                            }
 
                             $total_order_quantity += $cart_item->quantity;
                             $amount += $cart_item->quantity * $cart_item->getPriceCalculator();
                         endforeach;
                     endif;
 
-                    if(count($order_item_insert)):
-                        OrderItem::insert($order_item_insert);
-                    endif;
-
-                    Order::where([
-                        'id' => $insert_id_order
-                    ])->update([
+                    $order->updateInfo([
                         'amount' => $amount,
-                        'total_order_quantity' => $total_order_quantity,
-                        'updated_at' => date('Y-m-d H:i:s')
+                        'total_order_quantity' => $total_order_quantity
                     ]);
 
                     self::insertOrderServices($insert_id_order, $shop->services);
@@ -219,29 +227,15 @@ class Cart extends Model
 
                     #region Tao giao dich & tru tien tk khach
                     $deposit_amount = 0 - $deposit_amount;
-                    $transaction_note = sprintf('Đặt cọc đơn hàng %s', $order_code);
-
-                    User::where(['id' => $user_id])->update([
-                        'account_balance' => DB::raw("account_balance+$deposit_amount")
-                    ]);
-
-                    $order = Order::find($insert_id_order);
-                    $user_after = User::find($user_id);
-
-                    UserTransaction::insert([
-                        'user_id' => $user_id,
-                        'state' => UserTransaction::STATE_COMPLETED,
-                        'transaction_code' => UserTransaction::generateTransactionCode(),
-                        'transaction_type' => UserTransaction::TRANSACTION_TYPE_ORDER_DEPOSIT,
-                        'ending_balance' => $user_after->account_balance,
-                        'created_by' => $user_id,
-                        'object_id' => $insert_id_order,
-                        'object_type' => UserTransaction::OBJECT_TYPE_ORDER,
-                        'amount' => $deposit_amount,
-                        'transaction_detail' => json_encode($order),
-                        'transaction_note' => $transaction_note,
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
+                    $customer = User::find($order->user_id);
+                    UserTransaction::createTransaction(
+                        UserTransaction::TRANSACTION_TYPE_ORDER_DEPOSIT,
+                        sprintf('Đặt cọc đơn hàng %s', $order_code),
+                        $user,
+                        $customer,
+                        $order,
+                        $deposit_amount
+                    );
                     #endregion
 
                     $data_order_success[] = $order->id;
