@@ -28,26 +28,26 @@ class ComplaintServiceController extends Controller
 
     public function index(Request $request){
 
-        $order_id = $request->route('id');
-
+        $order_id = $request->route('order_id');
+        
         #region --validate--
-//        $order = Order::findOneByIdOrCode($order_id);
-//        $current_user = User::find(Auth::user()->id);
-//
-//        if(!$order || !$order instanceof Order):
-//            return redirect('404');
-//        endif;
-//
-//        $customer = User::find($order->user_id);
-//
-//        if($customer->id != $current_user->id):
-//            return redirect('403');
-//        endif;
+        $order = Order::findOneByIdOrCode($order_id);
+        $current_user = User::find(Auth::user()->id);
+
+        if(!$order || !$order instanceof Order):
+            return redirect('404');
+        endif;
+
+        $customer = User::find($order->user_id);
+
+        if($customer->id != $current_user->id):
+            return redirect('403');
+        endif;
 
         #endregion --end validate--
 
         return view('customer/complaint_create',[
-           # 'data' => $order,
+            'data' => $order,
             'page_title' => 'Khiếu nại'
         ]);
     }

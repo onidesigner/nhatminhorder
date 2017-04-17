@@ -230,7 +230,7 @@
 
                             <!--tab khieu nai tren don -->
                             <div role="tabpanel" class="tab-pane" id="order-complaint">
-                                <button type="button" class="btn btn-success">Tạo khiếu nại</button>
+                                <a href="{{url('tao-khieu-nai',$order->id)}}"  class="btn btn-success"> Tạo khiếu nại</a>
 
                                 <table class="table">
                                     <thead class="thead-default">

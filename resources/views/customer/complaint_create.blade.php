@@ -13,7 +13,7 @@
             <fieldset>
 
                 <!-- Form Name -->
-                <legend>Tạo khiếu nại</legend>
+                <legend>Tạo khiếu nại đơn hàng {{ $data->code }}</legend>
 
                 <!-- Text input-->
                 @if(session('message'))
@@ -23,11 +23,17 @@
                     </div>
                 @endif
 
+                @if(session('error'))
+                <div class="alert alert-warning">
+                    {{session('error')}}
+                </div>
+                @endif
+
                 <div class="form-group">
                     <label class="col-md-4 control-label">Mã đơn hàng </label>
                     <div class="col-md-4 inputGroupContainer">
                         <div class="input-group">
-                            <input  name="order_code" placeholder="Mã đơn hàng" class="form-control"  type="text">
+                            <input  name="order_code" placeholder="Mã đơn hàng" class="form-control"  value="{{ $data->code }}" type="text">
                         </div>
                     </div>
                 </div>
