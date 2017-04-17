@@ -56,15 +56,15 @@
                         <p>Tìm thấy {{ $total_orders }} đơn hàng</p>
 
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table no-padding-leftright">
                                 <thead>
-                                <tr>
-                                    <th>Đơn hàng</th>
-                                    <th>Đặt cọc</th>
-                                    <th>Tỉ giá</th>
-                                    <th>Tiền hàng</th>
-                                    <th>Thời gian</th>
-                                </tr>
+                                    <tr>
+
+                                        <th width="25%">Đơn hàng</th>
+                                        {{--<th width="30%">Khách hàng</th>--}}
+                                        <th width="25%">Phí</th>
+                                        <th width="20%">Thời gian</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
 
@@ -76,39 +76,52 @@
                                                     data-src="{{ $order->avatar }}"
                                                     src=""
                                                     class="lazy"
-                                                    style="width: 50px; float: left; margin-right: 15px;" alt="">
+                                                    style="width: 100px; float: left; margin-right: 10px;" alt="">
 
-                                            <strong>[{{strtoupper($order->site)}}]</strong>
-                                            <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+
+
+                                            <p>
+                                                {!! App\Util::showSite($order->site) !!}
+                                            </p>
+
+
+                                            <p>
+                                                <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
+                                            </p>
                                             <p>
                                                 {{ App\Order::getStatusTitle($order->status)  }}
                                             </p>
 
                                         </td>
+
                                         <td>
-                                            <p>
-                                                Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)  }} <sup>đ</sup></span>
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
-                                        </td>
-                                        <td>
-                                            <span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>
+
+                                            <small>
+                                                @foreach($order->order_fee as $order_fee_item)
+                                                    <div>
+                                                        {{$order_fee_item['label']}}:
+                                                        <span class="text-danger">
+                                                            {{$order_fee_item['value']}}<sup>đ</sup>
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </small>
+
                                         </td>
                                         <td>
 
                                             <ul style="list-style: none; margin: 0; padding: 0;">
 
-
-                                                <?php
-                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                                if(empty($order->$k)){
-                                                    continue;
-                                                }
-                                                ?>
-                                                <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
-                                                <?php } ?>
+                                                <small>
+                                                    <?php
+                                                    foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                    if(empty($order->$k)){
+                                                        continue;
+                                                    }
+                                                    ?>
+                                                    <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
+                                                    <?php } ?>
+                                                </small>
 
                                             </ul>
 
@@ -122,7 +135,9 @@
 
 
 
-                        {{ $orders->links() }}
+                        {{--{{ $orders->links() }}--}}
+
+                        {{ $orders->appends(request()->input())->links() }}
 
                     @else
                         <h4>Hiện chưa có đơn hàng!</h4>

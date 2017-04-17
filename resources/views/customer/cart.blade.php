@@ -51,17 +51,7 @@
                             </a>
                         </form>
 
-                        @if($shop->site == 'tmall')
-                        <span class="label label-danger">tmall</span>&nbsp;
-                        @endif
-
-                        @if($shop->site == '1688')
-                            <span class="label label-success">1688</span>&nbsp;
-                        @endif
-
-                        @if($shop->site == 'taobao')
-                            <span class="label label-warning">taobao</span>&nbsp;
-                        @endif
+                        {!! App\Util::showSite($shop->site) !!}
 
                         @if($shop->shop_name)
                             {{$shop->shop_name}}
