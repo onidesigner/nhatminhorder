@@ -21,6 +21,13 @@ class Complaints extends Model
     const STATUS_FINISH = 'FINISH'; // hoan thanh
     const STATUS_REJECT = 'REJECT'; // tu cho
 
+    public static $alias_array = [
+        self::STATUS_CREATE => 'Khởi tạo',
+        self::STATUS_ACCEPT => 'Tiếp nhận và xử lý',
+        self::STATUS_FINISH => 'Hoàn thành',
+        self::STATUS_REJECT => 'Từ chối'
+    ];
+    
     /**
      * create new complaint
      * @param array $complaint
@@ -42,4 +49,18 @@ class Complaints extends Model
         }
         return $result;
     }
+
+    /**
+     * get order_code by order_id
+     * @param $order_id
+     * @return mixed|string
+     */
+   public static function getOrderCode($order_id){
+       $order = new Order();
+       $order_code = $order->findOneByIdOrCode($order_id);
+       if($order_code instanceof Order){
+           return $order_code->code;
+       }
+       return '';
+   }
 }

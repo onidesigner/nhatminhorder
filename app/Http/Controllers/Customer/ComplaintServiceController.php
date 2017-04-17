@@ -29,7 +29,7 @@ class ComplaintServiceController extends Controller
     public function index(Request $request){
 
         $order_id = $request->route('order_id');
-        
+
         #region --validate--
         $order = Order::findOneByIdOrCode($order_id);
         $current_user = User::find(Auth::user()->id);
@@ -54,13 +54,16 @@ class ComplaintServiceController extends Controller
 
     /**
      * lấy danh sách của khiếu nại
+     * của khách hàng đó
      */
    public function listComplaint(){
+
         $list  = DB::table('complaints')
-            ->where('user_id', '=', Auth::user()->id)
+            ->where('customer_id', '=', Auth::user()->id)
             ->orderBy('id', 'desc')->paginate(20);
+       
        return view('customer/complaint_list',[
-            'data' => $list,
+           'data' => $list,
            'page_title' => 'Khiếu nại'
        ]);
 
@@ -157,5 +160,6 @@ class ComplaintServiceController extends Controller
         return $file_ary;
     }
 
+    
 
 }

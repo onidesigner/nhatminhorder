@@ -21,13 +21,10 @@
             @foreach($data as $complaint)
                 <tr>
                     <th scope="row">{{ $i++ }}</th>
-                    @if($notification->type == 'ORDER')
-                        <td>Thông báo trên đơn</td>
-                    @else
-                        <td>Thông báo tài chính</td>
-                    @endif
-                    <td>{{ $notification->notification_content }}</td>
-                    <td>{{ $notification->created_time }}</td>
+                    <td>{{ $complaint->title }}</td>
+                    <td>{{ App\Complaints::getOrderCode($complaint->order_id)  }}</td>
+                    <td>{{ App\Complaints::$alias_array[$complaint->status] }}</td>
+                    <td>{{ $complaint->created_time }}</td>
                 </tr>
             @endforeach
         @endif
@@ -36,7 +33,7 @@
     @if(!empty($data))
         {{ $data->links() }}
     @else
-        <h3 align="center">Chưa có thông báo mới !</h3>
+        <h3 align="center">Bạn chưa có khiếu nại !</h3>
     @endif
 
 

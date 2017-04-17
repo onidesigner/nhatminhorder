@@ -171,7 +171,7 @@ Route::get('/thong-bao','Customer\CustomerNotificationController@index');
 Route::get('/tao-khieu-nai/{order_id}','Customer\ComplaintServiceController@index');
 #endregion --end thong báo cho khách hàng--
 #region --danh sách khiếu nại --
-Route::get('/danh-sach-khieu-nai');
+Route::get('/danh-sach-khieu-nai','Customer\ComplaintServiceController@listComplaint');
 #endregion --danh sách khiếu nại--
 #region -- router tạo khiếu nại người bán--
 Route::post('/create-complaint','Customer\ComplaintServiceController@createComplaint');
