@@ -176,3 +176,6 @@ Route::get('/danh-sach-khieu-nai','Customer\ComplaintServiceController@listCompl
 #endregion --danh sách khiếu nại--
 #region -- router tạo khiếu nại người bán--
 Route::post('/create-complaint','Customer\ComplaintServiceController@createComplaint');
+#region --chi tiết khiếu nại--
+Route::post('/chi-tiet-khieu-nai/{complaint_id}','Customer\ComplaintServiceController@complaintDetail');
+#endregion --chi tiết khiếu nại--

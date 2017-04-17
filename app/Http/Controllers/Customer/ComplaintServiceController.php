@@ -160,6 +160,25 @@ class ComplaintServiceController extends Controller
         return $file_ary;
     }
 
+
+    public function complaintDetail(Request $request){
+
+        $complaint_id = $request->route('complaint_id');
+
+        $list  = DB::table('complaints')
+            ->where('complaint_id', '=', $complaint_id)->get();
+        if($list instanceof  Complaints){
+            // xu ly du lieu tra ve
+            return view('customer/complaint_list',[
+                'data' => $list,
+                'page_title' => 'Khiếu nại'
+            ]);
+
+        }else{
+            return redirect('404');
+        }
+    }
+
     
 
 }

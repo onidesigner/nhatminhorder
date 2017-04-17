@@ -69,10 +69,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Success message -->
-                <div class="alert alert-success" role="alert" id="success_message">Success <i class="glyphicon glyphicon-thumbs-up"></i> Thanks for contacting us, we will get back to you shortly.</div>
-
                 <!-- Button -->
                 <div class="form-group">
                     <label class="col-md-4 control-label"></label>
@@ -83,12 +79,16 @@
 
             </fieldset>
         </form>
-    </div>
     </div><!-- /.container -->
+    <div class="col-sm-4 col-xs-12" id="anchor-box-comment">
+        @include('partials/__comment', [
+            'object_id' => $data->id,
+            'object_type' => App\Comment::TYPE_OBJECT_COMPLAINT,
+            'scope_view' => App\Comment::TYPE_EXTERNAL
+        ])
 
-    <style>
-        #success_message{ display: none;}
-    </style>
+    </div>
+
 
 
 @endsection
