@@ -164,3 +164,14 @@ Route::get('/ho-tro/{id}', 'Support\PostController@index');
 //Route::get('/tinh-phi', '');
 Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError');
 Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');
+
+
+#region --thông báo cho khách hàng--
+Route::get('/thong-bao','Customer\CustomerNotificationController@index');
+Route::get('/tao-khieu-nai/{order_id}','Customer\ComplaintServiceController@index');
+#endregion --end thong báo cho khách hàng--
+#region --danh sách khiếu nại --
+Route::get('/danh-sach-khieu-nai');
+#endregion --danh sách khiếu nại--
+#region -- router tạo khiếu nại người bán--
+Route::post('/create-complaint','Customer\ComplaintServiceController@createComplaint');

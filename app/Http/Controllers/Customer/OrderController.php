@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 use App\Comment;
+use App\Complaints;
 use App\Exchange;
 use App\Http\Controllers\Controller;
 use App\Location;
@@ -192,6 +193,15 @@ class OrderController extends Controller
             }
         }
 
+        #region -- lấy danh sách của đơn khiếu nại --
+
+        $list_complaint =  DB::table('complaints')
+            ->where('customer_id', '=', Auth::user()->id)
+            ->where('order_id','=',$order->id)
+            ->get();
+
+        #endregion --laays danh sach don khieu nai--
+
         return [
             'order_id' => $order->id,
             'packages' => $packages,
@@ -211,6 +221,7 @@ class OrderController extends Controller
             'page_title' => 'Chi tiết đơn hàng',
             'permission' => $permission,
             'layout' => $layout,
+            'list_complaint' => $list_complaint
         ];
     }
 
