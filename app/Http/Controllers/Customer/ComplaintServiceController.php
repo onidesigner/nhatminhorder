@@ -60,7 +60,7 @@ class ComplaintServiceController extends Controller
 
         $list  = DB::table('complaints')
             ->where('customer_id', '=', Auth::user()->id)
-            ->orderBy('id', 'desc')->paginate(20);
+            ->orderBy('id', 'desc')->get();
        
        return view('customer/complaint_list',[
            'data' => $list,
@@ -119,23 +119,35 @@ class ComplaintServiceController extends Controller
 
         if(!empty($img))
         {
-            $errors = [];
             $img_desc = $this->reArrayFiles($img);
             foreach($img_desc as $val)
             {
                 $newname = date('YmdHis',time()).mt_rand().'.jpg';
                 move_uploaded_file($val['tmp_name'],'./uploads/'.$newname);
-                $path = './uploads/'.$newname;
+                $path = '/uploads/'.$newname;
                 $complaint_data = [
                     'name' => 'image',
                     'path' => $path,
                     'complaint_id' => $complaint_id,
                 ];
+                #validate upload ảnh
+                $expensions=["jpeg","jpg","png"];
+                $define_type = explode(".",$val['name']);
+                $file_ext = end($define_type);
+
+                if(in_array($file_ext,$expensions)=== false){
+                    return redirect('tao-khieu-nai/'.$order_id)->with('error','Không tồn tại định dạng ảnh !');
+                }
+
+                if($val['size'] > 2097152){
+                    return redirect('tao-khieu-nai/'.$order_id)->with('error','Kích thước ảnh quá lớn !');
+                }
+                #endregion validate upload ảnh
                 $complaint_file->createComplaintFile($complaint_data);
             }
         }
-
-        return redirect('tao-khieu-nai/'.$order_id)->with('message','Tạo khiệu nại thành công !');
+        // nếu tạo thành công chuyển về trang chi tiết khiếu nại
+        return redirect('chi-tiet-khieu-nai/'.$complaint_id)->with('message','Tạo khiệu nại thành công !');
 
     }
 
@@ -161,19 +173,25 @@ class ComplaintServiceController extends Controller
     }
 
 
+
     public function complaintDetail(Request $request){
 
         $complaint_id = $request->route('complaint_id');
 
-        $list  = DB::table('complaints')
-            ->where('complaint_id', '=', $complaint_id)->get();
+        $list = Complaints::where(['id' => $complaint_id])->first();
+
         if($list instanceof  Complaints){
+            $complaint = ComplaintFiles::where(['complaint_id' => $complaint_id])->get();
+            $data_complaint = [];
+            if (count($complaint) > 0){
+                $data_complaint = $complaint;
+            }
             // xu ly du lieu tra ve
-            return view('customer/complaint_list',[
-                'data' => $list,
+            return view('customer/complaint_detail',[
+                'data_complaint' => $list,
+                'data_complaint_file' => $data_complaint,
                 'page_title' => 'Khiếu nại'
             ]);
-
         }else{
             return redirect('404');
         }
