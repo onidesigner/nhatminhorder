@@ -44,9 +44,12 @@
 
                         @endforeach
 
+                        <?php
+//                        var_dump($params);
+                        ?>
 
 
-                        <input type="hidden" name="status" value="">
+                        <input type="hidden" name="status" value="{{ @$params['status']  }}">
 
                     </form>
                     <br>
@@ -142,8 +145,12 @@
                         </div>
 
 
+                    {{--{{ $orders->links() }}--}}
+                    <?php
 
-                    {{ $orders->links() }}
+//                    var_dump(request()->input());
+                    ?>
+                    {{ $orders->appends(request()->input())->links() }}
 
                     @else
 

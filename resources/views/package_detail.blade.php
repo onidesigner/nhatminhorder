@@ -110,6 +110,19 @@
                                 </ul>
                             </div>
 
+                            <br>
+                            <br>
+
+                            <div id="anchor-box-comment">
+                                @include('partials/__comment', [
+                                    'object_id' => $package->id,
+                                    'object_type' => App\Comment::TYPE_OBJECT_PACKAGE,
+                                    'scope_view' => App\Comment::TYPE_INTERNAL
+
+                                ])
+                            </div>
+
+
                         </div>
 
                         <div class="col-sm-4 col-xs-12">
@@ -144,6 +157,18 @@
         </div>
     </div>
 
+@endsection
+
+@section('css_bottom')
+    @parent
+    <style>
+        #anchor-box-comment .card{
+            box-shadow: none;
+        }
+        #anchor-box-comment .card-body{
+            padding: 0;
+        }
+    </style>
 @endsection
 
 @section('js_bottom')

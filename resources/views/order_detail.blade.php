@@ -6,6 +6,7 @@
 
 @section('css_bottom')
     {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">--}}
+    <link rel="stylesheet" href="{{ asset('bower_components/lightbox2/dist/css/lightbox.css')  }}">
 @endsection
 
 @section('widget')
@@ -15,6 +16,7 @@
 @section('js_bottom')
     @parent
 
+    <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
 {{--    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>--}}
     <script>
         $(document).ready(function(){
@@ -608,9 +610,19 @@
                                 <td>
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            <a href="{{$order_item->link}}" target="_blank">
-                                                <img class="img-responsive" width="90px" src="{{$order_item->image}}" alt="">
+                                            <a href="{{ str_replace('150x150', '600x600', $order_item->image)  }}" data-lightbox="image-1">
+                                                <img
+                                                        data-toggle="tooltip"
+
+                                                        class="img-responsive"
+                                                        title="Click vào để xem ảnh lớn hơn"
+                                                        width="90px"
+
+                                                        src="{{$order_item->image}}">
                                             </a>
+
+
+
                                         </div>
                                         <div class="col-sm-10">
                                             ID: #{{$order_item->id}}<br>
@@ -823,6 +835,7 @@
 
 
 @endsection
+
 
 
 
