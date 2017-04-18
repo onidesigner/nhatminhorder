@@ -63,4 +63,17 @@ class Complaints extends Model
        }
        return '';
    }
+
+    /**
+     * ham tra lai gia user nam khi truyen vao id khach
+     * @param $customer_id
+     * @return mixed|string
+     */
+    public static function getCustomerUsername($customer_id){
+        $customer = User::where('id',$customer_id)->first();
+        if($customer instanceof User){
+            return $customer->name;
+        }
+        return '';
+    }
 }

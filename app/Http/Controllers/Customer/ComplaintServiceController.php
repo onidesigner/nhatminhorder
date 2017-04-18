@@ -181,6 +181,11 @@ class ComplaintServiceController extends Controller
         $list = Complaints::where(['id' => $complaint_id])->first();
 
         if($list instanceof  Complaints){
+            $customer_id = $list->customer_id;
+            $current_id = Auth::user()->id;
+            if($customer_id != $current_id){
+                return redirect('404');
+            }
             $complaint = ComplaintFiles::where(['complaint_id' => $complaint_id])->get();
             $data_complaint = [];
             if (count($complaint) > 0){

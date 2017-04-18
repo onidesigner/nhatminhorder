@@ -179,3 +179,7 @@ Route::post('/create-complaint','Customer\ComplaintServiceController@createCompl
 #region --chi tiết khiếu nại--
 Route::get('/chi-tiet-khieu-nai/{complaint_id}','Customer\ComplaintServiceController@complaintDetail');
 #endregion --chi tiết khiếu nại--
+#region danh sach khieu nai tren trang quan trị
+Route::get('/complaint','ComplaintServiceController@index');
+#region chi tiet khieu nại trên đơn
+Route::get('/complaint-detail/{complaint_id}','ComplaintServiceController@complaintDetail');
