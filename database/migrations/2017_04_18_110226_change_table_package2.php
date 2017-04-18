@@ -20,6 +20,7 @@ class ChangeTablePackage2 extends Migration
             $table->string('order_code', 50)->nullable();
             $table->string('code', 50)->nullable();
             $table->enum('status', ['ACTIVE', 'DISABLED'])->default('ACTIVE');
+            $table->timestamps();
         });
     }
 
