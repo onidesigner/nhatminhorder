@@ -99,30 +99,70 @@
 
                                                     Tịnh
                                                     @if(!$package->weight_type || $package->weight_type == 1)
-                                                        <input type="radio" checked="checked" name="weight_type_{{$package->id}}" value="1">
+                                                        <input
+                                                                class="_choose-weight-type"
+                                                                data-package-id="{{$package->id}}"
+                                                                type="radio" checked="checked" name="weight_type_{{$package->id}}" value="1">
                                                     @else
-                                                        <input type="radio" name="weight_type_{{$package->id}}" value="1">
+                                                        <input
+                                                                class="_choose-weight-type"
+                                                                data-package-id="{{$package->id}}"
+                                                                type="radio" name="weight_type_{{$package->id}}" value="1">
                                                     @endif
 
                                                     <input value="{{ $package->weight  }}" name="weight" type="text" style="width: 15%;" class="!form-control">
 
                                                     Quy đổi
                                                     @if($package->weight_type == 2)
-                                                        <input type="radio" checked="checked" name="weight_type_{{$package->id}}" value="2">
+                                                        <input
+                                                                class="_choose-weight-type"
+                                                                data-package-id="{{$package->id}}"
+                                                                type="radio" checked="checked" name="weight_type_{{$package->id}}" value="2">
                                                     @else
-                                                        <input type="radio" name="weight_type_{{$package->id}}" value="2">
+                                                        <input
+
+                                                                class="_choose-weight-type"
+                                                                data-package-id="{{$package->id}}"
+                                                                type="radio" name="weight_type_{{$package->id}}" value="2">
                                                     @endif
 
                                                     <input value="{{ $package->converted_weight  }}" name="converted_weight" disabled type="text" style="width: 15%;" class="!form-control">
                                                 </li>
 
-                                                <li>
+                                                <li
+                                                        data-package-id="{{$package->id}}"
+                                                        class="_volume @if($package->weight_type <> 2) hidden @endif">
                                                     <strong>Thể tích (cm):</strong>
                                                     <input value="{{$package->length_package}}" name="length_package" type="text" style="width: 10%;" class="!form-control" placeholder="Dài">
                                                     x<input value="{{$package->width_package}}" name="width_package" type="text" style="width: 10%;" class="!form-control" placeholder="Rộng">
                                                     x<input value="{{$package->height_package}}" name="height_package" type="text" style="width: 10%;" class="!form-control" placeholder="Cao">
 
                                                 </li>
+
+                                                <li>
+                                                    <strong>Dịch vụ:</strong>
+                                                    <br>
+
+                                                    @foreach($package->service as $s)
+                                                        <label for="" style="display: inline-block; margin-right: 10px;">
+                                                            <i
+                                                                    data-toggle="tooltip"
+                                                                    title="{{$s['name']}}"
+                                                                    class="fa {{$s['icon']}}"></i>
+
+                                                            <input
+                                                                    class="_choose-package-service"
+                                                                    @if($s['checked']) checked @endif
+                                                                    type="checkbox" value="{{$s['code']}}">
+
+
+                                                            &nbsp;&nbsp;&nbsp; Phí đóng gỗ: <span class="_view-wood-crating">{{ $package->wood_crating_fee }}</span>đ
+                                                        </label>
+                                                        <br>
+                                                    @endforeach
+
+                                                </li>
+
                                                 <li>
                                                     <strong>Ghi chú:</strong>
                                                     <textarea name="note" id="" cols="30" rows="3" class="form-control">{{ $package->note  }}</textarea>
@@ -170,6 +210,15 @@
     <script>
         $(document).ready(function(){
 
+            $(document).on('change', '._choose-weight-type', function(){
+                var type = $(this).val();
+                var $parent = $(this).parents('._package');
+                $parent.find('._volume').addClass('hidden');
+                if(type == 2){
+                    $parent.find('._volume').removeClass('hidden');
+                }
+            });
+
             $(document).on('click', '._print', function(e){
                 var parent = $(this).parents('._package');
                 var href = parent.find('._link-in').attr('href');
@@ -210,14 +259,25 @@
 
             $(document).on('change', '._package-item-form', function(){
                 var data_send = $(this).serializeObject();
+
+                data_send.service = [];
+                var $package = $('._package[data-package-id="' + data_send.package_id + '"]');
+                $package.find('._choose-package-service').each(function(i){
+                    data_send.service.push({
+                        code:$(this).val(),
+                        checked:$(this).is(':checked') ? 1 : 0
+                    });
+                });
+
                 $.ajax({
                   url: "{{ url('package/action')  }}",
                   method: 'post',
                   data: data_send,
                   success:function(response) {
                       if(response.success){
-
-                          $('._package[data-package-id="' + response.result.package.id + '"]').find('input[name="converted_weight"]').val(response.result.package.converted_weight);
+                          var parent = $('._package[data-package-id="' + response.result.package.id + '"]');
+                          parent.find('input[name="converted_weight"]').val(response.result.package.converted_weight);
+                          parent.find('._view-wood-crating').text(response.result.package.wood_crating_fee);
                       }else{
                           if(response.message){
                               bootbox.alert(response.message);

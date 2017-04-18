@@ -119,7 +119,7 @@
                                                 <td>
                                                     @if(!empty($services))
                                                         @foreach($services as $service)
-                                                            <form class="___form">
+                                                            <form class="___form" style="display: inline; margin-right: 10px;">
                                                                 <input type="hidden" name="action" value="choose_service">
                                                                 <input type="hidden" name="method" value="post">
                                                                 <input type="hidden" name="service" value="{{$service['code']}}">
@@ -133,7 +133,11 @@
                                                                             @if($service['checked']) checked @endif
                                                                             @if($service['is_default']) disabled @endif
                                                                             type="checkbox"
-                                                                            value="{{$service['code']}}">{{$service['name']}}
+                                                                            value="{{$service['code']}}">
+
+                                                                    <i data-toggle="tooltip"
+                                                                       title="{{$service['name']}}"
+                                                                       class="fa {{ App\Service::getServiceIcon($service['code'])  }}"></i>
                                                                 </label>
 
                                                             </form>
@@ -493,22 +497,22 @@
             <br>
 
             @if($permission['can_view_package_list'])
-                @if(!count($packages))
 
-                @else
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table no-padding-leftright">
-                            <thead>
-                            <tr>
-                                <th class="text-uppercase">Kiện hàng</th>
-                                <th class="text-uppercase">Vận đơn</th>
-                                <th class="text-uppercase">Trạng thái</th>
-                                <th class="text-uppercase">Người tạo</th>
-                                <th class="text-uppercase">Thời gian</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+                @if(count($packages) > 0)
+
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table no-padding-leftright">
+                                <thead>
+                                <tr>
+                                    <th class="text-uppercase">Kiện hàng</th>
+                                    <th class="text-uppercase">Vận đơn</th>
+                                    <th class="text-uppercase">Trạng thái</th>
+                                    <th class="text-uppercase">Người tạo</th>
+                                    <th class="text-uppercase">Thời gian</th>
+                                </tr>
+                                </thead>
+                                <tbody>
 
                                 @foreach($packages as $package)
                                     <tr>
@@ -563,12 +567,13 @@
                                     </tr>
                                 @endforeach
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <br>
+                    <br>
+
                 @endif
             @else
                 <h5>Bạn không có quyền xem kiện hàng trên đơn!</h5>

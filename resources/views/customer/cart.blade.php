@@ -47,9 +47,12 @@
                                class="___btn-action"
                                data-toggle="tooltip"
                                title="Xoá shop">
+                                {{--<i class="fa fa-times"></i>--}}
                                 <i class="fa fa-trash-o"></i>
                             </a>
                         </form>
+
+                        &nbsp;&nbsp;&nbsp;
 
                         {!! App\Util::showSite($shop->site) !!}
 
@@ -60,34 +63,36 @@
                         @endif
 
                         <div style="position: absolute;top: 18px;right: 20px;">
-                            {{--@foreach($data['services'] as $service)--}}
-                                {{--<div class="checkbox-inline">--}}
+                            @foreach($data['services'] as $service)
+                                <div class="checkbox-inline">
 
-                                    {{--<form class="___form">--}}
-                                        {{--<input type="hidden" name="action" value="choose_service">--}}
-                                        {{--<input type="hidden" name="method" value="post">--}}
-                                        {{--<input type="hidden" name="shop_id" value="{{$shop->shop_id}}">--}}
-                                        {{--<input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">--}}
-                                        {{--<input type="hidden" name="response" value="customer/cart">--}}
-                                        {{--<input type="hidden" name="_token" value="{{ csrf_token()  }}">--}}
-                                        {{--<input type="hidden" name="service" value="{{$service['code']}}">--}}
+                                    <form class="___form">
+                                        <input type="hidden" name="action" value="choose_service">
+                                        <input type="hidden" name="method" value="post">
+                                        <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
+                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
+                                        <input type="hidden" name="response" value="customer/cart">
+                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                        <input type="hidden" name="service" value="{{$service['code']}}">
 
-                                        {{--<input--}}
-                                                {{--@if(in_array($service['code'], $shop->services)) checked @endif--}}
-                                                {{--type="checkbox"--}}
-                                                {{--value="{{$service['code']}}"--}}
-                                                {{--class="___btn-action"--}}
-                                                {{--id="checkbox_{{$service['code']}}_{{$shop->id}}">--}}
+                                        <input
+                                                @if(in_array($service['code'], $shop->services)) checked @endif
+                                                type="checkbox"
+                                                value="{{$service['code']}}"
+                                                class="___btn-action"
+                                                id="checkbox_{{$service['code']}}_{{$shop->id}}">
 
-                                    {{--</form>--}}
+                                    </form>
 
 
-                                    {{--<label for="checkbox_{{$service['code']}}_{{$shop->id}}">--}}
-                                        {{--{{$service['title']}}--}}
-                                    {{--</label>--}}
-                                {{--</div>--}}
-                            {{--@endforeach--}}
+                                    <label for="checkbox_{{$service['code']}}_{{$shop->id}}">
+                                        {{$service['title']}}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
+
+
                     </div>
                     <div class="card-body no-padding">
                         <div class="table-responsive">
@@ -106,7 +111,7 @@
 
                                 @foreach($shop->items as $item)
                                 <tr class="_shop-item" data-shop-id="{{$shop->shop_id}}" data-shop-item-id="{{$item->id}}">
-                                    <td>
+                                    <td class="text-center">
 
                                         <form class="___form">
                                             <input type="hidden" name="action" value="remove_item">
@@ -162,7 +167,9 @@
                                         </form>
                                     </td>
 
-                                    <td><span class="">{{ App\Util::formatNumber($item->price_calculator_vnd)  }}</span>đ / ¥{{$item->price_calculator}}</td>
+                                    <td>
+                                        <span class="text-danger">{{ App\Util::formatNumber($item->price_calculator_vnd)  }}đ</span> / <span class="text-success">¥{{$item->price_calculator}}</span>
+                                    </td>
                                     <td>
 
                                         <form class="___form" onsubmit="return false;">
@@ -185,18 +192,32 @@
 
                                     </td>
                                     <td>
-                                        <span class="">{{ App\Util::formatNumber($item->total_amount_item_vnd)  }}</span>đ / ¥{{$item->total_amount_item}}
+                                        <span class="text-danger">{{ App\Util::formatNumber($item->total_amount_item_vnd)  }}đ</span> / <span class="text-success">¥{{$item->total_amount_item}}</span>
                                     </td>
+
+
 
                                 </tr>
 
                                 @endforeach
                                 <tr>
                                     <td class="text-right" colspan="5">
-                                        Tiền hàng: <span class="">{{ App\Util::formatNumber($shop->total_amount_items)  }}đ</span> ;
-                                        Phí mua hàng <span>{{ App\Util::formatNumber($shop->buying_fee)  }}đ</span>
+
+                                        Tiền hàng: <span class="text-danger">{{ App\Util::formatNumber($shop->total_amount_items)  }}đ</span> ;
+                                        Mua hàng <span class="text-danger">{{ App\Util::formatNumber($shop->buying_fee)  }}đ</span>
+                                        ; VC TQ - VN <span class="text-danger">0 đ</span>
+                                        <i data-toggle="tooltip"
+                                           title="Khi NhatMinh247 nhận hàng của bạn, lúc đó hệ thống sẽ tính toán phí này. Hiện giờ chưa rõ cân nặng để tính phí" class="fa fa-question-circle"></i>
+
+                                        @if($shop->checkExistsCartService(App\Service::TYPE_WOOD_CRATING))
+                                        ; Đóng gỗ <span class="text-danger">{{ App\Util::formatNumber($shop->wood_crating)  }}đ</span>
+                                        <i data-toggle="tooltip"
+                                           title="Khi NhatMinh247 nhận hàng của bạn, lúc đó hệ thống sẽ tính toán phí này. Hiện giờ chưa rõ cân nặng để tính phí" class="fa fa-question-circle"></i>
+
+                                        @endif
 
                                         <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger text-uppercase">Đặt cọc</a>
+
                                     </td>
                                 </tr>
 

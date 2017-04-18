@@ -59,7 +59,7 @@
 
                                         <th width="25%">Đơn hàng</th>
                                         {{--<th width="30%">Khách hàng</th>--}}
-                                        <th width="25%">Phí</th>
+                                        <th width="25%">Phí trên đơn</th>
                                         <th width="20%">Thời gian</th>
                                     </tr>
                                 </thead>
@@ -93,19 +93,23 @@
 
                                         <td>
 
+                                            <small>
                                                 @foreach($order->order_fee as $order_fee_item)
                                                     <p>
                                                         {{$order_fee_item['label']}}:
                                                         <span class="text-danger">
-                                                            {{$order_fee_item['value']}}<sup>đ</sup>
+                                                            <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
                                                         </span>
                                                     </p>
                                                 @endforeach
+                                            </small>
+
 
                                         </td>
                                         <td>
 
-                                            <ul style="list-style: none; margin: 0; padding: 0;">
+                                            <small>
+                                                <ul style="list-style: none; margin: 0; padding: 0;">
 
                                                     <?php
                                                     foreach(App\Order::$timeListOrderDetail as $k => $v){
@@ -116,7 +120,9 @@
                                                     <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
                                                     <?php } ?>
 
-                                            </ul>
+                                                </ul>
+                                            </small>
+
 
                                         </td>
                                     </tr>

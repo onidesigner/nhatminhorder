@@ -590,6 +590,12 @@ class Order extends Model
             ->first()->total_quantity;
     }
 
+    /**
+     * @author vanhs
+     * @desc Kiem tra don hang co ton tai dich vu hay khong?
+     * @param $service_code
+     * @return mixed
+     */
     public function existService($service_code){
         $where['service_code'] = $service_code;
         $where['order_id'] = $this->id;
