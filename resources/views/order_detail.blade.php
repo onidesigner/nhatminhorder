@@ -614,7 +614,7 @@
 
                                 <td>
                                     <div class="row">
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <a href="{{ str_replace('150x150', '600x600', $order_item->image)  }}" data-lightbox="image-1">
                                                 <img
                                                         data-toggle="tooltip"
@@ -629,7 +629,7 @@
 
 
                                         </div>
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-9">
                                             ID: #{{$order_item->id}}<br>
                                             <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
                                             <br>

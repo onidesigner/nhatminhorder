@@ -347,7 +347,7 @@
                                     <td>
                                         <div class="row">
                                             <div class="col-sm-3">
-                                                <a href="{{$order_item->link}}" target="_blank">
+                                                <a href="{{ str_replace('150x150', '600x600', $order_item->image)  }}" data-lightbox="image-1">
                                                     <img class="img-responsive" width="90px" src="{{$order_item->image}}" alt="">
                                                 </a>
                                             </div>
@@ -480,8 +480,16 @@
     </div>
 @endsection
 
+@section('css_bottom')
+    @parent
+
+    <link rel="stylesheet" href="{{ asset('bower_components/lightbox2/dist/css/lightbox.css')  }}">
+@endsection
+
 @section('js_bottom')
     @parent
+
+    <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
     <script>
         $(document).ready(function(){
             //todo

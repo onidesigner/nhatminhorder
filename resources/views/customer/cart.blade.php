@@ -133,10 +133,13 @@
                                     </td>
 
                                     <td>
-                                        <img style="margin-right: 10px;"
-                                             src="{{ urldecode($item->image_model) }}"
-                                             class="pull-left"
-                                             width="50px" />
+                                        <a href="{{ str_replace('150x150', '600x600', urldecode($item->image_model))  }}" data-lightbox="image-1">
+                                            <img style="margin-right: 10px;"
+                                                 src="{{ urldecode($item->image_model) }}"
+                                                 class="pull-left"
+                                                 width="100px" />
+                                        </a>
+
                                         <a href="{{$item->link_origin}}" target="_blank">
                                             {{$item->title_origin}}
                                         </a>
@@ -246,9 +249,17 @@
 
 @endsection
 
+@section('css_bottom')
+    @parent
+
+    <link rel="stylesheet" href="{{ asset('bower_components/lightbox2/dist/css/lightbox.css')  }}">
+@endsection
+
 @section('js_bottom')
     @parent
     <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
+    <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
+
     <script>
         $(function() {
             $('.lazy').lazy();
