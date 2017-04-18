@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeTablePackage2 extends Migration
+class ChangeTableService extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +14,8 @@ class ChangeTablePackage2 extends Migration
      */
     public function up()
     {
-        Schema::table('package_service', function (Blueprint $table) {
-
+        Schema::table('services', function (Blueprint $table) {
+            DB::statement(" update services set `status` = 'ACTIVE' where `code` = 'WOOD_CRATING' ");
         });
     }
 
@@ -25,7 +26,7 @@ class ChangeTablePackage2 extends Migration
      */
     public function down()
     {
-        Schema::table('package_service', function (Blueprint $table) {
+        Schema::table('services', function (Blueprint $table) {
             //
         });
     }
