@@ -60,7 +60,7 @@
             <td>{{ $complaint_item->title }}</td>
             <td>{{ App\Complaints::$alias_array[$complaint_item->status] }}</td>
             <td>{{ App\Complaints::getCustomerUsername($complaint_item->customer_id) }}</td>
-            <td>{{ $complaint_item->created_time }} <a href="">   Xem chi tiết</a></td>
+            <td>{{ $complaint_item->created_time }} <a href="{{ url('complaint-detail/'.$complaint_item->id) }}">   Xem chi tiết</a></td>
         </tr>
         @endforeach
     @endif
