@@ -137,62 +137,6 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
-        $factoryMethodInstance = new ServiceFactoryMethod();
-
-        $orders = Order::all();
-        $orders = [];
-        foreach($orders as $order){
-            if(!$order instanceof Order){
-                continue;
-            }
-
-            $order->save();
-
-            $transactions = UserTransaction::where([
-                'object_id' => $order->id,
-                'object_type' => UserTransaction::OBJECT_TYPE_ORDER
-            ])->get();
-
-            if($transactions){
-                foreach($transactions as $transaction){
-                    if(!$transaction instanceof UserTransaction){
-                        continue;
-                    }
-                    $transaction->save();
-                }
-            }
-
-            $packages = Package::where([
-                'order_id' => $order->id,
-                'is_done' => 1
-            ])->get();
-
-            if($packages){
-                foreach($packages as $package){
-                    if(!$package instanceof Package){
-                        continue;
-                    }
-
-                    $service = $factoryMethodInstance->makeService([
-                        'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
-                        'weight' => $package->getWeightCalFee(),
-                        'destination_warehouse' => $order->destination_warehouse,
-                        'apply_time' => $order->deposited_at,
-                    ]);
-                    $money_charge = (float)$service->calculatorFee();
-                    if($money_charge > 0){
-                        $money_charge = 0 - abs($money_charge);
-                    }
-
-                    $data_fee_insert = [
-                        [ 'name' => 'shipping_china_vietnam_fee', 'money' => (abs($money_charge) / $order->exchange_rate), 'update_money' => true ],
-                        [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => abs($money_charge), 'update_money' => true ],
-                    ];
-                    OrderFee::createFee($order, $data_fee_insert);
-                }
-            }
-        }
-
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,
