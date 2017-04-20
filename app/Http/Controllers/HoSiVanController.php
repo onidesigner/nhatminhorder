@@ -15,6 +15,8 @@ class HoSiVanController extends Controller
     //
 
     public function index(){
+        OrderFee::truncate();
+
         $factoryMethodInstance = new ServiceFactoryMethod();
 
         $orders = Order::all();
