@@ -27,14 +27,6 @@ class HoSiVanController extends Controller
 
             $amount_vnd = $order->amountWithItems(true);
 
-            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT, true)){
-                $buying_fee_vnd = $order->getBuyingFee($amount_vnd);
-                $buying_fee = $buying_fee_vnd / $order->exchange_rate;
-
-                $data_fee_insert[] = [ 'name' => 'buying_fee', 'money' => $buying_fee ];
-                $data_fee_insert[] = [ 'name' => 'buying_fee_vnd', 'money' => $buying_fee_vnd ];
-            }
-
             $order->save();
 
             $transactions = UserTransaction::where([
