@@ -140,6 +140,7 @@ class HomeController extends Controller
         $factoryMethodInstance = new ServiceFactoryMethod();
 
         $orders = Order::all();
+        $orders = [];
         foreach($orders as $order){
             if(!$order instanceof Order){
                 continue;
