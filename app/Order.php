@@ -646,6 +646,9 @@ class Order extends Model
 
             [ 'name' => 'deposit_amount', 'money' => $deposit_amount ],
             [ 'name' => 'deposit_amount_vnd', 'money' => $deposit_amount_vnd ],
+
+            [ 'name' => 'domestic_shipping_fee', 'money' => $this->domestic_shipping_fee ],
+            [ 'name' => 'domestic_shipping_fee_vnd', 'money' => $this->domestic_shipping_fee_vnd ],
         ];
 
 //        if($this->isBeforeStatus(Order::STATUS_BOUGHT, true)){
@@ -655,6 +658,9 @@ class Order extends Model
             $data_fee_insert[] = [ 'name' => 'buying_fee', 'money' => $buying_fee ];
             $data_fee_insert[] = [ 'name' => 'buying_fee_vnd', 'money' => $buying_fee_vnd ];
 //        }
+
+
+        //todo::khi thay doi bieu phi mua hang thi can mo lai comment doan nay, neu khong se khong dung
 
         OrderFee::createFee($this, $data_fee_insert);
 

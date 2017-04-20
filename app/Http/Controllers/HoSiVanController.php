@@ -25,8 +25,6 @@ class HoSiVanController extends Controller
                 continue;
             }
 
-            $amount_vnd = $order->amountWithItems(true);
-
             $order->save();
 
             $transactions = UserTransaction::where([

@@ -979,15 +979,8 @@ class OrderController extends Controller
             return false;
         }
 
-
         $domestic_shipping_fee = $request->get('domestic_shipping_china');
         $domestic_shipping_fee_vnd = $domestic_shipping_fee * $order->exchange_rate;
-
-        $data_fee_insert = [
-            [ 'name' => 'domestic_shipping_fee', 'money' => $domestic_shipping_fee ],
-            [ 'name' => 'domestic_shipping_fee_vnd', 'money' => $domestic_shipping_fee_vnd ],
-        ];
-        OrderFee::createFee($order, $data_fee_insert);
 
         $order->domestic_shipping_fee = $domestic_shipping_fee;
         $order->domestic_shipping_fee_vnd = $domestic_shipping_fee_vnd;
