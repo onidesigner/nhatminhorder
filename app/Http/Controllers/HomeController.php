@@ -134,28 +134,28 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
-//        $orders = Order::all();
-//        foreach($orders as $order){
-//            if(!$order instanceof Order){
-//                continue;
-//            }
-//
-//            $order->save();
-//
-//            $transactions = UserTransaction::where([
-//                'object_id' => $order->id,
-//                'object_type' => UserTransaction::OBJECT_TYPE_ORDER
-//            ])->get();
-//
-//            if($transactions){
-//                foreach($transactions as $transaction){
-//                    if(!$transaction instanceof UserTransaction){
-//                        continue;
-//                    }
-//                    $transaction->save();
-//                }
-//            }
-//        }
+        $orders = Order::all();
+        foreach($orders as $order){
+            if(!$order instanceof Order){
+                continue;
+            }
+
+            $order->save();
+
+            $transactions = UserTransaction::where([
+                'object_id' => $order->id,
+                'object_type' => UserTransaction::OBJECT_TYPE_ORDER
+            ])->get();
+
+            if($transactions){
+                foreach($transactions as $transaction){
+                    if(!$transaction instanceof UserTransaction){
+                        continue;
+                    }
+                    $transaction->save();
+                }
+            }
+        }
 
         return view('home', [
             'page_title' => 'Trang chủ',
