@@ -634,9 +634,9 @@
                                             <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
                                             <br>
 
-                                            <p>
-                                                Địa điểm đăng bán: {{$order_item->location_sale}}
-                                            </p>
+                                            {{--<p>--}}
+                                                {{--Địa điểm đăng bán: {{$order_item->location_sale}}--}}
+                                            {{--</p>--}}
                                             <p>
                                                 Mẫu: {{$order_item->property}}
                                             </p>

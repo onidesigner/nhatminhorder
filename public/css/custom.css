@@ -42,6 +42,9 @@
     float: left;
     padding: 15px 0;
 }
+#order-detail-page .order-fee li label{
+    font-size: 12px;
+}
 
 /** css box chat **/
 #box-chat-right .comment-text-grey{

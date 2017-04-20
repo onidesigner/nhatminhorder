@@ -25,7 +25,7 @@ class UserTransaction extends Model
     const TRANSACTION_TYPE_PAYMENT = 'PAYMENT';//truy thu
     const TRANSACTION_TYPE_PROMOTION = 'PROMOTION';//khuyến mại
     const TRANSACTION_TYPE_GIFT = 'GIFT';//quà tặng
-    const TRANSACTION_TYPE_REFUND = 'REFUND';//trả lại theo đơn
+    const TRANSACTION_TYPE_ORDER_REFUND = 'ORDER_REFUND';//trả lại theo đơn
     const TRANSACTION_TYPE_REFUND_COMPLAINT = 'REFUND_COMPLAINT';//trả lại theo khiếu nại
     const TRANSACTION_TYPE_ADJUSTMENT = 'ADJUSTMENT';//giao dịch điều chỉnh
 
@@ -38,13 +38,15 @@ class UserTransaction extends Model
 
     public static $transaction_type = array(
 //        self::TRANSACTION_TYPE_DEPOSIT => 'Nạp tiền',
-        self::TRANSACTION_TYPE_ORDER_DEPOSIT => 'Đặt cọc',
-        self::TRANSACTION_TYPE_ORDER_PAYMENT => 'Thanh toán',
-        self::TRANSACTION_TYPE_PAYMENT => 'Truy thu',
-        self::TRANSACTION_TYPE_REFUND => 'Trả lại',
 //        self::TRANSACTION_TYPE_REFUND_COMPLAINT => 'Trả lại theo khiếu nại',
 //        self::TRANSACTION_TYPE_PROMOTION => 'Khuyến mại',
 //        self::TRANSACTION_TYPE_WITHDRAWAL => 'Rút tiền',
+
+
+        self::TRANSACTION_TYPE_ORDER_DEPOSIT => 'Đặt cọc',
+        self::TRANSACTION_TYPE_ORDER_PAYMENT => 'Thanh toán',
+        self::TRANSACTION_TYPE_PAYMENT => 'Truy thu',
+        self::TRANSACTION_TYPE_ORDER_REFUND => 'Trả lại đơn hàng',
         self::TRANSACTION_TYPE_ADJUSTMENT => "Điều chỉnh",
         self::TRANSACTION_TYPE_GIFT => "Quà tặng",
         self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT => "Điều chỉnh đặt cọc"
@@ -53,7 +55,7 @@ class UserTransaction extends Model
     public static $transaction_adjustment = array(
         self::TRANSACTION_TYPE_ADJUSTMENT => "Điều chỉnh",
         self::TRANSACTION_TYPE_PAYMENT => 'Truy thu',
-        self::TRANSACTION_TYPE_REFUND => 'Trả lại',
+        self::TRANSACTION_TYPE_ORDER_REFUND => 'Trả lại',
         self::TRANSACTION_TYPE_GIFT => "Quà tặng"
     );
 
@@ -128,18 +130,18 @@ class UserTransaction extends Model
 
     }
 
-    public static function getPaymentOrder(User $customer, Order $order){
-        return DB::table('user_transaction')
-            ->select(DB::raw('SUM(amount) as total_amount'))
-            ->where([
-                'user_id' => $customer->id,
-                'state' => self::STATE_COMPLETED,
-                'object_id' => $order->id,
-                'object_type' => self::OBJECT_TYPE_ORDER,
-
-            ])
-            ->first()->total_amount;
-    }
+//    public static function getPaymentOrder(User $customer, Order $order){
+//        return DB::table('user_transaction')
+//            ->select(DB::raw('SUM(amount) as total_amount'))
+//            ->where([
+//                'user_id' => $customer->id,
+//                'state' => self::STATE_COMPLETED,
+//                'object_id' => $order->id,
+//                'object_type' => self::OBJECT_TYPE_ORDER,
+//
+//            ])
+//            ->first()->total_amount;
+//    }
 
     /**
      * @author vanhs
@@ -165,7 +167,39 @@ class UserTransaction extends Model
             ->first()->total_amount;
     }
 
-    public static function getCustomerPaymentOrder(User $customer, Order $order){
+    /**
+     * @author vanhs
+     * @desc Tong tien khach da thanh toan tren don hang
+     * @param User $customer
+     * @param Order $order
+     * @return mixed
+     */
+//    public static function getCustomerPaymentOrder(User $customer, Order $order){
+//        return DB::table('user_transaction')
+//            ->select(DB::raw('SUM(amount) as total_amount'))
+//            ->where([
+//                'user_id' => $customer->id,
+//                'state' => self::STATE_COMPLETED,
+//                'object_id' => $order->id,
+//                'object_type' => self::OBJECT_TYPE_ORDER
+//            ])
+//            ->whereIn('transaction_type', [
+//                self::TRANSACTION_TYPE_ORDER_DEPOSIT,
+//                self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+//                self::TRANSACTION_TYPE_ORDER_PAYMENT,
+//                self::TRANSACTION_TYPE_PAYMENT
+//            ])
+//            ->first()->total_amount;
+//    }
+
+    /**
+     * @author vanhs
+     * @desc Tong so tien da tra lai tren don hang cua khach
+     * @param User $customer
+     * @param Order $order
+     * @return mixed
+     */
+    public static function getCustomerRefundOrder(User $customer, Order $order){
         return DB::table('user_transaction')
             ->select(DB::raw('SUM(amount) as total_amount'))
             ->where([
@@ -173,12 +207,15 @@ class UserTransaction extends Model
                 'state' => self::STATE_COMPLETED,
                 'object_id' => $order->id,
                 'object_type' => self::OBJECT_TYPE_ORDER,
-
+                'transaction_type' => self::TRANSACTION_TYPE_ORDER_REFUND
             ])
             ->first()->total_amount;
     }
 
-    public static function createTransaction($transaction_type, $transaction_note, User $create, User $customer, $object, $amount){
+    public static function createTransaction($transaction_type, $transaction_note,
+                                             User $create, User $customer,
+                                             $object, $amount){
+
         try{
             DB::beginTransaction();
 
@@ -223,5 +260,64 @@ class UserTransaction extends Model
         }
     }
 
+    public function getObject(){
+        $object = null;
+        switch ($this->object_type){
+            case self::OBJECT_TYPE_ORDER:
+                $object = Order::find($this->object_id);
+                break;
+        }
+        return $object;
+    }
 
+    public function save(array $options = [])
+    {
+        $object = $this->getObject();
+
+        //before save code
+
+        #region -- Cap nhat tong tien tra lai tren don hang --
+        if($this->transaction_type == self::TRANSACTION_TYPE_ORDER_REFUND
+            && $this->state == self::STATE_COMPLETED
+            && $this->object_type == self::OBJECT_TYPE_ORDER
+            && $object instanceof Order){
+
+            $data_fee_insert = [
+                [ 'name' => 'refund_order', 'money' => (abs($this->amount) / $object->exchange_rate), 'update_money' => true ],
+                [ 'name' => 'refund_order_vnd', 'money' => abs($this->amount), 'update_money' => true ],
+            ];
+
+            OrderFee::createFee($object, $data_fee_insert);
+        }
+        #endregion
+
+        #region -- Cap nhat tong tien da thanh toan cho don hang --
+        if(in_array($this->transaction_type, [
+                self::TRANSACTION_TYPE_ORDER_DEPOSIT,
+                self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+                self::TRANSACTION_TYPE_ORDER_PAYMENT,
+                self::TRANSACTION_TYPE_PAYMENT
+            ])
+            && $this->state == self::STATE_COMPLETED
+            && $this->object_type == self::OBJECT_TYPE_ORDER
+            && $object instanceof Order){
+
+            if($this->transaction_type == self::TRANSACTION_TYPE_PAYMENT){
+                $money_chart = 0 - abs($this->amount);
+            }else{
+                $money_chart = abs($this->amount);
+            }
+
+            $data_fee_insert = [
+                [ 'name' => 'customer_payment_amount', 'money' => ($money_chart / $object->exchange_rate), 'update_money' => true ],
+                [ 'name' => 'customer_payment_amount_vnd', 'money' => $money_chart, 'update_money' => true ],
+            ];
+            OrderFee::createFee($object, $data_fee_insert);
+        }
+        #endregion
+
+        $saved = parent::save($options); // TODO: Change the autogenerated stub
+        //end save code
+        return $saved;
+    }
 }

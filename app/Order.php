@@ -496,51 +496,41 @@ class Order extends Model
         return $service->calculatorFee();
     }
 
-    public static $fee_field_order_detail = [
-        'amount_vnd' => 'Tiền hàng (1)',
-        'buying_fee' => 'Mua hàng (2)',
-        'domestic_shipping_fee_vnd' => 'VC nội địa TQ (3)',
-        'shipping_china_vietnam_fee' => 'VC quốc tế (4)',
-        'total_amount_all' => 'Tổng chi phí (5) = (1) + (2) + (3) + (4)',
-        'customer_payment_amount' => 'Đã thanh toán (6)',
-        'need_payment_amount' => 'Cần thanh toán (7) = (5) - (6)',
-    ];
+    public function fee(){
+        $data_return = [];
+        foreach(OrderFee::$fee_field_order_detail as $key => $value){
+            $data_return[$key] = 0;
+        }
 
-    public function fee(User $customer, $packages = []){
-        $total_amount_vnd = $this->amount(true);
+        $fee = OrderFee::getListFee($this);
+        foreach($fee as $f){
+            if(!$f instanceof OrderFee){
+                continue;
+            }
+            $fee_name = $f->name;
 
-        $buying_fee = $this->getBuyingFee($total_amount_vnd);
-        $shipping_china_vietnam_fee = 0;
-        $domestic_shipping_fee_vnd = $this->domestic_shipping_fee * $this->exchange_rate;
-
-        if(count($packages)){
-            foreach($packages as $package){
-                if(!$package instanceof Package){
-                    continue;
-                }
-                $shipping_china_vietnam_fee += $this->getShippingChinaVietnam($package->getWeightCalFee());
+            $fee_money = $f->money;
+            if(isset($data_return[$fee_name])){
+                $data_return[$fee_name] = $fee_money;
             }
         }
 
-        $total_fee_vnd = $buying_fee + $domestic_shipping_fee_vnd + $shipping_china_vietnam_fee;
-        $total_amount_all = $total_amount_vnd + $total_fee_vnd;
-        $customer_payment_amount = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
-        $need_payment_amount = $total_amount_all > $customer_payment_amount
-            ? $total_amount_all - $customer_payment_amount : 0;
+        $data_return['total_fee_vnd'] =
+            $data_return['amount_vnd']
+            + $data_return['buying_fee_vnd']
+            + $data_return['domestic_shipping_fee_vnd']
+            + $data_return['shipping_china_vietnam_fee_vnd']
+            + $data_return['wood_crating_vnd'];
 
-        return [
-            'amount_vnd' => $total_amount_vnd,
-            'domestic_shipping_fee_vnd' => $domestic_shipping_fee_vnd,
-            'deposit_percent' => $this->deposit_percent,
-            'deposit_amount_vnd' => $this->deposit_amount,
+        $data_return['need_payment_amount_vnd'] = $data_return['total_fee_vnd']
+            - $data_return['refund_order_vnd']
+            - $data_return['customer_payment_amount_vnd'];
 
-            'buying_fee' => $buying_fee,
-            'shipping_china_vietnam_fee' => $shipping_china_vietnam_fee,
+        if($data_return['need_payment_amount_vnd'] < 0){
+            $data_return['need_payment_amount_vnd'] = 0;
+        }
 
-            'total_amount_all' => $total_amount_all,
-            'customer_payment_amount' => $customer_payment_amount,
-            'need_payment_amount' => $need_payment_amount,
-        ];
+        return $data_return;
     }
 
     public function original_bill(){
@@ -610,6 +600,12 @@ class Order extends Model
         }
     }
 
+    /**
+     * @author vanhs
+     * @desc Ham tinh tong tien hang theo danh sach san pham
+     * @param bool $vnd
+     * @return int|mixed
+     */
     public function amountWithItems($vnd = false){
         $amount = 0;
         $items = $this->item()->get();
@@ -619,9 +615,9 @@ class Order extends Model
                     continue;
                 }
 
-                $amount_item = $item->price * $item->order_quantity;
+                $amount_item = $item->getPriceCalculator() * $item->order_quantity;
                 if($vnd){
-                    $amount_item = $item->price * $item->order_quantity * $this->exchange_rate;
+                    $amount_item = $item->getPriceCalculator() * $item->order_quantity * $this->exchange_rate;
                 }
                 $amount += $amount_item;
             }
@@ -631,20 +627,41 @@ class Order extends Model
 
     public function save(array $options = [])
     {
-        //before save code
-        $order_amount = $this->amountWithItems(true);
-        $deposit_amount = Cart::getDepositAmount($this->deposit_percent, $order_amount);
-        $this->deposit_amount = $deposit_amount;
+        /**
+         * Khi thay doi thong tin don hang (truoc khi da mua) can tinh lai
+         * - tien hang
+         * - tien dat coc
+         * - phi mua hang
+         * - phi VC noi dia TQ
+         */
+        $amount_vnd = $this->amountWithItems(true);
+        $amount = $amount_vnd / $this->exchange_rate;
 
-        $this->amount_vnd = $this->amount * $this->exchange_rate;
-        $this->domestic_shipping_fee_vnd = $this->domestic_shipping_fee * $this->exchange_rate;
+        $deposit_amount_vnd = Cart::getDepositAmount($this->deposit_percent, $amount_vnd);
+        $deposit_amount = $deposit_amount_vnd / $this->exchange_rate;
 
-        $customer = User::find($this->user_id);
-        $this->payment_vnd = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
-        $this->payment = $this->payment_vnd / $this->exchange_rate;
+        $data_fee_insert = [
+            [ 'name' => 'amount', 'money' => $amount ],
+            [ 'name' => 'amount_vnd', 'money' => $amount_vnd ],
+
+            [ 'name' => 'deposit_amount', 'money' => $deposit_amount ],
+            [ 'name' => 'deposit_amount_vnd', 'money' => $deposit_amount_vnd ],
+        ];
+
+        if($this->isBeforeStatus(Order::STATUS_BOUGHT, true)){
+            $buying_fee_vnd = $this->getBuyingFee($amount_vnd);
+            $buying_fee = $buying_fee_vnd / $this->exchange_rate;
+
+            $data_fee_insert[] = [ 'name' => 'buying_fee', 'money' => $buying_fee ];
+            $data_fee_insert[] = [ 'name' => 'buying_fee_vnd', 'money' => $buying_fee_vnd ];
+        }
+
+        OrderFee::createFee($this, $data_fee_insert);
 
         $saved = parent::save($options); // TODO: Change the autogenerated stub
-        //end save code
+
+        //after save
+
         return $saved;
     }
 
@@ -763,23 +780,6 @@ class Order extends Model
             $customer = User::find($this->user_id);
 
             if($this->status == self::STATUS_RECEIVED_FROM_SELLER){
-//                if($this->isOrderTransportStraight()){
-//                    $this->changeStatus(self::STATUS_DELIVERING, false);
-//                    $this->save();
-//
-//                    $status_title_after_change = self::getStatusTitle(self::STATUS_DELIVERING);
-//
-//                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
-//                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
-//                }else{
-//                    $this->changeStatus(self::STATUS_TRANSPORTING, false);
-//                    $this->save();
-//
-//                    $status_title_after_change = self::getStatusTitle(self::STATUS_TRANSPORTING);
-//
-//                    Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
-//                    Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
-//                }
 
                 $this->changeStatus(self::STATUS_TRANSPORTING, false);
                 $this->save();
@@ -789,15 +789,32 @@ class Order extends Model
                 Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                 Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
-                $order_amount_vnd = $this->amountWithItems(true);
-                $order_buying_fee = $this->getBuyingFee($order_amount_vnd);
-                $total_customer_payment = abs(UserTransaction::getCustomerPaymentOrder($customer, $this));
-                $total_need_payment = ($order_amount_vnd + $order_buying_fee + $this->getDomesticShippingFeeVnd()) - $total_customer_payment;
+                $data_fee = OrderFee::$fee_field_order_detail;
+                $order_fee = OrderFee::getListFee($this);
+                if($order_fee){
+                    foreach($order_fee as $order_fee_item){
+                        if(!$order_fee_item instanceof OrderFee){
+                            continue;
+                        }
+                        $data_fee[$order_fee_item->name] = 0;
+                        if(isset($data_fee[$order_fee_item->name])){
+                            $data_fee[$order_fee_item->name] = $order_fee_item->money;
+                        }
+                    }
+                }
+
+                $total_need_payment = (
+                        $data_fee['amount_vnd']
+                        + $data_fee['buying_fee_vnd']
+                        + $data_fee['domestic_shipping_fee_vnd']
+                    )
+                    - $data_fee['customer_payment_amount_vnd'];
                 $total_need_payment = 0 - abs($total_need_payment);
 
-                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc + phí VC nội địa TQ %sđ + phí mua hàng %sđ',
-                    Util::formatNumber($this->getDomesticShippingFeeVnd()),
-                    Util::formatNumber($order_buying_fee));
+                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; + Mua hàng %sđ',
+                    Util::formatNumber($data_fee['amount_vnd'] - $data_fee['deposit_amount_vnd']),
+                    Util::formatNumber($data_fee['domestic_shipping_fee_vnd']),
+                    Util::formatNumber($data_fee['buying_fee_vnd']));
 
                 UserTransaction::createTransaction(
                     UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,

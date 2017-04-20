@@ -167,7 +167,7 @@ class UserTransactionController extends Controller
                 break;
 
             case UserTransaction::TRANSACTION_TYPE_PAYMENT:
-            case UserTransaction::TRANSACTION_TYPE_REFUND:
+            case UserTransaction::TRANSACTION_TYPE_ORDER_REFUND:
 
                 $rules['object_type'] = 'required';
                 switch ($data_insert['object_type']){
@@ -290,7 +290,7 @@ class UserTransactionController extends Controller
 
                     break;
 
-                case UserTransaction::TRANSACTION_TYPE_REFUND:
+                case UserTransaction::TRANSACTION_TYPE_ORDER_REFUND:
                 case UserTransaction::TRANSACTION_TYPE_PAYMENT:
 
                     if($data_insert['transaction_type'] == UserTransaction::TRANSACTION_TYPE_PAYMENT):

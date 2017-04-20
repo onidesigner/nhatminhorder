@@ -14,6 +14,7 @@ use App\User;
 use App\Role;
 use App\UserRole;
 use App\Permission;
+use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -131,6 +132,29 @@ class HomeController extends Controller
         if($current_user->section == User::SECTION_CRANE){
             $total_order_deposit_today = Order::getTotalDepositByDay(date('Y-m-d'));
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
+        }
+
+        $orders = Order::all();
+        foreach($orders as $order){
+            if(!$order instanceof Order){
+                continue;
+            }
+
+            $order->save();
+
+            $transactions = UserTransaction::where([
+                'object_id' => $order->id,
+                'object_type' => UserTransaction::OBJECT_TYPE_ORDER
+            ])->get();
+
+            if($transactions){
+                foreach($transactions as $transaction){
+                    if(!$transaction instanceof UserTransaction){
+                        continue;
+                    }
+                    $transaction->save();
+                }
+            }
         }
 
         return view('home', [
