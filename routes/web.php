@@ -165,3 +165,10 @@ Route::get('/tinh-phi', 'PreviewFeeController@index');
 Route::get('/calculator_fee', 'PreviewFeeController@calculatorFee');
 Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError');
 Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');
+
+
+#region --send sms--
+Route::get('/send-sms','SendSmsController@index');
+Route::post('/send-sms-2','SendSmsController@ondex');
+Route::post('/gui-tin-nhan','SendSmsController@sendSms');
+#endregion

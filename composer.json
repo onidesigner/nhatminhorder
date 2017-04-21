@@ -6,6 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "anlutro/curl": "^1.4",
         "doctrine/dbal": "^2.5",
         "eusonlito/laravel-packer": "master-dev",
         "laracasts/utilities": "^2.1",
@@ -24,8 +25,10 @@
             "database"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Ap\\" : "app/Library/Sms"
         }
+
     },
     "autoload-dev": {
         "psr-4": {
