@@ -20,7 +20,7 @@ class OrderFee extends Model
         'CUSTOMER_PAYMENT_AMOUNT_VND' => 'Tổng thanh toán (7)',
         'NEED_PAYMENT_AMOUNT_VND' => 'Còn thiếu (8=6-7)',
 
-        'WITHDREW_ORDER_VND' => 'Truy thu trên đơn <i class="fa fa-question-circle" data-toggle="tooltip" title=""></i>',
+        'WITHDREW_ORDER_VND' => 'Truy thu trên đơn',
         'REFUND_ORDER_VND' => 'Trả lại trên đơn',
         'REFUND_COMPLAINT_VND' => 'Trả lại từ KNDV',//chua tinh
     ];
