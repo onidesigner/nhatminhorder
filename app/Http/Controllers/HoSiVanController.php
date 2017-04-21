@@ -20,37 +20,41 @@ class HoSiVanController extends Controller
 
     }
 
-    public function index(Request $request){
-        $action = $request->get('action');
-        if($action == 'doi_soat_so_du'){
+    private function __tai_chinh_khong_khop(Request $request){
+        $users = User::all();
+        if($users){
+            foreach($users as $user){
+                $account_balance_by_user_transaction = DB::table('user_transaction')
+                    ->select(DB::raw('SUM(amount) as amount'))
+                    ->where([
+                        'user_id' => $user->id,
+                        'state' => UserTransaction::STATE_COMPLETED,
+                    ])
+                    ->first()->amount;
 
-            exit;
-        }
-
-        if($action == 'thong_ke_tai_chinh'){
-            $users = User::all();
-            if($users){
-                foreach($users as $user){
-                    $account_balance_by_user_transaction = DB::table('user_transaction')
-                        ->select(DB::raw('SUM(amount) as amount'))
-                        ->where([
-                            'user_id' => $user->id,
-                            'state' => UserTransaction::STATE_COMPLETED,
-                        ])
-                        ->first()->amount;
-
-                    echo '<h3>Khach hang: ' . $user->email . ' - ' . $user->code . '</h3>';
-                    if($user->account_balance != $account_balance_by_user_transaction){
-                        echo '<p style="color: red;">Giao dịch không trùng khớp</p>';
-                    }
-                    echo '<p>So du hien tai: ' . Util::formatNumber($user->account_balance) . 'đ</p>';
-                    echo '<p>So du tinh theo lich su giao dich: ' . Util::formatNumber($account_balance_by_user_transaction) . '</p>';
-
-                    echo '<hr>';
+                echo '<h3>Khach hang: ' . $user->email . ' - ' . $user->code . '</h3>';
+                if($user->account_balance <> $account_balance_by_user_transaction){
+                    echo '<p style="color: red;">Giao dịch không trùng khớp</p>';
                 }
+                echo '<p>So du hien tai: ' . $user->account_balance . 'đ</p>';
+                echo '<p>So du tinh theo lich su giao dich: ' . $account_balance_by_user_transaction . '</p>';
+
+                echo '<hr>';
             }
-            exit;
         }
+        exit;
+    }
+
+    public function index(Request $request){
+        $action = '__' . $request->get('action');
+
+        if (!method_exists($this, $action)) {
+            die('Not support action!');
+        }
+
+        $result = $this->$action($request);
+
+        die('done');
 
         OrderFee::truncate();
 
