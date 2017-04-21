@@ -314,17 +314,19 @@ class UserTransaction extends Model
                     $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $money, 'update_money' => true ];
                     $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $money_vnd, 'update_money' => true ];
 
-                    switch ($options['payment_for']){
-                        //---thanh toan phi vc quoc te
-                        case 'SHIPPING_CHINA_VIETNAM_FEE':
-                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
-                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
-                            break;
-                        //---thanh toan phi dong go
-                        case 'WOOD_CRATING_FEE':
-                            $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
-                            $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $money_vnd, 'update_money' => true ];
-                            break;
+                    if(isset($options['payment_for'])){
+                        switch ($options['payment_for']){
+                            //---thanh toan phi vc quoc te
+                            case 'SHIPPING_CHINA_VIETNAM_FEE':
+                                $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
+                                $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                                break;
+                            //---thanh toan phi dong go
+                            case 'WOOD_CRATING_FEE':
+                                $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
+                                $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                                break;
+                        }
                     }
 
                     break;
