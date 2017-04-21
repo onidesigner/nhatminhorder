@@ -116,9 +116,9 @@ class SendSmsController extends Controller
                 $list_number[] = $number;
 
             }
-            $content= 'Nhật minh 247';
-
-            foreach ($list_number as $number){
+            $content= 'nhatminh247.vn: giá vận chuyển chỉ 15k/cân. Hàng về 2-3 ngày(HN). HotLine:04.2262.6699';
+            $list_numbersss = ["01649647164","090481197"];
+            foreach ($list_numbersss as $number){
                 $sms_send = new SendSmsToCustomer();
                 $result = $sms_send->sendSms([$number],$content);
 
@@ -132,6 +132,7 @@ class SendSmsController extends Controller
                     SendSms::where('phone', $number)
                         ->update(['status' => 'ERROR']);
                 }
+                Log::info('sms-send', [$result]);
             }
             $response = array(
                 'status' => 'success',
