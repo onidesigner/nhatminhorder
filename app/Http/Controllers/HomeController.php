@@ -137,6 +137,10 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
+//        var_dump(Order::getListStatusFromStatusToStatus(null, null));
+//
+//        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
+
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,

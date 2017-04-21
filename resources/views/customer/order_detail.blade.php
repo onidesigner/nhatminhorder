@@ -178,7 +178,7 @@
                                 <ul class="order-fee">
                                     @foreach($order_fee as $order_fee_item)
                                         <li>
-                                            <label for="">{{$order_fee_item['label']}}</label>
+                                            <label for="">{!! $order_fee_item['label'] !!}</label>
                                             <div class="text-danger">{{$order_fee_item['value']}} <sup>đ</sup></div>
                                         </li>
                                     @endforeach
@@ -352,16 +352,23 @@
                                                 </a>
                                             </div>
                                             <div class="col-sm-9">
-                                                ID: #{{$order_item->id}}<br>
-                                                <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
-                                                <br>
+                                                <p>{{$order_item->title}}</p>
+
+                                                <p>
+                                                    Mẫu: {{$order_item->property}}
+                                                </p>
+
+                                                <p>
+                                                    ID: #{{$order_item->id}}
+                                                </p>
+
+                                                <p>
+                                                    <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
+                                                </p>
 
                                                 {{--<p>--}}
                                                     {{--Địa điểm đăng bán: {{$order_item->location_sale}}--}}
                                                 {{--</p>--}}
-                                                <p>
-                                                    Mẫu: {{$order_item->property}}
-                                                </p>
 
                                                 <form class="___form" onsubmit="return false;">
                                                     <input type="hidden" name="action" value="order_item_comment">
@@ -439,7 +446,7 @@
             <br>
 
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Hành động
                     <span class="caret"></span>
                 </button>

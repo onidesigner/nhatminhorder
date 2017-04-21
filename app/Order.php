@@ -9,12 +9,15 @@ use Illuminate\Support\Facades\App;
 use App\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use League\Flysystem\Exception;
 
 class Order extends Model
 {
     protected $table = 'order';
 
     protected $factoryMethodInstance = null;
+    protected $order_buying_number_fee = 3;
 
     const STATUS_DEPOSITED = 'DEPOSITED';
     const STATUS_BOUGHT = 'BOUGHT';
@@ -78,7 +81,6 @@ class Order extends Model
         self::STATUS_SELLER_DELIVERY,
         self::STATUS_RECEIVED_FROM_SELLER,
         self::STATUS_TRANSPORTING,
-
         self::STATUS_WAITING_DELIVERY,
         self::STATUS_DELIVERING,
         self::STATUS_RECEIVED,
@@ -89,6 +91,20 @@ class Order extends Model
         self::STATUS_RECEIVED,
         self::STATUS_CANCELLED,
     ];
+
+    public static function getListStatusFromStatusToStatus($from_status = null, $to_status = null){
+        if(!$from_status){
+            $from_status = 0;
+        }else{
+            $from_status = array_search($from_status, self::$statusLevel);
+        }
+        if(!$to_status){
+            $to_status = count(self::$statusLevel);
+        }else{
+            $to_status = array_search($to_status, self::$statusLevel);
+        }
+        return array_slice(self::$statusLevel, $from_status, $to_status);
+    }
 
     #endregion
 
@@ -496,6 +512,11 @@ class Order extends Model
         return $service->calculatorFee();
     }
 
+    /**
+     * @author vanhs
+     * @desc Hien thi cac phi tren don
+     * @return array
+     */
     public function fee(){
         $data_return = [];
         foreach(OrderFee::$fee_field_order_detail as $key => $value){
@@ -515,20 +536,19 @@ class Order extends Model
             }
         }
 
-        $data_return['total_fee_vnd'] =
-            $data_return['amount_vnd']
-            + $data_return['buying_fee_vnd']
-            + $data_return['domestic_shipping_fee_vnd']
-            + $data_return['shipping_china_vietnam_fee_vnd']
-            + $data_return['wood_crating_vnd'];
+        #region -- Phí đơn hàng --
+        $data_return['TOTAL_FEE_VND'] =
+            $data_return['AMOUNT_VND']
+            + $data_return['BUYING_FEE_VND']
+            + $data_return['DOMESTIC_SHIPPING_FEE_VND']
+            + $data_return['SHIPPING_CHINA_VIETNAM_FEE_VND']
+            + $data_return['WOOD_CRATING_VND'];
+        #endregion
 
-        $data_return['need_payment_amount_vnd'] = $data_return['total_fee_vnd']
-            - $data_return['refund_order_vnd']
-            - $data_return['customer_payment_amount_vnd'];
-
-        if($data_return['need_payment_amount_vnd'] < 0){
-            $data_return['need_payment_amount_vnd'] = 0;
-        }
+        #region -- Tổng thanh toán --
+        $data_return['NEED_PAYMENT_AMOUNT_VND'] = $data_return['TOTAL_FEE_VND']
+            - $data_return['CUSTOMER_PAYMENT_AMOUNT_VND'];
+        #endregion
 
         return $data_return;
     }
@@ -651,16 +671,16 @@ class Order extends Model
             [ 'name' => 'domestic_shipping_fee_vnd', 'money' => $this->domestic_shipping_fee_vnd ],
         ];
 
-//        if($this->isBeforeStatus(Order::STATUS_BOUGHT, true)){
+        $exist_buying_fee = OrderFee::existFee($this, 'buying_fee');
+        if($this->isBeforeStatus(Order::STATUS_BOUGHT, true) || !$exist_buying_fee){
             $buying_fee_vnd = $this->getBuyingFee($amount_vnd);
+//            if($this->isFirstOrderThree()){
+//                $buying_fee_vnd = 0;
+//            }
             $buying_fee = $buying_fee_vnd / $this->exchange_rate;
-
             $data_fee_insert[] = [ 'name' => 'buying_fee', 'money' => $buying_fee ];
             $data_fee_insert[] = [ 'name' => 'buying_fee_vnd', 'money' => $buying_fee_vnd ];
-//        }
-
-
-        //todo::khi thay doi bieu phi mua hang thi can mo lai comment doan nay, neu khong se khong dung
+        }
 
         OrderFee::createFee($this, $data_fee_insert);
 
@@ -669,6 +689,32 @@ class Order extends Model
         //after save
 
         return $saved;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Kiem tra xem don hang hien tai co phai la 3 don hang dau tien hay khong?
+     * p/s: Don hang dau tien tinh tu khi bat dau van chuyen ve VN - trang thai van chuyen
+     * @return bool
+     */
+    public function isFirstOrderThree(){
+        $number = self::where([
+            'user_id' => $this->user_id,
+        ])->whereIn('status', [
+            self::STATUS_TRANSPORTING,
+            self::STATUS_WAITING_DELIVERY,
+            self::STATUS_DELIVERING,
+            self::STATUS_RECEIVED])
+            ->count();
+
+        $order_buying_number_fee = SystemConfig::getConfigValueByKey('order_buying_number_fee');
+        if(!$order_buying_number_fee){
+            $order_buying_number_fee = $this->order_buying_number_fee;
+        }
+        if($number < $order_buying_number_fee){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -810,17 +856,17 @@ class Order extends Model
                 }
 
                 $total_need_payment = (
-                        $data_fee['amount_vnd']
-                        + $data_fee['buying_fee_vnd']
-                        + $data_fee['domestic_shipping_fee_vnd']
+                        $data_fee['AMOUNT_VND']
+                        + $data_fee['DOMESTIC_SHIPPING_FEE_VND']
+                        + $data_fee['BUYING_FEE_VND']
                     )
-                    - $data_fee['customer_payment_amount_vnd'];
+                    - $data_fee['CUSTOMER_PAYMENT_AMOUNT_VND'];
                 $total_need_payment = 0 - abs($total_need_payment);
 
-                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; + Mua hàng %sđ',
-                    Util::formatNumber($data_fee['amount_vnd'] - $data_fee['deposit_amount_vnd']),
-                    Util::formatNumber($data_fee['domestic_shipping_fee_vnd']),
-                    Util::formatNumber($data_fee['buying_fee_vnd']));
+                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; Mua hàng %sđ',
+                    Util::formatNumber($data_fee['AMOUNT_VND'] - $data_fee['DEPOSIT_AMOUNT_VND']),
+                    Util::formatNumber($data_fee['DOMESTIC_SHIPPING_FEE_VND']),
+                    Util::formatNumber($data_fee['BUYING_FEE_VND']));
 
                 UserTransaction::createTransaction(
                     UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
@@ -840,6 +886,10 @@ class Order extends Model
             return true;
         }catch(\Exception $e){
             DB::rollback();
+
+            Log::info('can-not-changeOrderTransporting' . $e->getMessage());
+
+//            throw new Exception($e->getMessage());
             return false;
         }
     }

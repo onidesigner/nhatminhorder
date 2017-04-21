@@ -12,7 +12,10 @@ use Illuminate\Http\Request;
 
 class HoSiVanController extends Controller
 {
-    //
+    function __construct()
+    {
+
+    }
 
     public function index(){
         OrderFee::truncate();

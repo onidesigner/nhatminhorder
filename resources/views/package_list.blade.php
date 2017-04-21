@@ -28,7 +28,7 @@
                     <table class="table no-padding-leftright">
                         <thead>
                         <tr>
-                            <th class="">Kiện hàng</th>
+                            <th class="">Mã</th>
                             <th class="">Vận đơn</th>
                             <th class="">Trạng thái</th>
                             <th class="">Đơn hàng</th>

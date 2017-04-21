@@ -199,23 +199,34 @@ class UserTransaction extends Model
      * @param Order $order
      * @return mixed
      */
-    public static function getCustomerRefundOrder(User $customer, Order $order){
-        return DB::table('user_transaction')
-            ->select(DB::raw('SUM(amount) as total_amount'))
-            ->where([
-                'user_id' => $customer->id,
-                'state' => self::STATE_COMPLETED,
-                'object_id' => $order->id,
-                'object_type' => self::OBJECT_TYPE_ORDER,
-                'transaction_type' => self::TRANSACTION_TYPE_ORDER_REFUND
-            ])
-            ->first()->total_amount;
-    }
+//    public static function getCustomerRefundOrder(User $customer, Order $order){
+//        return DB::table('user_transaction')
+//            ->select(DB::raw('SUM(amount) as total_amount'))
+//            ->where([
+//                'user_id' => $customer->id,
+//                'state' => self::STATE_COMPLETED,
+//                'object_id' => $order->id,
+//                'object_type' => self::OBJECT_TYPE_ORDER,
+//                'transaction_type' => self::TRANSACTION_TYPE_ORDER_REFUND
+//            ])
+//            ->first()->total_amount;
+//    }
 
+    /**
+     * @author vanhs
+     * @desc Tao giao dich + tru tien trong tai khoan khach hang
+     * @param $transaction_type
+     * @param $transaction_note
+     * @param User $create
+     * @param User $customer
+     * @param $object
+     * @param $amount
+     * @param null $payment_for
+     * @return bool
+     */
     public static function createTransaction($transaction_type, $transaction_note,
                                              User $create, User $customer,
-                                             $object, $amount){
-
+                                             $object, $amount, $payment_for = null){
         try{
             DB::beginTransaction();
 
@@ -250,7 +261,7 @@ class UserTransaction extends Model
 
             $user_transaction->transaction_detail = json_encode($object);
             $user_transaction->transaction_note = $transaction_note;
-            $user_transaction->save();
+            $user_transaction->save([ 'payment_for' => $payment_for ]);
 
             DB::commit();
             return true;
@@ -260,6 +271,11 @@ class UserTransaction extends Model
         }
     }
 
+    /**
+     * @author vanhs
+     * @desc Lay ra doi tuong cua giao dich
+     * @return null
+     */
     public function getObject(){
         $object = null;
         switch ($this->object_type){
@@ -275,46 +291,63 @@ class UserTransaction extends Model
         $object = $this->getObject();
 
         //before save code
-
-        #region -- Cap nhat tong tien tra lai tren don hang --
-        if($this->transaction_type == self::TRANSACTION_TYPE_ORDER_REFUND
-            && $this->state == self::STATE_COMPLETED
+        if($this->state == self::STATE_COMPLETED
             && $this->object_type == self::OBJECT_TYPE_ORDER
             && $object instanceof Order){
 
-            $data_fee_insert = [
-                [ 'name' => 'refund_order', 'money' => (abs($this->amount) / $object->exchange_rate), 'update_money' => true ],
-                [ 'name' => 'refund_order_vnd', 'money' => abs($this->amount), 'update_money' => true ],
-            ];
+            $data_fee_insert = [];
 
-            OrderFee::createFee($object, $data_fee_insert);
-        }
-        #endregion
+            switch ($this->transaction_type){
+                //Trả lại trên đơn
+                case self::TRANSACTION_TYPE_ORDER_REFUND:
+                    $money_vnd = abs($this->amount);
+                    $money = $money_vnd / $object->exchange_rate;
+                    $data_fee_insert[] = [ 'name' => 'refund_order', 'money' => $money, 'update_money' => true ];
+                    $data_fee_insert[] = [ 'name' => 'refund_order_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                    break;
+                //Tổng thanh toán
+                case self::TRANSACTION_TYPE_ORDER_DEPOSIT:
+                case self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT:
+                case self::TRANSACTION_TYPE_ORDER_PAYMENT:
+                    $money_vnd = abs($this->amount);
+                    $money = $money_vnd / $object->exchange_rate;
+                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $money, 'update_money' => true ];
+                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $money_vnd, 'update_money' => true ];
 
-        #region -- Cap nhat tong tien da thanh toan cho don hang --
-        if(in_array($this->transaction_type, [
-                self::TRANSACTION_TYPE_ORDER_DEPOSIT,
-                self::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
-                self::TRANSACTION_TYPE_ORDER_PAYMENT,
-                self::TRANSACTION_TYPE_PAYMENT
-            ])
-            && $this->state == self::STATE_COMPLETED
-            && $this->object_type == self::OBJECT_TYPE_ORDER
-            && $object instanceof Order){
+                    switch ($options['payment_for']){
+                        //---thanh toan phi vc quoc te
+                        case 'SHIPPING_CHINA_VIETNAM_FEE':
+                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
+                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                            break;
+                        //---thanh toan phi dong go
+                        case 'WOOD_CRATING_FEE':
+                            $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
+                            $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                            break;
+                    }
 
-            if($this->transaction_type == self::TRANSACTION_TYPE_PAYMENT){
-                $money_chart = 0 - abs($this->amount);
-            }else{
-                $money_chart = abs($this->amount);
+                    break;
+                //Trả lại trên đơn
+                case self::TRANSACTION_TYPE_PAYMENT:
+                    $money_vnd = abs($this->amount);
+                    $money = $money_vnd / $object->exchange_rate;
+                    $data_fee_insert[] = [ 'name' => 'withdrew_order', 'money' => $money, 'update_money' => true ];
+                    $data_fee_insert[] = [ 'name' => 'withdrew_order_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                    break;
+                //Trả lại từ KNDV
+                case self::TRANSACTION_TYPE_REFUND_COMPLAINT:
+                    $money_vnd = abs($this->amount);
+                    $money = $money_vnd / $object->exchange_rate;
+                    $data_fee_insert[] = [ 'name' => 'refund_complaint', 'money' => $money, 'update_money' => true ];
+                    $data_fee_insert[] = [ 'name' => 'refund_complaint_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                    break;
             }
 
-            $data_fee_insert = [
-                [ 'name' => 'customer_payment_amount', 'money' => ($money_chart / $object->exchange_rate), 'update_money' => true ],
-                [ 'name' => 'customer_payment_amount_vnd', 'money' => $money_chart, 'update_money' => true ],
-            ];
-            OrderFee::createFee($object, $data_fee_insert);
+            if(count($data_fee_insert) > 0){
+                OrderFee::createFee($object, $data_fee_insert);
+            }
         }
-        #endregion
 
         $saved = parent::save($options); // TODO: Change the autogenerated stub
         //end save code

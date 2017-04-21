@@ -229,7 +229,10 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $customer = User::find($order->user_id);
-                    $order->changeOrderTransporting();
+                    if(!$order->changeOrderTransporting()){
+                        $this->action_error[] = sprintf('Không chuyển trang thái đơn hàng sang %s', Order::getStatusTitle(Order::STATUS_TRANSPORTING));
+                        return false;
+                    }
 
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
@@ -267,7 +270,10 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $customer = User::find($order->user_id);
-                    $order->changeOrderDelivering();
+                    if(!$order->changeOrderDelivering()){
+                        $this->action_error[] = sprintf('Không chuyển trang thái đơn hàng sang %s', Order::getStatusTitle(Order::STATUS_DELIVERING));
+                        return false;
+                    }
 
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
@@ -318,13 +324,9 @@ class ScanController extends Controller
             $create_user,
             $customer,
             $order,
-            $money_charge
+            $money_charge,
+            'SHIPPING_CHINA_VIETNAM_FEE'
         );
-
-        $data_fee_insert = [
-            [ 'name' => 'shipping_china_vietnam_fee', 'money' => (abs($money_charge) / $order->exchange_rate), 'update_money' => true ],
-            [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => abs($money_charge), 'update_money' => true ],
-        ];
 
         if($package->existService(Service::TYPE_WOOD_CRATING)){
             $factoryMethodInstance = new ServiceFactoryMethod();
@@ -335,9 +337,6 @@ class ScanController extends Controller
                 'service_code' => Service::TYPE_WOOD_CRATING
             ]);
             $wood_crating_vnd = $service->calculatorFee();
-
-            $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => ($wood_crating_vnd / $order->exchange_rate), 'update_money' => true ];
-            $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $wood_crating_vnd, 'update_money' => true ];
 
             $message = sprintf("Thu phí đóng gỗ kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber($wood_crating_vnd));
 
@@ -354,10 +353,10 @@ class ScanController extends Controller
                 $create_user,
                 $customer,
                 $order,
-                $wood_crating_vnd
+                $wood_crating_vnd,
+                'WOOD_CRATING_FEE'
             );
         }
-        OrderFee::createFee($order, $data_fee_insert);
 
         $package->setDone();
     }
