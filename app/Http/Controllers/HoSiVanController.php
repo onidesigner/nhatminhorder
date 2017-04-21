@@ -45,6 +45,10 @@ class HoSiVanController extends Controller
                     }
                     echo '<p>So du hien tai: ' . Util::formatNumber($user->account_balance) . 'đ</p>';
                     echo '<p>So du tinh theo lich su giao dich: ' . Util::formatNumber($account_balance_by_user_transaction) . '</p>';
+
+
+
+
                     echo '<hr>';
                 }
             }
