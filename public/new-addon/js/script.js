@@ -1,6 +1,6 @@
 //=========== begin config =========
-var sitename = 'nhatminh247.dev:8000';
-// var sitename = 'nhatminh247.vn';
+// var sitename = 'nhatminh247.dev:8000';
+var sitename = 'nhatminh247.vn';
 var url_get_init_data = 'http://' + sitename + '/api/get_init_data';
 //=========== end config =========
 
