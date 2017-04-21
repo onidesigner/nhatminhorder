@@ -32,12 +32,15 @@ class HoSiVanController extends Controller
                     ])
                     ->first()->amount;
 
+                $account_balance_by_user_transaction = doubleval($account_balance_by_user_transaction);
+                $user_account_balance = doubleval($user->account_balance);
+
                 echo '<h3>Khach hang: ' . $user->email . ' - ' . $user->code . '</h3>';
-                if($user->account_balance <> $account_balance_by_user_transaction){
+                if($user_account_balance <> $account_balance_by_user_transaction){
                     echo '<p style="color: red;">Giao dịch không trùng khớp</p>';
                 }
-                echo '<p>So du hien tai: ' . $user->account_balance . 'đ</p>';
-                echo '<p>So du tinh theo lich su giao dich: ' . $account_balance_by_user_transaction . '</p>';
+                echo '<p>So du hien tai: ' . Util::formatNumber($user_account_balance) . 'đ</p>';
+                echo '<p>So du tinh theo lich su giao dich: ' . Util::formatNumber($account_balance_by_user_transaction) . '</p>';
 
                 echo '<hr>';
             }
