@@ -143,13 +143,16 @@ class HomeController extends Controller
 //
 //        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
 
+        $nick_test_id = User::USER_ID_TEST;
+
         $statistic = [];
 
         $customer_recharge_amount = DB::table('user_transaction')
             ->select(DB::raw('sum(amount) as amount'))
             ->where([
                 ['state', '=', UserTransaction::STATE_COMPLETED],
-                ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT]
+                ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
+                ['user_id', '!=', $nick_test_id]
             ])
             ->having('amount', '>', 0)
             ->first()->amount;
@@ -163,6 +166,7 @@ class HomeController extends Controller
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'AMOUNT_VND'],
+                ['user_id', '!=', $nick_test_id]
             ])
             ->first()->money;
         $statistic[] = [
@@ -174,6 +178,7 @@ class HomeController extends Controller
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'DEPOSIT_AMOUNT_VND'],
+                ['user_id', '!=', $nick_test_id]
             ])
             ->first()->money;
         $statistic[] = [
