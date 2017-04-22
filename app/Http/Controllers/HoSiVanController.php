@@ -74,7 +74,7 @@ class HoSiVanController extends Controller
     }
 
     private function __tinh_toan_lai_phi_tren_don(Request $request){
-        die('huhu');
+//        die('huhu');
         OrderFee::truncate();
 
         $factoryMethodInstance = new ServiceFactoryMethod();
