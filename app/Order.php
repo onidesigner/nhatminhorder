@@ -546,8 +546,12 @@ class Order extends Model
         #endregion
 
         #region -- Tổng thanh toán --
-        $data_return['NEED_PAYMENT_AMOUNT_VND'] = $data_return['TOTAL_FEE_VND']
-            - $data_return['CUSTOMER_PAYMENT_AMOUNT_VND'];
+        if($data_return['TOTAL_FEE_VND'] > $data_return['CUSTOMER_PAYMENT_AMOUNT_VND']){
+            $data_return['NEED_PAYMENT_AMOUNT_VND'] = $data_return['TOTAL_FEE_VND']
+                - $data_return['CUSTOMER_PAYMENT_AMOUNT_VND'];
+        }else{
+            $data_return['NEED_PAYMENT_AMOUNT_VND'] = 0;
+        }
         #endregion
 
         return $data_return;
