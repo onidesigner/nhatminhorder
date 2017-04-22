@@ -36,6 +36,30 @@
                             </div>
                         </a>
                     </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="card card-mini">
+                            <div class="card-header">
+                                <div class="card-title">Thống kê chung</div>
+
+                            </div>
+                            <div class="card-body no-padding table-responsive">
+                                <table class="table card-table">
+
+                                    <tbody>
+                                    @foreach($statistic as $s)
+                                    <tr>
+                                        <td>{{$s['name']}}</td>
+                                        <td class="text-right">
+                                            <span class="text-danger">{{$s['value']}}đ</span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <br>
 
@@ -43,7 +67,6 @@
             @endif
 
             <div class="card">
-
                 @include('partials/__breadcrumb',
                     [
                         'urls' => [
@@ -51,7 +74,6 @@
                         ]
                     ]
                 )
-
                 <div class="card-body">
 
                     <h3>Hướng dẫn dành cho khách hàng mới</h3>

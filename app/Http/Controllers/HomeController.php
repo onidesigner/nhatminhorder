@@ -22,6 +22,7 @@ use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -142,11 +143,55 @@ class HomeController extends Controller
 //
 //        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
 
+        $statistic = [];
+
+        $customer_recharge_amount = DB::table('user_transaction')
+            ->select(DB::raw('sum(amount) as amount'))
+            ->where([
+                ['state', '=', UserTransaction::STATE_COMPLETED],
+                ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT]
+            ])
+            ->having('amount', '>', 0)
+            ->first()->amount;
+
+        $statistic[] = [
+            'name' => 'Tiền khách nạp',
+            'value' => Util::formatNumber($customer_recharge_amount)
+        ];
+
+        $amount_vnd = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'AMOUNT_VND'],
+            ])
+            ->first()->money;
+        $statistic[] = [
+            'name' => 'Tiền hàng (1)',
+            'value' => Util::formatNumber($amount_vnd)
+        ];
+
+        $deposit_amount_vnd = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'DEPOSIT_AMOUNT_VND'],
+            ])
+            ->first()->money;
+        $statistic[] = [
+            'name' => 'Tiền đặt cọc (2)',
+            'value' => Util::formatNumber($deposit_amount_vnd)
+        ];
+
+        $statistic[] = [
+            'name' => 'Tiền còn thiếu (3=1-2)',
+            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd))
+        ];
+
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,
+            'statistic' => $statistic,
         ]);
     }
 }
