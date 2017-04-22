@@ -40,7 +40,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="card card-mini">
                             <div class="card-header">
-                                <div class="card-title">Thống kê chung</div>
+                                <div class="card-title text-uppercase">Thống kê chung</div>
 
                             </div>
                             <div class="card-body no-padding table-responsive">
