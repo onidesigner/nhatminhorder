@@ -191,9 +191,7 @@
                                     <thead>
                                     <tr>
                                         <th>Mã GD</th>
-                                        <th>Loại</th>
                                         <th>Trạng thái</th>
-                                        <th>Thời gian</th>
                                         <th>Giá trị</th>
                                     </tr>
                                     </thead>
@@ -212,12 +210,13 @@
 
 
                                             <td>
+                                                <p>
+                                                    Loại: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }} ({{ App\Util::formatDate($transaction->created_at)  }})
+                                                </p>
                                                 {{$transaction->transaction_code}}<br>
                                                 <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
                                             </td>
-                                            <td>
-                                                {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
-                                            </td>
+
                                             <td>
 
 
@@ -227,10 +226,9 @@
                                             </td>
 
 
-                                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
                                             <td>
                                 <span class="text-danger">
-                                    {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
+                                    {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
                                 </span>
                                             </td>
 

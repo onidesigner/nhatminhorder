@@ -53,7 +53,7 @@
                         <p>Tìm thấy {{ $total_orders }} đơn hàng</p>
 
                         <div class="table-responsive">
-                            <table class="table no-padding-leftright table-striped">
+                            <table class="table table-striped table-hover no-padding-leftright">
                                 <thead>
                                     <tr>
 

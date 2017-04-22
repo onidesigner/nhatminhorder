@@ -40,7 +40,7 @@ class HoSiVanController extends Controller
                     echo '<p style="color: red;">Giao dịch không trùng khớp</p>';
                 }
                 echo '<p>So du hien tai: ' . Util::formatNumber($user_account_balance) . 'đ</p>';
-                echo '<p>So du tinh theo lich su giao dich: ' . Util::formatNumber($account_balance_by_user_transaction) . '</p>';
+                echo '<p>So du tinh theo lich su giao dich: ' . Util::formatNumber($account_balance_by_user_transaction) . 'đ</p>';
 
                 echo '<hr>';
             }
@@ -48,17 +48,7 @@ class HoSiVanController extends Controller
         exit;
     }
 
-    public function index(Request $request){
-        $action = '__' . $request->get('action');
-
-        if (!method_exists($this, $action)) {
-            die('Not support action!');
-        }
-
-        $result = $this->$action($request);
-
-        die('done');
-
+    private function __tinh_toan_lai_phi_tren_don(Request $request){
         OrderFee::truncate();
 
         $factoryMethodInstance = new ServiceFactoryMethod();
@@ -85,37 +75,48 @@ class HoSiVanController extends Controller
                 }
             }
 
-            $packages = Package::where([
-                'order_id' => $order->id,
-                'is_done' => 1
-            ])->get();
+//            $packages = Package::where([
+//                'order_id' => $order->id,
+//                'is_done' => 1
+//            ])->get();
+//
+//            if($packages){
+//                foreach($packages as $package){
+//                    if(!$package instanceof Package){
+//                        continue;
+//                    }
+//
+//                    $service = $factoryMethodInstance->makeService([
+//                        'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+//                        'weight' => $package->getWeightCalFee(),
+//                        'destination_warehouse' => $order->destination_warehouse,
+//                        'apply_time' => $order->deposited_at,
+//                    ]);
+//                    $money_charge = (float)$service->calculatorFee();
+//                    if($money_charge > 0){
+//                        $money_charge = 0 - abs($money_charge);
+//                    }
+//
+//                    $data_fee_insert = [
+//                        [ 'name' => 'shipping_china_vietnam_fee', 'money' => (abs($money_charge) / $order->exchange_rate), 'update_money' => true ],
+//                        [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => abs($money_charge), 'update_money' => true ],
+//                    ];
+//                    OrderFee::createFee($order, $data_fee_insert);
+//
+//                }
+//            }
+        }
+    }
 
-            if($packages){
-                foreach($packages as $package){
-                    if(!$package instanceof Package){
-                        continue;
-                    }
+    public function index(Request $request){
+        $action = '__' . $request->get('action');
 
-                    $service = $factoryMethodInstance->makeService([
-                        'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
-                        'weight' => $package->getWeightCalFee(),
-                        'destination_warehouse' => $order->destination_warehouse,
-                        'apply_time' => $order->deposited_at,
-                    ]);
-                    $money_charge = (float)$service->calculatorFee();
-                    if($money_charge > 0){
-                        $money_charge = 0 - abs($money_charge);
-                    }
-
-                    $data_fee_insert = [
-                        [ 'name' => 'shipping_china_vietnam_fee', 'money' => (abs($money_charge) / $order->exchange_rate), 'update_money' => true ],
-                        [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => abs($money_charge), 'update_money' => true ],
-                    ];
-                    OrderFee::createFee($order, $data_fee_insert);
-                }
-            }
+        if (!method_exists($this, $action)) {
+            die('Not support action!');
         }
 
-        echo 'done<br/>';
+        $result = $this->$action($request);
+
+        die('done');
     }
 }

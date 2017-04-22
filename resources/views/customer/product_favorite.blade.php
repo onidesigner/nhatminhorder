@@ -24,7 +24,7 @@
 
                     @if($total_product_favorite)
 
-                        <table class="table table-striped table-bordered table-hover">
+                        <table class="table table-striped table-hover">
                             <thead>
                             <tr>
                                 <th>TT</th>
