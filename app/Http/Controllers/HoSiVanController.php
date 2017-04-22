@@ -22,6 +22,18 @@ class HoSiVanController extends Controller
     }
 
     private function __linh_tinh(Request $request){
+
+        $order_fee = OrderFee::all();
+        foreach($order_fee as $order_fee_item){
+            if(!$order_fee_item instanceof OrderFee){
+                continue;
+            }
+            $order = Order::find($order_fee_item->order_id);
+            if(!$order instanceof Order){
+                $order_fee_item->delete();
+            }
+        }
+
 //        $exchange_rate = Exchange::getExchange();
 //
 //        $order = Order::find(74);
