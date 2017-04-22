@@ -48,7 +48,7 @@
                                                     <option value="{{$users_customer_item['id']}}">
                                                         [{{ App\User::getSectionName($users_customer_item['section'])  }}]
                                                         &nbsp;&nbsp;&nbsp;
-                                                        {{$users_customer_item['email']}} - {{$users_customer_item['name']}}
+                                                        {{$users_customer_item['email']}} - {{$users_customer_item['name']}} - {{$users_customer_item['code']}}
                                                     </option>
                                                 @endforeach
                                             @endif
