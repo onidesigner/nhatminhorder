@@ -22,27 +22,27 @@ class HoSiVanController extends Controller
     }
 
     private function __linh_tinh(Request $request){
-        $exchange_rate = Exchange::getExchange();
-
-        $order = Order::find(74);
-
-        $money_vnd = 62100;
-        $money = $money_vnd / $exchange_rate;
-
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => false ];
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => false ];
-
-        OrderFee::createFee($order, $data_fee_insert);
-
-        $order = Order::find(70);
-
-        $money_vnd = 111000;
-        $money = $money_vnd / $exchange_rate;
-
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => false ];
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => false ];
-
-        OrderFee::createFee($order, $data_fee_insert);
+//        $exchange_rate = Exchange::getExchange();
+//
+//        $order = Order::find(74);
+//
+//        $money_vnd = 62100;
+//        $money = $money_vnd / $exchange_rate;
+//
+//        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => false ];
+//        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => false ];
+//
+//        OrderFee::createFee($order, $data_fee_insert);
+//
+//        $order = Order::find(70);
+//
+//        $money_vnd = 111000;
+//        $money = $money_vnd / $exchange_rate;
+//
+//        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => false ];
+//        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => false ];
+//
+//        OrderFee::createFee($order, $data_fee_insert);
     }
 
     private function __tai_chinh_khong_khop(Request $request){
