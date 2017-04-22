@@ -61,13 +61,14 @@
                                         placeholder="Quét mã kiện">
 
                             </form>
-
-
                         </div>
                         <div class="col-sm-8 col-xs-12">
-                            {{--<h3>Kết quả quét</h3>--}}
-
-
+                            <ul class="list-group" style="margin-top: 57px;">
+                                <li class="list-group-item">
+                                    Mã kiện 8080080 Khách Nhung , số điện thoại 0909090 , địa chỉ :  số 8 ngách 3 ngõ 198 Lê Trọng Tấn – Định Công – Hà Nội
+                                    <span style="color:green"><i class="fa fa-print" aria-hidden="true"></i></span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
 
@@ -85,7 +86,8 @@
 
     <script>
         $(document).ready(function(){
-
+            var arr_message = [];
+            LocalStorage.init();
             // init bunch of sounds
             ion.sound({
                 sounds: [
@@ -110,6 +112,16 @@
                         var msg_type = 'success';
                         if(response.success){
                             ion.sound.play("success");
+                            if(response.result.order_id){
+                                var message = " Mã Kiện " + response.result.barcode + " khách hàng " +
+                                        response.result.address.reciver_name + " , địa chỉ " + response.result.address.detail  ;
+                                arr_message.unshift(message);
+                                LocalStorage.set('scan_action.', JSON.stringify(arr_message));
+                                var package_item =  JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : [];
+                                for (var i = 0; i < package_item.length; i++) {
+                                    $(".list-group").prepend("<li class='list-group-item'>" + package_item[i] + "</li>");
+                                }
+                            }
                         }else{
                             msg_type = 'error';
                             ion.sound.play("error");
@@ -122,29 +134,29 @@
                     });
                 }
             });
-
-//            $(document).on('change', 'select[name="warehouse"]', function(){
-//                var warehouse_type = $(this).data('warehouse-type');
-//                Action.chooseWarehouse(warehouse_type);
-//            });
-
         });
 
-        {{--var Action = {--}}
-            {{--chooseWarehouse: function (warehouse_type) {--}}
-                {{--var $dom = $('select[name="action"]');--}}
-                {{--$dom.find('option').remove();--}}
-                {{--if(warehouse_type == "{{ App\WareHouse::TYPE_DISTRIBUTION  }}"){--}}
-                    {{--$dom.append('<option value="IN">Nhập</option>');--}}
-                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
-                {{--}else if(warehouse_type == "{{ App\WareHouse::TYPE_RECEIVE  }}"){--}}
-                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
-                {{--}--}}
-            {{--}--}}
-        {{--};--}}
+// giá trị localstorage bên trung quốc
 
-        {{--Action.chooseWarehouse("{{ App\WareHouse::TYPE_RECEIVE  }}");--}}
-
+var LocalStorage = {
+            init : function () {
+                JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : []
+            },
+            prefix: '',
+            setPrefix: function(prefix) {
+                this.prefix = prefix;
+            },
+            get: function (key, defaultVal) {
+                var val = localStorage.getItem(this.prefix + key);
+                if (!val && defaultVal) {
+                    return defaultVal;
+                }
+                return val;
+            },
+            set: function (key, val) {
+                localStorage.setItem(this.prefix + key, val);
+            }
+};
     </script>
 @endsection
 

@@ -137,6 +137,7 @@ class ScanController extends Controller
     private function __in(Request $request, WareHouse $warehouse, User $currentUser){
         $barcode = $request->get('barcode');
         $create_user = User::find(Auth::user()->id);
+        $response = [];
 
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
             $message_internal = sprintf("Kiện hàng %s nhập kho %s", $barcode, $warehouse->code);
@@ -145,19 +146,31 @@ class ScanController extends Controller
                 'logistic_package_barcode' => $barcode,
                 'status' => Package::STATUS_INIT,
             ])->first();
+
             if($package && $package instanceof Package){
-                $package->inputWarehouseReceive($warehouse->code);
+                #$package->inputWarehouseReceive($warehouse->code); // tam bo se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $order->changeOrderReceivedFromSeller();
+                    $order_address = $order->getCustomerReceiveAddress();
+                    $user_phone = $order_address->phone;
+                    $response = array(
+                        'barcode' => $barcode,
+                        'address' => $order_address,
+                        'phone' => $user_phone,
+                        'status' => 'success',
+                        'order_id' => $order->id
+                    );
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                 }
             }
 
             $this->message = $message_internal;
+            return $response;
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
+
             $message_internal = sprintf("Kiện hàng %s nhập kho phân phối %s", $barcode, $warehouse->code);
 
             $package = Package::where([
@@ -167,13 +180,12 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
-                $package->inputWarehouseDistribution($warehouse->code);
+                #$package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
-                    $order->changeOrderWaitingDelivery();
+                   # $order->changeOrderWaitingDelivery(); // tam b se mo
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-
                     $user_address = UserAddress::find($order->user_address_id);
                     if($user_address instanceof UserAddress){
                         $job = (new SendSms([
@@ -182,10 +194,21 @@ class ScanController extends Controller
                         ]));
                         dispatch($job);
                     }
+
+                    $order_address = $order->getCustomerReceiveAddress();
+                    $user_phone = $order_address->phone;
+                    $response = array(
+                        'barcode' => $barcode,
+                        'address' => $order_address,
+                        'phone' => $user_phone,
+                        'status' => 'success',
+                        'order_id' => $order->id
+                    );
                 }
             }
 
             $this->message = $message_internal;
+            return $response;
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
