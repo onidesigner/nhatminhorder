@@ -142,29 +142,6 @@ class HomeController extends Controller
 //
 //        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
 
-
-        $exchange_rate = Exchange::getExchange();
-
-        $order = Order::find(74);
-
-        $money_vnd = 62100;
-        $money = $money_vnd / $exchange_rate;
-
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
-
-        OrderFee::createFee($order, $data_fee_insert);
-
-        $order = Order::find(70);
-
-        $money_vnd = 111000;
-        $money = $money_vnd / $exchange_rate;
-
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
-        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
-
-        OrderFee::createFee($order, $data_fee_insert);
-
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,

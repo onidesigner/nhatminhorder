@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exchange;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
 use App\OrderFee;
@@ -18,6 +19,30 @@ class HoSiVanController extends Controller
     function __construct()
     {
 
+    }
+
+    private function __linh_tinh(Request $request){
+        $exchange_rate = Exchange::getExchange();
+
+        $order = Order::find(74);
+
+        $money_vnd = 62100;
+        $money = $money_vnd / $exchange_rate;
+
+        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
+        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
+
+        OrderFee::createFee($order, $data_fee_insert);
+
+        $order = Order::find(70);
+
+        $money_vnd = 111000;
+        $money = $money_vnd / $exchange_rate;
+
+        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
+        $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
+
+        OrderFee::createFee($order, $data_fee_insert);
     }
 
     private function __tai_chinh_khong_khop(Request $request){
