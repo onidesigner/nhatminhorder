@@ -11,6 +11,7 @@ use App\OrderFreightBill;
 use App\OrderItem;
 use App\OrderOriginalBill;
 use App\OrderService;
+use App\Package;
 use App\Permission;
 use App\Service;
 use App\User;
@@ -198,7 +199,9 @@ class OrderController extends Controller
 
         $packages = $order->package()->where([
             'is_deleted' => 0,
-        ])->get();
+        ])
+            ->whereNotIn('status', [ Package::STATUS_INIT ])
+            ->get();
 
         $fee = $order->fee();
 

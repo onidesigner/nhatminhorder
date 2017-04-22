@@ -29,6 +29,10 @@
     border-top:none!important;
 }
 
+.cart-title{
+    margin-top: 0;
+}
+
 /** page order detail backend **/
 #order-detail-page .order-fee{
     margin: 0 0 30px 0;
