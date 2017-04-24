@@ -45,7 +45,7 @@
                                 <ul class="card-action">
                                     <li>
                                         <a href="{{ url('statistic/users')  }}" style="color: #5e6263;">
-                                            Xem chi tiết >>
+                                            <small>Xem chi tiết >></small>
                                         </a>
                                     </li>
                                 </ul>
