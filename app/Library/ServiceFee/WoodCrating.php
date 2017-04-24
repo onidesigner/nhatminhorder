@@ -31,6 +31,11 @@ class WoodCrating extends AbstractService {
 
     function calculatorFee()
     {
+        if($this->weight >= 1){
+            return (20 + (($this->weight - 1) * 0.8)) * $this->exchange_rate;
+        }else if($this->weight < 1 && $this->weight > 0){
+            return 20 * $this->exchange_rate;
+        }
         return 0;
     }
 

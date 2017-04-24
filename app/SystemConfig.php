@@ -13,6 +13,10 @@ class SystemConfig extends Model
 
     public static $system_config_data = [
         [
+            'field_name' => 'Miễn phí mua hàng với ? đơn đầu tiên',
+            'key' => 'order_buying_number_fee'
+        ],
+        [
             'field_name' => 'Thời gian hưởng hoa hồng của khách giới thiệu & sử dụng hệ thống (tính bằng tháng)',
             'key' => 'user_refer_time_enjoyment'
         ],

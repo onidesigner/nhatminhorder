@@ -119,7 +119,7 @@
                                                 <td>
                                                     @if(!empty($services))
                                                         @foreach($services as $service)
-                                                            <form class="___form">
+                                                            <form class="___form" style="display: inline; margin-right: 10px;">
                                                                 <input type="hidden" name="action" value="choose_service">
                                                                 <input type="hidden" name="method" value="post">
                                                                 <input type="hidden" name="service" value="{{$service['code']}}">
@@ -133,7 +133,11 @@
                                                                             @if($service['checked']) checked @endif
                                                                             @if($service['is_default']) disabled @endif
                                                                             type="checkbox"
-                                                                            value="{{$service['code']}}">{{$service['name']}}
+                                                                            value="{{$service['code']}}">
+
+                                                                    <i data-toggle="tooltip"
+                                                                       title="{{$service['name']}}"
+                                                                       class="fa {{ App\Service::getServiceIcon($service['code'])  }}"></i>
                                                                 </label>
 
                                                             </form>
@@ -330,7 +334,7 @@
                                                     @if($permission['can_change_order_domestic_shipping_fee'])
 
 
-                                                        <form class="___form">
+                                                        <form class="___form" onsubmit="return false;">
                                                             <input type="hidden" name="action" value="domestic_shipping_china">
                                                             <input type="hidden" name="method" value="post">
                                                             <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
@@ -423,7 +427,7 @@
                                 <ul class="order-fee">
                                     @foreach($order_fee as $order_fee_item)
                                     <li>
-                                        <label for="">{{$order_fee_item['label']}}</label>
+                                        <label for="">{!! $order_fee_item['label'] !!}</label>
                                         <div class="text-danger">{{$order_fee_item['value']}} <sup>đ</sup></div>
                                     </li>
                                     @endforeach
@@ -435,9 +439,7 @@
                                     <thead>
                                         <tr>
                                             <th>Mã GD</th>
-                                            <th>Loại</th>
                                             <th>Trạng thái</th>
-                                            <th>Thời gian</th>
                                             <th>Giá trị</th>
                                         </tr>
                                     </thead>
@@ -456,12 +458,11 @@
 
 
                                             <td>
+                                                <p>Loại: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }} ({{ App\Util::formatDate($transaction->created_at)  }})</p>
                                                 {{$transaction->transaction_code}}<br>
                                                 <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
                                             </td>
-                                            <td>
-                                                {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
-                                            </td>
+
                                             <td>
 
 
@@ -471,10 +472,10 @@
                                             </td>
 
 
-                                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
+
                                             <td>
                                 <span class="text-danger">
-                                    {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
+                                    {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
                                 </span>
                                             </td>
 
@@ -493,22 +494,22 @@
             <br>
 
             @if($permission['can_view_package_list'])
-                @if(!count($packages))
 
-                @else
-                <div class="card">
-                    <div class="card-body">
-                        <table class="table no-padding-leftright">
-                            <thead>
-                            <tr>
-                                <th class="text-uppercase">Kiện hàng</th>
-                                <th class="text-uppercase">Vận đơn</th>
-                                <th class="text-uppercase">Trạng thái</th>
-                                <th class="text-uppercase">Người tạo</th>
-                                <th class="text-uppercase">Thời gian</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+                @if(count($packages) > 0)
+
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table no-padding-leftright">
+                                <thead>
+                                <tr>
+                                    <th class="text-uppercase">Kiện hàng</th>
+                                    <th class="text-uppercase">Vận đơn</th>
+                                    <th class="text-uppercase">Trạng thái</th>
+                                    <th class="text-uppercase">Người tạo</th>
+                                    <th class="text-uppercase">Thời gian</th>
+                                </tr>
+                                </thead>
+                                <tbody>
 
                                 @foreach($packages as $package)
                                     <tr>
@@ -563,12 +564,13 @@
                                     </tr>
                                 @endforeach
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <br>
+                    <br>
+
                 @endif
             @else
                 <h5>Bạn không có quyền xem kiện hàng trên đơn!</h5>
@@ -609,7 +611,7 @@
 
                                 <td>
                                     <div class="row">
-                                        <div class="col-sm-2">
+                                        <div class="col-sm-3">
                                             <a href="{{ str_replace('150x150', '600x600', $order_item->image)  }}" data-lightbox="image-1">
                                                 <img
                                                         data-toggle="tooltip"
@@ -624,17 +626,24 @@
 
 
                                         </div>
-                                        <div class="col-sm-10">
-                                            ID: #{{$order_item->id}}<br>
-                                            <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
-                                            <br>
-
-                                            <p>
-                                                Địa điểm đăng bán: {{$order_item->location_sale}}
-                                            </p>
+                                        <div class="col-sm-9">
+                                            <p>{{$order_item->title}}</p>
                                             <p>
                                                 Mẫu: {{$order_item->property}}
                                             </p>
+
+                                            <p>
+                                                ID: #{{$order_item->id}}
+                                            </p>
+
+                                            <p>
+                                                <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
+                                            </p>
+
+                                            {{--<p>--}}
+                                                {{--Địa điểm đăng bán: {{$order_item->location_sale}}--}}
+                                            {{--</p>--}}
+
 
                                             <form class="___form" onsubmit="return false;">
                                                 <input type="hidden" name="action" value="order_item_comment">

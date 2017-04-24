@@ -77,6 +77,24 @@ class Package extends Model
 
     /**
      * @author vanhs
+     * @desc Kiem tra kien co ton tai dich vu hay khong?
+     * @param string $service_code
+     * @return bool
+     */
+    public function existService($service_code = ''){
+        $row = PackageService::where([
+            'package_id' => $this->id,
+            'code' => $service_code,
+            'status' => PackageService::STATUS_ACTIVE
+        ])->first();
+        if($row instanceof PackageService){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @author vanhs
      * @desc Lay ra toan bo kien cung 1 don hang
      * @return null
      */

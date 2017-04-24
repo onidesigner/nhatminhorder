@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exchange;
+use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
 use App\OrderFreightBill;
+use App\OrderService;
 use App\Package;
+use App\PackageService;
 use App\Permission;
+use App\Service;
 use App\User;
 use App\Util;
 use Illuminate\Http\Request;
@@ -85,6 +90,14 @@ class PackageController extends Controller
      * @return array|bool
      */
     private function __update_package(Request $request, $package){
+        /** @var Package $package */
+
+        $order = Order::find($package->order_id);
+        $exchange_rate = Exchange::getExchange();
+        if($order instanceof Order){
+            $exchange_rate = $order->exchange_rate;
+        }
+
         $height_package = doubleval($request->get('height_package'));
         $width_package = doubleval($request->get('width_package'));
         $length_package = doubleval($request->get('length_package'));
@@ -99,7 +112,35 @@ class PackageController extends Controller
         $converted_weight = ($length_package * $width_package * $height_package) / 6000;
         $package->converted_weight = $converted_weight;
 
+        $package_service = $request->get('service');
+        if(is_array($package_service)){
+            foreach($package_service as $package_service_item){
+                $checked = $package_service_item['checked'];
+                $service_code = $package_service_item['code'];
+                if($checked == 1){
+                    PackageService::insertService($package, $service_code);
+                }else if($checked == 0){
+                    PackageService::removeService($package, $service_code);
+                }
+            }
+        }
+
         if($package->save()){
+
+            //phi dong go
+            $package->wood_crating_fee = 0;
+            if($package->existService(Service::TYPE_WOOD_CRATING)){
+                $weight_cal_fee = $package->getWeightCalFee();
+                $factoryMethodInstance = new ServiceFactoryMethod();
+                //============phi dong go===========
+                $service = $factoryMethodInstance->makeService([
+                    'exchange_rate' => $exchange_rate,
+                    'weight' => $weight_cal_fee,
+                    'service_code' => Service::TYPE_WOOD_CRATING
+                ]);
+                $package->wood_crating_fee = Util::formatNumber($service->calculatorFee());
+            }
+
             return [
                 'package' => $package,
             ];
@@ -137,22 +178,39 @@ class PackageController extends Controller
     private function __create_package_item($order, $barcode = null){
         if(empty($barcode)) return null;
 
-        $package = new Package();
+        $data_insert = [];
+
         if($order instanceof Order){
             $code = Package::genPackageCode($order);
-            $package->code = $code;
-            $package->order_id = $order->id;
-            $package->buyer_id = $order->user_id;
-            $package->user_address_id = $order->user_address_id;
-        }else{
-
+            $data_insert['code'] = $code;
+            $data_insert['order_id'] = $order->id;
+            $data_insert['buyer_id'] = $order->user_id;
+            $data_insert['user_address_id'] = $order->user_address_id;
         }
 
-        $package->logistic_package_barcode = Package::generateBarcode();
-        $package->status = Package::STATUS_INIT;
-        $package->freight_bill = $barcode;
-        $package->created_by = Auth::user()->id;
-        return $package->save();
+        $data_insert['logistic_package_barcode'] = Package::generateBarcode();
+        $data_insert['status'] = Package::STATUS_INIT;
+        $data_insert['freight_bill'] = $barcode;
+        $data_insert['created_by'] = Auth::user()->id;
+        $data_insert['created_at'] = date('Y-m-d H:i:s');
+
+        $insert_id_package = Package::insertGetId($data_insert);
+
+        //insert package service with order service
+        if($order instanceof Order){
+            $order_services = $order->service;
+            foreach($order_services as $order_service){
+                if(!$order_service instanceof OrderService){
+                    continue;
+                }
+                if(in_array($order_service->service_code, PackageService::$service_using)){
+                    $package = Package::find($insert_id_package);
+                    PackageService::insertService($package, PackageService::TYPE_WOOD_CRATING);
+                }
+            }
+        }
+
+        return $insert_id_package;
     }
 
     /**
@@ -218,14 +276,44 @@ class PackageController extends Controller
                     $order = Order::find($package->order_id);
                     $customer = User::find($package->buyer_id);
 
+                    $exchange_rate = Exchange::getExchange();
+
                     if($order instanceof Order){
                         $packages[$key]->order = $order;
                         $packages[$key]->customer_address = $order->getCustomerReceiveAddress();
+                        $exchange_rate = $order->exchange_rate;
                     }
                     if($customer instanceof User){
                         $packages[$key]->customer = $customer;
                     }
 
+                    $service_data = [];
+                    $service = PackageService::getServiceList();
+                    foreach($service as $code => $name){
+                        $checked = $package->existService($code);
+
+                        $service_data[] = [
+                            'code' => $code,
+                            'name' => $name,
+                            'icon' => Service::getServiceIcon($code),
+                            'checked' => $checked,
+                        ];
+                    }
+                    $packages[$key]->service = $service_data;
+
+                    //phi dong go
+                    $packages[$key]->wood_crating_fee = 0;
+                    if($package->existService(Service::TYPE_WOOD_CRATING)){
+                        $weight_cal_fee = $package->getWeightCalFee();
+                        $factoryMethodInstance = new ServiceFactoryMethod();
+                        //============phi dong go===========
+                        $service = $factoryMethodInstance->makeService([
+                            'exchange_rate' => $exchange_rate,
+                            'weight' => $weight_cal_fee,
+                            'service_code' => Service::TYPE_WOOD_CRATING
+                        ]);
+                        $packages[$key]->wood_crating_fee = Util::formatNumber($service->calculatorFee());
+                    }
                 }
             }
         }

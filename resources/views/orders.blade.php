@@ -60,13 +60,13 @@
 
                         <div class="table-responsive">
 
-                            <table class="table no-padding-leftright table-striped">
+                            <table class="table table-striped table-hover no-padding-leftright">
                                 <thead>
                                     <tr>
 
                                         <th width="25%">Đơn hàng</th>
                                         <th width="30%">Khách hàng</th>
-                                        <th width="25%">Phí</th>
+                                        <th width="25%">Phí trên đơn</th>
                                         <th width="20%">Thời gian</th>
                                     </tr>
                                 </thead>
@@ -121,34 +121,38 @@
                                                 Đặt cọc ({{$order->deposit_percent}}%): <span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount) }} <sup>đ</sup></span>
                                             </p>
                                             <p>
-                                                Số dư: {{App\Util::formatNumber($order->customer->account_balance)}} <sup>đ</sup>
+                                                Số dư: <span class="text-danger">{{App\Util::formatNumber($order->customer->account_balance)}} <sup>đ</sup></span>
                                             </p>
                                         </td>
 
                                         <td>
                                             {{--<span class="text-danger">{{ App\Util::formatNumber($order->amount * $order->exchange_rate) }} <sup>đ</sup></span>--}}
 
+                                            <small>
                                                 @foreach($order->order_fee as $order_fee_item)
                                                     <p>
-                                                        {{$order_fee_item['label']}}:
+                                                        {!! $order_fee_item['label'] !!}:
                                                         <span class="text-danger">
-                                                            {{$order_fee_item['value']}}<sup>đ</sup>
+                                                            <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
                                                         </span>
                                                     </p>
                                                 @endforeach
+                                            </small>
+
 
                                         </td>
                                         <td>
-                                            <ul style="list-style: none; margin: 0; padding: 0;">
-                                                    <?php
-                                                    foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                                    if(empty($order->$k)){
-                                                        continue;
-                                                    }
-                                                    ?>
-                                                    <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
-                                                    <?php } ?>
-                                            </ul>
+                                            <small>
+                                                <?php
+                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                if(empty($order->$k)){
+                                                    continue;
+                                                }
+                                                ?>
+                                                <p>{{$v}}: {{ App\Util::formatDate($order->$k) }}</p>
+                                                <?php } ?>
+                                            </small>
+
                                         </td>
                                     </tr>
                                 @endforeach

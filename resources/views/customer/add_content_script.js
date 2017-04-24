@@ -989,10 +989,10 @@ var alibaba = function(){
                 }
 
                 if(is_end){
-                    html += 'Mua số lượng từ '
+                    html += 'Mua từ '
                         + price_range[i].begin + ' sp trở lên giá ' + price_vnd + 'đ<br>';
                 }else{
-                    html += 'Mua số lượng từ '
+                    html += 'Mua từ '
                         + price_range[i].begin + '-'
                         + price_range[i].end
                         + ' sp giá ' + price_vnd + 'đ<br>';

@@ -38,7 +38,7 @@ class Service extends Model
      * @var array
      */
     public static $service_customer_choose = [
-        self::TYPE_CHECKING => 'Kiểm Hàng',
+//        self::TYPE_CHECKING => 'Kiểm Hàng',
         self::TYPE_WOOD_CRATING => 'Đóng Gỗ',
     ];
 

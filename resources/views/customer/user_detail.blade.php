@@ -98,7 +98,7 @@
                                                 <td class="no-padding-leftright"><strong>Mã</strong>: {{$user->code}}</td>
                                             </tr>
                                             <tr>
-                                                <td class="no-padding-leftright"><strong>Số dư</strong>: {{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></td>
+                                                <td class="no-padding-leftright"><strong>Số dư</strong>: <span class="text-danger">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></span></td>
                                             </tr>
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Email</strong>: {{$user->email}}</td>

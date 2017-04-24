@@ -48,7 +48,7 @@
                                                     <option value="{{$users_customer_item['id']}}">
                                                         [{{ App\User::getSectionName($users_customer_item['section'])  }}]
                                                         &nbsp;&nbsp;&nbsp;
-                                                        {{$users_customer_item['email']}} - {{$users_customer_item['name']}}
+                                                        {{$users_customer_item['email']}} - {{$users_customer_item['name']}} - {{$users_customer_item['code']}}
                                                     </option>
                                                 @endforeach
                                             @endif
@@ -57,7 +57,7 @@
                                     </div>
 
 
-                                    <div class="_form-item _form-item-sub PAYMENT REFUND ORDER DEFAULT_SUB hidden">
+                                    <div class="_form-item _form-item-sub PAYMENT ORDER_REFUND ORDER DEFAULT_SUB hidden">
                                         <select class="form-control _selectpicker"  name="object_type" id="transaction_adjustment_object">
                                             <option value="">Chọn đối tượng </option>
 
@@ -81,9 +81,9 @@
 
                                     </div>
 
-                                    <input type="text" class="form-control _autoNumeric _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT" name="amount" placeholder="Số tiền ">
+                                    <input type="text" class="form-control _autoNumeric _form-item _form-item-sub GIFT ORDER_REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT" name="amount" placeholder="Số tiền ">
 
-                                    <textarea name="transaction_note" placeholder="Lý do " class="form-control _form-item _form-item-sub GIFT REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT"></textarea>
+                                    <textarea name="transaction_note" placeholder="Lý do " class="form-control _form-item _form-item-sub GIFT ORDER_REFUND PAYMENT ORDER DEFAULT_SUB ADJUSTMENT hidden DEFAULT"></textarea>
 
                                     <button class="btn btn-danger" id="_save-transaction-adjustment">TẠO GIAO DỊCH </button>
                                     {{ csrf_field()  }}

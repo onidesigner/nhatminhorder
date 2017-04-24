@@ -45,9 +45,12 @@
 
                                         <table class="table no-padding-leftright">
                                             <tbody>
+
+
                                             <tr>
-                                                <td width="30%" class="border-top-none">Mã đơn: </td>
+                                                <td class="border-top-none">Mã đơn: </td>
                                                 <td class="border-top-none">
+
                                                     <h4 style="margin-top: 0;">{{$order->code}}</h4>
                                                 </td>
                                             </tr>
@@ -63,7 +66,7 @@
                                                 <td>
                                                     @if(!empty($services))
                                                         @foreach($services as $service)
-                                                            <form class="___form">
+                                                            <form class="___form" style="display: inline; margin-right: 10px;">
                                                                 <input type="hidden" name="action" value="choose_service">
                                                                 <input type="hidden" name="method" value="post">
                                                                 <input type="hidden" name="service" value="{{$service['code']}}">
@@ -71,6 +74,11 @@
                                                                 <input type="hidden" name="response" value="customer/order_detail">
                                                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
+                                                                <?php
+
+//                                                                var_dump($service);
+
+                                                                ?>
                                                                 <label class="checkbox-inline">
                                                                     <input
                                                                             class="___btn-action"
@@ -78,7 +86,12 @@
                                                                             @if($service['is_default']) disabled @endif
                                                                             @if(!$permission['can_change_order_service']) disabled @endif
                                                                             type="checkbox"
-                                                                            value="{{$service['code']}}">{{$service['name']}}
+                                                                            value="{{$service['code']}}">
+
+                                                                    <i data-toggle="tooltip"
+                                                                       title="{{$service['name']}}"
+                                                                       class="fa {{ App\Service::getServiceIcon($service['code'])  }}"></i>
+
                                                                 </label>
 
                                                             </form>
@@ -90,12 +103,14 @@
                                             <tr>
                                                 <td>Tỉ lệ đặt cọc (%)</td>
                                                 <td>
-                                                    {{$order->deposit_percent}} ({{ App\Util::formatNumber($order->deposit_amount)}} <sup>đ</sup>)
+                                                    {{$order->deposit_percent}} (<span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)}} <sup>đ</sup></span>)
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Tỉ giá</td>
-                                                <td>{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></td>
+                                                <td>
+                                                    <span class="text-danger">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></span>
+                                                </td>
                                             </tr>
 
                                             <tr>
@@ -166,7 +181,7 @@
                                 <ul class="order-fee">
                                     @foreach($order_fee as $order_fee_item)
                                         <li>
-                                            <label for="">{{$order_fee_item['label']}}</label>
+                                            <label for="">{!! $order_fee_item['label'] !!}</label>
                                             <div class="text-danger">{{$order_fee_item['value']}} <sup>đ</sup></div>
                                         </li>
                                     @endforeach
@@ -174,13 +189,12 @@
 
 
                                 <h4>LS giao dịch</h4>
+
                                 <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Mã GD</th>
-                                        <th>Loại</th>
                                         <th>Trạng thái</th>
-                                        <th>Thời gian</th>
                                         <th>Giá trị</th>
                                     </tr>
                                     </thead>
@@ -199,12 +213,13 @@
 
 
                                             <td>
+                                                <p>
+                                                    Loại: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }} ({{ App\Util::formatDate($transaction->created_at)  }})
+                                                </p>
                                                 {{$transaction->transaction_code}}<br>
                                                 <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
                                             </td>
-                                            <td>
-                                                {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }}
-                                            </td>
+
                                             <td>
 
 
@@ -214,10 +229,9 @@
                                             </td>
 
 
-                                            <td>{{ App\Util::formatDate($transaction->created_at)  }}</td>
                                             <td>
                                 <span class="text-danger">
-                                    {{ App\Util::formatNumber($transaction->amount) }} <sup>d</sup>
+                                    {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
                                 </span>
                                             </td>
 
@@ -279,6 +293,8 @@
 
             <br>
 
+            @if(count($packages) > 0)
+
             <div class="card">
                 <div class="card-body">
                     <table class="table no-padding-leftright">
@@ -291,11 +307,10 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @if(!empty($packages))
                             @foreach($packages as $package)
                                 <tr>
                                     <td>
-                                        <code>{{$package->logistic_package_barcode}}</code>
+                                        {{$package->logistic_package_barcode}}
 
                                         @if($package->weight)
                                             <br>
@@ -335,13 +350,14 @@
                                     <td>{{  App\Util::formatDate($package->created_at)}}</td>
                                 </tr>
                             @endforeach
-                        @endif
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <br>
+
+            @endif
 
             <div class="card">
 
@@ -375,22 +391,29 @@
 
                                     <td>
                                         <div class="row">
-                                            <div class="col-sm-2">
-                                                <a href="{{$order_item->link}}" target="_blank">
+                                            <div class="col-sm-3">
+                                                <a href="{{ str_replace('150x150', '600x600', $order_item->image)  }}" data-lightbox="image-1">
                                                     <img class="img-responsive" width="90px" src="{{$order_item->image}}" alt="">
                                                 </a>
                                             </div>
-                                            <div class="col-sm-10">
-                                                ID: #{{$order_item->id}}<br>
-                                                <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
-                                                <br>
+                                            <div class="col-sm-9">
+                                                <p>{{$order_item->title}}</p>
 
-                                                <p>
-                                                    Địa điểm đăng bán: {{$order_item->location_sale}}
-                                                </p>
                                                 <p>
                                                     Mẫu: {{$order_item->property}}
                                                 </p>
+
+                                                <p>
+                                                    ID: #{{$order_item->id}}
+                                                </p>
+
+                                                <p>
+                                                    <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
+                                                </p>
+
+                                                {{--<p>--}}
+                                                    {{--Địa điểm đăng bán: {{$order_item->location_sale}}--}}
+                                                {{--</p>--}}
 
                                                 <form class="___form" onsubmit="return false;">
                                                     <input type="hidden" name="action" value="order_item_comment">
@@ -468,7 +491,7 @@
             <br>
 
             <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Hành động
                     <span class="caret"></span>
                 </button>
@@ -509,8 +532,16 @@
     </div>
 @endsection
 
+@section('css_bottom')
+    @parent
+
+    <link rel="stylesheet" href="{{ asset('bower_components/lightbox2/dist/css/lightbox.css')  }}">
+@endsection
+
 @section('js_bottom')
     @parent
+
+    <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
     <script>
         $(document).ready(function(){
             //todo

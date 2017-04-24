@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exchange;
 use App\Jobs\SendSms;
 use App\Library\ServiceFee\AbstractService;
 use App\Library\ServiceFee\Buying;
 use App\Library\ServiceFee\ServiceFactoryMethod;
+use App\OrderFee;
+use App\Package;
+use App\PackageService;
 use App\Service;
 use App\OrderFreightBill;
 use App\Order;
@@ -14,9 +18,11 @@ use App\User;
 use App\Role;
 use App\UserRole;
 use App\Permission;
+use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -133,11 +139,64 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
+//        var_dump(Order::getListStatusFromStatusToStatus(null, null));
+//
+//        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
+
+        $nick_test_id = User::USER_ID_TEST;
+
+        $statistic = [];
+
+        $customer_recharge_amount = DB::table('user_transaction')
+            ->select(DB::raw('sum(amount) as amount'))
+            ->where([
+                ['state', '=', UserTransaction::STATE_COMPLETED],
+                ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
+                ['user_id', '!=', $nick_test_id]
+            ])
+            ->having('amount', '>', 0)
+            ->first()->amount;
+
+        $statistic[] = [
+            'name' => 'Tiền khách nạp',
+            'value' => Util::formatNumber($customer_recharge_amount)
+        ];
+
+        $amount_vnd = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'AMOUNT_VND'],
+                ['user_id', '!=', $nick_test_id]
+            ])
+            ->first()->money;
+        $statistic[] = [
+            'name' => 'Tiền hàng (1)',
+            'value' => Util::formatNumber($amount_vnd)
+        ];
+
+        $deposit_amount_vnd = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'DEPOSIT_AMOUNT_VND'],
+                ['user_id', '!=', $nick_test_id]
+            ])
+            ->first()->money;
+        $statistic[] = [
+            'name' => 'Tiền đặt cọc (2)',
+            'value' => Util::formatNumber($deposit_amount_vnd)
+        ];
+
+        $statistic[] = [
+            'name' => 'Tiền còn thiếu (3=1-2)',
+            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd))
+        ];
+
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,
+            'statistic' => $statistic,
         ]);
     }
 }

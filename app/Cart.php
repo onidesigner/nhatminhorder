@@ -275,6 +275,32 @@ class Cart extends Model
 
     /**
      * @author vanhs
+     * @desc Kiem tra xem shop tren gio hang co ton tai dich vu hay khong?
+     * @param null $service
+     * @return bool
+     */
+    public function checkExistsCartService($service = null){
+        if(!$service){
+            return false;
+        }
+
+        $services_list = [];
+        if(is_array($this->services)){
+            $services_list = $this->services;
+        }else if(is_string($this->services)){
+            $services_list = explode('|', $this->services);
+        }
+
+        if(count($services_list)
+            && in_array($service, $services_list)){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @author vanhs
      * @desc Them san pham vao gio hang
      * @param $params
      * @return bool
