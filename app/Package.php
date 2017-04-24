@@ -185,7 +185,7 @@ class Package extends Model
 
             // check if already existed in database
             $package = self::where([ 'logistic_package_barcode' => $code ])->first();
-            if(!$package || !$package instanceof Package){
+            if(!$package || !$package instanceof Package){  
                 $valid = true;
             }
         }

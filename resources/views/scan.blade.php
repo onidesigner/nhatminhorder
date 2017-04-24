@@ -63,11 +63,11 @@
                             </form>
                         </div>
                         <div class="col-sm-8 col-xs-12">
-                            <ul class="list-group" style="margin-top: 57px;">
-                                <li class="list-group-item">
-                                    Mã kiện 8080080 Khách Nhung , số điện thoại 0909090 , địa chỉ :  số 8 ngách 3 ngõ 198 Lê Trọng Tấn – Định Công – Hà Nội
-                                    <span style="color:green"><i class="fa fa-print" aria-hidden="true"></i></span>
-                                </li>
+                            <ul class="list-group scroll" style="margin-top: 57px;">
+                                {{--<li class="list-group-item">--}}
+                                    {{--Mã kiện 8080080 Khách Nhung , số điện thoại 0909090 , địa chỉ :  số 8 ngách 3 ngõ 198 Lê Trọng Tấn – Định Công – Hà Nội--}}
+                                    {{--<span style="color:green"><i class="fa fa-print" aria-hidden="true"></i></span>--}}
+                                {{--</li>--}}
                             </ul>
                         </div>
                     </div>
@@ -78,6 +78,14 @@
     </div>
 
 @endsection
+@section('cs_bottom')
+    <style>
+        .scroll{
+            max-height: 300px;
+            overflow-y:scroll;
+        }
+    </style>
+@endsection
 
 @section('js_bottom')
     @parent
@@ -86,7 +94,7 @@
 
     <script>
         $(document).ready(function(){
-            var arr_message = [];
+            var arr_message = JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : [];
             LocalStorage.init();
             // init bunch of sounds
             ion.sound({
@@ -102,6 +110,7 @@
                 volume: 0.9
             });
 
+
             $(document).on('keypress', '._scan-barcode', function(e){
                 var that = this;
                 if(e.keyCode == 13){
@@ -113,14 +122,15 @@
                         if(response.success){
                             ion.sound.play("success");
                             if(response.result.order_id){
-                                var message = " Mã Kiện " + response.result.barcode + " khách hàng " +
+                                var message = " Kiện " + "<strong>" + response.result.barcode + "</strong>" + " khách hàng " +
                                         response.result.address.reciver_name + " , địa chỉ " + response.result.address.detail  ;
-                                arr_message.unshift(message);
+                                arr_message.push(message);
                                 LocalStorage.set('scan_action.', JSON.stringify(arr_message));
-                                var package_item =  JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : [];
-                                for (var i = 0; i < package_item.length; i++) {
-                                    $(".list-group").prepend("<li class='list-group-item'>" + package_item[i] + "</li>");
-                                }
+
+                                $(".list-group").prepend("<li class='list-group-item'>" + message + "</li>");
+
+                            }else{
+                                $(".list-group").prepend("<li class='list-group-item'>Kiện chưa khớp đơn !</li>");
                             }
                         }else{
                             msg_type = 'error';
@@ -140,7 +150,10 @@
 
 var LocalStorage = {
             init : function () {
-                JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : []
+               var package_item = JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : []
+                for (var i = 0; i < package_item.length; i++) {
+                        $(".list-group").prepend("<li class='list-group-item'>" + package_item[i] + "</li>");
+                     }
             },
             prefix: '',
             setPrefix: function(prefix) {
