@@ -29,7 +29,7 @@ class CustomerNotificationController extends Controller
         if(count($data_notification) < 1){
          $data_notification = [];
         }
-        return view('customer/customer_notification',[
+        return view('customer/notification',[
             'data' => $data_notification,
             'page_title' => 'notification'
         ]);
