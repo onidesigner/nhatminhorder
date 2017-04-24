@@ -143,8 +143,6 @@ class HomeController extends Controller
 //
 //        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
 
-        $nick_test_id = User::USER_ID_TEST;
-
         $statistic = [];
 
         $customer_recharge_amount = DB::table('user_transaction')
@@ -152,7 +150,7 @@ class HomeController extends Controller
             ->where([
                 ['state', '=', UserTransaction::STATE_COMPLETED],
                 ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
-                ['user_id', '!=', $nick_test_id]
+                ['user_id', '!=', User::USER_ID_TEST]
             ])
             ->having('amount', '>', 0)
             ->first()->amount;
@@ -162,25 +160,35 @@ class HomeController extends Controller
             'value' => Util::formatNumber($customer_recharge_amount)
         ];
 
-        $amount_vnd = DB::table('order_fee')
+        $orders_cancelled = Order::getOrderIdCancelled();
+
+        $query = DB::table('order_fee')
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'AMOUNT_VND'],
-                ['user_id', '!=', $nick_test_id]
-            ])
-            ->first()->money;
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền hàng (1)',
             'value' => Util::formatNumber($amount_vnd)
         ];
 
-        $deposit_amount_vnd = DB::table('order_fee')
+        $query = DB::table('order_fee')
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'DEPOSIT_AMOUNT_VND'],
-                ['user_id', '!=', $nick_test_id]
-            ])
-            ->first()->money;
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $deposit_amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền đặt cọc (2)',
             'value' => Util::formatNumber($deposit_amount_vnd)

@@ -27,10 +27,10 @@
                             <thead>
                                 <tr>
                                     <th>Khách hàng</th>
-                                    <th>Nạp tiền</th>
-                                    <th>Tiền hàng(1)</th>
-                                    <th>Đặt cọc(2)</th>
-                                    <th>Còn thiếu(3=1-2)</th>
+                                    <th class="text-right">Nạp tiền</th>
+                                    <th class="text-right">Tiền hàng(1)</th>
+                                    <th class="text-right">Đặt cọc(2)</th>
+                                    <th class="text-right">Còn thiếu(3=1-2)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,17 +38,26 @@
                             @foreach($users as $user)
                                 <tr>
                                     <td>
-                                        <h5>{{$user->email}} </h5>
-                                        <p>{{$user->code}}</p>
-
+                                        <h4>
+                                            <a href="{{ url('user/detail', $user->id)  }}">{{$user->email}}</a>
+                                        </h4>
                                         <p>
-                                            <small>{{$user->name}}</small>
+                                            Họ & Tên: {{$user->name}}
                                         </p>
+                                        <p class="">Mã: <span class="text-danger">{{$user->code}}</span></p>
                                     </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-right">
+                                        <span class="text-danger">{{ App\Util::formatNumber($user->input_money_vnd)  }}đ</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-danger">{{ App\Util::formatNumber($user->amount_vnd)  }}đ</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-danger">{{ App\Util::formatNumber($user->deposit_vnd)  }}đ</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-danger">{{ App\Util::formatNumber($user->need_payment_vnd)  }}đ</span>
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
