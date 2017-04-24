@@ -42,6 +42,8 @@ class User extends Authenticatable
     const SITE_TMALL = 'tmall';
     const SITE_1688 = '1688';
 
+    const USER_ID_TEST = 61;
+
     public static $status_list = [
         self::STATUS_ACTIVE => 'Kích hoạt',
         self::STATUS_INACTIVE => 'Ngừng kích hoạt'
@@ -56,7 +58,7 @@ class User extends Authenticatable
     public static $god = [
 //        'hosivan90@gmail.com',
 //        'nguyenhoanggiangdhxd@gmail.com',
-        'nguyengiangdhxd@gmail.com',
+//        'nguyengiangdhxd@gmail.com',
         'cherry@gmail.com',
     ];
 

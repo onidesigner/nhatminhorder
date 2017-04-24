@@ -6,10 +6,12 @@ use App\Cart;
 use App\Comment;
 use App\Exchange;
 use App\Location;
+use App\OrderFee;
 use App\OrderFreightBill;
 use App\OrderItem;
 use App\OrderOriginalBill;
 use App\OrderService;
+use App\Package;
 use App\Permission;
 use App\Service;
 use App\User;
@@ -113,10 +115,10 @@ class OrderController extends Controller
 
             $customer = User::find($order->user_id);
 
-            $fee = $order->fee($customer, $packages);
+            $fee = $order->fee();
 
             $order_fee = [];
-            foreach(Order::$fee_field_order_detail as $key => $label){
+            foreach(OrderFee::$fee_field_order_detail as $key => $label){
                 $value = $key;
                 if(isset($fee[$key])){
                     $value = Util::formatNumber($fee[$key]);
@@ -197,12 +199,14 @@ class OrderController extends Controller
 
         $packages = $order->package()->where([
             'is_deleted' => 0,
-        ])->get();
+        ])
+            ->whereNotIn('status', [ Package::STATUS_INIT ])
+            ->get();
 
-        $fee = $order->fee($customer, $packages);
+        $fee = $order->fee();
 
         $order_fee = [];
-        foreach(Order::$fee_field_order_detail as $key => $label){
+        foreach(OrderFee::$fee_field_order_detail as $key => $label){
             $value = $key;
             if(isset($fee[$key])){
                 $value = Util::formatNumber($fee[$key]);
@@ -773,7 +777,7 @@ class OrderController extends Controller
         $deposit_amount = UserTransaction::getDepositOrder($customer, $order);
         if($deposit_amount < 0){
             UserTransaction::createTransaction(
-                UserTransaction::TRANSACTION_TYPE_REFUND,
+                UserTransaction::TRANSACTION_TYPE_ORDER_REFUND,
                 sprintf('Trả lại tiền đặt cọc đơn hàng %s', $order->code),
                 $user,
                 $customer,
@@ -951,14 +955,12 @@ class OrderController extends Controller
         $order->deposit_percent = $new_deposit_percent;
         $order->save();
 
-        if($old_deposit_percent <> $new_deposit_percent){
+        if($old_deposit_percent <> $new_deposit_percent) {
             $message = sprintf("Thay đổi tỉ lệ đặt cọc đơn hàng từ %s thành %s", $old_deposit_percent, $new_deposit_percent);
 
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         }
-
-
         return true;
     }
 
@@ -980,10 +982,11 @@ class OrderController extends Controller
             return false;
         }
 
-        $old_demestic_shipping_fee = $order->domestic_shipping_fee;
         $domestic_shipping_fee = $request->get('domestic_shipping_china');
+        $domestic_shipping_fee_vnd = $domestic_shipping_fee * $order->exchange_rate;
 
         $order->domestic_shipping_fee = $domestic_shipping_fee;
+        $order->domestic_shipping_fee_vnd = $domestic_shipping_fee_vnd;
         $order->save();
 
         Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);

@@ -6,6 +6,7 @@ use App\Exchange;
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\Order;
+use App\OrderFee;
 use App\OrderItem;
 use App\OrderService;
 use App\Package;
@@ -91,10 +92,10 @@ class OrderController extends Controller
 
             $customer = User::find($order->user_id);
 
-            $fee = $order->fee($customer, $packages);
+            $fee = $order->fee();
 
             $order_fee = [];
-            foreach(Order::$fee_field_order_detail as $key => $label){
+            foreach(OrderFee::$fee_field_order_detail as $key => $label){
                 $value = $key;
                 if(isset($fee[$key])){
                     $value = Util::formatNumber($fee[$key]);
@@ -180,12 +181,14 @@ class OrderController extends Controller
 
         $packages = $order->package()->where([
             'is_deleted' => 0,
-        ])->get();
+        ])
+            ->whereNotIn('status', [ Package::STATUS_INIT ])
+            ->get();
 
-        $fee = $order->fee($customer, $packages);
+        $fee = $order->fee();
 
         $order_fee = [];
-        foreach(Order::$fee_field_order_detail as $key => $label){
+        foreach(OrderFee::$fee_field_order_detail as $key => $label){
             $value = $key;
             if(isset($fee[$key])){
                 $value = Util::formatNumber($fee[$key]);
@@ -394,7 +397,7 @@ class OrderController extends Controller
         $deposit_amount = UserTransaction::getDepositOrder($customer, $order);
         if($deposit_amount < 0){
             UserTransaction::createTransaction(
-                UserTransaction::TRANSACTION_TYPE_REFUND,
+                UserTransaction::TRANSACTION_TYPE_ORDER_REFUND,
                 sprintf('Trả lại tiền đặt cọc đơn hàng %s', $order->code),
                 $user,
                 $customer,

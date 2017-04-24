@@ -36,6 +36,38 @@
                             </div>
                         </a>
                     </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="card card-mini">
+                            <div class="card-header">
+                                <div class="card-title text-uppercase">Thống kê</div>
+
+                                <ul class="card-action">
+                                    <li>
+                                        <a href="{{ url('statistic/users')  }}" style="color: #5e6263;">
+                                            Xem chi tiết >>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                            <div class="card-body no-padding table-responsive">
+                                <table class="table card-table">
+
+                                    <tbody>
+                                    @foreach($statistic as $s)
+                                    <tr>
+                                        <td>{{$s['name']}}</td>
+                                        <td class="text-right">
+                                            <span class="text-danger">{{$s['value']}}đ</span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <br>
 
@@ -43,7 +75,6 @@
             @endif
 
             <div class="card">
-
                 @include('partials/__breadcrumb',
                     [
                         'urls' => [
@@ -51,10 +82,8 @@
                         ]
                     ]
                 )
-
                 <div class="card-body">
-
-                    <h3>Hướng dẫn dành cho khách hàng mới</h3>
+                    <h3 class="cart-title">Hướng dẫn dành cho khách hàng mới</h3>
                     <a class="" href="{{ url('ho-tro', 4)  }}">Hướng dẫn cài đặt công cụ đặt hàng & đặt cọc đơn hàng</a><br>
                     <a class="" href="{{ url('ho-tro', 5)  }}">Hướng dẫn tìm nguồn hàng trên website taobao.com, tmall.com, 1688.com</a><br>
                     <a class="" href="{{ url('ho-tro', 1)  }}">Hướng dẫn nạp tiền vào tài khoản</a><br>

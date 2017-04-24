@@ -6,8 +6,10 @@ use App\Comment;
 use App\Jobs\SendSms;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
+use App\OrderFee;
 use App\OrderFreightBill;
 use App\Package;
+use App\PackageService;
 use App\Scan;
 use App\Service;
 use App\SystemConfig;
@@ -227,7 +229,10 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $customer = User::find($order->user_id);
-                    $order->changeOrderTransporting();
+                    if(!$order->changeOrderTransporting()){
+                        $this->action_error[] = sprintf('Không chuyển trang thái đơn hàng sang %s', Order::getStatusTitle(Order::STATUS_TRANSPORTING));
+                        return false;
+                    }
 
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
@@ -265,7 +270,10 @@ class ScanController extends Controller
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     $customer = User::find($order->user_id);
-                    $order->changeOrderDelivering();
+                    if(!$order->changeOrderDelivering()){
+                        $this->action_error[] = sprintf('Không chuyển trang thái đơn hàng sang %s', Order::getStatusTitle(Order::STATUS_DELIVERING));
+                        return false;
+                    }
 
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
@@ -305,7 +313,7 @@ class ScanController extends Controller
             $money_charge = 0 - abs($money_charge);
         }
 
-        $message = sprintf("Thu phí kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber(abs($money_charge)));
+        $message = sprintf("Thu phí vận chuyển kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber(abs($money_charge)));
 
         Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
         Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
@@ -316,8 +324,39 @@ class ScanController extends Controller
             $create_user,
             $customer,
             $order,
-            $money_charge
+            $money_charge,
+            UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM
         );
+
+        if($package->existService(Service::TYPE_WOOD_CRATING)){
+            $factoryMethodInstance = new ServiceFactoryMethod();
+            //============phi dong go===========
+            $service = $factoryMethodInstance->makeService([
+                'exchange_rate' => $order->exchange_rate,
+                'weight' => $package->getWeightCalFee(),
+                'service_code' => Service::TYPE_WOOD_CRATING
+            ]);
+            $wood_crating_vnd = $service->calculatorFee();
+
+            $message = sprintf("Thu phí đóng gỗ kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber($wood_crating_vnd));
+
+            Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+            Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+            if($wood_crating_vnd > 0){
+                $wood_crating_vnd = 0 - $wood_crating_vnd;
+            }
+
+            UserTransaction::createTransaction(
+                UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+                $message,
+                $create_user,
+                $customer,
+                $order,
+                $wood_crating_vnd,
+                UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_WOOD_CRATING
+            );
+        }
 
         $package->setDone();
     }

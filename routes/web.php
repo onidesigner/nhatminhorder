@@ -113,6 +113,8 @@ Route::put('/warehouses_manually/delete', 'WarehouseController@delete_manually')
 
 #endregion
 
+Route::get('hosivan', 'HoSiVanController@index');
+
 #region -- giao dich --
 Route::get('transaction/statistic', 'UserTransactionController@statisticTransaction');
 Route::get('transactions', 'UserTransactionController@getTransactions');
@@ -165,6 +167,8 @@ Route::get('/tinh-phi', 'PreviewFeeController@index');
 Route::get('/calculator_fee', 'PreviewFeeController@calculatorFee');
 Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError');
 Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');
+
+Route::get('/statistic/users', 'StatisticController@users');
 
 
 #region --send sms--

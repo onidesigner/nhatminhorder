@@ -81,11 +81,11 @@ if(Auth::check()){
                         'title' => 'Tạo điều chỉnh tài chính',
                         'permission' => \App\Permission::PERMISSION_TRANSACTION_CREATE
                     ],
-                    [
-                        'url' => url('transaction/statistic'),
-                        'title' => 'Thông kê tài chính',
-                        'permission' => \App\Permission::PERMISSION_TRANSACTION_STATISTIC
-                    ],
+//                    [
+//                        'url' => url('transaction/statistic'),
+//                        'title' => 'Thông kê tài chính',
+//                        'permission' => \App\Permission::PERMISSION_TRANSACTION_STATISTIC
+//                    ],
                 ]
             ],
             [

@@ -60,7 +60,7 @@
 
                         <div class="table-responsive">
 
-                            <table class="table no-padding-leftright table-striped">
+                            <table class="table table-striped table-hover no-padding-leftright">
                                 <thead>
                                     <tr>
 
@@ -131,7 +131,7 @@
                                             <small>
                                                 @foreach($order->order_fee as $order_fee_item)
                                                     <p>
-                                                        {{$order_fee_item['label']}}:
+                                                        {!! $order_fee_item['label'] !!}:
                                                         <span class="text-danger">
                                                             <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
                                                         </span>
@@ -143,16 +143,14 @@
                                         </td>
                                         <td>
                                             <small>
-                                                <ul style="list-style: none; margin: 0; padding: 0;">
-                                                    <?php
-                                                    foreach(App\Order::$timeListOrderDetail as $k => $v){
-                                                    if(empty($order->$k)){
-                                                        continue;
-                                                    }
-                                                    ?>
-                                                    <li>{{$v}}: {{ App\Util::formatDate($order->$k) }}</li>
-                                                    <?php } ?>
-                                                </ul>
+                                                <?php
+                                                foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                                if(empty($order->$k)){
+                                                    continue;
+                                                }
+                                                ?>
+                                                <p>{{$v}}: {{ App\Util::formatDate($order->$k) }}</p>
+                                                <?php } ?>
                                             </small>
 
                                         </td>

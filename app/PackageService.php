@@ -38,7 +38,7 @@ class PackageService extends Model
             return false;
         }
 
-        $package_service = self::where([
+        $package_service = PackageService::where([
             'package_id' => $package->id
         ])->first();
 
@@ -70,15 +70,13 @@ class PackageService extends Model
             return false;
         }
 
-        $package_service = PackageService::where([
+
+        return PackageService::where([
             'package_id' => $package->id,
             'code' => $service_code
-        ])->first();
-
-        if($package_service instanceof PackageService){
-            $package_service->status = self::STATUS_DISABLED;
-            return $package_service->save();
-        }
-        return true;
+        ])->update([
+            'status' => self::STATUS_DISABLED,
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
     }
 }
