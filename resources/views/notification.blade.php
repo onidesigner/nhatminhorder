@@ -36,16 +36,16 @@
                                 <tr class="
                                     <?php
                                 if(in_array($notification->is_view, [\App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,\App\CustomerNotification::CUSTOMER_NOTIFICATION_READ])){
-                                   echo "_unread";
+                                    echo "_unread";
                                 }
                                 ?>
 
-                                "
+                                        "
 
                                 >
-                                    <th scope="row" class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('don-hang') }}/{{$notification->order_id}}">{{ $per_page * $page + $i++ }}</a></th>
-                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('don-hang') }}/{{$notification->order_id}}">{{ $notification->notification_content }}</a></td>
-                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('don-hang') }}/{{$notification->order_id}}">{{ \App\Util::formatDate($notification->created_time)  }}</a> </td>
+                                    <th scope="row" class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $per_page * $page + $i++ }}</a></th>
+                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $notification->notification_content }}</a></td>
+                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $notification->created_time }}</a> </td>
                                 </tr>
                             @endforeach
                         @endif

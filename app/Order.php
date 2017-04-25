@@ -751,6 +751,12 @@ class Order extends Model
 
                 Comment::createComment($create_user, $this, $message_external, Comment::TYPE_EXTERNAL, $type_context);
                 Comment::createComment($create_user, $this, $message_internal, Comment::TYPE_INTERNAL, $type_context);
+
+                $title = "Trạng thái đơn hàng";
+                $content = $create_user->name . $message_external;
+                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+
+
             }
             #endregion
 
@@ -845,6 +851,13 @@ class Order extends Model
                 Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                 Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
+                #region --tạo notification cho khách--
+                $title = 'Trạng thái đơn hàng '.$this->code;
+                $content_message = sprintf(" đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change);
+                $content = $create_user->name.$content_message;
+                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                #endregion -- kết thúc tạo notification cho khách --
+
                 $data_fee = OrderFee::$fee_field_order_detail;
                 $order_fee = OrderFee::getListFee($this);
                 if($order_fee){
@@ -884,6 +897,13 @@ class Order extends Model
                 Comment::createComment($create_user, $this, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                 Comment::createComment($create_user, $this, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
+                #region --tạo notification cho khách--
+                $title = 'Tài chính đơn hàng '.$this->code;
+                $content_message = $message;
+                $content = $create_user->name.' '.$content_message;
+                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                #endregion -- kết thúc tạo notification cho khách --
+
             }
 
             DB::commit();
@@ -917,6 +937,14 @@ class Order extends Model
 
                 Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                 Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+                #region --tạo notification cho khách--
+                $title = 'Trạng thái đơn hàng '.$this->code;
+                $content_message = sprintf(" đơn hàng chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)", $status_title_after_change);
+                $content = $create_user->name.$content_message;
+                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                #endregion -- kết thúc tạo notification cho khách --
+
             }
             #endregion
 
@@ -947,6 +975,13 @@ class Order extends Model
 
                 Comment::createComment($create_user, $this, sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
                 Comment::createComment($create_user, $this, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+                #region --tạo notification cho khách--
+                $title = 'Trạng thái đơn hàng '.$this->code;
+                $content_message = sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change);
+                $content = $create_user->name.$content_message;
+                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                #endregion -- kết thúc tạo notification cho khách --
             }
             #endregion
 

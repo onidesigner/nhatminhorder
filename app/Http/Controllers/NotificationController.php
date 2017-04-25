@@ -2,25 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: goerge
- * Date: 13/04/2017
- * Time: 21:40
+ * Date: 25/04/2017
+ * Time: 18:53
  */
 
-namespace App\Http\Controllers\Customer;
-
+namespace App\Http\Controllers;
 
 
 use App\CustomerNotification;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Request;
 
-
-class CustomerNotificationController extends Controller
+class NotificationController extends Controller
 {
     public function __construct()
     {
@@ -39,12 +34,12 @@ class CustomerNotificationController extends Controller
         }
 
         $data_notification = DB::table('customer_notification')
-                                ->where('user_id', '=', Auth::user()->id)
-                                ->orderBy('id', 'desc')->paginate($per_page);
+            ->where('user_id', '=', Auth::user()->id)
+            ->orderBy('id', 'desc')->paginate($per_page);
         if(count($data_notification) < 1){
-         $data_notification = [];
+            $data_notification = [];
         }
-        return view('customer/notification',[
+        return view('notification',[
             'data' => $data_notification,
             'page_title' => 'notification',
             'per_page' => $per_page,
@@ -57,7 +52,7 @@ class CustomerNotificationController extends Controller
      * change value to VIEW -> READ
      */
     public function changeStatus(){
-            //update value to view to read
+        //update value to view to read
         $user_id = Auth::user()->id;
         $section = Auth::user()->section;
         if($section == User::SECTION_CRANE){
@@ -82,9 +77,13 @@ class CustomerNotificationController extends Controller
 
     }
 
-    public function  changeTypeNotification(){
+    /**
+     * khi click vào thông báo thì tắt hiển thị
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeTypeNotification(){
         $id_notification = Input::get('notification_id');
-        
+
         $notification = CustomerNotification::where([
             'id' => $id_notification
         ])->update([
@@ -101,8 +100,7 @@ class CustomerNotificationController extends Controller
             ];
             return response()->json($response);
         }
-        
-    }
 
+    }
 
 }
