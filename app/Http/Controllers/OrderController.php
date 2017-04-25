@@ -985,9 +985,15 @@ class OrderController extends Controller
      */
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
     {
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+            }
         }
+
+
 
         if(count($this->action_error)){
             return false;
