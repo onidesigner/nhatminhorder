@@ -642,9 +642,15 @@ class OrderController extends Controller
         $item_id = $request->get('item_id');
         $order_item = OrderItem::find($item_id);
 
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = 'Không được phép sửa giá sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+            }
         }
+
+
 
         if(!$order_item || !$order_item instanceof OrderItem){
             $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
