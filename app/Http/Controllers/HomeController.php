@@ -46,6 +46,28 @@ class HomeController extends Controller
     {
         $user_id = Auth::user()->id;
 
+        //============phi mua hang===========
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_BUYING,
+//            'total_amount' => 60000000,
+//            'apply_time' => '2017-04-30 00:12:12'
+//        ]);
+//        $buying_fee = doubleval($service->calculatorFee());
+//        var_dump($buying_fee);
+
+
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+//            'weight' => 70,
+//            'destination_warehouse' => 'S-SG',
+//            'apply_time' => '2017-04-26 10:00:00',
+//        ]);
+//        $money_charge = (float)$service->calculatorFee();
+//        var_dump($money_charge);
+
         /*
 
         $factoryMethodInstance = new ServiceFactoryMethod();
