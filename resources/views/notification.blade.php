@@ -33,19 +33,19 @@
                             <?php $i = 1; ?>
                             @foreach($data as $notification)
 
-                                <tr class="
+                                <tr class=" _open
                                     <?php
                                 if(in_array($notification->is_view, [\App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,\App\CustomerNotification::CUSTOMER_NOTIFICATION_READ])){
                                     echo "_unread";
                                 }
                                 ?>
 
-                                        "
+                                        " data-value="{{$notification->id}}" data-order-id="{{$notification->order_id}}"
 
                                 >
-                                    <th scope="row" class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $per_page * $page + $i++ }}</a></th>
-                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $notification->notification_content }}</a></td>
-                                    <td class="_isread" data-value="{{$notification->id}}"><a target="_blank" href="{{ url('order') }}/{{$notification->order_id}}">{{ $notification->created_time }}</a> </td>
+                                    <td scope="row" class="_isread" data-value="{{$notification->id}}">{{ $per_page * $page + $i++ }}</td>
+                                    <td class="_isread" data-value="{{$notification->id}}">{{ $notification->notification_content }}</td>
+                                    <td class="_isread" data-value="{{$notification->id}}">{{ \App\Util::formatDate($notification->created_time)  }} </td>
                                 </tr>
                             @endforeach
                         @endif
@@ -68,29 +68,42 @@
         ._unread{
             background-color: #ddd
         }
+        ._open {
+            color:#337ab7;
+            cursor:pointer;
+        }
     </style>
 @endsection
 
 @section('js_bottom')
     @parent
     <script>
-        $(document).ready(function(){
-            $("._isread").click(function () {
-                $(this).parent().removeClass("_unread");
+        $(document).ready(function() {
+
+
+            $("._open").click(function () {
+                $(this).removeClass("_unread");
+                var notification = $(this).data('value');
+                var order_id = $(this).data('order-id');
                 $.ajax({
-                    url : '/change-type-notification',
-                    type :'GET',
-                    data : {
-                        notification_id : $(this).data('value')
+                    url: '/change-type-notification',
+                    type: 'GET',
+                    data: {
+                        notification_id: $(this).data('value')
                     }
                 }).done(function (response) {
-                    if(response.type == 'error'){
+                    if (response.type == 'error') {
                         alert('Có lỗi !');
+                    } else {
+                        var url = "/order/" + order_id;
+                        var win = window.open(url, '_blank');
+                        win.focus();
+
                     }
                 })
-            })
-
+            });
         });
+
 
     </script>
 @endsection
