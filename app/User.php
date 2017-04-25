@@ -62,6 +62,13 @@ class User extends Authenticatable
         'cherry@gmail.com',
     ];
 
+    public function isGod(){
+        if(in_array($this->email, self::$god)){
+            return true;
+        }
+        return false;
+    }
+
     public static $section_list = [
         self::SECTION_CRANE => 'Quản trị viên',
         self::SECTION_CUSTOMER => 'Khách hàng',

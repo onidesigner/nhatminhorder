@@ -248,9 +248,11 @@ class Permission extends Model
         $user_email = Auth::user()->email;
         $user_section = Auth::user()->section;
 
-        if(in_array($user_email, User::$god)):
+        $current_user = User::find($user_id);
+
+        if($current_user->isGod()){
             return true;
-        endif;
+        }
 
         if($user_section == User::SECTION_CUSTOMER):
             return false;

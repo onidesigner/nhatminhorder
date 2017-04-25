@@ -174,6 +174,9 @@ class OrderController extends Controller
 
     private function __getOrderInitData(Order $order, User $customer, $layout){
 
+        $current_user = User::find(Auth::user()->id);
+        /** @var User $current_user */
+
         $order_item_comments_data = [];
         $order_item_comments = Order::findByOrderItemComments($order->id);
         if($order_item_comments){
@@ -188,7 +191,7 @@ class OrderController extends Controller
             'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_TRANSPORTING),
             'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
             'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
-            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
