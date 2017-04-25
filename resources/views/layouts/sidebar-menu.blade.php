@@ -5,6 +5,12 @@ if(Auth::check()){
     if(Auth::user()->section == App\User::SECTION_CUSTOMER){
         $menus = [
             [
+                'url' => url(''),
+                'icon' => 'fa fa-home',
+                'title' => 'Trang chủ',
+            ],
+
+            [
                 'url' => url('home'),
                 'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
@@ -22,6 +28,11 @@ if(Auth::check()){
         ];
     }else{
         $menus = [
+            [
+                'url' => url(''),
+                'icon' => 'fa fa-home',
+                'title' => 'Trang chủ',
+            ],
             [
                 'url' => url('home'),
                 'icon' => 'fa fa-tasks',

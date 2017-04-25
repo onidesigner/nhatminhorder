@@ -24,6 +24,16 @@ class AddonController extends Controller
     }
 
     public function executeAction(Request $request){
+        $not_login = Auth::guest();
+
+        if($not_login):
+            $html = $this->__addon_alert_template(
+                false,
+                'Bạn chưa đăng nhập vào hệ thống',
+                'Vui lòng <a style="color:blue;" target="_blank" href="' . url('login') . '">đăng nhập</a> vào hệ thống!'
+            );
+            return response()->json(['html' => $html]);
+        endif;
 
         $data_send = Request::all();
         $action = '__' . $data_send['action'];
@@ -35,6 +45,12 @@ class AddonController extends Controller
         ]);
     }
 
+    /**
+     * @author vanhs
+     * @desc Luu san pham yeu thich
+     * @param $data_send
+     * @return bool
+     */
     private function __save_product($data_send){
         $user_id = Auth::user()->id;
 

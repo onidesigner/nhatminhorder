@@ -18,13 +18,14 @@ class ShippingChinaVietnam extends AbstractService {
         #region Lay ra cong thuc tinh phi
         $result = $this->model->getCurrentPolicy($this->weight, $this->destination_warehouse, $this->apply_time);
         if($result):
+            $this->weight_fee_first = $result->weight_fee_first;
             $this->unit_price = $result->weight_fee;
         endif;
         #endregion
 
-        #region Lay ra phi co dinh doi voi dich vu van chuyen TQ - VN
-        $this->fixed_fee = $this->service->getFixedFeeWithServiceCode($this->getServiceCode());
-        #endregion
+//        #region Lay ra phi co dinh doi voi dich vu van chuyen TQ - VN
+//        $this->fixed_fee = $this->service->getFixedFeeWithServiceCode($this->getServiceCode());
+//        #endregion
     }
 
     function getServiceCode()
@@ -40,6 +41,29 @@ class ShippingChinaVietnam extends AbstractService {
      */
     function calculatorFee()
     {
-        return $this->fixed_fee + ($this->unit_price * $this->weight);
+        if($this->weight < 0.5){
+            $this->weight = 0.5;
+        }
+
+        if($this->weight <= 1){
+
+            if($this->weight_fee_first > 0){
+                return $this->weight_fee_first * $this->weight;
+            }else{
+                return $this->unit_price * $this->weight;
+            }
+
+        }else{
+
+            if($this->weight_fee_first > 0){
+
+                return $this->weight_fee_first + ($this->unit_price * ($this->weight - 1));
+
+            }else{
+                return $this->unit_price * $this->weight;
+            }
+
+        }
+
     }
 }

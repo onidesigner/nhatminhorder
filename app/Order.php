@@ -166,6 +166,25 @@ class Order extends Model
     }
 
     /**
+     * @author vanhs
+     * @desc Lay danh sach id don hang da huy (VD: 1,2,3,10,44)
+     * @return null
+     */
+    public static function getOrderIdCancelled(){
+        $query = DB::table('order')
+            ->select(DB::raw('GROUP_CONCAT(id) as id'))
+            ->where([
+                ['status', '=', self::STATUS_CANCELLED],
+                ['user_id', '!=', User::USER_ID_TEST]
+            ])
+            ->first();
+        if($query){
+            return $query->id;
+        }
+        return null;
+    }
+
+    /**
      * get Right Status
      * @param $status
      * @return array Status
