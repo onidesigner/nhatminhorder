@@ -11,6 +11,7 @@ use App\OrderFreightBill;
 use App\OrderItem;
 use App\OrderOriginalBill;
 use App\OrderService;
+use App\Package;
 use App\Permission;
 use App\Service;
 use App\User;
@@ -173,6 +174,9 @@ class OrderController extends Controller
 
     private function __getOrderInitData(Order $order, User $customer, $layout){
 
+        $current_user = User::find(Auth::user()->id);
+        /** @var User $current_user */
+
         $order_item_comments_data = [];
         $order_item_comments = Order::findByOrderItemComments($order->id);
         if($order_item_comments){
@@ -187,9 +191,11 @@ class OrderController extends Controller
             'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_TRANSPORTING),
             'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
             'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
-            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
-            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+
+            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
+
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_view_package_list' => Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW),
             'can_add_freight_bill_to_order' => Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL)
@@ -198,7 +204,9 @@ class OrderController extends Controller
 
         $packages = $order->package()->where([
             'is_deleted' => 0,
-        ])->get();
+        ])
+            ->whereNotIn('status', [ Package::STATUS_INIT ])
+            ->get();
 
         $fee = $order->fee();
 
@@ -636,9 +644,15 @@ class OrderController extends Controller
         $item_id = $request->get('item_id');
         $order_item = OrderItem::find($item_id);
 
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = 'Không được phép sửa giá sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+            }
         }
+
+
 
         if(!$order_item || !$order_item instanceof OrderItem){
             $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
@@ -971,9 +985,15 @@ class OrderController extends Controller
      */
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
     {
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+            }
         }
+
+
 
         if(count($this->action_error)){
             return false;

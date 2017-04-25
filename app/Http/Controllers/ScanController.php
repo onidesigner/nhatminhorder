@@ -348,7 +348,7 @@ class ScanController extends Controller
             $customer,
             $order,
             $money_charge,
-            'SHIPPING_CHINA_VIETNAM_FEE'
+            UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM
         );
 
         if($package->existService(Service::TYPE_WOOD_CRATING)){
@@ -377,7 +377,7 @@ class ScanController extends Controller
                 $customer,
                 $order,
                 $wood_crating_vnd,
-                'WOOD_CRATING_FEE'
+                UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_WOOD_CRATING
             );
         }
 

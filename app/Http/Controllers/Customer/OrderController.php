@@ -181,7 +181,9 @@ class OrderController extends Controller
 
         $packages = $order->package()->where([
             'is_deleted' => 0,
-        ])->get();
+        ])
+            ->whereNotIn('status', [ Package::STATUS_INIT ])
+            ->get();
 
         $fee = $order->fee();
 

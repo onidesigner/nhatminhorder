@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exchange;
 use App\Jobs\SendSms;
 use App\Library\ServiceFee\AbstractService;
 use App\Library\ServiceFee\Buying;
@@ -21,6 +22,7 @@ use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -43,6 +45,28 @@ class HomeController extends Controller
     public function index()
     {
         $user_id = Auth::user()->id;
+
+        //============phi mua hang===========
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_BUYING,
+//            'total_amount' => 60000000,
+//            'apply_time' => '2017-04-30 00:12:12'
+//        ]);
+//        $buying_fee = doubleval($service->calculatorFee());
+//        var_dump($buying_fee);
+
+
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+//            'weight' => 70,
+//            'destination_warehouse' => 'S-SG',
+//            'apply_time' => '2017-04-26 10:00:00',
+//        ]);
+//        $money_charge = (float)$service->calculatorFee();
+//        var_dump($money_charge);
 
         /*
 
@@ -141,11 +165,68 @@ class HomeController extends Controller
 //
 //        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
 
+        $statistic = [];
+
+        $customer_recharge_amount = DB::table('user_transaction')
+            ->select(DB::raw('sum(amount) as amount'))
+            ->where([
+                ['state', '=', UserTransaction::STATE_COMPLETED],
+                ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
+                ['user_id', '!=', User::USER_ID_TEST]
+            ])
+            ->having('amount', '>', 0)
+            ->first()->amount;
+
+        $statistic[] = [
+            'name' => 'Tiền khách nạp',
+            'value' => Util::formatNumber($customer_recharge_amount)
+        ];
+
+        $orders_cancelled = Order::getOrderIdCancelled();
+
+        $query = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'AMOUNT_VND'],
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $amount_vnd = $query->money;
+        $statistic[] = [
+            'name' => 'Tiền hàng (1)',
+            'value' => Util::formatNumber($amount_vnd)
+        ];
+
+        $query = DB::table('order_fee')
+            ->select(DB::raw('sum(money) as money'))
+            ->where([
+                ['name', '=', 'DEPOSIT_AMOUNT_VND'],
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $deposit_amount_vnd = $query->money;
+        $statistic[] = [
+            'name' => 'Tiền đặt cọc (2)',
+            'value' => Util::formatNumber($deposit_amount_vnd)
+        ];
+
+        $statistic[] = [
+            'name' => 'Tiền còn thiếu (3=1-2)',
+            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd))
+        ];
+
         return view('home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,
+            'statistic' => $statistic,
         ]);
     }
 }

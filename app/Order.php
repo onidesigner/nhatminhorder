@@ -166,6 +166,25 @@ class Order extends Model
     }
 
     /**
+     * @author vanhs
+     * @desc Lay danh sach id don hang da huy (VD: 1,2,3,10,44)
+     * @return null
+     */
+    public static function getOrderIdCancelled(){
+        $query = DB::table('order')
+            ->select(DB::raw('GROUP_CONCAT(id) as id'))
+            ->where([
+                ['status', '=', self::STATUS_CANCELLED],
+                ['user_id', '!=', User::USER_ID_TEST]
+            ])
+            ->first();
+        if($query){
+            return $query->id;
+        }
+        return null;
+    }
+
+    /**
      * get Right Status
      * @param $status
      * @return array Status
@@ -546,8 +565,12 @@ class Order extends Model
         #endregion
 
         #region -- Tổng thanh toán --
-        $data_return['NEED_PAYMENT_AMOUNT_VND'] = $data_return['TOTAL_FEE_VND']
-            - $data_return['CUSTOMER_PAYMENT_AMOUNT_VND'];
+        if($data_return['TOTAL_FEE_VND'] > $data_return['CUSTOMER_PAYMENT_AMOUNT_VND']){
+            $data_return['NEED_PAYMENT_AMOUNT_VND'] = $data_return['TOTAL_FEE_VND']
+                - $data_return['CUSTOMER_PAYMENT_AMOUNT_VND'];
+        }else{
+            $data_return['NEED_PAYMENT_AMOUNT_VND'] = 0;
+        }
         #endregion
 
         return $data_return;

@@ -29,6 +29,11 @@ class UserTransaction extends Model
     const TRANSACTION_TYPE_REFUND_COMPLAINT = 'REFUND_COMPLAINT';//trả lại theo khiếu nại
     const TRANSACTION_TYPE_ADJUSTMENT = 'ADJUSTMENT';//giao dịch điều chỉnh
 
+    #region -- transaction sub type --
+    const TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM = 'ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM';
+    const TRANSACTION_SUB_TYPE_ORDER_PAYMENT_WOOD_CRATING = 'ORDER_PAYMENT_WOOD_CRATING';
+    #endregion
+
     const OBJECT_TYPE_ADJUSTMENT = 'ADJUSTMENT';
     const OBJECT_TYPE_ORDER = 'ORDER';
     const OBJECT_TYPE_DELIVERY = 'DELIVERY';
@@ -221,12 +226,12 @@ class UserTransaction extends Model
      * @param User $customer
      * @param $object
      * @param $amount
-     * @param null $payment_for
+     * @param null $transaction_sub_type
      * @return bool
      */
     public static function createTransaction($transaction_type, $transaction_note,
                                              User $create, User $customer,
-                                             $object, $amount, $payment_for = null){
+                                             $object, $amount, $transaction_sub_type = null){
         try{
             DB::beginTransaction();
 
@@ -249,6 +254,9 @@ class UserTransaction extends Model
             $user_transaction->state = self::STATE_COMPLETED;
             $user_transaction->transaction_code = $transaction_code;
             $user_transaction->transaction_type = $transaction_type;
+            if($transaction_sub_type){
+                $user_transaction->transaction_sub_type = $transaction_sub_type;
+            }
             $user_transaction->amount = $amount;
             $user_transaction->ending_balance = $customer_after_change->account_balance;
             $user_transaction->created_by = $create->id;
@@ -261,7 +269,7 @@ class UserTransaction extends Model
 
             $user_transaction->transaction_detail = json_encode($object);
             $user_transaction->transaction_note = $transaction_note;
-            $user_transaction->save([ 'payment_for' => $payment_for ]);
+            $user_transaction->save();
 
             DB::commit();
             return true;
@@ -314,22 +322,20 @@ class UserTransaction extends Model
                     $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $money, 'update_money' => true ];
                     $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $money_vnd, 'update_money' => true ];
 
-                    if(isset($options['payment_for'])){
-                        switch ($options['payment_for']){
-                            //---thanh toan phi vc quoc te
-                            case 'SHIPPING_CHINA_VIETNAM_FEE':
-                                $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
-                                $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
-                                break;
-                            //---thanh toan phi dong go
-                            case 'WOOD_CRATING_FEE':
-                                $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
-                                $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $money_vnd, 'update_money' => true ];
-                                break;
-                        }
+                    switch ($this->transaction_sub_type){
+                        //---thanh toan phi vc quoc te
+                        case self::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM:
+                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money, 'update_money' => true ];
+                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                            break;
+                        //---thanh toan phi dong go
+                        case self::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_WOOD_CRATING:
+                            $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
+                            $data_fee_insert[] = [ 'name' => 'wood_crating_vnd', 'money' => $money_vnd, 'update_money' => true ];
+                            break;
                     }
-
                     break;
+
                 //Trả lại trên đơn
                 case self::TRANSACTION_TYPE_PAYMENT:
                     $money_vnd = abs($this->amount);

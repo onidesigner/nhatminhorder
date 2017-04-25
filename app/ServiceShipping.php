@@ -41,10 +41,10 @@ class ServiceShipping extends Model
                 ['status', '=', self::STATUS_ACTIVE],
                 ['type', '=', self::TYPE_CHINA_VIETNAM],
                 ['sub_type', '=', $sub_type],
-                ['weight_from', '<', $weight],
+                ['weight_from', '<=', $weight],
                 ['weight_to', '>=', $weight],
                 ['actived_time', '<=', $apply_time],
-                ['deadline_time', '>', $apply_time]
+                ['deadline_time', '>=', $apply_time]
             ])
             ->orderBy('actived_time', 'desc')
             ->first();

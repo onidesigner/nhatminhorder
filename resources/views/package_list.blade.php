@@ -17,22 +17,20 @@
                     ]
                 )
                 <div class="card-body">
-                    <h3>Danh sách kiện hàng</h3>
+                    <h3 class="cart-title">Danh sách kiện hàng</h3>
 
                     @if($can_create_package)
                         <a href="{{ url('package')  }}" class="btn btn-danger pull-right">Tạo kiện</a>
                     @endif
 
-                    <p>Tìm thấy <strong>{{$total_packages}}</strong> kiện hàng</p>
+                    <p>Tìm thấy {{$total_packages}} kiện hàng</p>
 
                     <table class="table no-padding-leftright">
                         <thead>
                         <tr>
-                            <th class="">Mã</th>
-                            <th class="">Vận đơn</th>
+                            <th class="">Mã kiện</th>
                             <th class="">Trạng thái</th>
                             <th class="">Đơn hàng</th>
-                            <th class="">Khách hàng</th>
                             <th class="">Người tạo</th>
                             <th class="">Thời gian</th>
                         </tr>
@@ -52,10 +50,11 @@
                                                 {{ $package->weight }} kg
                                             </small>
                                         @endif
+
+                                            <br>
+                                        VĐ: {{$package->freight_bill}}
                                     </td>
-                                    <td>
-                                        {{$package->freight_bill}}
-                                    </td>
+
                                     <td>
                                         {{ App\Package::getStatusTitle($package->status)  }}
                                         <br>
@@ -81,23 +80,24 @@
                                     <td>
                                         @if($package->order instanceof App\Order)
                                             <a href="{{ url('order', $package->order->id) }}">{{$package->order->code}}</a>
-                                            <br>
-                                            <small>
-                                                {{  App\Order::getStatusTitle($package->order->status) }}
-                                            </small>
+                                            (<small>{{  App\Order::getStatusTitle($package->order->status) }}</small>)
                                         @else
                                             --
                                         @endif
+
+                                        <br>
+
+                                        <small>
+                                            @if($package->customer instanceof App\User)
+                                                <a href="{{ url('user/detail', $package->customer->id) }}">{{$package->customer->email}}</a>
+                                                (<small>{{$package->customer->name}}</small>)
+                                            @else
+                                                --
+                                            @endif
+                                        </small>
+
                                     </td>
-                                    <td>
-                                        @if($package->customer instanceof App\User)
-                                            <a href="{{ url('user/detail', $package->customer->id) }}">{{$package->customer->email}}</a>
-                                            <br>
-                                            <small>{{$package->customer->name}}</small>
-                                        @else
-                                            --
-                                        @endif
-                                    </td>
+
                                     <td>
                                         <?php
                                         $created_user = App\User::find($package->created_by);
@@ -110,11 +110,14 @@
                                     </td>
                                     <td>
 
-                                        @foreach(App\Package::$timeListOrderDetail as $key => $value)
-                                            @if($package->$key)
-                                                {{$value}}: {{ App\Util::formatDate($package->$key) }}<br>
-                                            @endif
-                                        @endforeach
+                                        <small>
+                                            @foreach(App\Package::$timeListOrderDetail as $key => $value)
+                                                @if($package->$key)
+                                                    {{$value}}: {{ App\Util::formatDate($package->$key) }}<br>
+                                                @endif
+                                            @endforeach
+                                        </small>
+
 
                                     </td>
                                 </tr>
