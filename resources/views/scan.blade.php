@@ -122,8 +122,14 @@
                         if(response.success){
                             ion.sound.play("success");
                             if(response.result.order_id){
-                                var message = " Kiện " + "<strong>" + response.result.barcode + "</strong>" + " khách hàng " +
-                                        response.result.address.reciver_name + " , địa chỉ " + response.result.address.detail  ;
+                                var packageBarcode = response.result.barcode;
+                                var url_barcode = "package/"+packageBarcode;
+//                                var message = " Kiện " + "<strong class='_click_barcode'>"+"<a href='"+ url_barcode +"' target='_blank'>" + response.result.barcode + "</a></strong>" + " khách hàng " +
+//                                        response.result.address.reciver_name + " , địa chỉ " + response.result.address.detail + "<br/>" + response.result.message ;
+
+                                var message = " Kiện " + "<strong class='_click_barcode'>"+"<a href='"+ url_barcode +"' target='_blank'>" + response.result.barcode + "</a></strong>" + response.result.message + "<br/>"
+                                        + "Địa chỉ: " + " khách hàng " + response.result.address.reciver_name + ','  + response.result.address.detail;
+
                                 arr_message.push(message);
                                 LocalStorage.set('scan_action.', JSON.stringify(arr_message));
 

@@ -158,6 +158,7 @@ class ScanController extends Controller
                     $response = array(
                         'barcode' => $barcode,
                         'address' => $order_address,
+                        'message' => " nhập kho ".$warehouse->code,
                         'phone' => $user_phone,
                         'status' => 'success',
                         'order_id' => $order->id
@@ -201,6 +202,7 @@ class ScanController extends Controller
                         'barcode' => $barcode,
                         'address' => $order_address,
                         'phone' => $user_phone,
+                        'message' => ' nhập kho phân phối '. $warehouse->code,
                         'status' => 'success',
                         'order_id' => $order->id
                     );
