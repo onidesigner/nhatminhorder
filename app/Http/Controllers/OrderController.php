@@ -39,14 +39,10 @@ class OrderController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * @author vanhs
-     * @desc Danh sach don hang
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function orders(){
-        $params = Input::all();
+    public function getOrdersData(){
         $per_page = 20;
+
+        $params = Input::all();
 
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
@@ -58,7 +54,7 @@ class OrderController extends Controller
         if(!empty($params['customer_code_email'])){
             $user_ids = User::where(function($query) use ($params){
                 $query->where('code', '=', $params['customer_code_email'])
-                        ->orWhere('email', '=', $params['customer_code_email']);
+                    ->orWhere('email', '=', $params['customer_code_email']);
             })->pluck('id');
             $orders = $orders->whereIn('user_id', $user_ids);
         }
@@ -68,27 +64,35 @@ class OrderController extends Controller
         }
         $total_orders = $orders->count();
         $orders = $orders->paginate($per_page);
-
-        $status_list = [];
-        foreach(Order::$statusTitle as $key => $val){
-            $selected = false;
-            if(!empty($params['status'])){
-                $selected = in_array($key, explode(',', $params['status']));
-            }
-            $status_list[] = [
-                'key' => $key,
-                'val' => $val,
-                'selected' => $selected
-            ];
-        }
+        $orders->withPath('order');
 
         $order_ids = [];
-        if($orders){
+        if($total_orders){
             foreach($orders as $order){
-                if(!$order || !$order instanceof Order){
+                if(!$order instanceof Order){
                     continue;
                 }
+
                 $order_ids[] = $order->id;
+
+                $customer = User::find($order->user_id);
+
+                $fee = $order->fee();
+
+                $order_fee = [];
+                foreach(OrderFee::$fee_field_order_detail as $key => $label){
+                    $value = $key;
+                    if(isset($fee[$key])){
+                        $value = Util::formatNumber($fee[$key]);
+                    }
+                    $order_fee[] = [
+                        'label' => $label,
+                        'value' => $value,
+                    ];
+                }
+
+                $order->customer = $customer;
+                $order->order_fee = $order_fee;
             }
         }
 
@@ -105,42 +109,41 @@ class OrderController extends Controller
             ];
         }
 
-        foreach($orders as $order){
-            if(!$order instanceof Order){
-                continue;
+        $view = View::make('orders_data', [
+            'total_orders' => $total_orders,
+            'orders' => $orders,
+        ]);
+        $html = $view->render();
+
+        return response()->json([
+            'html' => $html,
+            'success' => true,
+            'message' => null
+        ]);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Danh sach don hang
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function orders(Request $request){
+        $status_list = [];
+        foreach(Order::$statusTitle as $key => $val){
+            $selected = false;
+            if(!empty($request->get('status'))){
+                $selected = in_array($key, explode(',', $request->get('status')));
             }
-
-            $packages = $order->package()->where([
-                'is_deleted' => 0,
-            ])->get();
-
-            $customer = User::find($order->user_id);
-
-            $fee = $order->fee();
-
-            $order_fee = [];
-            foreach(OrderFee::$fee_field_order_detail as $key => $label){
-                $value = $key;
-                if(isset($fee[$key])){
-                    $value = Util::formatNumber($fee[$key]);
-                }
-                $order_fee[] = [
-                    'label' => $label,
-                    'value' => $value,
-                ];
-            }
-
-            $order->customer = $customer;
-            $order->order_fee = $order_fee;
+            $status_list[] = [
+                'key' => $key,
+                'val' => $val,
+                'selected' => $selected
+            ];
         }
 
         return view('orders', [
             'page_title' => ' Quản lý đơn hàng',
-            'orders' => $orders,
-            'services' => $services,
-            'total_orders' => $total_orders,
             'status_list' => $status_list,
-            'params' => $params,
         ]);
     }
 

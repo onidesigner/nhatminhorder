@@ -76,6 +76,8 @@ Route::get('/package/{code}', 'PackageController@detail');
 
 #region quan ly don hang
 Route::get('/order', 'OrderController@orders');
+Route::get('/order/get_orders_data', 'OrderController@getOrdersData');
+
 Route::get('/order/{id}', 'OrderController@order');
 Route::get('/order/detail/{id}', 'OrderController@order');
 Route::post('/order/{id}/freight_bill', 'OrderController@insertFreightBill');
