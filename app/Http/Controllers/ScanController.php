@@ -148,7 +148,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package && $package instanceof Package){
-                #$package->inputWarehouseReceive($warehouse->code); // tam bo se mo
+                $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -181,11 +181,11 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
-                #$package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
+                $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
-                   # $order->changeOrderWaitingDelivery(); // tam b se mo
+                    $order->changeOrderWaitingDelivery(); // tam b se mo
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     $user_address = UserAddress::find($order->user_address_id);
                     if($user_address instanceof UserAddress){
