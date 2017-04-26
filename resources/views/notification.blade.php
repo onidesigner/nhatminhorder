@@ -36,11 +36,11 @@
                                 <tr class=" _open
                                     <?php
                                 if(in_array($notification->is_view, [\App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,\App\CustomerNotification::CUSTOMER_NOTIFICATION_READ])){
-                                   echo "_unread";
+                                    echo "_unread";
                                 }
                                 ?>
 
-                                " data-value="{{$notification->id}}" data-order-id="{{$notification->order_id}}"
+                                        " data-value="{{$notification->id}}" data-order-id="{{$notification->order_id}}"
 
                                 >
                                     <td scope="row" class="_isread" data-value="{{$notification->id}}">{{ $per_page * $page + $i++ }}</td>
@@ -95,7 +95,7 @@
                     if (response.type == 'error') {
                         alert('Có lỗi !');
                     } else {
-                        var url = "/don-hang/" + order_id;
+                        var url = "/order/" + order_id;
                         var win = window.open(url, '_blank');
                         win.focus();
 
@@ -103,6 +103,7 @@
                 })
             });
         });
+
 
     </script>
 @endsection

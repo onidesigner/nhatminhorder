@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Customer;
 use App\Comment;
+use App\Complaints;
+use App\CustomerNotification;
 use App\Exchange;
 use App\Http\Controllers\Controller;
 use App\Location;
@@ -224,6 +226,15 @@ class OrderController extends Controller
             }
         }
 
+        #region -- lấy danh sách của đơn khiếu nại --
+
+        $list_complaint =  DB::table('complaints')
+            ->where('customer_id', '=', Auth::user()->id)
+            ->where('order_id','=',$order->id)
+            ->get();
+
+        #endregion --laays danh sach don khieu nai--
+
         return [
             'order_id' => $order->id,
             'packages' => $packages,
@@ -243,6 +254,7 @@ class OrderController extends Controller
             'page_title' => 'Chi tiết đơn hàng',
             'permission' => $permission,
             'layout' => $layout,
+            'list_complaint' => $list_complaint
         ];
     }
 
@@ -408,6 +420,14 @@ class OrderController extends Controller
 
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
+        $paid_user = User::find($order->paid_staff_id); // thoong tin nguowif mua hang
+
+        #region --thông báo hủy đơn hàng cho quản trị--
+        $title = "Thay đổi trạng thái đơn hàng ";
+        $content = $user->name." hủy đơn hàng ".$order->code;
+        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
+        #region --end --
+
         return true;
     }
 
@@ -422,6 +442,16 @@ class OrderController extends Controller
     private function __order_item_comment(Request $request, Order $order, User $user){
         $item_id = $request->get('item_id');
         $order_item = OrderItem::find($item_id);
+
+        #region --thông báo hủy đơn hàng cho quản trị--
+
+        $title = " Comment trên sản phẩm của đơn ".$order->code;
+        $content =  $user->name." comment trên sản phẩm của đơn ".$order->code;
+        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
+
+        #region --end --
+
+
         return Comment::createComment(
             $user,
             $order_item,
@@ -474,6 +504,16 @@ class OrderController extends Controller
         }
 
         Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        // tạo notification cho hành động
+
+        #region --tạo notification--
+
+        $title = "Thay đổi dịch vụ đơn hàng ".$order->code;
+        $content = $user->name." ".$message." đơn ".$order->code;
+        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
+
+        #endregion
 
         return true;
     }

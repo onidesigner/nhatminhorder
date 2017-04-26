@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\CustomerNotification;
+use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
@@ -84,7 +86,7 @@ class CommentController extends Controller
         if(count($this->action_error)){
             return false;
         }
-
+        $order_id = $request->get('object_id');
         $comment = new Comment();
         $comment->user_id = $user->id;
         $comment->object_id = $request->get('object_id');
@@ -94,6 +96,14 @@ class CommentController extends Controller
         $comment->type_context = Comment::TYPE_CONTEXT_CHAT;
         $comment->is_public_profile = $request->get('is_public_profile');
         $comment->save();
+        $order = Order::findOneByIdOrCode($order_id);
+        $tile = 'chat trên đơn';
+        $notification_content = $user->name." trao đổi trên đơn hàng ".$order->code;
+        if($user->section == User::SECTION_CRANE){
+            CustomerNotification::notificationCustomer($order,$tile,$notification_content,'ORDER');
+        }else{
+            CustomerNotification::notificationCrane($order,$tile,$notification_content,'ORDER');
+        }
 
         return true;
     }
