@@ -95,10 +95,55 @@
                         </li>
 
                         <li class="arrow-none dropdown notification danger">
-                            <a href="{{ url('thong-bao') }}" class="dropdown-toggle" data-toggle="dropdown1111">
+                            <a href="
+                            <?php if(Auth::user()->section == App\User::SECTION_CUSTOMER){ ?>
+
+                                {{ url('thong-bao') }}
+
+                                    <?php }else{ ?>
+
+                                    {{ url('notification') }}
+
+                                <?php }?>
+                                    " class="dropdown-toggle
+                            <?php if(Auth::user()->section == App\User::SECTION_CUSTOMER){
+
+                                echo "_read_notification_customer";
+
+                            }else{
+                                echo "_read_notification_crane";
+                            }?>
+
+
+                            " data-toggle="dropdown1111">
                                 <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
                                 <div class="title">System Notifications</div>
-                                <div class="count width-auto">0</div>
+                                <div class="count width-auto">
+                                    <?php
+                                    if(Auth::user()->section == App\User::SECTION_CUSTOMER){
+                                        // đây là giao diện dành cho khách hàng
+                                        $user_id = \Illuminate\Support\Facades\Auth::user()->id;
+                                        $count_notification = \App\CustomerNotification::where([
+                                                'section' => App\User::SECTION_CUSTOMER,
+                                                'is_view' => App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,
+                                                'user_id' => $user_id
+                                        ])->count();
+                                        ;
+                                        echo $count_notification;
+                                    }else{
+                                        // giao dien dành cho quản trị
+                                        $user_id = \Illuminate\Support\Facades\Auth::user()->id;
+                                        $count_notification = \App\CustomerNotification::
+                                                where([
+                                                        'section' => App\User::SECTION_CRANE,
+                                                        'is_view' => App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,
+                                                        'user_id' => $user_id
+                                                ])->count();
+                                        ;
+                                        echo $count_notification;
+                                    }
+                                    ?>
+                                </div>
                             </a>
                         </li>
 
@@ -219,6 +264,33 @@
 <script type="text/javascript" src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+
+    <script>
+        $( document ).ready(function() {
+            $( "._read_notification_customer" ).click(function() {
+                $.ajax({
+                    url : '/view-notification',
+                    data : {
+
+                    },
+                    type : 'GET'
+                }).done(function (response) {
+                    console.info(response);
+                });
+            });
+            $( "._read_notification_crane" ).click(function() {
+                $.ajax({
+                    url : '/view-notification',
+                    data : {
+
+                    },
+                    type : 'GET'
+                }).done(function (response) {
+                    console.info(response);
+                });
+            })
+        });
+    </script>
 @show
 
 </body>

@@ -33,6 +33,9 @@
                             <li role="presentation">
                                 <a href="#order-transaction" aria-controls="tab" role="tab" data-toggle="tab">Phí & LS Giao dịch</a>
                             </li>
+                            {{--<li role="presentation">--}}
+                                {{--<a href="#order-complaint" aria-controls="tab" role="tab" data-toggle="tab">Khiếu nại</a>--}}
+                            {{--</li>--}}
                         </ul>
 
                         <!-- Tab panes -->
@@ -236,6 +239,50 @@
                                     @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+
+
+                            <!--tab khieu nai tren don -->
+                            <div role="tabpanel" class="tab-pane" id="order-complaint">
+                                <a href="{{url('tao-khieu-nai',$order->id)}}"  class="btn btn-success"> Tạo khiếu nại</a>
+
+                                <table class="table">
+                                    <thead class="thead-default">
+                                    <tr>
+                                        <th>Tên KN</th>
+                                        <th>Trạng thái KN</th>
+                                        <th>Tiếp nhận</th>
+                                        <th>Hoàn thành</th>
+                                        <th>Từ Chối</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php $i = 1 ?>
+                                    @foreach($list_complaint as $complaint)
+                                    <tr>
+
+                                        <td>{{ $complaint->title }}</td>
+                                        <td>{{ $complaint->status }}</td>
+                                        @if($complaint->accept_time)
+                                        <td>{{ $complaint->accept_time }}</td>
+                                        @else
+                                            <td>---</td>
+                                        @endif
+                                        @if( $complaint->finish_time )
+                                        <td>{{ $complaint->finish_time }}</td>
+                                        @else
+                                            <td>---</td>
+                                        @endif
+                                        @if($complaint->reject_time)
+                                        <td>{{ $complaint->reject_time }}</td>
+                                        @else
+                                            <td>---</td>
+                                        @endif
+                                    </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+
                             </div>
                         </div>
                     </div>

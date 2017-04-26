@@ -143,7 +143,7 @@ Route::post('/don-hang/{id}/hanh-dong', 'Customer\OrderController@action');
 #endregion
 
 #region -- thong bao --
-Route::get('/thong-bao', 'Customer\NotificationController@indexs');
+#Route::get('/thong-bao', 'Customer\NotificationController@indexs');
 #endregion
 
 #region -- bai viet --
@@ -169,3 +169,29 @@ Route::get('/manager_addon_link_error', 'SystemController@managerAddonLinkError'
 Route::post('/set_done_link_error', 'SystemController@setDoneLinkError');
 
 Route::get('/statistic/users', 'StatisticController@users');
+
+
+#region --thông báo cho khách hàng--
+Route::get('/thong-bao','Customer\CustomerNotificationController@index');
+Route::get('/change-type-notification','Customer\CustomerNotificationController@changeTypeNotification'); // send ajax
+
+// send code ajax
+Route::get('/view-notification','Customer\CustomerNotificationController@changeStatus');
+Route::get('/view-notification-crane','NotificationController@changeStatus');
+#endregion --end thong báo cho khách hàng--
+#region --danh sách khiếu nại --
+Route::get('/tao-khieu-nai/{order_id}','Customer\ComplaintServiceController@index');
+Route::get('/danh-sach-khieu-nai','Customer\ComplaintServiceController@listComplaint');
+#endregion --danh sách khiếu nại--
+#region -- router tạo khiếu nại người bán--
+Route::post('/create-complaint','Customer\ComplaintServiceController@createComplaint');
+#region --chi tiết khiếu nại--
+Route::get('/chi-tiet-khieu-nai/{complaint_id}','Customer\ComplaintServiceController@complaintDetail');
+#endregion --chi tiết khiếu nại--
+#region danh sach khieu nai tren trang quan trị
+Route::get('/complaint','ComplaintServiceController@index');
+#region chi tiet khieu nại trên đơn
+Route::get('/complaint-detail/{complaint_id}','ComplaintServiceController@complaintDetail');
+#region --thông báo dành cho quản trị viên--
+Route::get('/notification','NotificationController@index');
+#endregion --kết thúc thông báo cho quản trị viên--
