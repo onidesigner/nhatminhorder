@@ -136,7 +136,7 @@
                                 $(".list-group").prepend("<li class='list-group-item'>" + message + "</li>");
 
                             }else{
-                                $(".list-group").prepend("<li class='list-group-item'>Kiện chưa khớp đơn !</li>");
+                                //$(".list-group").prepend("<li class='list-group-item'>Kiện chưa khớp đơn !</li>");
                             }
                         }else{
                             msg_type = 'error';
