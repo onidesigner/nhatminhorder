@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Order;
+use App\Permission;
 use App\User;
 use App\UserTransaction;
 use Illuminate\Http\Request;
@@ -90,7 +91,18 @@ class StatisticController extends Controller
         return $money;
     }
 
+    /**
+     * @author vanhs
+     * @desc Thong ke tai chinh theo tung khach hang
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function users(Request $request){
+        $can_view = Permission::isAllow(Permission::PERMISSION_STATISTIC_DETAIL);
+        if(!$can_view){
+            return redirect('403');
+        }
+
         $where = [];
         if(!empty($request->get('user_code'))){
             $where[] = [ 'code', '=', $request->get('user_code') ];

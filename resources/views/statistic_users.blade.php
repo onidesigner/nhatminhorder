@@ -23,14 +23,15 @@
 
                     @if($total_users > 0)
 
-                        <table class="table table-striped table-hover">
+                        <table class="table table-striped table-hover no-padding-leftright">
                             <thead>
                                 <tr>
                                     <th>Khách hàng</th>
                                     <th class="text-right">Nạp tiền</th>
                                     <th class="text-right">Tiền hàng(1)</th>
                                     <th class="text-right">Đặt cọc(2)</th>
-                                    <th class="text-right">Còn thiếu(3=1-2)</th>
+                                    <th class="text-right">Còn thiếu (3=1-2)</th>
+                                    <th class="text-right">Số dư</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,6 +58,11 @@
                                     </td>
                                     <td class="text-right">
                                         <span class="text-danger">{{ App\Util::formatNumber($user->need_payment_vnd)  }}đ</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span class="text-danger">
+                                            {{ App\Util::formatNumber($user->account_balance)  }}đ
+                                        </span>
                                     </td>
                                 </tr>
                             @endforeach
