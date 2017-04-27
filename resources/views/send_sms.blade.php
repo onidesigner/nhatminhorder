@@ -43,20 +43,27 @@ if (!empty($_GET['status'])) {
                     <input type="submit" class="btn btn-primary" name="importSubmit" value="UPLOAD" style="margin-bottom: 20px;">
                 </form>
 
-                <select class="selectpicker">
-                    <option>Level</option>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="4">4</option>
-                </select>
+                <form action="{{ url('send-sms') }}" method="get">
+                    <select class="selectpicker">
+                        <option>Level</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                    </select>
 
-                <select class="selectpicker">
-                    <option value="">Trang thái gửi tin nhắn</option>
-                    <option value="SEND_SUCCESS">Thành Công</option>
-                    <option value="SEND_NOT_SUCCESS" >Thất bại</option>
-                </select>
-
+                    <select class="selectpicker">
+                        <option value="">Trang thái gửi tin nhắn</option>
+                        <option value="SEND_SUCCESS">Thành Công</option>
+                        <option value="SEND_NOT_SUCCESS" >Thất bại</option>
+                    </select>
+                    <select class="selectpicker">
+                        <option value="">Số lần gửi tin</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </form>
                 <br/>
                 <form action="#">
 
