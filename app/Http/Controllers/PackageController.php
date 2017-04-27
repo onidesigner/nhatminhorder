@@ -252,14 +252,14 @@ class PackageController extends Controller
             // lấy giá trị id của kiện vừa được tạo
             $package_id =  $this->__create_package_item($order, $barcode);
             // nếu tồn tại giá trị của đối tượng
-            if($package_id){
-                $package = Package::retrieveById($package_id);
-            }
-            if($package instanceof Package){
-                //  truyen vao doi tuong package cua doi tuong
-                $warehouse_code = WareHouse::WAREHOUSE_ALIAS_SG;
-               // $package->inputWarehouseReceive($warehouse->code);
-            }
+//            if($package_id){
+//                $package = Package::retrieveById($package_id);
+//            }
+//            if($package instanceof Package){
+//                //  truyen vao doi tuong package cua doi tuong
+//                $warehouse_code = WareHouse::WAREHOUSE_ALIAS_SG;
+//               // $package->inputWarehouseReceive($warehouse->code);
+//            }
 
             // sau khi tạo được mã kiện thì ngay lập tức nhập kiện vào kho quảng châu
 
