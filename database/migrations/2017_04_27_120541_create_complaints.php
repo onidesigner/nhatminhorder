@@ -15,18 +15,17 @@ class CreateComplaints extends Migration
     {
         Schema::create('complaints', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('order_id');
-            $table->integer('customer_id');
+            $table->integer('order_id')->nullable();
+            $table->integer('customer_id')->nullable();
             $table->text('description')->nullable();
-            $table->integer('accept_by',11);
-            $table->integer('reject_by',11);
+            $table->integer('accept_by');
+            $table->integer('reject_by');
             $table->string('status',50)->nullable();
             $table->text('title')->nullable();
             $table->dateTime('accept_time')->nullable();
             $table->dateTime('reject_time')->nullable();
             $table->dateTime('created_time')->nullable();
-            $table->dateTime('finish_time');
-
+            $table->dateTime('finish_time')->nullable();
             $table->timestamps();
         });
     }

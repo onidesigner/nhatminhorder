@@ -17,9 +17,9 @@ class CreateComplaintsFiles extends Migration
             $table->increments('id');
             $table->string('name',50)->nullable();
             $table->string('path',100)->nullable();
-            $table->integer('complaint_id');
-            $table->string('file_type');
-            $table->dateTime('create_time');
+            $table->integer('complaint_id')->nullable();
+            $table->string('file_type')->nullable();
+            $table->dateTime('create_time')->nullable();
             $table->timestamps();
         });
     }
