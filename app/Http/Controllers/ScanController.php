@@ -149,7 +149,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package && $package instanceof Package){
-               # $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
+                $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -182,7 +182,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
-               # $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
+                $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -243,7 +243,7 @@ class ScanController extends Controller
     private function __out(Request $request, WareHouse $warehouse, User $currentUser){
         $barcode = $request->get('barcode');
         $create_user = User::find(Auth::user()->id);
-
+        $response = [];
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
             $message_internal = sprintf("Kiện hàng %s xuất kho %s", $barcode, $warehouse->code);
 
@@ -279,10 +279,24 @@ class ScanController extends Controller
                             dispatch($job);
                         }
                     }
+
+                    $order_address = $order->getCustomerReceiveAddress();
+                    $user_phone = $order_address->phone;
+                    $response = array(
+                        'barcode' => $barcode,
+                        'address' => $order_address,
+                        'phone' => $user_phone,
+                        'message' => ' xuất kho '. $warehouse->code,
+                        'status' => 'success',
+                        'order_id' => $order->id
+                    );
+
                 }
             }
 
             $this->message = $message_internal;
+
+            return $response;
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
             $message_internal = sprintf("Kiện hàng %s xuất kho phân phối %s", $barcode, $warehouse->code);
@@ -310,10 +324,23 @@ class ScanController extends Controller
                     if(!$package->isTransportStraight()){
                         $this->__packageChargeFee($package, $order, $create_user, $customer);
                     }
+
+                    $order_address = $order->getCustomerReceiveAddress();
+                    $user_phone = $order_address->phone;
+                    $response = array(
+                        'barcode' => $barcode,
+                        'address' => $order_address,
+                        'phone' => $user_phone,
+                        'message' => ' xuất kho phân phối '. $warehouse->code,
+                        'status' => 'success',
+                        'order_id' => $order->id
+                    );
                 }
             }
 
             $this->message = $message_internal;
+
+            return $response;
         }
 
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
