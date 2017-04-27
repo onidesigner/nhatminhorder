@@ -42,8 +42,25 @@ if (!empty($_GET['status'])) {
                     <input type="file" name="file" style="float: left"/>
                     <input type="submit" class="btn btn-primary" name="importSubmit" value="UPLOAD" style="margin-bottom: 20px;">
                 </form>
+
+                <select class="selectpicker">
+                    <option>Level</option>
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+
+                <select class="selectpicker">
+                    <option>Trang thái gửi tin nhắn</option>
+                    <option>Thành Công</option>
+                    <option>Thất bại</option>
+                </select>
+
+                <br/>
                 <form action="#">
-                <table class="table table-bordered">
+
+                    <table class="table table-bordered">
                     <thead>
                     <tr>
                         <th>STT</th>

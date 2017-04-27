@@ -91,6 +91,8 @@ class SendSmsController extends Controller
             $page = $page - 1;  
         }
         $sms_customer = SendSms::select('*')->orderBy('id', 'ASC')->paginate($per_page);
+
+
         return view('send_sms',[
             'page_title' => 'send sms',
             'data_sms' => $sms_customer,
