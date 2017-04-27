@@ -51,6 +51,7 @@ if (!empty($_GET['status'])) {
                         <th>Tên khách</th>
                         <th>Email</th>
                         <th>Điện thoại</th>
+                        <th>Cấp độ(level)</th>
                         <th>Trạng thái SMS</th>
                     </tr>
                     </thead>
@@ -64,6 +65,7 @@ if (!empty($_GET['status'])) {
                             <td>{{ $item_sms->name }}</td>
                             <td>{{ $item_sms->email }}</td>
                             <td>{{ $item_sms->phone }}</td>
+                            <td>{{ $item_sms->level }}</td>
                             <td>{{ \App\Library\Sms\SendSmsToCustomer::getStatus($item_sms->status) }}</td>
                         </tr>
                     @endforeach

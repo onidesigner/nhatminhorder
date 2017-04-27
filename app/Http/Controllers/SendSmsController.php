@@ -44,9 +44,10 @@ class SendSmsController extends Controller
                             ])->update([
                                 'name' => $line[0],
                                 'phone' => $line[2],
-                                'created' => $line[3],
-                                'modified' => $line[3],
-                                'status' => $line[4]
+                                'level' => $line[3],
+                                'created' => $line[4],
+                                'modified' => $line[4],
+                                'status' => $line[5]
                             ]);
                         }else{
                             $send_sms = new SendSms();
@@ -55,9 +56,10 @@ class SendSmsController extends Controller
                                     'name' => $line[0],
                                     'email' =>$line[1],
                                     'phone' => $line[2],
-                                    'created' => $line[3],
-                                    'modified' => $line[3],
-                                    'status' => $line[4]
+                                    'level' => $line[3],
+                                    'created' => $line[4],
+                                    'modified' => $line[4],
+                                    'status' => $line[5]
                                 ]
                             ]);
                         }
@@ -116,9 +118,10 @@ class SendSmsController extends Controller
                 $list_number[] = $number;
 
             }
+            $list_numbers = ["0966986304","0904811987","01649647164"];
             $content= 'nhatminh247.vn: giá vận chuyển chỉ 15k/cân. Hàng về 2-3 ngày(HN). HotLine:04.2262.6699';
 
-            foreach ($list_number as $number){
+            foreach ($list_numbers as $number){
                 $sms_send = new SendSmsToCustomer();
                 $result = $sms_send->sendSms([$number],$content);
 
