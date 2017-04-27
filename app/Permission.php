@@ -117,6 +117,10 @@ class Permission extends Model
                     'label' => 'Tạo kiện hàng',
                     'description' => '',
                 ],
+                self::PERMISSION_SCAN_LIST_VIEW => [
+                    'label' => 'Quét mã vạch',
+                    'description' => '',
+                ],
             ]
         ],
 
