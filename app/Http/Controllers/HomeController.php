@@ -46,6 +46,28 @@ class HomeController extends Controller
     {
         $user_id = Auth::user()->id;
 
+        //============phi mua hang===========
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_BUYING,
+//            'total_amount' => 60000000,
+//            'apply_time' => '2017-04-30 00:12:12'
+//        ]);
+//        $buying_fee = doubleval($service->calculatorFee());
+//        var_dump($buying_fee);
+
+
+//        $factoryMethodInstance = new ServiceFactoryMethod();
+//
+//        $service = $factoryMethodInstance->makeService([
+//            'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+//            'weight' => 70,
+//            'destination_warehouse' => 'S-SG',
+//            'apply_time' => '2017-04-26 10:00:00',
+//        ]);
+//        $money_charge = (float)$service->calculatorFee();
+//        var_dump($money_charge);
+
         /*
 
         $factoryMethodInstance = new ServiceFactoryMethod();
@@ -139,12 +161,35 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
-//        var_dump(Order::getListStatusFromStatusToStatus(null, null));
-//
-//        var_dump(Order::getListStatusFromStatusToStatus(null, Order::STATUS_TRANSPORTING));
+        #region -- Thong ke chung tren bang chung --
+        $statistic = [];
+        $can_view_statistic_money_quick = Permission::isAllow(Permission::PERMISSION_STATISTIC_QUICK);
+        if($can_view_statistic_money_quick){
+            $statistic = $this->__statisticMoneyQuick();
+        }
+        #endregion
 
-        $nick_test_id = User::USER_ID_TEST;
+        $permission = [
+            'can_view_statistic_money_quick' => $can_view_statistic_money_quick,
+            'can_view_statistic_money_detail' => Permission::isAllow(Permission::PERMISSION_STATISTIC_DETAIL),
+        ];
 
+        return view('home', [
+            'page_title' => 'Trang chủ',
+            'current_user' => $current_user,
+            'total_order_deposit_today' => $total_order_deposit_today,
+            'total_customer_register_today' => $total_customer_register_today,
+            'statistic' => $statistic,
+            'permission' => $permission,
+        ]);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Thong ke tai chinh chung tren bang chung
+     * @return array
+     */
+    private function __statisticMoneyQuick(){
         $statistic = [];
 
         $customer_recharge_amount = DB::table('user_transaction')
@@ -152,7 +197,7 @@ class HomeController extends Controller
             ->where([
                 ['state', '=', UserTransaction::STATE_COMPLETED],
                 ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
-                ['user_id', '!=', $nick_test_id]
+                ['user_id', '!=', User::USER_ID_TEST]
             ])
             ->having('amount', '>', 0)
             ->first()->amount;
@@ -162,25 +207,35 @@ class HomeController extends Controller
             'value' => Util::formatNumber($customer_recharge_amount)
         ];
 
-        $amount_vnd = DB::table('order_fee')
+        $orders_cancelled = Order::getOrderIdCancelled();
+
+        $query = DB::table('order_fee')
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'AMOUNT_VND'],
-                ['user_id', '!=', $nick_test_id]
-            ])
-            ->first()->money;
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền hàng (1)',
             'value' => Util::formatNumber($amount_vnd)
         ];
 
-        $deposit_amount_vnd = DB::table('order_fee')
+        $query = DB::table('order_fee')
             ->select(DB::raw('sum(money) as money'))
             ->where([
                 ['name', '=', 'DEPOSIT_AMOUNT_VND'],
-                ['user_id', '!=', $nick_test_id]
-            ])
-            ->first()->money;
+                ['user_id', '!=', User::USER_ID_TEST]
+            ]);
+        if($orders_cancelled){
+            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        $query = $query->first();
+        $deposit_amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền đặt cọc (2)',
             'value' => Util::formatNumber($deposit_amount_vnd)
@@ -191,12 +246,6 @@ class HomeController extends Controller
             'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd))
         ];
 
-        return view('home', [
-            'page_title' => 'Trang chủ',
-            'current_user' => $current_user,
-            'total_order_deposit_today' => $total_order_deposit_today,
-            'total_customer_register_today' => $total_customer_register_today,
-            'statistic' => $statistic,
-        ]);
+        return $statistic;
     }
 }

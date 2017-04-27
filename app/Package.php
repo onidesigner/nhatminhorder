@@ -161,6 +161,20 @@ class Package extends Model
     }
 
     /**
+     * get package follow id
+     * @param $package_id
+     * @return null
+     */
+    public static function retrieveById($package_id){
+        if(empty($package_id)){
+            return null;
+        }
+        return self::where([
+            'id' => $package_id
+        ])->first();
+    }
+
+    /**
      * Generate barcode
      * Get number of day since "epoch" for first 4 number
      * Make a random number for next package, check if already existed then random again
@@ -185,7 +199,7 @@ class Package extends Model
 
             // check if already existed in database
             $package = self::where([ 'logistic_package_barcode' => $code ])->first();
-            if(!$package || !$package instanceof Package){
+            if(!$package || !$package instanceof Package){  
                 $valid = true;
             }
         }

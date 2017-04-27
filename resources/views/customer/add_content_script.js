@@ -1398,10 +1398,12 @@ var myFunction = function() {
     var send_url = this.getAttribute('data-url');
     var method = this.getAttribute('data-method');
 
-    var current_url = window.location.origin;
-    if(window.location.pathname){
-        current_url += window.location.pathname;
-    }
+    // var current_url = window.location.origin;
+    // if(window.location.pathname){
+    //     current_url += window.location.pathname;
+    // }
+
+    var current_url = window.location.href;
 
     chrome.runtime.sendMessage({
         action: "request_server",

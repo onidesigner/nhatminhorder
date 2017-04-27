@@ -10,6 +10,7 @@ namespace App\Library\ServiceFee;
 
 abstract class AbstractService {
     protected $unit_price = 0;
+    protected $weight_fee_first = 0;
     protected $fixed_fee = 0;
     protected $min_fee = 0;
     protected $total_fee = 0;

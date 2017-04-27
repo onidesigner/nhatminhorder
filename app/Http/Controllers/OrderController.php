@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use App\Comment;
+use App\CustomerNotification;
 use App\Exchange;
 use App\Location;
 use App\OrderFee;
@@ -38,14 +39,10 @@ class OrderController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * @author vanhs
-     * @desc Danh sach don hang
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function orders(){
-        $params = Input::all();
+    public function getOrdersData(){
         $per_page = 20;
+
+        $params = Input::all();
 
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
@@ -57,7 +54,7 @@ class OrderController extends Controller
         if(!empty($params['customer_code_email'])){
             $user_ids = User::where(function($query) use ($params){
                 $query->where('code', '=', $params['customer_code_email'])
-                        ->orWhere('email', '=', $params['customer_code_email']);
+                    ->orWhere('email', '=', $params['customer_code_email']);
             })->pluck('id');
             $orders = $orders->whereIn('user_id', $user_ids);
         }
@@ -67,27 +64,35 @@ class OrderController extends Controller
         }
         $total_orders = $orders->count();
         $orders = $orders->paginate($per_page);
-
-        $status_list = [];
-        foreach(Order::$statusTitle as $key => $val){
-            $selected = false;
-            if(!empty($params['status'])){
-                $selected = in_array($key, explode(',', $params['status']));
-            }
-            $status_list[] = [
-                'key' => $key,
-                'val' => $val,
-                'selected' => $selected
-            ];
-        }
+        $orders->withPath('order');
 
         $order_ids = [];
-        if($orders){
+        if($total_orders){
             foreach($orders as $order){
-                if(!$order || !$order instanceof Order){
+                if(!$order instanceof Order){
                     continue;
                 }
+
                 $order_ids[] = $order->id;
+
+                $customer = User::find($order->user_id);
+
+                $fee = $order->fee();
+
+                $order_fee = [];
+                foreach(OrderFee::$fee_field_order_detail as $key => $label){
+                    $value = $key;
+                    if(isset($fee[$key])){
+                        $value = Util::formatNumber($fee[$key]);
+                    }
+                    $order_fee[] = [
+                        'label' => $label,
+                        'value' => $value,
+                    ];
+                }
+
+                $order->customer = $customer;
+                $order->order_fee = $order_fee;
             }
         }
 
@@ -104,42 +109,41 @@ class OrderController extends Controller
             ];
         }
 
-        foreach($orders as $order){
-            if(!$order instanceof Order){
-                continue;
+        $view = View::make('orders_data', [
+            'total_orders' => $total_orders,
+            'orders' => $orders,
+        ]);
+        $html = $view->render();
+
+        return response()->json([
+            'html' => $html,
+            'success' => true,
+            'message' => null
+        ]);
+    }
+
+    /**
+     * @author vanhs
+     * @desc Danh sach don hang
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function orders(Request $request){
+        $status_list = [];
+        foreach(Order::$statusTitle as $key => $val){
+            $selected = false;
+            if(!empty($request->get('status'))){
+                $selected = in_array($key, explode(',', $request->get('status')));
             }
-
-            $packages = $order->package()->where([
-                'is_deleted' => 0,
-            ])->get();
-
-            $customer = User::find($order->user_id);
-
-            $fee = $order->fee();
-
-            $order_fee = [];
-            foreach(OrderFee::$fee_field_order_detail as $key => $label){
-                $value = $key;
-                if(isset($fee[$key])){
-                    $value = Util::formatNumber($fee[$key]);
-                }
-                $order_fee[] = [
-                    'label' => $label,
-                    'value' => $value,
-                ];
-            }
-
-            $order->customer = $customer;
-            $order->order_fee = $order_fee;
+            $status_list[] = [
+                'key' => $key,
+                'val' => $val,
+                'selected' => $selected
+            ];
         }
 
         return view('orders', [
             'page_title' => ' Quản lý đơn hàng',
-            'orders' => $orders,
-            'services' => $services,
-            'total_orders' => $total_orders,
             'status_list' => $status_list,
-            'params' => $params,
         ]);
     }
 
@@ -174,6 +178,9 @@ class OrderController extends Controller
 
     private function __getOrderInitData(Order $order, User $customer, $layout){
 
+        $current_user = User::find(Auth::user()->id);
+        /** @var User $current_user */
+
         $order_item_comments_data = [];
         $order_item_comments = Order::findByOrderItemComments($order->id);
         if($order_item_comments){
@@ -188,9 +195,11 @@ class OrderController extends Controller
             'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_TRANSPORTING),
             'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
             'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
-            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
-            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+
+            'can_change_order_domestic_shipping_fee' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
+
             'can_change_order_deposit_percent' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_view_package_list' => Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW),
             'can_add_freight_bill_to_order' => Permission::isAllow(Permission::PERMISSION_ORDER_ADD_FREIGHT_BILL)
@@ -394,17 +403,29 @@ class OrderController extends Controller
         Comment::createComment($user, $order, sprintf('Thêm mã vận đơn %s', $freight_bill), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
         $order_empty_freight_bill = $order->exist_freight_bill();
+
         if($order_empty_freight_bill
             && $order->status == Order::STATUS_BOUGHT){
             $order->changeStatus(Order::STATUS_SELLER_DELIVERY);
             $status_title_after_change = Order::getStatusTitle(Order::STATUS_SELLER_DELIVERY);
             Comment::createComment($user, $order, sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
             Comment::createComment($user, $order, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+            # tạo notification cho khách
+            $title = sprintf("Thay đổi trạng thái trên đơn %s", $order->code);
+            CustomerNotification::notificationCustomer($order,$title,sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change),'ORDER');
+
         }
 
         return true;
     }
 
+    /**
+     * bổ sung notification khi chọn đơn hàng
+     * @param Request $request
+     * @param Order $order
+     * @param User $user
+     * @return bool
+     */
     private function __choose_service(Request $request, Order $order, User $user){
         $service = $request->get('service');
         if(empty($service)){
@@ -434,6 +455,12 @@ class OrderController extends Controller
                 $order_service->save();
 
                 $message = sprintf("Chọn dịch vụ %s", Service::getServiceName($service));
+
+
+                $title = "Chọn dịch vụ trên đơn ". $order->code;
+                $content = $user->name . " chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;
+                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+                
             }
         }else{
             if($exist_service){
@@ -443,9 +470,13 @@ class OrderController extends Controller
                 ])->delete();
 
                 $message = sprintf("Bỏ chọn dịch vụ %s", Service::getServiceName($service));
+                $title = sprintf("Bỏ chọn dịch vụ trên đơn %s", $order->code);
+                $content = $user->name . " bỏ chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;;
+                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
             }
         }
 
+        
         Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
@@ -565,6 +596,12 @@ class OrderController extends Controller
 
                     Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    $title = "Chọn dịch vụ trên đơn ". $order->code;
+                    $content = $user->name . " chọn dịch vụ " .$service_name;
+                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+
+
                 }
                 break;
             case 'uncheck':
@@ -573,6 +610,10 @@ class OrderController extends Controller
 
                     Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    $title = "Bỏ dịch vụ trên đơn ".$order->code;
+                    $content = $user->name . " bỏ chọn dịch vụ " .$service_name;
+                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
                 }
                 break;
         }
@@ -621,6 +662,11 @@ class OrderController extends Controller
                 Comment::TYPE_CONTEXT_ACTIVITY,
                 $order
             );
+
+            $title = "Sửa số lượng sản phẩm trên đơn ".$order->code;
+            $message = sprintf(" sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity);
+            $content = $user->name. $message;
+            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
 
@@ -639,9 +685,15 @@ class OrderController extends Controller
         $item_id = $request->get('item_id');
         $order_item = OrderItem::find($item_id);
 
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = 'Không được phép sửa giá sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+            }
         }
+
+
 
         if(!$order_item || !$order_item instanceof OrderItem){
             $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
@@ -669,6 +721,10 @@ class OrderController extends Controller
                 Comment::TYPE_CONTEXT_ACTIVITY,
                 $order
             );
+            $title = "Sửa giá sản phẩm trên đơn ".$order->code;
+            $message =   sprintf(" sửa giá sản phẩm từ %s thành %s", $old_order_item_price, $new_order_item_price);
+            $content = $user->name. $message;
+            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
         return true;
@@ -693,7 +749,7 @@ class OrderController extends Controller
 
         $exists_original_bill = Order::find($order->id)->original_bill()->count();
         if(!$exists_original_bill){
-            $this->action_error[] = 'Vui lòng nhập mã hóa đơn gốc!';
+            $this->action_error[] = 'Vui lòng nhập mã hóa đơn gốc !';
         }
 
         if($order->domestic_shipping_fee < 0){
@@ -727,6 +783,12 @@ class OrderController extends Controller
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Chuyển trạng thái đơn hàng sang đã mua.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
+        $title = "Đơn hàng được mua thành công ";
+        $message =   " đơn hàng ".$order->code." đã được mua thành công ";
+        $content = $user->name. $message;
+        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+
+
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
 
         if(abs($user_transaction_amount) <> 0){
@@ -743,6 +805,7 @@ class OrderController extends Controller
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
 
+
             UserTransaction::createTransaction(
                 UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
                 $message,
@@ -751,6 +814,10 @@ class OrderController extends Controller
                 $order,
                 $user_transaction_amount
             );
+
+            $title = "Tài chính đơn hàng";
+            $content = $user->name." ".$message.' trên đơn '.$order->code;
+            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
         return true;
@@ -786,8 +853,14 @@ class OrderController extends Controller
             );
         }
 
+        // đặt vị trí
+
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+        $title = "Trạng thái đơn hàng";
+        $content = $user->name . " hủy đơn hàng";
+        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+
 
         return true;
     }
@@ -960,6 +1033,10 @@ class OrderController extends Controller
 
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            $title = "Thay đối tỷ lệ đặt cọc trên đơn ";
+            $content = $user->name." ".$message." trên đơn ".$order->code;
+            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
         return true;
     }
@@ -974,9 +1051,15 @@ class OrderController extends Controller
      */
     private function __domestic_shipping_china(Request $request, Order $order, User $user)
     {
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = sprintf('Không thể thay đổi phí vận chuyển nội địa TQ khi đơn ở trạng thái %s', Order::getStatusTitle($order->status));
+            }
         }
+
+
 
         if(count($this->action_error)){
             return false;
@@ -991,6 +1074,11 @@ class OrderController extends Controller
 
         Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+        $title = "Phí vận chuyển nội địa";
+        $message = sprintf(' cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee);
+        $content = $user->name . $message;
+        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
 
         return true;
     }

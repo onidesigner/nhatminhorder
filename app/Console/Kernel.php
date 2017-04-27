@@ -24,8 +24,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+         $schedule->command('inspire')
+                  ->hourly();
+
         // $schedule->command('inspire')
         //          ->hourly();
+
+//        $schedule->call(function () {
+//            Log::info("anh yeu em");
+//
+//        })->everyMinute();
+
+
+//        $schedule->call(function(){
+//            DB::table('test')->truncate();
+//        });
     }
 
     /**

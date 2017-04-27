@@ -61,13 +61,14 @@
                                         placeholder="Quét mã kiện">
 
                             </form>
-
-
                         </div>
                         <div class="col-sm-8 col-xs-12">
-                            {{--<h3>Kết quả quét</h3>--}}
-
-
+                            <ul class="list-group scroll" style="margin-top: 57px;">
+                                {{--<li class="list-group-item">--}}
+                                    {{--Mã kiện 8080080 Khách Nhung , số điện thoại 0909090 , địa chỉ :  số 8 ngách 3 ngõ 198 Lê Trọng Tấn – Định Công – Hà Nội--}}
+                                    {{--<span style="color:green"><i class="fa fa-print" aria-hidden="true"></i></span>--}}
+                                {{--</li>--}}
+                            </ul>
                         </div>
                     </div>
 
@@ -77,6 +78,14 @@
     </div>
 
 @endsection
+@section('cs_bottom')
+    <style>
+        .scroll{
+            max-height: 300px;
+            overflow-y:scroll;
+        }
+    </style>
+@endsection
 
 @section('js_bottom')
     @parent
@@ -85,7 +94,8 @@
 
     <script>
         $(document).ready(function(){
-
+            var arr_message = JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : [];
+            LocalStorage.init();
             // init bunch of sounds
             ion.sound({
                 sounds: [
@@ -100,6 +110,7 @@
                 volume: 0.9
             });
 
+
             $(document).on('keypress', '._scan-barcode', function(e){
                 var that = this;
                 if(e.keyCode == 13){
@@ -110,6 +121,23 @@
                         var msg_type = 'success';
                         if(response.success){
                             ion.sound.play("success");
+                            if(response.result.order_id){
+                                var packageBarcode = response.result.barcode;
+                                var url_barcode = "package/"+packageBarcode;
+//                                var message = " Kiện " + "<strong class='_click_barcode'>"+"<a href='"+ url_barcode +"' target='_blank'>" + response.result.barcode + "</a></strong>" + " khách hàng " +
+//                                        response.result.address.reciver_name + " , địa chỉ " + response.result.address.detail + "<br/>" + response.result.message ;
+
+                                var message = " Kiện " + "<strong class='_click_barcode'>"+"<a href='"+ url_barcode +"' target='_blank'>" + response.result.barcode + "</a></strong>" + response.result.message + "<br/>"
+                                        + "Địa chỉ: " + " khách hàng " + response.result.address.reciver_name + ','  + response.result.address.detail;
+
+                                arr_message.push(message);
+                                LocalStorage.set('scan_action.', JSON.stringify(arr_message));
+
+                                $(".list-group").prepend("<li class='list-group-item'>" + message + "</li>");
+
+                            }else{
+                                //$(".list-group").prepend("<li class='list-group-item'>Kiện chưa khớp đơn !</li>");
+                            }
                         }else{
                             msg_type = 'error';
                             ion.sound.play("error");
@@ -122,29 +150,32 @@
                     });
                 }
             });
-
-//            $(document).on('change', 'select[name="warehouse"]', function(){
-//                var warehouse_type = $(this).data('warehouse-type');
-//                Action.chooseWarehouse(warehouse_type);
-//            });
-
         });
 
-        {{--var Action = {--}}
-            {{--chooseWarehouse: function (warehouse_type) {--}}
-                {{--var $dom = $('select[name="action"]');--}}
-                {{--$dom.find('option').remove();--}}
-                {{--if(warehouse_type == "{{ App\WareHouse::TYPE_DISTRIBUTION  }}"){--}}
-                    {{--$dom.append('<option value="IN">Nhập</option>');--}}
-                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
-                {{--}else if(warehouse_type == "{{ App\WareHouse::TYPE_RECEIVE  }}"){--}}
-                    {{--$dom.append('<option value="OUT">Xuất</option>');--}}
-                {{--}--}}
-            {{--}--}}
-        {{--};--}}
+// giá trị localstorage bên trung quốc
 
-        {{--Action.chooseWarehouse("{{ App\WareHouse::TYPE_RECEIVE  }}");--}}
-
+var LocalStorage = {
+            init : function () {
+               var package_item = JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : []
+                for (var i = 0; i < package_item.length; i++) {
+                        $(".list-group").prepend("<li class='list-group-item'>" + package_item[i] + "</li>");
+                     }
+            },
+            prefix: '',
+            setPrefix: function(prefix) {
+                this.prefix = prefix;
+            },
+            get: function (key, defaultVal) {
+                var val = localStorage.getItem(this.prefix + key);
+                if (!val && defaultVal) {
+                    return defaultVal;
+                }
+                return val;
+            },
+            set: function (key, val) {
+                localStorage.setItem(this.prefix + key, val);
+            }
+};
     </script>
 @endsection
 

@@ -65,6 +65,11 @@ class Permission extends Model
     const PERMISSION_MANAGER_ADDON_LINK_ERROR = 'MANAGER_ADDON_LINK_ERROR';
     #endregion
 
+    #region -- Statistic money --
+    const PERMISSION_STATISTIC_QUICK = 'STATISTIC_QUICK';
+    const PERMISSION_STATISTIC_DETAIL = 'STATISTIC_DETAIL';
+    #endregion
+
     public static $permissions = array(
 
         'order_permission' => [
@@ -110,6 +115,10 @@ class Permission extends Model
                 ],
                 self::PERMISSION_PACKAGE_ADD => [
                     'label' => 'Tạo kiện hàng',
+                    'description' => '',
+                ],
+                self::PERMISSION_SCAN_LIST_VIEW => [
+                    'label' => 'Quét mã vạch',
                     'description' => '',
                 ],
             ]
@@ -235,6 +244,21 @@ class Permission extends Model
         ),
 
 
+        'statistic_permission' => array(
+            'label' => 'Thống kê tài chính',
+            'permissions' => array(
+                self::PERMISSION_STATISTIC_QUICK => array(
+                    'label' => 'Thống kê chung',
+                    'description' => 'Cho phép xem thống kê trên bảng chung',
+                ),
+                self::PERMISSION_STATISTIC_DETAIL => array(
+                    'label' => 'Thống kê tài chính theo từng khách hàng',
+                    'description' => 'Cho phép xem thống kê tài chính trên từng khách hàng',
+                ),
+            ),
+        ),
+
+
     );
 
     /**
@@ -245,12 +269,13 @@ class Permission extends Model
      */
     public static function isAllow($permission_code){
         $user_id = Auth::user()->id;
-        $user_email = Auth::user()->email;
         $user_section = Auth::user()->section;
 
-        if(in_array($user_email, User::$god)):
+        $current_user = User::find($user_id);
+
+        if($current_user->isGod()){
             return true;
-        endif;
+        }
 
         if($user_section == User::SECTION_CUSTOMER):
             return false;

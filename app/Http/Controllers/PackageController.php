@@ -13,6 +13,7 @@ use App\Permission;
 use App\Service;
 use App\User;
 use App\Util;
+use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -248,7 +249,20 @@ class PackageController extends Controller
             if($order_freight_bill instanceof OrderFreightBill){
                 $order = Order::find($order_freight_bill->order_id);
             }
-            $this->__create_package_item($order, $barcode);
+            // lấy giá trị id của kiện vừa được tạo
+            $package_id =  $this->__create_package_item($order, $barcode);
+            // nếu tồn tại giá trị của đối tượng
+//            if($package_id){
+//                $package = Package::retrieveById($package_id);
+//            }
+//            if($package instanceof Package){
+//                //  truyen vao doi tuong package cua doi tuong
+//                $warehouse_code = WareHouse::WAREHOUSE_ALIAS_SG;
+//               // $package->inputWarehouseReceive($warehouse->code);
+//            }
+
+            // sau khi tạo được mã kiện thì ngay lập tức nhập kiện vào kho quảng châu
+
         }
         return true;
     }

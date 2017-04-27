@@ -37,17 +37,20 @@
                         </a>
                     </div>
 
+                    @if($permission['can_view_statistic_money_quick'])
                     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <div class="card card-mini">
                             <div class="card-header">
                                 <div class="card-title text-uppercase">Thống kê</div>
 
                                 <ul class="card-action">
+                                    @if($permission['can_view_statistic_money_detail'])
                                     <li>
                                         <a href="{{ url('statistic/users')  }}" style="color: #5e6263;">
-                                            Xem chi tiết >>
+                                            <small>Xem chi tiết >></small>
                                         </a>
                                     </li>
+                                    @endif
                                 </ul>
 
                             </div>
@@ -68,6 +71,8 @@
                             </div>
                         </div>
                     </div>
+                    @endif
+
                 </div>
                 <br>
 
