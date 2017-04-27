@@ -145,7 +145,7 @@ Route::post('/don-hang/{id}/hanh-dong', 'Customer\OrderController@action');
 #endregion
 
 #region -- thong bao --
-#Route::get('/thong-bao', 'Customer\NotificationController@indexs');
+Route::get('/thong-bao', 'Customer\NotificationController@indexs');
 #endregion
 
 #region -- bai viet --
@@ -197,3 +197,11 @@ Route::get('/complaint-detail/{complaint_id}','ComplaintServiceController@compla
 #region --thông báo dành cho quản trị viên--
 Route::get('/notification','NotificationController@index');
 #endregion --kết thúc thông báo cho quản trị viên--
+
+
+
+#region --send sms--
+Route::get('/send-sms','SendSmsController@index');
+Route::post('/send-sms-2','SendSmsController@ondex');
+Route::post('/gui-tin-nhan','SendSmsController@sendSms');
+#endregion

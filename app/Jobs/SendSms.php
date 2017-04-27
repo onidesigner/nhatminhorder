@@ -13,7 +13,7 @@ class SendSms implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $data = null;
+    protected $data;
 
     /**
      * Create a new job instance.
@@ -32,6 +32,7 @@ class SendSms implements ShouldQueue
      */
     public function handle()
     {
+
         Log::info('gui sms ', $this->data);
 
     }

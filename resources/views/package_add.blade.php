@@ -22,7 +22,14 @@
 
                     <div class="row">
                         <div class="col-xs-12">
-                            <h3>Tạo kiện</h3>
+                           <div class="col-xs-6"><h3>Tạo kiện</h3></div>
+                           {{--<div class="col-xs-6 ">--}}
+                               {{--<select class="selectpicker" style="margin-top: 23px;">--}}
+                                   {{--<option>Mustard</option>--}}
+                                   {{--<option>Ketchup</option>--}}
+                                   {{--<option>Relish</option>--}}
+                               {{--</select>--}}
+                           {{--</div>--}}
 
                             <form class="___form" onsubmit="return false;">
 
