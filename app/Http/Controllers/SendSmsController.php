@@ -105,6 +105,7 @@ class SendSmsController extends Controller
      * ham gui tin nhan
      */
     public function sendSms(){
+
         $numbers = Input::get('list_phone');
 
         if(count($numbers) <= 0){
@@ -128,14 +129,28 @@ class SendSmsController extends Controller
                 $result = $sms_send->sendSms([$number],$content);
 
                 if($result['status'] == 'success'){
+
+                    $send_sms =  SendSms::where('phone', $number)->first();
+                    $number_send = $send_sms->number_send;
+                    $send = $number_send + 1;
+
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'SEND_SUCCESS']);
+                        ->update(['status' => 'SEND_SUCCESS','number_send' => $send]);
+
                 }elseif ($result['status'] == null){
+
+                    $send_sms =  SendSms::where('phone', $number)->first();
+                    $number_send = $send_sms->number_send;
+                    $send = $number_send + 1;
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'SEND_NOT_SUCCESS']);
+                        ->update(['status' => 'SEND_NOT_SUCCESS','number_send' => $send]);
+
                 }elseif ($result['status'] == 'error'){
+                    $send_sms =  SendSms::where('phone', $number)->first();
+                    $number_send = $send_sms->number_send;
+                    $send = $number_send + 1;
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'ERROR']);
+                        ->update(['status' => 'ERROR','number_send' => $send]);
                 }
                 Log::info('sms-send', [$result]);
             }
