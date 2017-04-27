@@ -20,6 +20,7 @@ use App\Util;
 use App\WareHouse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -148,7 +149,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package && $package instanceof Package){
-                $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
+               # $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -181,7 +182,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
-                $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
+               # $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -189,10 +190,14 @@ class ScanController extends Controller
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     $user_address = UserAddress::find($order->user_address_id);
                     if($user_address instanceof UserAddress){
-                        $job = (new SendSms([
+
+                        
+                        $content = "Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code;
+                        $array_data = [
                             'phone' => $user_address->reciver_phone,
-                            'content' => sprintf('Don hang %s da ve kho phan phoi tai VN', $order->code)
-                        ]));
+                            'content' => $content
+                        ];
+                        $job = (new \App\Jobs\SendReminderEmail($array_data));
                         dispatch($job);
                     }
 
