@@ -96,18 +96,18 @@ class SendSmsController extends Controller
         
 
         $sms_customer = SendSms::select('*')->orderBy('id', 'ASC');
-        if($status){
-            $sms_customer = SendSms::where('status','=',$status);
-            #$complaint_service = $complaint_service->where('status',$statusOrder);
-        }
-        if($number){
-            $sms_customer = SendSms::where('number_send','=',$number);
-        }
-
-        if($level || $level == 0){
-            $sms_customer = SendSms::where('level','=',$level);
-            
-        }
+//        if($status){
+//            $sms_customer = SendSms::where('status','=',$status);
+//            #$complaint_service = $complaint_service->where('status',$statusOrder);
+//        }
+//        if($number){
+//            $sms_customer = SendSms::where('number_send','=',$number);
+//        }
+//
+//        if($level || $level == 0){
+//            $sms_customer = SendSms::where('level','=',$level);
+//
+//        }
 
 
         $sms_customer = $sms_customer->paginate($per_page);
