@@ -74,13 +74,13 @@
                                     <tr>
                                         <td>Kho hiện tại: </td>
                                         <td>
-                                            {{$package->current_warehouse}} - {{$package->warehouse_status}}
+                                            {{$package->current_warehouse}}
 
                                             @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_IN)
                                                 (Nhập kho: {{  App\Util::formatDate($package->warehouse_status_in_at) }})
                                             @endif
 
-                                            @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_IN)
+                                            @if($package->warehouse_status == App\Package::WAREHOUSE_STATUS_OUT)
                                                 (Xuất kho: {{  App\Util::formatDate($package->warehouse_status_out_at) }})
                                             @endif
                                         </td>
