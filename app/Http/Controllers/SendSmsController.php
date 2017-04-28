@@ -36,7 +36,7 @@ class SendSmsController extends Controller
 
                     //parse data from csv file line by line
                     while(($line = fgetcsv($csvFile)) !== FALSE){
-                        $smsQuery = SendSms::where('email','=',$line['1']);
+                        $smsQuery = SendSms::where('email',$line['1']);
                         if($smsQuery instanceof SendSms){
                             //update member data
                             SendSms::where([
@@ -88,9 +88,29 @@ class SendSmsController extends Controller
         if(!$page || $page == 1){
             $page = 0;
         }else{
-            $page = $page - 1;  
+            $page = $page - 1;
         }
-        $sms_customer = SendSms::select('*')->orderBy('id', 'ASC')->paginate($per_page);
+        $status = Input::get('status','');
+        $number = Input::get('number','');
+        $level = Input::get('level','');
+        
+
+        $sms_customer = SendSms::select('*')->orderBy('id', 'ASC');
+        if($status){
+            $sms_customer = SendSms::where('status','=',$status);
+            #$complaint_service = $complaint_service->where('status',$statusOrder);
+        }
+        if($number){
+            $sms_customer = SendSms::where('number_send','=',$number);
+        }
+
+        if($level || $level == 0){
+            $sms_customer = SendSms::where('level','=',$level);
+            
+        }
+
+
+        $sms_customer = $sms_customer->paginate($per_page);
 
 
         return view('send_sms',[

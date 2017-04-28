@@ -44,25 +44,67 @@ if (!empty($_GET['status'])) {
                 </form>
 
                 <form action="{{ url('send-sms') }}" method="get">
-                    <select class="selectpicker">
-                        <option>Level</option>
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="4">4</option>
+                    <select class="selectpicker" name="level">
+                        <option value=""
+                                @if(@request()->get('level') == '')
+                                selected
+                                @endif
+                        >Level</option>
+                        <option value="0"
+                        @if(@request()->get('level') == 0)
+                            selected
+                            @endif
+                        >0</option>
+                        <option value="1"
+                                @if(@request()->get('level') == 1)
+                                selected
+                                @endif
+                        >1</option>
+                        <option value="2"
+                                @if(@request()->get('level') == 2)
+                                selected
+                                @endif
+                        >2</option>
+                        <option value="4"
+                                @if(@request()->get('level') == 4)
+                                selected
+                                @endif
+                        >4</option>
                     </select>
 
-                    <select class="selectpicker">
+                    <select class="selectpicker" name="status">
                         <option value="">Trang thái gửi tin nhắn</option>
-                        <option value="SEND_SUCCESS">Thành Công</option>
-                        <option value="SEND_NOT_SUCCESS" >Thất bại</option>
+                        <option value="SEND_SUCCESS"
+                                @if(@request()->get('status') == "SEND_SUCCESS")
+                                selected
+                                @endif
+                        >Thành Công</option>
+                        <option value="SEND_NOT_SUCCESS"
+                                @if(@request()->get('status') == "SEND_NOT_SUCCESS")
+                                selected
+                                @endif
+                        >Thất bại</option>
                     </select>
-                    <select class="selectpicker">
+                    <select class="selectpicker" name="number">
                         <option value="">Số lần gửi tin</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
+                        <option value="1"
+                                @if(@request()->get('number') == 1)
+                                selected
+                                @endif
+                        >1</option>
+                        <option value="2"
+                                @if(@request()->get('number') == 2)
+                                selected
+                                @endif
+                        >2</option>
+                        <option value="3"
+                                @if(@request()->get('number') == 3)
+                                selected
+                                @endif
+                        >3</option>
                     </select>
+
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                 </form>
                 <br/>
                 <form action="#">
