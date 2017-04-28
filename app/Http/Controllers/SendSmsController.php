@@ -142,7 +142,7 @@ class SendSmsController extends Controller
 
             }
             $list_numbers = ["0966986304","0904811987","01649647164"];
-            $content= 'nhatminh247.vn: giá vận chuyển chỉ 15k/cân. Hàng về 2-3 ngày(HN). HotLine:04.2262.6699';
+            $content= 'nhatminh247.vn: giá vận chuyển chỉ từ 15k/cân. Hàng về 2-3 ngày(HN), 4-5 ngày SG. HotLine:04.2262.6699';
 
             foreach ($list_numbers as $number){
                 $sms_send = new SendSmsToCustomer();
