@@ -133,7 +133,9 @@
 
                         </div>
 
-                    {{ $transactions->links() }}
+                    {{--{{ $transactions->links() }}--}}
+
+                    {{ $transactions->appends(request()->input())->links() }}
                 </div>
             </div>
         </div>
