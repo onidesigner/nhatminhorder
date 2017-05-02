@@ -16,7 +16,7 @@
             </p>
 
             <br>
-            <div class="post-content">
+            <div class="post-content" style="background: #fff;margin: 0 20px;">
                 {!! $post->post_content !!}
             </div>
 

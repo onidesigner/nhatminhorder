@@ -36,6 +36,7 @@
         body {
             padding-top: 100px;
             font-family: 'Roboto', sans-serif!important;
+            background: #fafafa;
         }
 
         @media (min-width: 992px) {
