@@ -19,6 +19,8 @@
 
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/inhnmjhbedekbkffcjopnjakeiiclcej">
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
     <script>
         function ExtInstall() {
             if (chrome.app.isInstalled){
@@ -33,6 +35,7 @@
     <style>
         body {
             padding-top: 100px;
+            font-family: 'Roboto', sans-serif!important;
         }
 
         @media (min-width: 992px) {
