@@ -41,6 +41,10 @@
             }
         }
 
+        .post-content img{
+            max-width: 100%;
+        }
+
         .pagination {
             margin-bottom: 15px;
         }

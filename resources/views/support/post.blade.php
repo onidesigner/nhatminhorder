@@ -16,7 +16,10 @@
             </p>
 
             <br>
-            {!! $post->post_content !!}
+            <div class="post-content">
+                {!! $post->post_content !!}
+            </div>
+
         </div>
     </div>
     <!-- /.row -->
