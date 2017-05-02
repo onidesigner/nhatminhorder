@@ -129,11 +129,23 @@
 
 <div class="nhatminh-menubar">
 
+    <span style="
+    color: #fff;
+    margin-right: 15px;
+    position: absolute;
+    top: 0;
+    left: 10px;
+    font-size: 20px;
+    /* font-weight: bold; */
+    " class="pull-left">
+        NHẬTMINH247
+    </span>
+
     <span style="color: #fff;
     margin-right: 15px;
     position: absolute;
     top: 0;
-    left: 10px;" class="pull-left">
+    right: 10px;" class="">
         HOTLINE: 04.2262.6699 – 04.2265.6699
     </span>
 
