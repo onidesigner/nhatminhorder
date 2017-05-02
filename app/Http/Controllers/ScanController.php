@@ -133,7 +133,7 @@ class ScanController extends Controller
      * @param Request $request
      * @param WareHouse $warehouse
      * @param User $currentUser
-     * @return bool
+     * @return bool|array
      */
     private function __in(Request $request, WareHouse $warehouse, User $currentUser){
         $barcode = $request->get('barcode');
@@ -149,7 +149,7 @@ class ScanController extends Controller
             ])->first();
 
             if($package && $package instanceof Package){
-                $package->inputWarehouseReceive($warehouse->code); // tam bo se mo
+                $package->inputWarehouseReceive($warehouse->code);
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
@@ -182,11 +182,11 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
-                $package->inputWarehouseDistribution($warehouse->code); // tam bo , se mo
+                $package->inputWarehouseDistribution($warehouse->code);
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
-                    $order->changeOrderWaitingDelivery(); // tam b se mo
+                    $order->changeOrderWaitingDelivery();
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     $user_address = UserAddress::find($order->user_address_id);
                     if($user_address instanceof UserAddress){
@@ -197,8 +197,8 @@ class ScanController extends Controller
                             'phone' => $user_address->reciver_phone,
                             'content' => $content
                         ];
-                        $job = (new \App\Jobs\SendReminderEmail($array_data));
-                        dispatch($job);
+//                        $job = (new \App\Jobs\SendReminderEmail($array_data));
+//                        dispatch($job);
                     }
 
                     $order_address = $order->getCustomerReceiveAddress();
