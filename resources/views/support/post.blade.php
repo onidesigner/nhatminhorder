@@ -1,30 +1,33 @@
 @extends('layouts/support')
 
 @section('content')
-    <!-- Page Heading -->
-    <h1 class="my-4">{{ $post->post_title  }}</h1>
+    <div style="background: #fff;margin: 0 20px; width: 100%; display: inline-block; padding: 5px 20px;">
+        <!-- Page Heading -->
+        <h1 class="my-4">{{ $post->post_title  }}</h1>
 
-    @if($can_edit_post)
-        <a href="{{ url('post', $post->id)  }}">Sửa bài viết</a>
+        @if($can_edit_post)
+            <a href="{{ url('post', $post->id)  }}">Sửa bài viết</a>
     @endif
 
     <!-- Project Four -->
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                {{ $post->post_excerpt  }}
-            </p>
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    {{ $post->post_excerpt  }}
+                </p>
 
-            <br>
-            <div class="post-content" style="background: #fff;margin: 0 20px;">
-                {!! $post->post_content !!}
+                <br>
+                <div class="post-content">
+                    {!! $post->post_content !!}
+                </div>
+
             </div>
-
         </div>
-    </div>
-    <!-- /.row -->
+        <!-- /.row -->
 
-    <hr>
+        <hr>
+    </div>
+
 @endsection
 
 @section('sidebar')
