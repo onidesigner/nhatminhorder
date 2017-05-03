@@ -21,6 +21,29 @@ class HoSiVanController extends Controller
 
     }
 
+    private function __don_truy_thu_dat_coc(Request $request){
+        //select * from `user_transaction` where transaction_type = 'DEPOSIT_ADJUSTMENT' and object_type = 'ORDER';
+        $user_transaction = UserTransaction::where([
+            'transaction_type' => UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+            'object_type' => UserTransaction::OBJECT_TYPE_ORDER
+        ])->get();
+
+        if($user_transaction){
+            foreach($user_transaction as $item){
+                if(!$item instanceof UserTransaction){
+                    continue;
+                }
+
+                $order = Order::find($item->object_id);
+                if(!$order instanceof Order){
+                    continue;
+                }
+
+                echo sprintf("<p><a href='%s'>Don hang %s</a></p>", url('order/detail', $order->id), $order->code);
+            }
+        }
+    }
+
     private function __xoa_du_lieu_khach_hang(Request $request){
         $user_id = $request->get('user_id');
         $user_email = $request->get('user_email');
