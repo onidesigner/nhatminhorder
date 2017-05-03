@@ -97,6 +97,23 @@
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Mã</strong>: {{$user->code}}</td>
                                             </tr>
+
+                                            <td class="no-padding-leftright">
+                                                <strong>Cú pháp nạp tiền</strong>: NM {{$user->code}}
+
+                                                <?php
+                                                $user_mobile_default = $user->getMobile();
+
+                                                ?>
+
+                                                @if($user_mobile_default)
+                                                    {{ $user_mobile_default  }}
+                                                @else
+                                                    &lt;Số Điện Thoại&gt;
+                                                @endif
+
+                                            </td>
+
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Số dư</strong>: <span class="text-danger">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></span></td>
                                             </tr>

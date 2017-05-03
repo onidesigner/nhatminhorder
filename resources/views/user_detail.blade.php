@@ -55,7 +55,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="no-padding-leftright">
-                                                    <strong>Nạp tiền</strong>: NM {{$user->code}}
+                                                    <strong>Cú pháp nạp tiền</strong>: NM {{$user->code}}
 
                                                     <?php
                                                     $user_mobile_default = $user->getMobile();
