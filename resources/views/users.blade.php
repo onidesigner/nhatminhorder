@@ -104,6 +104,11 @@
                                                     <a href="{{ url('gio-hang?hosivan_user_id=' . $user->id)  }}">Xem giỏ hàng</a>
                                                 </small>
                                                 @endif
+
+                                                <br>
+                                                <small>
+                                                    <a href="{{ url('order?customer_code_email=' . $user->code)  }}">Xem đơn hàng</a>
+                                                </small>
                                             </td>
                                             <td>{{ App\User::getStatusName($user->status)  }}</td>
                                             <td>
