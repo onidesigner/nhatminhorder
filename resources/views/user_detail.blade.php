@@ -53,6 +53,27 @@
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Mã</strong>: {{$user->code}}</td>
                                             </tr>
+                                            <tr>
+                                                <td class="no-padding-leftright">
+                                                    <strong>Nạp tiền</strong>: NM {{$user->code}}
+
+                                                    <?php
+                                                    $user_mobile_default = $user->getMobile();
+
+                                                    ?>
+
+                                                    @if($user_mobile_default)
+                                                        {{ $user_mobile_default  }}
+                                                    @else
+                                                        &lt;Số Điện Thoại&gt;
+                                                    @endif
+
+                                                </td>
+
+
+
+                                                </td>
+                                            </tr>
                                             @if($user->section == App\User::SECTION_CUSTOMER)
                                                 <tr>
                                                     <td class="no-padding-leftright"><strong>Số dư</strong>: <span class="text-danger">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></span></td>
