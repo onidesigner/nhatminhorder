@@ -154,7 +154,6 @@ class SendSmsController extends Controller
 
                 $sms_send = new SendSmsToCustomer();
                 $result = $sms_send->sendSms([$number],$content);
-
                 if($result['status'] == 'success'){
 
                     $send_sms =  SendSms::where('phone', $number)->first();
