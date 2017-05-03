@@ -168,6 +168,7 @@ return [
          * Using form
          */
         Collective\Html\HtmlServiceProvider::class,
+        'Maatwebsite\Excel\ExcelServiceProvider',
 
         /**
          * Transform PHP Vars to JavaScript
@@ -239,6 +240,8 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+
+        'Excel' => 'Maatwebsite\Excel\Facades\Excel',
 
         'Javascript' => Laracasts\Utilities\JavaScript\JavaScriptFacade::class
 

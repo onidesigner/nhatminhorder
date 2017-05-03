@@ -44,33 +44,33 @@ if (!empty($_GET['status'])) {
                 </form>
 
                 <form action="{{ url('send-sms') }}" method="get">
-                    <select class="selectpicker" name="level">
-                        <option value=""
-                                @if(@request()->get('level') == '')
-                                selected
-                                @endif
-                        >Level</option>
-                        <option value="0"
-                        @if(@request()->get('level') == 0)
-                            selected
-                            @endif
-                        >0</option>
-                        <option value="1"
-                                @if(@request()->get('level') == 1)
-                                selected
-                                @endif
-                        >1</option>
-                        <option value="2"
-                                @if(@request()->get('level') == 2)
-                                selected
-                                @endif
-                        >2</option>
-                        <option value="4"
-                                @if(@request()->get('level') == 4)
-                                selected
-                                @endif
-                        >4</option>
-                    </select>
+                    {{--<select class="selectpicker" name="level">--}}
+                        {{--<option value=""--}}
+                                {{--@if(@request()->get('level') == '')--}}
+                                {{--selected--}}
+                                {{--@endif--}}
+                        {{-->Level</option>--}}
+                        {{--<option value="0"--}}
+                        {{--@if(@request()->get('level') == 0)--}}
+                            {{--selected--}}
+                            {{--@endif--}}
+                        {{-->0</option>--}}
+                        {{--<option value="1"--}}
+                                {{--@if(@request()->get('level') == 1)--}}
+                                {{--selected--}}
+                                {{--@endif--}}
+                        {{-->1</option>--}}
+                        {{--<option value="2"--}}
+                                {{--@if(@request()->get('level') == 2)--}}
+                                {{--selected--}}
+                                {{--@endif--}}
+                        {{-->2</option>--}}
+                        {{--<option value="4"--}}
+                                {{--@if(@request()->get('level') == 4)--}}
+                                {{--selected--}}
+                                {{--@endif--}}
+                        {{-->4</option>--}}
+                    {{--</select>--}}
 
                     <select class="selectpicker" name="status">
                         <option value="">Trang thái gửi tin nhắn</option>
@@ -105,7 +105,10 @@ if (!empty($_GET['status'])) {
                     </select>
 
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+
+
                 </form>
+                {{--<a href="{{ URL::to('downloadExcel') }}"><button class="btn btn-success">Download CSV</button></a>--}}
                 <br/>
                 <form action="#">
 
@@ -117,7 +120,7 @@ if (!empty($_GET['status'])) {
                         <th>Tên khách</th>
                         <th>Email</th>
                         <th>Điện thoại</th>
-                        <th>Cấp độ(level)</th>
+                       {{-- <th>Cấp độ(level)</th>--}}
                         <th>Trạng thái SMS</th>
                     </tr>
                     </thead>
@@ -131,13 +134,13 @@ if (!empty($_GET['status'])) {
                             <td>{{ $item_sms->name }}</td>
                             <td>{{ $item_sms->email }}</td>
                             <td>{{ $item_sms->phone }}</td>
-                            <td>{{ $item_sms->level }}</td>
+                            {{--<td>{{ $item_sms->level }}</td>--}}
                             <td>{{ \App\Library\Sms\SendSmsToCustomer::getStatus($item_sms->status) }}</td>
                         </tr>
                     @endforeach
                     @else
                         <tr>
-                            <td colspan="5">Chưa có dữ liệu !</td>
+                            <td colspan="6">Chưa có dữ liệu !</td>
                         </tr>
                     @endif
                     </tbody>

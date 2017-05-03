@@ -13,7 +13,7 @@ use App\Library\Sms\SendSmsToCustomer;
 use App\SendSms;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class SendSmsController extends Controller
@@ -92,22 +92,19 @@ class SendSmsController extends Controller
         }
         $status = Input::get('status','');
         $number = Input::get('number','');
-        $level = Input::get('level','');
+
         
 
         $sms_customer = SendSms::select('*')->orderBy('id', 'ASC');
-//        if($status){
-//            $sms_customer = SendSms::where('status','=',$status);
-//            #$complaint_service = $complaint_service->where('status',$statusOrder);
-//        }
-//        if($number){
-//            $sms_customer = SendSms::where('number_send','=',$number);
-//        }
-//
-//        if($level || $level == 0){
-//            $sms_customer = SendSms::where('level','=',$level);
-//
-//        }
+        $sms_customer = SendSms::where('level' , '=' , 8);
+        if($status){
+            $sms_customer = SendSms::where('status','=',$status);
+        }
+        if($number){
+            $sms_customer = SendSms::where('number_send','=',$number);
+        }
+
+
 
 
         $sms_customer = $sms_customer->paginate($per_page);
@@ -136,41 +133,48 @@ class SendSmsController extends Controller
 
             return  response()->json($response);
         }else{
-            $list_number = [];
+            $list_number = ["966986304","1649647164"];
             foreach($numbers as $number ){
                 $list_number[] = $number;
 
             }
-            $list_numbers = ["0966986304","0904811987","01649647164"];
-            $content= 'nhatminh247.vn: giá vận chuyển chỉ từ 15k/cân. Hàng về 2-3 ngày(HN), 4-5 ngày SG. HotLine:04.2262.6699';
+            $arr = [" 04.2262.6699","04.2265.6699"];
 
-            foreach ($list_numbers as $number){
+
+            $rand_key = array_rand($arr,1);
+
+            $content= 'Nhatminh247.vn: 
+            Dịch vụ đặt hàng TQ,vận chuyển chỉ từ 13k/kg.
+             Hàng về 2-3 ngày(HN), 4-5 ngày SG. HotLine:'.$arr[$rand_key];
+
+
+
+            foreach ($list_number as $number){
+
+
                 $sms_send = new SendSmsToCustomer();
                 $result = $sms_send->sendSms([$number],$content);
 
                 if($result['status'] == 'success'){
 
                     $send_sms =  SendSms::where('phone', $number)->first();
-                    $number_send = $send_sms->number_send;
-                    $send = $number_send + 1;
+
 
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'SEND_SUCCESS','number_send' => $send]);
+                        ->update(['status' => 'SEND_SUCCESS']);
 
                 }elseif ($result['status'] == null){
 
                     $send_sms =  SendSms::where('phone', $number)->first();
-                    $number_send = $send_sms->number_send;
-                    $send = $number_send + 1;
+
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'SEND_NOT_SUCCESS','number_send' => $send]);
+                        ->update(['status' => 'SEND_NOT_SUCCESS']);
 
                 }elseif ($result['status'] == 'error'){
                     $send_sms =  SendSms::where('phone', $number)->first();
-                    $number_send = $send_sms->number_send;
-                    $send = $number_send + 1;
+
                     SendSms::where('phone', $number)
-                        ->update(['status' => 'ERROR','number_send' => $send]);
+                        ->update(['status' => 'ERROR']);
                 }
                 Log::info('sms-send', [$result]);
             }
@@ -181,5 +185,44 @@ class SendSmsController extends Controller
             );
             return response()->json($response);
         }
+    }
+
+    public function downloadExcel()
+    {
+
+
+        $per_page = 50;
+       // $page = Input::get('page');
+//        if(!$page || $page == 1){
+//            $page = 0;
+//        }else{
+//            $page = $page - 1;
+//        }
+        $status = Input::get('status','');
+        $number = Input::get('number','');
+
+
+
+        $sms_customer = SendSms::select('*')->orderBy('id', 'ASC');
+        if($status){
+            $sms_customer = SendSms::where('status','=',$status);
+        }
+        if($number){
+            $sms_customer = SendSms::where('number_send','=',$number);
+        }
+
+
+
+
+        $sms_customer = $sms_customer->paginate($per_page);
+        $data = $sms_customer->toArray();
+
+
+        return Excel::create('danh_sach_khach_hang', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
     }
 }

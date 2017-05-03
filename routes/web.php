@@ -205,3 +205,8 @@ Route::get('/send-sms','SendSmsController@index');
 Route::post('/send-sms-2','SendSmsController@ondex');
 Route::post('/gui-tin-nhan','SendSmsController@sendSms');
 #endregion
+
+
+#download excel
+
+Route::get('/downloadExcel', 'SendSmsController@downloadExcel');
