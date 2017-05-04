@@ -42,7 +42,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $user_id = Auth::user()->id;
 
@@ -151,6 +151,8 @@ class HomeController extends Controller
 //        $job = new SendSms([]);
 //        dispatch($job);
 
+
+
         $current_user = User::find($user_id);
 
         $total_order_deposit_today = 0;
@@ -192,12 +194,17 @@ class HomeController extends Controller
     private function __statisticMoneyQuick(){
         $statistic = [];
 
+        $start_today = sprintf("%s 00:00:00", date('Y-m-d'));
+        $end_today = sprintf("%s 23:59:59", date('Y-m-d'));
+
         $customer_recharge_amount = DB::table('user_transaction')
             ->select(DB::raw('sum(amount) as amount'))
             ->where([
                 ['state', '=', UserTransaction::STATE_COMPLETED],
                 ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
-                ['user_id', '!=', User::USER_ID_TEST]
+                ['user_id', '!=', User::USER_ID_TEST],
+                ['created_at', '>=', $start_today],
+                ['created_at', '<=', $end_today]
             ])
             ->having('amount', '>', 0)
             ->first()->amount;
@@ -208,6 +215,17 @@ class HomeController extends Controller
         ];
 
         $orders_cancelled = Order::getOrderIdCancelled();
+        $orders_deposited_today = null;
+        $query = DB::table('order')
+            ->select(DB::raw('GROUP_CONCAT(id) as id'))
+            ->where([
+                ['deposited_at', '>=', $start_today],
+                ['deposited_at', '<=', $end_today]
+            ])
+            ->first();
+        if($query){
+            $orders_deposited_today = $query->id;
+        }
 
         $query = DB::table('order_fee')
             ->select(DB::raw('sum(money) as money'))
@@ -217,6 +235,9 @@ class HomeController extends Controller
             ]);
         if($orders_cancelled){
             $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        if($orders_deposited_today){
+            $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
         }
         $query = $query->first();
         $amount_vnd = $query->money;
@@ -233,6 +254,9 @@ class HomeController extends Controller
             ]);
         if($orders_cancelled){
             $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
+        }
+        if($orders_deposited_today){
+            $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
         }
         $query = $query->first();
         $deposit_amount_vnd = $query->money;
