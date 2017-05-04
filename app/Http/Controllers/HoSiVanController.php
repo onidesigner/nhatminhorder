@@ -21,7 +21,81 @@ class HoSiVanController extends Controller
 
     }
 
+    private function __don_truy_thu_dat_coc(Request $request){
+        //select * from `user_transaction` where transaction_type = 'DEPOSIT_ADJUSTMENT' and object_type = 'ORDER';
+        $user_transaction = UserTransaction::where([
+            'transaction_type' => UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
+            'object_type' => UserTransaction::OBJECT_TYPE_ORDER
+        ])->get();
+
+        if($user_transaction){
+            foreach($user_transaction as $item){
+                if(!$item instanceof UserTransaction){
+                    continue;
+                }
+
+                $order = Order::find($item->object_id);
+                if(!$order instanceof Order){
+                    continue;
+                }
+
+                echo sprintf("<p><a href='%s'>Don hang %s</a></p>", url('order/detail', $order->id), $order->code);
+            }
+        }
+    }
+
+    private function __xoa_du_lieu_khach_hang(Request $request){
+        $user_id = $request->get('user_id');
+        $user_email = $request->get('user_email');
+
+        $user = null;
+
+        if($user_id){
+            $user = User::where([
+                'id' => $user_id
+            ])->first();
+        } else if($user_email){
+            $user = User::where([
+                'email' => $user_email
+            ])->first();
+        }
+
+        if(!$user instanceof User){
+            echo '<p>khong ton tai user</p>';
+            exit;
+        }
+
+        #region -- Xoa lich su giao dich --
+        UserTransaction::where([
+            'user_id' => $user->id
+        ])->delete();
+        User::where([
+            'id' => $user->id
+        ])->update([
+            'account_balance' => 0
+        ]);
+        #endregion
+
+        #region -- Xoa kien hang --
+        DB::statement(sprintf('delete from package_service where package_id in (select id from packages where buyer_id = %s)', $user->id));
+        DB::statement(sprintf('delete from packages where buyer_id = %s', $user->id));
+        #endregion
+
+        #region -- Xoa don hang --
+        DB::statement(sprintf("delete from order_service where order_id in (select id from `order` where user_id = %s)", $user->id));
+        DB::statement(sprintf("delete from order_original_bill where order_id in (select id from `order` where user_id = %s)", $user->id));
+        DB::statement(sprintf("delete from order_item where order_id in (select id from `order` where user_id = %s)", $user->id));
+        DB::statement(sprintf("delete from order_freight_bill where order_id in (select id from `order` where user_id = %s)", $user->id));
+        DB::statement(sprintf("delete from order_fee where order_id in (select id from `order` where user_id = %s)", $user->id));
+        DB::statement(sprintf("delete from `order` where user_id = %s", $user->id));
+        #endregion
+
+        echo sprintf('<p>Xoa du lieu thanh cong user: %s</p>', $user->email);
+    }
+
     private function __linh_tinh(Request $request){
+
+
 
 
 //        $order_fee = OrderFee::all();
