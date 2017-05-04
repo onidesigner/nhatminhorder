@@ -287,7 +287,7 @@ class PackageController extends Controller
                 'freight_bill' => $barcode,
                 'status' => Package::STATUS_INIT,
                 'is_deleted' => 0,
-            ])->orwhere('status','=',Package::STATUS_DELIVERING)
+            ])->orwhere('status','=',Package::STATUS_RECEIVED_FROM_SELLER)
             ->orderBy('id', 'desc')
                 ->get();
 
