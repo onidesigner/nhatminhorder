@@ -197,6 +197,9 @@ class HomeController extends Controller
         $start_today = sprintf("%s 00:00:00", date('Y-m-d'));
         $end_today = sprintf("%s 23:59:59", date('Y-m-d'));
 
+//        var_dump($start_today);
+//        var_dump($end_today);
+
         $query = DB::table('user_transaction')
             ->select(DB::raw('sum(amount) as amount'))
             ->where([
@@ -229,7 +232,7 @@ class HomeController extends Controller
                 ['deposited_at', '<=', $end_today]
             ])
             ->first();
-        if($query){
+        if($query && $query->id){
             $orders_deposited_today = $query->id;
         }
 
@@ -242,8 +245,11 @@ class HomeController extends Controller
         if($orders_cancelled){
             $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
         }
+
         if($orders_deposited_today){
             $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
+        }else{
+            $query = $query->whereIn('order_id', [0]);
         }
         $query = $query->first();
         $amount_vnd = $query->money;
@@ -263,6 +269,8 @@ class HomeController extends Controller
         }
         if($orders_deposited_today){
             $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
+        }else{
+            $query = $query->whereIn('order_id', [0]);
         }
         $query = $query->first();
         $deposit_amount_vnd = $query->money;
