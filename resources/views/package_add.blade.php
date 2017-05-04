@@ -27,8 +27,23 @@
                             <form class="___form" onsubmit="return false;">
                                 <div class="col-xs-6 ">
                                    <select class="selectpicker" style="margin-top: 23px;" id="_warehouse">
-                                       <option value="CNGZ">Quảng Châu</option>
-                                       <option value="CNPX">Bằng Tường</option>
+                                       <option value="CNGZ"
+
+                                               @if( 'CNGZ' == @request()->get('warehouse') )
+                                                selected
+                                               @endif
+
+
+
+                                       >Quảng Châu</option>
+                                       <option value="CNPX"
+
+                                               @if( 'CNPX' == @request()->get('warehouse') )
+                                               selected
+                                               @endif
+
+
+                                       >Bằng Tường</option>
                                    </select>
                                 </div>
 
@@ -251,7 +266,7 @@
                      success:function(response) {
 
                          if(response.success){
-                             window.location.href = "{{ url('package?barcode=')  }}" + barcode;
+                             window.location.href = "{{ url('package?barcode=')  }}" + barcode + '&warehouse='+warehouse;
                          }else{
                              if(response.message){
                                  bootbox.alert(response.message);
