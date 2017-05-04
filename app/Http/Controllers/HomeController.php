@@ -197,7 +197,7 @@ class HomeController extends Controller
         $start_today = sprintf("%s 00:00:00", date('Y-m-d'));
         $end_today = sprintf("%s 23:59:59", date('Y-m-d'));
 
-        $customer_recharge_amount = DB::table('user_transaction')
+        $query = DB::table('user_transaction')
             ->select(DB::raw('sum(amount) as amount'))
             ->where([
                 ['state', '=', UserTransaction::STATE_COMPLETED],
@@ -207,7 +207,13 @@ class HomeController extends Controller
                 ['created_at', '<=', $end_today]
             ])
             ->having('amount', '>', 0)
-            ->first()->amount;
+            ->first();
+
+        $customer_recharge_amount = 0;
+
+        if($query){
+            $customer_recharge_amount = $query->amount;
+        }
 
         $statistic[] = [
             'name' => 'Tiền khách nạp',
