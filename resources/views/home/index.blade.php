@@ -573,15 +573,15 @@ End Fixed Navigation
                 <div class="col-md-5 wow animated fadeInRight">
                     <address class="contact-details">
                         <h3>Thông tin liên hệ</h3>
-                        <p>
-                            <i class="fa fa-pencil"></i>
-                            Văn phòng: Số 8, Ngách 3, Ngõ 198 Lê Trọng Tấn - Hà Nội
-                        </p>
+                        {{--<p>--}}
+                            {{--<i class="fa fa-pencil"></i>--}}
+                            {{--Văn phòng: Số 8, Ngách 3, Ngõ 198 Lê Trọng Tấn - Hà Nội--}}
+                        {{--</p>--}}
                         <br>
                         <p><i class="fa fa-phone"></i>Điện thoại: 0966.986.304 (Zalo, Wechat) </p>
                         <p><i class="fa fa-phone"></i>Hotline: 04.2262.6699 - 04.2265.6699</p>
                         <p><i class="fa fa-envelope"></i>
-                            <a href="mailto:nguyentuanbmb@gmail.com?Subject=Xin chào, NhatMinh247" target="_top">nguyentuanbmb@gmail.com</a>
+                            <a href="mailto:nhatminh247.vn@gmail.com?Subject=Xin chào, NhatMinh247" target="_top">nhatminh247.vn@gmail.com</a>
                         </p>
                     </address>
                 </div>
