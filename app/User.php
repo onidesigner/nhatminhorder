@@ -233,7 +233,9 @@ class User extends Authenticatable
      * @return mixed|string
      */
     public function getMobile(){
-        $row = UserMobile::orderBy('id', 'desc')->first();
+        $row = UserMobile::where([
+            'user_id' => $this->id
+        ])->orderBy('id', 'desc')->first();
         if($row instanceof UserMobile){
             return $row->mobile;
         }
