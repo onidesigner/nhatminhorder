@@ -176,7 +176,7 @@ class HomeController extends Controller
             'can_view_statistic_money_detail' => Permission::isAllow(Permission::PERMISSION_STATISTIC_DETAIL),
         ];
 
-        return view('home', [
+        return view('flat/home', [
             'page_title' => 'Trang chủ',
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
