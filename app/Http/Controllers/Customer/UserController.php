@@ -39,8 +39,8 @@ class UserController extends Controller
 
         $user_refer = $this->__user_refer($user);
 
-        return view('customer/user_detail', [
-            'page_title' => "Thông tin cá nhân",
+        return view('flat/customer/user_detail', [
+            'page_title' => "Cá nhân",
             'user' => $user,
             'user_id' => $user_id,
             'user_mobiles' => $user->mobile,
@@ -195,7 +195,7 @@ class UserController extends Controller
             return redirect('404');
         endif;
 
-        return view('customer/user_form', [
+        return view('flat/customer/user_form', [
             'page_title' => "Sửa thông tin cá nhân",
             'user_id' => $user_id,
             'user' => $user

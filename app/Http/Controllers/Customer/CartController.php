@@ -192,7 +192,7 @@ class CartController extends Controller
             'orders' => $orders
         ];
 
-        return view('customer/deposit_success', $data);
+        return view('flat/customer/deposit_success', $data);
     }
 
     /**
@@ -257,7 +257,7 @@ class CartController extends Controller
 
         JavaScript::put($data);
 
-        return view('customer/deposit', $data);
+        return view('flat/customer/deposit', $data);
     }
 
     /**
@@ -285,9 +285,9 @@ class CartController extends Controller
 //            return redirect('403');
 //        }
 
-        return view('customer/cart', [
+        return view('flat/customer/cart', [
             'page_title' => 'Giỏ hàng',
-            'layout' => 'layouts.app',
+            'layout' => 'flat/layouts.app',
             'data' => $this->__getInitDataCart($customer)
         ]);
     }
@@ -428,7 +428,7 @@ class CartController extends Controller
 
             $view = View::make($request->get('response'), [
                 'data' => $this->__getInitDataCart($customer),
-                'layout' => 'layouts/app_blank',
+                'layout' => 'flat/layouts/app-blank',
             ]);
 
             $html = $view->render();
@@ -442,7 +442,7 @@ class CartController extends Controller
 
         }catch(\Exception $e){
             DB::rollback();
-            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
+            return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại' . $e->getMessage()]);
         }
 
     }

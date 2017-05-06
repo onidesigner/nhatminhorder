@@ -26,10 +26,10 @@ class Service extends Model
     ];
 
     public static $serviceIcon = [
-        self::TYPE_BUYING => 'fa-shopping-cart',
-        self::TYPE_CHECKING => 'fa-chevron-down',
-        self::TYPE_SHIPPING_CHINA_VIETNAM => 'fa-truck',
-        self::TYPE_WOOD_CRATING => 'fa-cube',
+        self::TYPE_BUYING => 'icon-shopping-cart',
+        self::TYPE_CHECKING => 'icon-ok',
+        self::TYPE_SHIPPING_CHINA_VIETNAM => 'icon-truck',
+        self::TYPE_WOOD_CRATING => 'icon-sign-blank',
     ];
 
     /**

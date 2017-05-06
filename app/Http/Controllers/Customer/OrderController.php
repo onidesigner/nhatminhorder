@@ -112,7 +112,7 @@ class OrderController extends Controller
             $order->order_fee = $order_fee;
         }
 
-        return view('customer/orders', [
+        return view('flat/customer/orders', [
             'page_title' => 'Danh sách đơn hàng',
             'status_list' => $status_list,
             'exchange_rage' => $exchange_rage,
@@ -144,7 +144,7 @@ class OrderController extends Controller
             return redirect('403');
         endif;
 
-        return view('customer/order_detail', $this->__getOrderInitData($order, $customer, 'layouts.app'));
+        return view('flat/customer/order_detail', $this->__getOrderInitData($order, $customer, 'flat/layouts.app'));
     }
 
     private function __getOrderInitData(Order $order, User $customer, $layout){
@@ -251,7 +251,10 @@ class OrderController extends Controller
             'order_fee' => $order_fee,
             'customer' => $customer,
             'transactions' => Order::findByTransactions($order->id),
-            'page_title' => 'Chi tiết đơn hàng',
+            'page_title' => '<img
+                                                            src="' . $order->avatar . '"
+                                                            class="lazy"
+                                                            style="width: 100px; float:left; margin-right: 10px;" alt="">Đơn ' . $order->code . ' <br/><small>(' . Order::getStatusTitle($order->status) . ')</small>',
             'permission' => $permission,
             'layout' => $layout,
             'list_complaint' => $list_complaint

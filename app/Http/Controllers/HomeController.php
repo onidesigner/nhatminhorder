@@ -177,7 +177,7 @@ class HomeController extends Controller
         ];
 
         return view('flat/home', [
-            'page_title' => 'Trang chủ',
+            'page_title' => 'Bảng chung',
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,

@@ -25,7 +25,7 @@ class ProductFavoriteController extends Controller
 
         $product_favorite = $product_favorite->paginate($per_page);
 
-        return view('customer/product_favorite', [
+        return view('flat/customer/product_favorite', [
             'page_title' => 'Sản phẩm đã lưu',
             'product_favorite' => $product_favorite,
             'total_product_favorite' => $total_product_favorite,

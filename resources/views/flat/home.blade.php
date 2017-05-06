@@ -4,56 +4,67 @@
     {{$page_title}}
 @endsection
 
+@section('page-header')
+    @parent
+    <div class="page-header">
+        <div class="pull-left">
+            <h1>{{$page_title}}</h1>
+        </div>
+
+    </div>
+@endsection
+
+@section('breadcrumbs')
+    @parent
+    @include('flat/partials/breadcrumb',
+                    [
+                        'urls' => [
+                            ['name' => 'Bảng chung', 'link' => null],
+                        ]
+                    ]
+                )
+@endsection
+
 @section('content')
 
-    <div class="row">
-        <div class="col-xs-12">
+    <div class="row-fluid">
 
             @if($current_user->section == App\User::SECTION_CRANE)
 
-                <div class="row">
 
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <a class="card card-banner card-green-light">
+                    <div class="span6">
                             <div class="card-body">
                                 <i class="icon fa fa-shopping-basket fa-4x"></i>
                                 <div class="content">
-                                    <div class="title">Đơn đặt cọc trong ngày</div>
+                                    <h4>Đơn đặt cọc trong ngày</h4>
                                     <div class="value">{{$total_order_deposit_today}}</div>
                                 </div>
                             </div>
-                        </a>
 
-                        <br>
 
-                        <a class="card card-banner card-yellow-light">
                             <div class="card-body">
                                 <i class="icon fa fa-user-plus fa-4x"></i>
                                 <div class="content">
-                                    <div class="title">Khách đăng ký trong ngày</div>
+                                    <h4>Khách đăng ký trong ngày</h4>
                                     <div class="value"><span class="sign"></span>{{$total_customer_register_today}}</div>
                                 </div>
                             </div>
-                        </a>
                     </div>
 
                     @if($permission['can_view_statistic_money_quick'])
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="span6">
                         <div class="card card-mini">
-                            <div class="card-header">
-                                <div class="card-title text-uppercase">Thống kê</div>
+                            <h4>
+                                Thống kê trong ngày
+                                &nbsp;&nbsp;&nbsp;&nbsp;
 
-                                <ul class="card-action">
-                                    @if($permission['can_view_statistic_money_detail'])
-                                    <li>
-                                        <a href="{{ url('statistic/users')  }}" style="color: #5e6263;">
-                                            <small>Xem chi tiết >></small>
-                                        </a>
-                                    </li>
-                                    @endif
-                                </ul>
+                                @if($permission['can_view_statistic_money_detail'])
+                                    <a href="{{ url('statistic/users')  }}" style="color: #5e6263;">
+                                        <small>Xem chi tiết >></small>
+                                    </a>
+                                @endif
 
-                            </div>
+                            </h4>
                             <div class="card-body no-padding table-responsive">
                                 <table class="table card-table">
 
@@ -73,33 +84,25 @@
                     </div>
                     @endif
 
-                </div>
-                <br>
-
 
             @endif
 
-            <div class="card">
-                @include('partials/__breadcrumb',
-                    [
-                        'urls' => [
-                            ['name' => 'Bảng chung', 'link' => null],
-                        ]
-                    ]
-                )
-                <div class="card-body">
-                    <h3 class="cart-title">Hướng dẫn dành cho khách hàng mới</h3>
-                    <a class="" href="{{ url('ho-tro', 4)  }}">Hướng dẫn cài đặt công cụ đặt hàng & đặt cọc đơn hàng</a><br>
-                    <a class="" href="{{ url('ho-tro', 5)  }}">Hướng dẫn tìm nguồn hàng trên website taobao.com, tmall.com, 1688.com</a><br>
-                    <a class="" href="{{ url('ho-tro', 1)  }}">Hướng dẫn nạp tiền vào tài khoản</a><br>
-                    <a class="" href="{{ url('ho-tro', 3)  }}">Xem biểu phí</a><br>
 
-                    <br>
 
-                    <a href="{{ url('')  }}"><< Về trang chủ</a>
-                </div>
-            </div>
+    </div>
 
+    <div class="row-fluid">
+        <div class="span12">
+
+            <h4>Hướng dẫn dành cho khách hàng mới</h4>
+            <a class="" href="{{ url('ho-tro', 4)  }}">Hướng dẫn cài đặt công cụ đặt hàng & đặt cọc đơn hàng</a><br>
+            <a class="" href="{{ url('ho-tro', 5)  }}">Hướng dẫn tìm nguồn hàng trên website taobao.com, tmall.com, 1688.com</a><br>
+            <a class="" href="{{ url('ho-tro', 1)  }}">Hướng dẫn nạp tiền vào tài khoản</a><br>
+            <a class="" href="{{ url('ho-tro', 3)  }}">Xem biểu phí</a><br>
+
+            <br>
+
+            <a href="{{ url('')  }}"><< Về trang chủ</a>
         </div>
     </div>
 

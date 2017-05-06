@@ -1,0 +1,22 @@
+#main{
+    margin-left: 0!important;
+}
+#navigation #brand{
+    background: none!important;
+}
+#navigation #brand{
+    padding-right: 15px!important;
+    padding-left: 0!important;
+}
+table.no-border-top td{
+    border-top: none!important;
+}
+.border-top-none{
+    border-top:none!important;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right!important;
+}

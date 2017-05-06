@@ -44,9 +44,9 @@ class CustomerNotificationController extends Controller
         if(count($data_notification) < 1){
          $data_notification = [];
         }
-        return view('customer/notification',[
+        return view('flat/customer/notification',[
             'data' => $data_notification,
-            'page_title' => 'notification',
+            'page_title' => 'Thông báo',
             'per_page' => $per_page,
             'page' => $page
         ]);

@@ -38,7 +38,7 @@ class UserTransactionController extends Controller
             ->orderBy('id', 'desc')
             ->paginate($per_page);
 
-        return view('customer/transactions', [
+        return view('flat/customer/transactions', [
             'page_title' => 'Lịch sử giao dịch ',
             'transactions' => $transactions
         ]);
