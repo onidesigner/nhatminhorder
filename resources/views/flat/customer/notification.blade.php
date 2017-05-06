@@ -62,7 +62,11 @@
                         </tbody>
                     </table>
                     @if(!empty($data))
-                        {{ $data->links() }}
+
+                        <div class="pagination">
+                            {{ $data->links() }}
+                        </div>
+
                     @else
                         <h3 align="center">Chưa có thông báo mới !</h3>
                     @endif

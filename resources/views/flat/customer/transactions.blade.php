@@ -100,7 +100,12 @@
 
 {{--                    {{ $transactions->links() }}--}}
 
-                    {{ $transactions->appends(request()->input())->links() }}
+
+
+
+                    <div class="pagination">
+                        {{ $transactions->appends(request()->input())->links() }}
+                    </div>
                 </div>
             </div>
         </div>

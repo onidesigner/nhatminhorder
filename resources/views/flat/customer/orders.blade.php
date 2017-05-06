@@ -141,7 +141,9 @@
 
                         {{--{{ $orders->links() }}--}}
 
-                        {{ $orders->appends(request()->input())->links() }}
+                        <div class="pagination">
+                            {{ $orders->appends(request()->input())->links() }}
+                        </div>
 
                     @else
                         <h4>Hiện chưa có đơn hàng!</h4>
