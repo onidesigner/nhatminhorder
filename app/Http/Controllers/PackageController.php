@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Comment;
 use App\Exchange;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
@@ -14,7 +13,6 @@ use App\Permission;
 use App\Service;
 use App\User;
 use App\Util;
-use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -225,16 +223,8 @@ class PackageController extends Controller
     private function __create_package(Request $request, $package){
         $barcode = $request->get('barcode');
 
-        $warehouse = $request->get('warehouse');
-
-
-
         if(empty($barcode)){
             $this->action_error[] = 'Mã quét không để trống!';
-        }
-
-        if(empty($warehouse)){
-            $this->action_error[] = 'Kho tạo kiện không được để trống!';
         }
 
         $can_create = Permission::isAllow(Permission::PERMISSION_PACKAGE_ADD);
@@ -251,31 +241,14 @@ class PackageController extends Controller
             'is_deleted' => 0,
         ])->get();
 
-
         $orders_freight_bill = count($orders_freight_bill) > 0 ? $orders_freight_bill : [ null ];
-
 
         foreach($orders_freight_bill as $order_freight_bill){
             $order = null;
             if($order_freight_bill instanceof OrderFreightBill){
                 $order = Order::find($order_freight_bill->order_id);
             }
-            // lấy giá trị id của kiện vừa được tạo
-            $package_id =  $this->__create_package_item($order, $barcode);
-
-            if($package_id){
-                $package = Package::retrieveById($package_id);
-            }
-            // nếu giá trị của
-            if($package instanceof Package){
-                if($package->order_id){
-                    //  truyen vao doi tuong package cua doi tuong
-                    $create_user = User::find(Auth::user()->id);
-                    $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse);
-                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    $package->inputWarehouseReceive($warehouse);
-                }
-            }
+            $this->__create_package_item($order, $barcode);
         }
         return true;
     }
@@ -287,8 +260,7 @@ class PackageController extends Controller
                 'freight_bill' => $barcode,
                 'status' => Package::STATUS_INIT,
                 'is_deleted' => 0,
-            ])->orwhere('status','=',Package::STATUS_RECEIVED_FROM_SELLER)
-            ->orderBy('id', 'desc')
+            ])->orderBy('id', 'desc')
                 ->get();
 
             if(count($packages)){

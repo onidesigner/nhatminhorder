@@ -22,30 +22,9 @@
 
                     <div class="row">
                         <div class="col-xs-12">
-                           <div class="col-xs-6"><h3>Tạo kiện</h3></div>
+                            <h3>Tạo kiện</h3>
 
                             <form class="___form" onsubmit="return false;">
-                                <div class="col-xs-6 ">
-                                   <select class="selectpicker" style="margin-top: 23px;" id="_warehouse">
-                                       <option value="CNGZ"
-
-                                               @if( 'CNGZ' == @request()->get('warehouse') )
-                                                selected
-                                               @endif
-
-
-
-                                       >Quảng Châu</option>
-                                       <option value="CNPX"
-
-                                               @if( 'CNPX' == @request()->get('warehouse') )
-                                               selected
-                                               @endif
-
-
-                                       >Bằng Tường</option>
-                                   </select>
-                                </div>
 
                                 <input type="hidden" name="method" value="post">
                                 <input type="hidden" name="url" value="{{ url('package/action') }}">
@@ -252,7 +231,6 @@
                if(e.keyCode == 13){
                    var barcode = $(this).val();
                    if(!barcode) return false;
-                   var warehouse = $("#_warehouse").val();
 
                    $.ajax({
                      url: "{{ url('package/action') }}",
@@ -261,12 +239,11 @@
                          barcode:barcode,
                          _token: "{{csrf_token()}}",
                          action: 'create_package',
-                         warehouse : warehouse
                      },
                      success:function(response) {
 
                          if(response.success){
-                             window.location.href = "{{ url('package?barcode=')  }}" + barcode + '&warehouse='+warehouse;
+                             window.location.href = "{{ url('package?barcode=')  }}" + barcode;
                          }else{
                              if(response.message){
                                  bootbox.alert(response.message);
