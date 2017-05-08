@@ -56,6 +56,10 @@ class OrderController extends Controller
             $orders = $orders->where('code', $params['order_code']);
         }
 
+        if(!empty($params['paid_staff_id'])){
+            $orders = $orders->where('paid_staff_id', $params['paid_staff_id']);
+        }
+
         if(!empty($params['customer_code_email'])){
             $user_ids = User::where(function($query) use ($params){
                 $query->where('code', '=', $params['customer_code_email'])
@@ -207,9 +211,14 @@ class OrderController extends Controller
             ];
         }
 
+        $crane_buying_list = UserRole::findByRoleId(
+            [ SystemConfig::getConfigValueByKey('group_crane_buying_id') ]
+        );
+
         return view('orders', [
             'page_title' => ' Quản lý đơn hàng',
             'status_list' => $status_list,
+            'crane_buying_list' => $crane_buying_list
         ]);
     }
 

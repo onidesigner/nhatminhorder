@@ -31,6 +31,19 @@
                                class=""
                                name="customer_code_email" value="{{ request()->get('customer_code_email') }}">
 
+                        <select name="paid_staff_id" id="" style="width: 200px;">
+                            <option value="">Nhân viên mua hàng</option>
+                            @foreach($crane_buying_list as $crane_buying_list_item)
+                                <option
+
+                                        @if( request()->get('paid_staff_id') == $crane_buying_list_item->id )
+                                         selected
+                                        @endif
+
+                                        value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
+                            @endforeach
+                        </select>
+
                         <br><br>
 
                         @foreach($status_list as $status_list_item)
