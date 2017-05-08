@@ -15,9 +15,11 @@ use App\OrderService;
 use App\Package;
 use App\Permission;
 use App\Service;
+use App\SystemConfig;
 use App\User;
 use App\UserAddress;
 use App\UserOriginalSite;
+use App\UserRole;
 use App\UserTransaction;
 use App\Util;
 use App\WareHouse;
@@ -40,6 +42,9 @@ class OrderController extends Controller
     }
 
     public function getOrdersData(){
+        $current_user = User::find(Auth::user()->id);
+        /** @var User $current_user */
+
         $per_page = 20;
 
         $params = Input::all();
@@ -71,6 +76,11 @@ class OrderController extends Controller
             foreach($orders as $order){
                 if(!$order instanceof Order){
                     continue;
+                }
+
+                $order->paid_staff = null;
+                if($order->paid_staff_id){
+                    $order->paid_staff = User::find($order->paid_staff_id);
                 }
 
                 $order_ids[] = $order->id;
@@ -109,9 +119,21 @@ class OrderController extends Controller
             ];
         }
 
+        $crane_buying_list = [];
+        $can_set_crane_buying = Permission::isAllow(Permission::PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF)
+            || $current_user->isGod();
+
+        if($can_set_crane_buying){
+            $crane_buying_list = UserRole::findByRoleId(
+                [ SystemConfig::getConfigValueByKey('group_crane_buying_id') ]
+            );
+        }
+
         $view = View::make('orders_data', [
             'total_orders' => $total_orders,
             'orders' => $orders,
+            'can_set_crane_buying' => $can_set_crane_buying,
+            'crane_buying_list' => $crane_buying_list
         ]);
         $html = $view->render();
 
@@ -191,8 +213,14 @@ class OrderController extends Controller
         }
 
         $permission = [
-            'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED,
-            'can_change_order_cancel' => $order->isBeforeStatus(Order::STATUS_TRANSPORTING),
+            'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED
+                && $order->crane_staff_id == $current_user->id,
+
+            'can_change_order_cancel' =>
+                    ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && $order->crane_staff_id == $current_user->id )
+                || ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && $current_user->isGod() )
+                || ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && Permission::isAllow(Permission::PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF) ),
+
             'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
             'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
             'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
@@ -743,6 +771,11 @@ class OrderController extends Controller
             $this->action_error[] = sprintf('Đơn hiện đang ở trạng thái [%s], không thể chuyển sang đã mua!', Order::getStatusTitle($order->status));
         }
 
+        if($user->id != $order->crane_staff_id){
+            $this->action_error[] = sprintf('Bạn không có quyền mua đơn hàng này');
+            return false;
+        }
+
         if(empty($order->account_purchase_origin)){
             $this->action_error[] = 'Vui lòng chọn user mua hàng site gốc!';
         }
@@ -832,8 +865,17 @@ class OrderController extends Controller
      * @return bool
      */
     private function __cancel_order(Request $request, Order $order, User $user){
-        if($order->isAfterStatus(Order::STATUS_TRANSPORTING, true)){
-            $this->action_error[] = 'Đơn hàng bắt đầu vận chuyển về Việt Nam. Không thể hủy đơn hàng!';
+//        if($order->isAfterStatus(Order::STATUS_TRANSPORTING, true)){
+//            $this->action_error[] = 'Đơn hàng bắt đầu vận chuyển về Việt Nam. Không thể hủy đơn hàng!';
+//            return false;
+//        }
+
+        $can_change_order_cancel =
+                    ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && $order->crane_staff_id == $user->id )
+                    || ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && $user->isGod() )
+                    || ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && Permission::isAllow(Permission::PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF) );
+        if(!$can_change_order_cancel){
+            $this->action_error[] = 'Không thể hủy đơn hàng!';
             return false;
         }
 

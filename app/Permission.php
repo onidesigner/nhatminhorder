@@ -47,7 +47,7 @@ class Permission extends Model
 
     #region -- Mua hang --
     const PERMISSION_ORDER_BUYING_LIST_VIEW = 'ORDER_BUYING_LIST_VIEW';
-
+    const PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF = 'ORDER_BUYING_CAN_SET_CRANE_STAFF';
     #endregion
 
     #regioin -- Package permission --
@@ -117,6 +117,10 @@ class Permission extends Model
                 self::PERMISSION_ORDER_BUYING_LIST_VIEW => [
                     'label' => 'Xem trang danh sách đơn mua hàng',
                     'description' => '',
+                ],
+                self::PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF => [
+                    'label' => 'Quyền trưởng nhóm mua hàng',
+                    'description' => 'Cho phép phân đơn cho nhân viên mua hàng, hủy đơn hàng',
                 ],
             ]
         ],

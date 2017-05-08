@@ -13,7 +13,7 @@
                                 [
                                     'urls' => [
                                         ['name' => 'Trang chủ', 'link' => url('home')],
-                                        ['name' => 'Đơn hàng', 'link' => null],
+                                        ['name' => 'Mua hàng', 'link' => null],
                                     ]
                                 ]
                             )
@@ -23,7 +23,7 @@
                     <h3>{{$page_title}}</h3>
 
                     <form
-                            action="{{ url('order')  }}" method="get" id="_form-orders">
+                            action="{{ url('order_buying')  }}" method="get" id="_form-orders">
                         <input type="hidden" name="page" value="{{ request()->get('page')  }}">
 
                         <input type="text" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
@@ -66,20 +66,6 @@
 
     <script>
         $(document).ready(function(){
-
-            $(document).on('change', '._crane_staff_buying', function(){
-                var user_id = $(this).val();
-                var order_id = $(this).find('option[value="' + user_id + '"]').attr('data-order-id');
-                request('order_buying/set_crane_staff', 'post', {
-                    order_id:order_id,
-                    user_id:user_id
-                }).done(function(response){
-                     if(!response.success){
-                         bootbox.alert(response.message);
-                     }
-                });
-            });
-
             $(document).on('click', '._select-order-status', function(){
                  var selected = $(this).hasClass('selected');
                  if(selected){
@@ -136,7 +122,7 @@
                 window.history.pushState({'path': page_url}, '', page_url);
             }
 
-            request("{{ url('order/get_orders_data')  }}",
+            request("{{ url('order_buying/get_orders_data')  }}",
                 "get",
                 $('#_form-orders').serializeObject())
                 .done(function(response){

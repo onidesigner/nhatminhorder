@@ -44,12 +44,12 @@ if(Auth::check()){
                 'title' => 'Vận Hành',
                 'children' => [
                     [
-                        'url' => url('order'),
+                        'url' => url(sprintf('order?status=%s', App\Order::STATUS_DEPOSITED)),
                         'title' => 'Đơn hàng',
                         'permission' => \App\Permission::PERMISSION_ORDER_LIST_VIEW
                     ],
                     [
-                        'url' => url('order_buying'),
+                        'url' => url(sprintf('order_buying?status=%s', App\Order::STATUS_DEPOSITED)),
                         'title' => 'Mua hàng',
                         'permission' => \App\Permission::PERMISSION_ORDER_BUYING_LIST_VIEW
                     ],

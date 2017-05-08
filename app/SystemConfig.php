@@ -13,6 +13,10 @@ class SystemConfig extends Model
 
     public static $system_config_data = [
         [
+            'field_name' => 'ID nhóm mua hàng',
+            'key' => 'group_crane_buying_id'
+        ],
+        [
             'field_name' => 'Miễn phí mua hàng với ? đơn đầu tiên',
             'key' => 'order_buying_number_fee'
         ],

@@ -9,8 +9,8 @@
             <tr>
 
                 <th width="25%">Đơn hàng</th>
-                <th width="30%">Khách hàng</th>
-                <th width="25%">Phí trên đơn</th>
+                <th width="20%">Nhân viên</th>
+                <th width="35%">Phí trên đơn</th>
                 <th width="20%">Thời gian</th>
             </tr>
             </thead>
@@ -56,9 +56,10 @@
                     </td>
 
                     <td>
+                        <h5>KHÁCH HÀNG</h5>
                         <?php
                         $customer = App\User::find($order->user_id);
-                        echo '<p><strong><a href="' . url('user/detail', $customer->id) . '">' . $customer->email . '</a></strong> ('. $customer->code .')</p>';
+                        echo '<p><a href="' . url('user/detail', $customer->id) . '">' . $customer->email . '</a> ('. $customer->code .')</p>';
                         ?>
 
                         <p>
@@ -66,7 +67,50 @@
                         </p>
                         <p>
                             Số dư: <span class="text-danger">{{App\Util::formatNumber($order->customer->account_balance)}} <sup>đ</sup></span>
+
                         </p>
+
+
+
+                        @if($order->paid_staff)
+                            <hr>
+                            <h5>MUA HÀNG</h5>
+                        <p>
+                            <a href="{{  url('user/detail', $order->paid_staff->id) }}">{{$order->paid_staff->email}}</a> ({{$order->paid_staff->code}})
+                        </p>
+
+
+
+                        @else
+
+                            @if($can_set_crane_buying)
+
+                            <hr>
+                            <h5>MUA HÀNG</h5>
+                            <p>
+                                <select class="_crane_staff_buying" name="crane_staff_buying" id="">
+                                    <option
+
+                                            data-order-id="{{$order->id}}"
+                                            value="">--Chọn nhân viên mua hàng--</option>
+
+                                    @foreach($crane_buying_list as $crane_buying_list_item)
+                                        <option
+                                                @if($order->crane_staff_id
+                                                && $order->crane_staff_id == $crane_buying_list_item->id)
+                                                 selected
+                                                @endif
+
+
+                                                data-order-id="{{$order->id}}"
+
+                                                value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
+                                    @endforeach
+                                </select>
+                            </p>
+
+                            @endif
+                        @endif
                     </td>
 
                     <td>
@@ -74,12 +118,14 @@
 
                         <small>
                             @foreach($order->order_fee as $order_fee_item)
-                                <p>
-                                    {!! $order_fee_item['label'] !!}:
-                                    <span class="text-danger">
-                                                            <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
-                                                        </span>
-                                </p>
+                                <div style="width: 50%; display: inline-block; float: left;">
+                                    <div style="padding: 5px 0;">
+                                        {!! $order_fee_item['label'] !!}:
+                                        <span class="text-danger">
+                                                                <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
+                                                            </span>
+                                    </div>
+                                </div>
                             @endforeach
                         </small>
 

@@ -37,6 +37,12 @@ Route::delete('/cart/shop', 'Customer\CartController@deleteShop');
 Route::post('/dat-coc', 'Customer\CartController@depositOrder');
 #endregion
 
+#region -- Mua hang --
+Route::get('order_buying', 'OrderBuyingController@indexs');
+Route::get('/order_buying/get_orders_data', 'OrderBuyingController@getOrdersData');
+Route::post('/order_buying/set_crane_staff', 'OrderBuyingController@setCraneStaff');
+#endregion
+
 #region quan ly nhan vien
 Route::get('/user', 'UserController@getUsers');
 Route::get('/user/detail/{id}', 'UserController@detailUser');
