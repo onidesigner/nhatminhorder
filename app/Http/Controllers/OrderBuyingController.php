@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Order;
 use App\OrderFee;
 use App\OrderService;
@@ -78,9 +79,16 @@ class OrderBuyingController extends Controller
             }
         }
 
-        $order->crane_staff_id = $user_id;
+
         if(!$user_id){
             $order->crane_staff_id = null;
+            $order->crane_staff_at = null;
+        }else{
+            $order->crane_staff_id = $user_id;
+            $order->crane_staff_at = date('Y-m-d H:i:s');
+
+            $message = sprintf("Phân đơn hàng cho nhân viên %s (%s)", $user->email, $user->code);
+            Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         }
         $order->save();
 

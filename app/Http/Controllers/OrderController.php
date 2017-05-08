@@ -147,9 +147,53 @@ class OrderController extends Controller
     /**
      * @author vanhs
      * @desc Danh sach don hang
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return View
      */
     public function orders(Request $request){
+
+//        $crane_buying_list = UserRole::findByRoleId(
+//            [ SystemConfig::getConfigValueByKey('group_crane_buying_id') ]
+//        );
+//
+//        //default is today
+//        $start_time = sprintf('% 00-00-00', date('Y-m-d'));
+//        $end_time = sprintf('%s 23:59:59', date('Y-m-d'));
+//
+//        $users = [];
+//        if($crane_buying_list){
+//            foreach($crane_buying_list as $crane_buying_list_item){
+//                //don duoc phan
+//                $crane_buying_list_item->order_receive = DB::table('order')
+//                    ->select('id')
+//                    ->where([
+//                        ['crane_staff_id', '=', $crane_buying_list_item->id],
+//                        ['crane_staff_at', '>=', $start_time],
+//                        ['crane_staff_at', '<=', $end_time],
+//                    ])->count();
+//
+//                //don da mua
+//                $crane_buying_list_item->order_buying = DB::table('order')
+//                    ->select('id')
+//                    ->where([
+//                        ['paid_staff_id', '=', $crane_buying_list_item->id],
+//                        ['bought_at', '>=', $start_time],
+//                        ['bought_at', '<=', $end_time],
+//                    ])->count();
+//
+//
+//
+//
+//
+////                $crane_buying_list_item->order_receive = 0;//don duoc phan
+////                $crane_buying_list_item->order_buying = 0;//don da mua
+//                $crane_buying_list_item->order_amount = 0;//tien hang
+//                $crane_buying_list_item->order_buying_time_avg = 0;//thoi gian mua trung binh tinh tu luc duoc phan don
+//
+//                $users[] = $crane_buying_list_item;
+//            }
+//        }
+
         $status_list = [];
         foreach(Order::$statusTitle as $key => $val){
             $selected = false;
