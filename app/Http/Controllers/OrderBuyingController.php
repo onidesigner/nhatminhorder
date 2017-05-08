@@ -93,7 +93,7 @@ class OrderBuyingController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function getOrdersData(){
-        $per_page = 1;
+        $per_page = 20;
 
         $params = Input::all();
 
