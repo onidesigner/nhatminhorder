@@ -637,6 +637,10 @@
                                             </p>
 
                                             <p>
+                                                Site: {{$order_item->site}}
+                                            </p>
+
+                                            <p>
                                                 <a href="{{$order_item->link}}" target="_blank">Link gốc</a>
                                             </p>
 
