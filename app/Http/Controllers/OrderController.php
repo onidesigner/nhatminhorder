@@ -109,7 +109,7 @@ class OrderController extends Controller
             ];
         }
 
-        $view = View::make('orders_data', [
+        $view = View::make('flat/orders_data', [
             'total_orders' => $total_orders,
             'orders' => $orders,
         ]);
@@ -141,7 +141,7 @@ class OrderController extends Controller
             ];
         }
 
-        return view('orders', [
+        return view('flat/orders', [
             'page_title' => ' Quản lý đơn hàng',
             'status_list' => $status_list,
         ]);

@@ -371,9 +371,9 @@ class PackageController extends Controller
             exit;
         }
 
-        $data = $this->__getInitData('layouts.app', $request->get('barcode'));
+        $data = $this->__getInitData('flat/layouts.app', $request->get('barcode'));
 
-        return view('package_add', $data);
+        return view('flat/package_add', $data);
     }
 
     private function __getDetailData(Request $request, $layout = null){
@@ -452,8 +452,8 @@ class PackageController extends Controller
             return redirect('403');
         }
 
-        $data = $this->__getListData('layouts.app');
+        $data = $this->__getListData('flat/layouts.app');
 
-        return view('package_list', $data);
+        return view('flat/package_list', $data);
     }
 }

@@ -60,7 +60,7 @@ class SystemController extends Controller
             }
         }
 
-        return view('manager_addon_link_error', [
+        return view('flat/manager_addon_link_error', [
             'is_done_list' => $is_done_list,
             'data' => $data,
             'condition' => $condition,
@@ -287,7 +287,7 @@ class SystemController extends Controller
             'permissions_role' => $permissions_role_list,
             'permissions' => Permission::$permissions
         ];
-        return view('role_detail', $data);
+        return view('flat/role_detail', $data);
     }
 
     /**
@@ -365,7 +365,7 @@ class SystemController extends Controller
             'roles' => $roles,
             'permissions' => Permission::$permissions
         ];
-        return view('role', $data);
+        return view('flat/role', $data);
     }
 
     /**
@@ -392,7 +392,7 @@ class SystemController extends Controller
             'data_inserted' => $data_inserted,
             'save' => $request->get('save')
         ];
-        return view('system_config', $data);
+        return view('flat/system_config', $data);
     }
 
     /**

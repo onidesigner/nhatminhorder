@@ -38,9 +38,9 @@ class ScanController extends Controller
 
     public function indexs()
     {
-        $data = $this->__getInitData('layouts.app');
+        $data = $this->__getInitData('flat/layouts.app');
 
-        return view('scan', $data);
+        return view('flat/scan', $data);
     }
 
     private function __getInitData($layout = null){

@@ -20,3 +20,6 @@ table.no-border-top td{
 .text-right{
     text-align: right!important;
 }
+.table-body-vertical-align-top tbody td{
+    vertical-align: top;
+}

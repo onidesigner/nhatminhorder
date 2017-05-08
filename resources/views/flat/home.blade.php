@@ -33,22 +33,18 @@
 
 
                     <div class="span6">
-                            <div class="card-body">
-                                <i class="icon fa fa-shopping-basket fa-4x"></i>
-                                <div class="content">
-                                    <h4>Đơn đặt cọc trong ngày</h4>
-                                    <div class="value">{{$total_order_deposit_today}}</div>
-                                </div>
-                            </div>
 
+                        <ul class="tiles tiles-center1 nomargin">
 
-                            <div class="card-body">
-                                <i class="icon fa fa-user-plus fa-4x"></i>
-                                <div class="content">
-                                    <h4>Khách đăng ký trong ngày</h4>
-                                    <div class="value"><span class="sign"></span>{{$total_customer_register_today}}</div>
-                                </div>
-                            </div>
+                            <li class="satgreen">
+                                <span class="label label-inverse">{{$total_order_deposit_today}}</span>
+                                <a href="#"><span><i class="icon-shopping-cart"></i></span><span class="name">Đơn đặt cọc</span></a>
+                            </li>
+                            <li class="orange">
+                                <span class="label label-inverse">{{$total_customer_register_today}}</span>
+                                <a href="#"><span><i class="icon-comments"></i></span><span class="name">Đăng ký mới</span></a>
+                            </li>
+                        </ul>
                     </div>
 
                     @if($permission['can_view_statistic_money_quick'])

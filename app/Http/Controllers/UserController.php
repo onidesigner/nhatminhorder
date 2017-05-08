@@ -236,7 +236,7 @@ class UserController extends Controller
             'data' => $user_refer_data
         ];
 
-        return view('user_detail', [
+        return view('flat/user_detail', [
             'page_title' => "Thông tin nhân viên [" . $user->email . "]",
             'user' => $user,
             'user_id' => $user_id,
@@ -333,7 +333,7 @@ class UserController extends Controller
             return redirect('404');
         endif;
 
-        return view('user_form', [
+        return view('flat/user_form', [
             'page_title' => "Sửa thông tin nhân viên [" . $user['email'] . "]",
             'section_list' => User::$section_list,
             'status_list' => User::$status_list,
@@ -386,7 +386,7 @@ class UserController extends Controller
         $total_users = $users->count();
         $users = $users->paginate($per_page);
 
-        return view('users', [
+        return view('flat/users', [
             'page_title' => 'Danh sách nhân viên ',
             'users' => $users,
             'total_users' => $total_users,

@@ -21,20 +21,23 @@ $steps = [
 
 ?>
 
+<form action="#" method="POST" class="form-horizontal form-wizard ui-formwizard" id="ss" novalidate="novalidate">
 
-
-
-    <div class="col-xs-12">
-            <ul class="nav nav-pills nav-justified thumbnail setup-panel">
-
+    <ul class="wizard-steps steps-4">
                 @foreach($steps as $idx => $step)
+
+
                     <li class="@if($idx + 1 == $active) active @else disabled @endif">
-                        <a href="#step-{{ $idx + 1  }}">
-                            <h4 class="list-group-item-heading">{{$step['title']}}</h4>
-                            <p class="list-group-item-text">{{$step['description']}}</p>
-                        </a>
+                        <div class="single-step">
+													<span class="title">
+														{{ $idx + 1  }}</span>
+                            <span class="circle">
+													</span>
+                            <span class="description">
+														{{$step['title']}}
+													</span>
+                        </div>
                     </li>
                 @endforeach
-            </ul>
-
-        </div>
+    </ul>
+</form>
