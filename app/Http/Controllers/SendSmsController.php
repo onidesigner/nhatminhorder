@@ -90,31 +90,42 @@ class SendSmsController extends Controller
         }else{
             $page = $page - 1;
         }
-        $status = Input::get('status','');
-        $number = Input::get('number','');
+
+
+        $condition = Input::all();
+        $where = [];
+
+
+
+        if(!empty($condition['status'])){
+            $where['status'] = $condition['status'];
+        }
+        if(!empty($condition['level'])){
+            $where['level'] = $condition['level'];
+        }
+        if(!empty($condition['number'])){
+            $where['number_send'] = $condition['number'];
+        }
+
+
 
         
-
-        $sms_customer = SendSms::select('*')->orderBy('id', 'ASC');
-        $sms_customer = SendSms::where('level' , '=' , 8);
-        if($status){
-            $sms_customer = SendSms::where('status','=',$status);
-        }
-        if($number){
-            $sms_customer = SendSms::where('number_send','=',$number);
-        }
+        $sms_customer = SendSms::where($where);
 
 
+        $sms_customer = $sms_customer->orderBy('id', 'ASC');
+        $sms_customer_list = $sms_customer->paginate($per_page);
+        $result = $sms_customer->count();
 
 
-        $sms_customer = $sms_customer->paginate($per_page);
 
 
         return view('send_sms',[
             'page_title' => 'send sms',
-            'data_sms' => $sms_customer,
+            'data_sms' => $sms_customer_list->appends($where),
             'per_page' => $per_page,
-            'page' => $page
+            'page' => $page,
+           # 'count_item' =>$result
         ]);
     }
 
@@ -145,7 +156,7 @@ class SendSmsController extends Controller
 
             $content= 'Nhatminh247.vn: 
             Dịch vụ đặt hàng TQ,vận chuyển chỉ từ 13k/kg.
-             Hàng về 2-3 ngày(HN), 4-5 ngày SG. HotLine:'.$arr[$rand_key];
+             Hàng về 2-3 ngày(HN), 4-5 ngày SG. HotLine: 04.2262.6699-04.2265.6699';
 
 
 
