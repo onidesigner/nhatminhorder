@@ -49,6 +49,11 @@ if(Auth::check()){
                         'permission' => \App\Permission::PERMISSION_ORDER_LIST_VIEW
                     ],
                     [
+                        'url' => url('order_buying'),
+                        'title' => 'Mua hàng',
+                        'permission' => \App\Permission::PERMISSION_ORDER_BUYING_LIST_VIEW
+                    ],
+                    [
                         'url' => url('packages'),
                         'title' => 'Kiện hàng',
                         'permission' => \App\Permission::PERMISSION_PACKAGE_LIST_VIEW

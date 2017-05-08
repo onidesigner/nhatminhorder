@@ -48,6 +48,7 @@
                                 echo Form::text('email', $user['email'], ['class' => 'form-control', 'placeholder' => 'Email', 'disabled' => 'disabled']);
                                 echo Form::select('section', $section_list, $user['section'], $section_metadata);
                                 echo Form::select('status', $status_list, $user['status'], ['class' => 'select2 form-control']);
+                                echo Form::number('order_deposit_percent', $user['order_deposit_percent'], ['class' => 'select2 form-control']);
                                 echo Form::submit('Lưu', ['class' => 'btn btn-primary']);
                                 echo Form::hidden('id', $user_id);
                                 echo Form::close();

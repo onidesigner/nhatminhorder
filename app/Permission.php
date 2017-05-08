@@ -45,6 +45,11 @@ class Permission extends Model
     const PERMISSION_ORDER_CHANGE_SERVICE = 'ORDER_CHANGE_SERVICE';
     #endregion
 
+    #region -- Mua hang --
+    const PERMISSION_ORDER_BUYING_LIST_VIEW = 'ORDER_BUYING_LIST_VIEW';
+
+    #endregion
+
     #regioin -- Package permission --
     const PERMISSION_PACKAGE_LIST_VIEW = 'PACKAGE_LIST_VIEW';
     const PERMISSION_PACKAGE_ADD = 'PACKAGE_ADD';
@@ -101,6 +106,16 @@ class Permission extends Model
                 ],
                 self::PERMISSION_ORDER_CHANGE_SERVICE => [
                     'label' => 'Thêm/bỏ dịch vụ trên chi tiết đơn hàng',
+                    'description' => '',
+                ],
+            ]
+        ],
+
+        'order_buying' => [
+            'label' => 'Mua hàng',
+            'permissions' => [
+                self::PERMISSION_ORDER_BUYING_LIST_VIEW => [
+                    'label' => 'Xem trang danh sách đơn mua hàng',
                     'description' => '',
                 ],
             ]

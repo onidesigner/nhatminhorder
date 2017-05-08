@@ -21,7 +21,13 @@ class Cart extends Model
      * @param null $apply_time
      * @return int
      */
-    public static function getDepositPercent($apply_time = null){
+    public static function getDepositPercent($apply_time = null, $user_id = null){
+        $current_user_id = $user_id ? $user_id : Auth::user()->id;
+        $current_user = User::find($current_user_id);
+        $order_deposit_percent = $current_user->order_deposit_percent;
+        if($order_deposit_percent){
+            return $order_deposit_percent;
+        }
         return SystemConfig::getConfigValueByKey('order_deposit_percent');
     }
     

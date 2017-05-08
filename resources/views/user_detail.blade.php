@@ -74,6 +74,13 @@
 
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td class="no-padding-leftright"><strong>Tỉ lệ đặt cọc (%)</strong>:
+
+                                                    {{ $deposit_percent = App\Cart::getDepositPercent(null, $user->id) }}
+
+                                                </td>
+                                            </tr>
                                             @if($user->section == App\User::SECTION_CUSTOMER)
                                                 <tr>
                                                     <td class="no-padding-leftright"><strong>Số dư</strong>: <span class="text-danger">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></span></td>

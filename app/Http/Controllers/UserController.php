@@ -303,6 +303,11 @@ class UserController extends Controller
         endif;
 
         $user->status = $request->get('status');
+        $order_deposit_percent = null;
+        if($request->get('order_deposit_percent')){
+            $order_deposit_percent = $request->get('order_deposit_percent');
+        }
+        $user->order_deposit_percent = $order_deposit_percent;
         $user->updated_at = date('Y-m-d H:i:s');
         $user->save();
 
