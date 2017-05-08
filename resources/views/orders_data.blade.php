@@ -88,7 +88,7 @@
                             <hr>
                             <h5>MUA HÀNG</h5>
                             <p>
-                                <select class="_crane_staff_buying" name="crane_staff_buying" id="">
+                                <select style="width: 200px;" class="_crane_staff_buying" name="crane_staff_buying" id="">
                                     <option
 
                                             data-order-id="{{$order->id}}"
