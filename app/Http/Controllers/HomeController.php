@@ -237,7 +237,8 @@ class HomeController extends Controller
 
         $statistic[] = [
             'name' => 'Tiền khách nạp',
-            'value' => Util::formatNumber($customer_recharge_amount)
+//            'value' => Util::formatNumber($customer_recharge_amount),
+            'money' => $customer_recharge_amount
         ];
 
         $orders_cancelled = Order::getOrderIdCancelled();
@@ -272,7 +273,8 @@ class HomeController extends Controller
         $amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền hàng (1)',
-            'value' => Util::formatNumber($amount_vnd)
+//            'value' => Util::formatNumber($amount_vnd),
+            'money' => $amount_vnd
         ];
 
         $query = DB::table('order_fee')
@@ -293,12 +295,14 @@ class HomeController extends Controller
         $deposit_amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền đặt cọc (2)',
-            'value' => Util::formatNumber($deposit_amount_vnd)
+//            'value' => Util::formatNumber($deposit_amount_vnd),
+            'money' => $deposit_amount_vnd
         ];
 
         $statistic[] = [
             'name' => 'Tiền còn thiếu (3=1-2)',
-            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd))
+//            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd)),
+            'money' => ($amount_vnd - $deposit_amount_vnd)
         ];
 
         return $statistic;

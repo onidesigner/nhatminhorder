@@ -107,6 +107,7 @@
 
 @section('js_bottom')
     @parent
+    <script src="{{ asset('bower_components/jquery-animateNumber/jquery.animateNumber.js')  }}"></script>
     <script>
         $(document).ready(function(){
              $(document).on('change', '._filter-statistic', function(){
@@ -118,6 +119,12 @@
                  request('home/statistic', 'get', send_data).done(function(response){
                      if(response.success){
                          $('#_home-statistic').html(response.html);
+
+                         var comma_separator_number_step = $.animateNumber.numberStepFactories.separator('.');
+                         $('.lines').each(function(i){
+                             $(this).animateNumber({ number: $(this).data('money'), numberStep: comma_separator_number_step });
+                         });
+
                      }else{
                          bootbox.alert(response.message);
                      }
