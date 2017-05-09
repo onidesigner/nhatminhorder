@@ -145,10 +145,10 @@ class SendSmsController extends Controller
             return  response()->json($response);
         }else{
             $list_number = ["966986304","1649647164"];
-            foreach($numbers as $number ){
-                $list_number[] = $number;
-
-            }
+//            foreach($numbers as $number ){
+//                $list_number[] = $number;
+//
+//            }
             $arr = [" 04.2262.6699","04.2265.6699"];
 
 
