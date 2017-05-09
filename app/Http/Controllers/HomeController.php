@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class HomeController extends Controller
 {
@@ -35,6 +36,29 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function homeStatistic(Request $request){
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        if(!Util::validateDate($start_date, 'Y-m-d')){
+            return response()->json(['success' => false, 'message' => sprintf('Định dạng ngày bắt đầu %s không chính xác', $start_date)]);
+        }
+        if(!Util::validateDate($end_date, 'Y-m-d')){
+            return response()->json(['success' => false, 'message' => sprintf('Định dạng ngày kết thúc %s không chính xác', $end_date)]);
+        }
+
+        $html = '';
+        $can_view_statistic_money_quick = Permission::isAllow(Permission::PERMISSION_STATISTIC_QUICK);
+        if($can_view_statistic_money_quick){
+            $view = View::make('home_statistic_tpl', [
+                'statistic' => $this->__statisticMoneyQuick($start_date, $end_date)
+            ]);
+            $html = $view->render();
+        }
+
+        return response()->json(['success' => true, 'message' => '', 'html' => $html]);
     }
 
     /**
@@ -163,16 +187,8 @@ class HomeController extends Controller
             $total_customer_register_today = User::getTotalRegisterByDay(date('Y-m-d'));
         }
 
-        #region -- Thong ke chung tren bang chung --
-        $statistic = [];
-        $can_view_statistic_money_quick = Permission::isAllow(Permission::PERMISSION_STATISTIC_QUICK);
-        if($can_view_statistic_money_quick){
-            $statistic = $this->__statisticMoneyQuick();
-        }
-        #endregion
-
         $permission = [
-            'can_view_statistic_money_quick' => $can_view_statistic_money_quick,
+            'can_view_statistic_money_quick' => Permission::isAllow(Permission::PERMISSION_STATISTIC_QUICK),
             'can_view_statistic_money_detail' => Permission::isAllow(Permission::PERMISSION_STATISTIC_DETAIL),
         ];
 
@@ -181,7 +197,6 @@ class HomeController extends Controller
             'current_user' => $current_user,
             'total_order_deposit_today' => $total_order_deposit_today,
             'total_customer_register_today' => $total_customer_register_today,
-            'statistic' => $statistic,
             'permission' => $permission,
         ]);
     }
@@ -189,13 +204,15 @@ class HomeController extends Controller
     /**
      * @author vanhs
      * @desc Thong ke tai chinh chung tren bang chung
+     * @param $start_today
+     * @param $end_today
      * @return array
      */
-    private function __statisticMoneyQuick(){
+    private function __statisticMoneyQuick($start_today, $end_today){
         $statistic = [];
 
-        $start_today = sprintf("%s 00:00:00", date('Y-m-d'));
-        $end_today = sprintf("%s 23:59:59", date('Y-m-d'));
+        $start_today = sprintf("%s 00:00:00", $start_today);
+        $end_today = sprintf("%s 23:59:59", $end_today);
 
 //        var_dump($start_today);
 //        var_dump($end_today);

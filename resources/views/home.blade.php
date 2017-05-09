@@ -13,7 +13,7 @@
 
                 <div class="row">
 
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-sm-4 col-xs-12">
                         <a class="card card-banner card-green-light">
                             <div class="card-body">
                                 <i class="icon fa fa-shopping-basket fa-4x"></i>
@@ -38,10 +38,24 @@
                     </div>
 
                     @if($permission['can_view_statistic_money_quick'])
-                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="col-sm-8 col-xs-12">
                         <div class="card card-mini">
                             <div class="card-header">
-                                <div class="card-title text-uppercase">Thống kê</div>
+                                <div class="card-title text-uppercase">
+                                    Thống kê
+                                    <br>
+                                    <div style="text-transform: none;
+    font-size: 14px;">
+                                        <form action="" onsubmit="return false;" class="_filter-statistic">
+                                            Từ
+                                            <input name="start_date" type="date" data-date="" data-date-format="DD MMMM YYYY" value="{{ sprintf('%s', date('Y-m-d'))  }}">
+                                            đến
+                                            <input name="end_date" type="date" data-date="" data-date-format="DD MMMM YYYY" value="{{ sprintf('%s', date('Y-m-d'))  }}">
+                                        </form>
+                                    <p style="color: grey; font-size: 12px;">Định dạng: tháng/ngày/năm</p>
+
+                                    </div>
+                                </div>
 
                                 <ul class="card-action">
                                     @if($permission['can_view_statistic_money_detail'])
@@ -54,21 +68,7 @@
                                 </ul>
 
                             </div>
-                            <div class="card-body no-padding table-responsive">
-                                <table class="table card-table">
-
-                                    <tbody>
-                                    @foreach($statistic as $s)
-                                    <tr>
-                                        <td>{{$s['name']}}</td>
-                                        <td class="text-right">
-                                            <span class="text-danger">{{$s['value']}}đ</span>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                            <div class="card-body no-padding table-responsive" id="_home-statistic"></div>
                         </div>
                     </div>
                     @endif
@@ -103,4 +103,34 @@
         </div>
     </div>
 
+@endsection
+
+@section('js_bottom')
+    @parent
+    <script>
+        $(document).ready(function(){
+             $(document).on('change', '._filter-statistic', function(){
+                    var data = $(this).serializeObject();
+                    home_statistic(data);
+             });
+
+             function home_statistic(send_data){
+                 request('home/statistic', 'get', send_data).done(function(response){
+                     if(response.success){
+                         $('#_home-statistic').html(response.html);
+                     }else{
+                         bootbox.alert(response.message);
+                     }
+                 });
+             }
+
+             var can_view_home_statistic = "{{ $permission['can_view_statistic_money_quick'] }}";
+
+             if(can_view_home_statistic == 1){
+                 var data = $('._filter-statistic').serializeObject();
+                 home_statistic(data);
+             }
+
+        });
+    </script>
 @endsection
