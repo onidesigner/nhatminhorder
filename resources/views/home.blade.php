@@ -107,7 +107,7 @@
 
 @section('js_bottom')
     @parent
-    <script src="{{ asset('bower_components/jquery-animateNumber/jquery.animateNumber.js')  }}"></script>
+    <script src="{{ asset('js/jquery.animateNumber.js')  }}"></script>
     <script>
         $(document).ready(function(){
              $(document).on('change', '._filter-statistic', function(){
