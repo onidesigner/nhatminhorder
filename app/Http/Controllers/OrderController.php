@@ -275,7 +275,7 @@ class OrderController extends Controller
                 || ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && Permission::isAllow(Permission::PERMISSION_ORDER_BUYING_CAN_SET_CRANE_STAFF) ),
 
             'can_change_order_received_from_seller' => $order->status == Order::STATUS_SELLER_DELIVERY,
-            'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
+            'can_change_order_item_quantity' => $order->isBeforeStatus(Order::STATUS_BOUGHT)|| $current_user->isGod(),
             'can_change_order_item_price' => $order->isBeforeStatus(Order::STATUS_BOUGHT) || $current_user->isGod(),
             'can_change_order_account_purchase_origin' => $order->isBeforeStatus(Order::STATUS_BOUGHT),
 
@@ -713,9 +713,15 @@ class OrderController extends Controller
         $item_id = $request->get('item_id');
         $order_item = OrderItem::find($item_id);
 
-        if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
-            $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+        if($user->isGod()){
+
+        }else{
+            if(!$order->isBeforeStatus(Order::STATUS_BOUGHT)){
+                $this->action_error[] = 'Không được phép sửa số lượng sản phẩm ở trạng thái ' . Order::getStatusTitle($order->status);
+            }
         }
+
+
 
         if(!$order_item || !$order_item instanceof OrderItem){
             $this->action_error[] = 'Sản phẩm #' . $item_id . ' không tồn tại!';
