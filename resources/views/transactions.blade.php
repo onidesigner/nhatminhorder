@@ -46,6 +46,21 @@
                                     value="{{$key}}">{{$value}}</option>
                                 @endforeach
                             </select>
+
+                            Từ <input
+
+                                    value="{{ request()->get('start_date')  }}"
+                                    placeholder="Tháng/ngày/năm" name="start_date" data-date-format="DD MMMM YYYY" type="date">
+                            Đến <input
+                                    value="{{ request()->get('end_date')  }}"
+                                    placeholder="Tháng/ngày/năm" name="end_date" data-date-format="DD MMMM YYYY" type="date">
+
+
+                            <p>
+                                <small style="color: grey;">
+                                    Định dạng ngày tháng: tháng/ngày/năm
+                                </small>
+                            </p>
                             <button class="">Tìm kiếm</button>
                         </form>
 

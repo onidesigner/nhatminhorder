@@ -108,24 +108,32 @@ class UserTransactionController extends Controller
         if(!empty($condition['customer_code'])){
             $customer = User::retrieveByCode($condition['customer_code']);
             if($customer instanceof User){
-                $where['user_id'] = $customer->id;
+                $where[] = ['user_id', '=', $customer->id];
             }else{
-                $where['user_id'] = 0;
+                $where[] = ['user_id', '=', 0];
             }
         }
 
         if(!empty($condition['order_code'])){
             $order = Order::retrieveByCode($condition['order_code']);
             if($order instanceof Order){
-                $where['object_id'] = $order->id;
+                $where[] = ['object_id', '=', $order->id];
             }else{
-                $where['object_id'] = 0;
+                $where[] = ['object_id', '=', 0];
             }
-            $where['object_type'] = UserTransaction::OBJECT_TYPE_ORDER;
+            $where[] = ['object_type', '=', UserTransaction::OBJECT_TYPE_ORDER];
         }
 
         if(!empty($condition['transaction_type'])){
-            $where['transaction_type'] = $condition['transaction_type'];
+            $where[] = ['transaction_type', '=', $condition['transaction_type']];
+        }
+
+        if(!empty($condition['start_date'])){
+            $where[] = ['created_at', '>=', sprintf('%s 00:00:00', $condition['start_date'])];
+        }
+
+        if(!empty($condition['end_date'])){
+            $where[] = ['created_at', '>=', sprintf('%s 23:59:59', $condition['end_date'])];
         }
 
         $transactions = UserTransaction::where($where);
