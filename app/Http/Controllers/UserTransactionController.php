@@ -133,7 +133,7 @@ class UserTransactionController extends Controller
         }
 
         if(!empty($condition['end_date'])){
-            $where[] = ['created_at', '>=', sprintf('%s 23:59:59', $condition['end_date'])];
+            $where[] = ['created_at', '<=', sprintf('%s 23:59:59', $condition['end_date'])];
         }
 
         $transactions = UserTransaction::where($where);
