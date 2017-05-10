@@ -149,6 +149,23 @@ var taobao = function(){
                 html = 'Giá: ' + Helper.formatPrice(lowPrice) + 'đ ~ ' + Helper.formatPrice(highPrice) + 'đ';
             }
         }
+
+        if(!html){
+            try{
+                var string = document.querySelectorAll('.tb-rmb-num')[0].textContent.trim();
+                if(string){
+                    var array = string.split('-');
+                    var lowPrice = parseFloat(array[0].trim()) * Helper.getExchangeRate();
+                    var highPrice = parseFloat(array[1].trim()) * Helper.getExchangeRate();
+                    if(!isNaN(lowPrice) && !isNaN(highPrice)){
+                        html = 'Giá: ' + Helper.formatPrice(lowPrice) + 'đ ~ ' + Helper.formatPrice(highPrice) + 'đ';
+                    }
+                }
+            }catch (e){
+
+            }
+        }
+
         return html;
     };
 
@@ -158,6 +175,12 @@ var taobao = function(){
             if(!$anchor.length){
                 $anchor = document.querySelectorAll('#J_PromoPrice');
             }
+
+            if(!$anchor.length){
+                $anchor = document.querySelectorAll('.tb-meta')[0];
+            }
+
+            // console.log($anchor);
 
             if($anchor.length){
                 document.querySelectorAll('.nhatminh247-preview-price').remove();
@@ -321,6 +344,14 @@ var taobao = function(){
         if(!price){
             try{
                 price = document.querySelectorAll('#J_priceStd .tb-rmb-num')[0].textContent.trim();
+            }catch (e){
+
+            }
+        }
+
+        if(!price){
+            try{
+                price = document.querySelectorAll('.tb-rmb-num')[0].textContent.trim();
             }catch (e){
 
             }

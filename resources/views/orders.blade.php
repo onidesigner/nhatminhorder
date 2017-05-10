@@ -59,6 +59,28 @@
 
                         @endforeach
 
+                        {{--<br>--}}
+                        {{--<br>--}}
+
+                        {{--Theo <select name="" id="">--}}
+                            {{--<option value="">------</option>--}}
+                        {{--</select>--}}
+
+                        {{--Từ <input type="text">--}}
+
+                        {{--Đến <input type="text">--}}
+
+                        {{--<div class="btn-group" data-toggle="buttons">--}}
+                            {{--<label class="btn btn-primary active">--}}
+                                {{--<input type="radio" name="options" id="option1" autocomplete="off" checked> Cũ trước--}}
+                            {{--</label>--}}
+                            {{--<label class="btn btn-primary">--}}
+                                {{--<input type="radio" name="options" id="option2" autocomplete="off"> Mới trước--}}
+                            {{--</label>--}}
+                        {{--</div>--}}
+                        
+                        
+
                         <input type="hidden" name="status" value="{{ request()->get('status')  }}">
 
                     </form>
