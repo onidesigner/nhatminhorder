@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>NhatMinh247 - @yield('page_title')</title>
+    <title>@yield('page_title') - NhatMinh247</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
