@@ -27,6 +27,11 @@
                         <input type="hidden" name="page" value="{{ request()->get('page')  }}">
 
                         <input type="text" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
+
+                        <input type="text" placeholder="Hóa đơn gốc..." name="original_bill" value="{{ request()->get('original_bill') }}">
+
+                        <input type="text" placeholder="Vận đơn..." name="freight_bill" value="{{ request()->get('freight_bill') }}">
+
                         <input type="text" placeholder="Mã khách hoặc email..."
                                class=""
                                name="customer_code_email" value="{{ request()->get('customer_code_email') }}">

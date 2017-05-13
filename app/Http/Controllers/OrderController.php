@@ -52,6 +52,38 @@ class OrderController extends Controller
         $orders = Order::select('*');
         $orders = $orders->orderBy('id', 'desc');
 
+        if(!empty($params['original_bill'])){
+            $query = DB::table('order_original_bill')
+                ->select(DB::raw('GROUP_CONCAT(order_id) as order_id'))
+                ->where([
+                    ['original_bill', '=', $params['original_bill']],
+                    ['is_deleted', '=', 0],
+                ])
+                ->first();
+            if($query){
+                $o_ids = explode(',', $query->order_id);
+            }else{
+                $o_ids[] = 0;
+            }
+            $orders = $orders->whereIn('id', $o_ids);
+        }
+
+        if(!empty($params['freight_bill'])){
+            $query = DB::table('order_freight_bill')
+                ->select(DB::raw('GROUP_CONCAT(order_id) as order_id'))
+                ->where([
+                    ['freight_bill', '=', $params['freight_bill']],
+                    ['is_deleted', '=', 0],
+                ])
+                ->first();
+            if($query){
+                $o_ids = explode(',', $query->order_id);
+            }else{
+                $o_ids[] = 0;
+            }
+            $orders = $orders->whereIn('id', $o_ids);
+        }
+
         if(!empty($params['order_code'])){
             $orders = $orders->where('code', $params['order_code']);
         }
