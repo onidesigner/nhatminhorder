@@ -20,34 +20,48 @@
 
                 <div class="card-body">
 
-                    <h3>{{$page_title}}</h3>
+                    <h3 class="cart-title">{{$page_title}}</h3>
 
                     <form
                             action="{{ url('order')  }}" method="get" id="_form-orders">
                         <input type="hidden" name="page" value="{{ request()->get('page')  }}">
 
-                        <input type="text" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
+                            </div>
 
-                        <input type="text" placeholder="Hóa đơn gốc..." name="original_bill" value="{{ request()->get('original_bill') }}">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Hóa đơn gốc..." name="original_bill" value="{{ request()->get('original_bill') }}">
+                            </div>
 
-                        <input type="text" placeholder="Vận đơn..." name="freight_bill" value="{{ request()->get('freight_bill') }}">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Vận đơn..." name="freight_bill" value="{{ request()->get('freight_bill') }}">
+                            </div>
 
-                        <input type="text" placeholder="Mã khách hoặc email..."
-                               class=""
-                               name="customer_code_email" value="{{ request()->get('customer_code_email') }}">
 
-                        <select name="paid_staff_id" id="" style="width: 200px;">
-                            <option value="">Nhân viên mua hàng</option>
-                            @foreach($crane_buying_list as $crane_buying_list_item)
-                                <option
+                            <div class="col-sm-3">
+                                <input type="text" placeholder="Mã khách, email..."
+                                       class="form-control"
+                                       name="customer_code_email" value="{{ request()->get('customer_code_email') }}">
+                            </div>
+                            <div class="col-sm-3">
+                                <select
+                                        class="form-control"
+                                        name="paid_staff_id">
+                                    <option value="">Nhân viên mua hàng</option>
+                                    @foreach($crane_buying_list as $crane_buying_list_item)
+                                        <option
 
-                                        @if( request()->get('paid_staff_id') == $crane_buying_list_item->id )
-                                         selected
-                                        @endif
+                                                @if( request()->get('paid_staff_id') == $crane_buying_list_item->id )
+                                                selected
+                                                @endif
 
-                                        value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
-                            @endforeach
-                        </select>
+                                                value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
                         <br><br>
 
