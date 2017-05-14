@@ -100,9 +100,10 @@ class SendSmsController extends Controller
         if(!empty($condition['status'])){
             $where['status'] = $condition['status'];
         }
-        if(!empty($condition['level'])){
-            $where['level'] = $condition['level'];
-        }
+        //if(!empty($condition['level'])){
+        //    $where['level'] = $condition['level'];
+        //}
+        $where['level'] = 0;
         if(!empty($condition['number'])){
             $where['number_send'] = $condition['number'];
         }
@@ -150,9 +151,7 @@ class SendSmsController extends Controller
 
             }
             $arr = [" 04.2262.6699","04.2265.6699"];
-
-
-            $rand_key = array_rand($arr,1);
+            
 
             $content= 'Nhatminh247.vn: 
             Dịch vụ đặt hàng TQ,vận chuyển chỉ từ 13k/kg.
