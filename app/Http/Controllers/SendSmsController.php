@@ -125,7 +125,7 @@ class SendSmsController extends Controller
             'data_sms' => $sms_customer_list->appends($where),
             'per_page' => $per_page,
             'page' => $page,
-           # 'count_item' =>$result
+            'count_item' =>$result
         ]);
     }
 

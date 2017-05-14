@@ -111,7 +111,7 @@ if (!empty($_GET['status'])) {
 
                     {{--<a href="{{ URL::to('downloadExcel') }}"><button class="btn btn-success">Download CSV</button></a>--}}
                     <br/>
-                    {{--<span>Số bản ghi {{ $count_item }} </span>--}}
+                    <span>Số bản ghi {{ $count_item }} </span>
 
 
                         <table class="table table-bordered">
