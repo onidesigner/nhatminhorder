@@ -140,6 +140,8 @@ class ScanController extends Controller
         $create_user = User::find(Auth::user()->id);
         $response = [];
 
+
+
         if($warehouse->type == WareHouse::TYPE_RECEIVE){
             $message_internal = sprintf("Kiện hàng %s nhập kho %s", $barcode, $warehouse->code);
 
@@ -186,31 +188,44 @@ class ScanController extends Controller
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
-                    $order->changeOrderWaitingDelivery();
-                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    $user_address = UserAddress::find($order->user_address_id);
-                    if($user_address instanceof UserAddress){
+                    // trong truong hop kho nhan hàng trùng với kho đích trên đơn thì mới
+                    // chuyển trạng thái sang chờ giao hàng
+                    if($warehouse->code == $order->destination_warehouse){
+                        $order->changeOrderWaitingDelivery();
+                        $user_address = UserAddress::find($order->user_address_id);
+                        if($user_address instanceof UserAddress){
+                            // lay ra so tien cua khach hang , neu so tien khach
+                            $user_customer = User::find($order->user_id);
+                            $account_banace = $user_customer->account_balance;
+                            $without_money = abs($account_banace);
+                            if($account_banace < 0){
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối "
+                                    .$warehouse->code. " .Bạn cần nạp thêm {$without_money} đ để lấy được hàng ! ";
+                            }else{
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code .".Mời bạn đến kho để lấy hàng .";
+                            }
 
-                        
-                        $content = "Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code;
-                        $array_data = [
-                            'phone' => $user_address->reciver_phone,
-                            'content' => $content
-                        ];
-//                        $job = (new \App\Jobs\SendReminderEmail($array_data));
-//                        dispatch($job);
+                            $array_data = [
+                                'phone' => $user_address->reciver_phone,
+                                'content' => $content
+                            ];
+                            $job = (new \App\Jobs\SendSmsToCustomer($array_data));
+                            dispatch($job);
+                        }
+
+                        $order_address = $order->getCustomerReceiveAddress();
+                        $user_phone = $order_address->phone;
+                        $response = array(
+                            'barcode' => $barcode,
+                            'address' => $order_address,
+                            'phone' => $user_phone,
+                            'message' => ' nhập kho phân phối '. $warehouse->code,
+                            'status' => 'success',
+                            'order_id' => $order->id
+                        );
                     }
+                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-                    $order_address = $order->getCustomerReceiveAddress();
-                    $user_phone = $order_address->phone;
-                    $response = array(
-                        'barcode' => $barcode,
-                        'address' => $order_address,
-                        'phone' => $user_phone,
-                        'message' => ' nhập kho phân phối '. $warehouse->code,
-                        'status' => 'success',
-                        'order_id' => $order->id
-                    );
                 }
             }
 
