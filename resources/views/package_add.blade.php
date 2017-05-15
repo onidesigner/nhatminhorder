@@ -24,6 +24,21 @@
                         <div class="col-xs-12">
                             <h3>Tạo kiện</h3>
 
+                            @if($warehouse_receive_list)
+                            <select class="form-control" name="warehouse" id="">
+                                @foreach($warehouse_receive_list as $warehouse_receive_list_item)
+                                <option
+
+                                        @if($warehouse_receive_list_item->code == request()->get('warehouse'))
+                                         selected
+                                        @endif
+                                        value="{{$warehouse_receive_list_item->code}}">{{$warehouse_receive_list_item->name}} - {{$warehouse_receive_list_item->code}}</option>
+                                @endforeach
+                            </select>
+                            <br>
+                            @endif
+
+
                             <form class="___form" onsubmit="return false;">
 
                                 <input type="hidden" name="method" value="post">
@@ -230,6 +245,7 @@
             $(document).on('keypress', '#_barcode', function(e){
                if(e.keyCode == 13){
                    var barcode = $(this).val();
+                   var warehouse = $('select[name="warehouse"]').val();
                    if(!barcode) return false;
 
                    $.ajax({
@@ -237,13 +253,14 @@
                      method: 'post',
                      data: {
                          barcode:barcode,
+                         warehouse:warehouse,
                          _token: "{{csrf_token()}}",
                          action: 'create_package',
                      },
                      success:function(response) {
 
                          if(response.success){
-                             window.location.href = "{{ url('package?barcode=')  }}" + barcode;
+                             window.location.href = "{{ url('package?barcode=')  }}" + barcode + '&warehouse=' + warehouse;
                          }else{
                              if(response.message){
                                  bootbox.alert(response.message);
