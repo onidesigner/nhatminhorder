@@ -70,6 +70,7 @@ Route::put('/user/address/default', 'Customer\UserAddressController@setDefaultUs
 
 #region -- quet ma vach --
 Route::get('/scan', 'ScanController@indexs');
+Route::get('/scan/statistic', 'ScanController@statistic');
 Route::post('/scan/action', 'ScanController@action');
 #endregion
 

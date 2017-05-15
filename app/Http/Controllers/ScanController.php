@@ -43,6 +43,18 @@ class ScanController extends Controller
         return view('scan', $data);
     }
 
+    public function statistic(Request $request){
+        $warehouse_list = WareHouse::getAllWarehouse();
+
+        $view = View::make('scan_statistic', [
+            'action_list' => Scan::$action_list,
+            'warehouse_list' => $warehouse_list,
+        ]);
+        $html = $view->render();
+
+        return response()->json(['success' => true, 'html' => $html]);
+    }
+
     private function __getInitData($layout = null){
         $warehouse_list = WareHouse::getAllWarehouse();
 
