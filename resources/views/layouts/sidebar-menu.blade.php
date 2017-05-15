@@ -44,7 +44,7 @@ if(Auth::check()){
                 'title' => 'Vận Hành',
                 'children' => [
                     [
-                        'url' => url(sprintf('order?status=%s', App\Order::STATUS_DEPOSITED)),
+                        'url' => url(sprintf('order')),
                         'title' => 'Đơn hàng',
                         'permission' => \App\Permission::PERMISSION_ORDER_LIST_VIEW
                     ],
