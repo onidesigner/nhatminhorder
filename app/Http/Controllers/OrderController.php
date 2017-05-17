@@ -776,14 +776,14 @@ class OrderController extends Controller
             Comment::createComment(
                 $user,
                 $order_item,
-                sprintf("Sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity),
+                sprintf("Sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity),
                 Comment::TYPE_NONE,
                 Comment::TYPE_CONTEXT_ACTIVITY,
                 $order
             );
 
             $title = "Sửa số lượng sản phẩm trên đơn ".$order->code;
-            $message = sprintf(" sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity);
+            $message = sprintf(" sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity);
             $content = $user->name. $message;
             CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }

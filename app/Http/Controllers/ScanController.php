@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class ScanController extends Controller
@@ -185,6 +186,8 @@ class ScanController extends Controller
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
 
+            Log::debug("nhap kho phan phoi");
+
             $message_internal = sprintf("Kiện hàng %s nhập kho phân phối %s", $barcode, $warehouse->code);
 
             $package = Package::where([
@@ -194,10 +197,14 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
+                Log::debug(sprintf("kien hang %s", $barcode));
+
                 $package->inputWarehouseDistribution($warehouse->code);
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
+                    Log::debug(sprintf("don hang %s", $order->code));
+
                     $order->changeOrderWaitingDelivery();
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     $user_address = UserAddress::find($order->user_address_id);
@@ -225,11 +232,11 @@ class ScanController extends Controller
                     );
                 }
             }
-
+            Log::debug("1");
             $this->message = $message_internal;
             return $response;
         }
-
+        Log::debug("2");
         $this->__writeActionScanLog($request, $warehouse, $currentUser);
 
         return true;
