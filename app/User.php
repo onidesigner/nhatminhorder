@@ -71,6 +71,14 @@ class User extends Authenticatable
         self::SECTION_CUSTOMER => 'Khách hàng',
     ];
 
+    public static function findBySection($section){
+        return self::where([
+            ['section', '=', $section]
+        ])
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
     /**
      * @author vanhs
      * @desc Lay tong so user dang ky moi theo ngay
