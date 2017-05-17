@@ -11,6 +11,7 @@ use App\OrderService;
 use App\Package;
 use App\PackageService;
 use App\Permission;
+use App\Scan;
 use App\Service;
 use App\User;
 use App\Util;
@@ -490,15 +491,31 @@ class PackageController extends Controller
 
     }
 
-    private function __getListData($layout = null){
+    private function __getListData(Request $request, $layout = null){
         $per_page = 50;
 
-        $packages = Package::select('*')
-            ->where([
-                'is_deleted' => 0,
-            ])
-            ->orderBy('id', 'desc');
+        $packages = Package::select('*');
+
+        $where = [];
+
+//        if($request->get('package_has_weight') == 'on'){
+//            $where[] = ['weight', '>', 0];
+//        }
+
+        if(!empty($request->get('current_warehouse'))){
+            $where[] = ['current_warehouse', '=', $request->get('current_warehouse')];
+        }
+
+        if(!empty($request->get('warehouse_status'))){
+            $where[] = ['warehouse_status', '=', $request->get('warehouse_status')];
+        }
+
+        $where[] = ['is_deleted', '=', 0];
+
+        $packages = $packages->where($where);
+        $packages = $packages->orderBy('id', 'desc');
         $total_packages = $packages->count();
+
         $packages = $packages->paginate($per_page);
 
         if($packages){
@@ -515,18 +532,20 @@ class PackageController extends Controller
             'packages' => $packages,
             'total_packages' => $total_packages,
             'can_create_package' => $can_create_package,
+            'warehouse_list' => WareHouse::getAllWarehouse(),
+            'action_list' => Scan::$action_list,
             'layout' => $layout
         ];
     }
 
-    public function indexs()
+    public function indexs(Request $request)
     {
         $can_view = Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW);
         if(!$can_view){
             return redirect('403');
         }
 
-        $data = $this->__getListData('layouts.app');
+        $data = $this->__getListData($request, 'layouts.app');
 
         return view('package_list', $data);
     }

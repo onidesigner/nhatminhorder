@@ -25,6 +25,54 @@
 
                     <p>Tìm thấy {{$total_packages}} kiện hàng</p>
 
+                    <form onchange="this.submit();" action="{{ url('packages')  }}" method="get">
+                        <div class="row">
+                            {{--<div class="col-sm-3 col-xs-12">--}}
+                                {{--<input type="checkbox"--}}
+                                       {{--@if(request()->get('package_has_weight') == 'on')--}}
+                                        {{--checked--}}
+                                       {{--@endif--}}
+
+                                       {{--name="package_has_weight"> cân nặng > 0--}}
+                            {{--</div>--}}
+
+                            <div class="col-sm-3 col-xs-12">
+                                <select name="current_warehouse" id="" class="form-control">
+                                    <option value="">Chọn kho</option>
+                                    @foreach($warehouse_list as $warehouse_list_item)
+                                        <option
+                                                @if($warehouse_list_item->code == request()->get('current_warehouse'))
+
+                                                         selected
+
+                                                @endif
+
+                                                value="{{$warehouse_list_item->code}}">{{$warehouse_list_item->name}} - {{$warehouse_list_item->code}}</option>
+                                    @endforeach
+                                </select>
+
+
+                            </div>
+
+                            <div class="col-sm-3 col-xs-12">
+                                <select name="warehouse_status" id="" class="form-control">
+                                    <option value="">Hành động</option>
+                                    @foreach($action_list as $key => $value)
+                                        <option
+                                                @if($key == request()->get('warehouse_status'))
+
+                                                selected
+
+                                                @endif
+
+                                                value="{{$key}}">{{$value}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+
                     <table class="table no-padding-leftright">
                         <thead>
                         <tr>
