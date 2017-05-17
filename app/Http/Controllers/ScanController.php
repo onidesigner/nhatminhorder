@@ -197,7 +197,7 @@ class ScanController extends Controller
                             'phone' => $user_address->reciver_phone,
                             'content' => $content
                         ];
-                        $job = (new \App\Jobs\SendReminderEmail($array_data));
+                        $job = (new \App\Jobs\SendSms($array_data));
                         dispatch($job);
                     }
 
