@@ -386,6 +386,10 @@ class UserController extends Controller
             $where['status'] = $condition['status'];
         }
 
+        if(!empty($condition['customer_code_email'])){
+            $where['id'] = $condition['customer_code_email'];
+        }
+
         $users = User::where($where);
         $users = $users->orderBy('id', 'desc');
         $total_users = $users->count();
