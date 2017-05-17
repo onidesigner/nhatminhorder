@@ -175,7 +175,10 @@
                     </table>
 
 
-                    {{ $packages->links()  }}
+{{--                    {{ $packages->links()  }}--}}
+
+                    {{ $packages->appends(request()->input())->links() }}
+
                 </div>
             </div>
         </div>
