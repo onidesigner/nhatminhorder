@@ -510,6 +510,10 @@ class PackageController extends Controller
             $where[] = ['warehouse_status', '=', $request->get('warehouse_status')];
         }
 
+        if(!empty($request->get('logistic_package_barcode'))){
+            $where[] = ['logistic_package_barcode', '=', $request->get('logistic_package_barcode')];
+        }
+
         $where[] = ['is_deleted', '=', 0];
 
         $packages = $packages->where($where);

@@ -37,7 +37,15 @@
                             {{--</div>--}}
 
                             <div class="col-sm-3 col-xs-12">
-                                <select name="current_warehouse" id="" class="form-control">
+                                <input type="text" name="logistic_package_barcode"
+
+                                       placeholder="Mã kiện"
+                                       class="form-control"
+                                       value="{{request()->get('logistic_package_barcode')}}">
+                            </div>
+
+                            <div class="col-sm-3 col-xs-12">
+                                <select name="current_warehouse" id="" class="form-control _selectpicker">
                                     <option value="">Chọn kho</option>
                                     @foreach($warehouse_list as $warehouse_list_item)
                                         <option
@@ -55,7 +63,7 @@
                             </div>
 
                             <div class="col-sm-3 col-xs-12">
-                                <select name="warehouse_status" id="" class="form-control">
+                                <select name="warehouse_status" id="" class="form-control _selectpicker">
                                     <option value="">Hành động</option>
                                     @foreach($action_list as $key => $value)
                                         <option
@@ -186,11 +194,20 @@
 
 @endsection
 
+@section('css_bottom')
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+@endsection
+
 @section('js_bottom')
     @parent
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script>
         $(document).ready(function(){
 
+            $('._selectpicker').selectpicker({
+//                style: 'btn-info',
+//                width: 'fit',
+            });
 
         });
 
