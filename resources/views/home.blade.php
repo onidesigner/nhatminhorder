@@ -35,6 +35,9 @@
                                 </div>
                             </div>
                         </a>
+
+
+
                     </div>
 
                     @if($permission['can_view_statistic_money_quick'])
@@ -42,7 +45,7 @@
                         <div class="card card-mini">
                             <div class="card-header">
                                 <div class="card-title text-uppercase">
-                                    Thống kê
+                                    Thống kê tài chính
                                     <br>
                                     <div style="text-transform: none;
     font-size: 14px;">
@@ -70,6 +73,31 @@
                             </div>
                             <div class="card-body no-padding table-responsive" id="_home-statistic"></div>
                         </div>
+
+
+
+                        <div class="card card-mini hidden" style="margin-top: 30px;">
+                            <div class="card-header">
+                                <div class="card-title text-uppercase">
+                                    Thống kê mua hàng
+                                    <br>
+                                    <div style="text-transform: none;
+    font-size: 14px;">
+                                        <form action="" onsubmit="return false;" class="_filter-statistic-order-buying">
+                                            Từ
+                                            <input name="start_date" type="date" data-date="" data-date-format="DD MMMM YYYY" value="{{ sprintf('%s', date('Y-m-d'))  }}">
+                                            đến
+                                            <input name="end_date" type="date" data-date="" data-date-format="DD MMMM YYYY" value="{{ sprintf('%s', date('Y-m-d'))  }}">
+                                        </form>
+                                        <p style="color: grey; font-size: 12px;">Định dạng: tháng/ngày/năm</p>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-body no-padding table-responsive" id="_home-statistic-order-buying"></div>
+                        </div>
+
                     </div>
                     @endif
 
@@ -110,6 +138,13 @@
     <script src="{{ asset('js/jquery.animateNumber.js')  }}"></script>
     <script>
         $(document).ready(function(){
+
+            /* thong ke mua hang */
+
+
+
+
+            /* thong ke tai chinh */
              $(document).on('change', '._filter-statistic', function(){
                     var data = $(this).serializeObject();
                     home_statistic(data);

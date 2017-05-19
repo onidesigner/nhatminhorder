@@ -80,6 +80,20 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-sm-3">
+                                <input
+                                        @if(request()->get('order_not_fights') == 'on')
+                                         checked
+                                        @endif
+                                        type="checkbox" id="order_not_fights" name="order_not_fights">
+
+                                <label for="order_not_fights">
+                                    Đơn chưa phân
+                                </label>
+
+
+                            </div>
                         </div>
 
                         <br><br>

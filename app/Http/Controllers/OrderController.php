@@ -68,6 +68,10 @@ class OrderController extends Controller
             $orders = $orders->whereIn('id', $o_ids);
         }
 
+        if(!empty($params['order_not_fights'])){
+            $orders = $orders->where('crane_staff_id', null);
+        }
+
         if(!empty($params['freight_bill'])){
             $query = DB::table('order_freight_bill')
                 ->select(DB::raw('GROUP_CONCAT(order_id) as order_id'))

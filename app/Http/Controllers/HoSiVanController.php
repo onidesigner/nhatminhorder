@@ -21,6 +21,32 @@ class HoSiVanController extends Controller
 
     }
 
+    private function __cap_nhat_nguoi_duoc_phan_don_cho_nhung_don_hang_cu(Request $request){
+        $orders = Order::where([
+            ['crane_staff_id', '=', null],
+            ['status', '!=', Order::STATUS_DEPOSITED]
+        ])->get();
+
+        if($orders){
+            foreach($orders as $order){
+                echo sprintf("<a href='%s' target='_blank'>don hang %s (%s)</a><br/>",
+                    url('order/detail', $order->id),
+                    $order->code,
+                    Order::getStatusTitle($order->status));
+
+                $crane_buying = User::find($order->paid_staff_id);
+                if($crane_buying instanceof User){
+                    $order->crane_staff_id = $order->paid_staff_id;
+                    $order->crane_staff_at = $order->bought_at;
+                    $order->save();
+
+                    echo sprintf("nguoi mua %s - %s<hr>", $crane_buying->email, $crane_buying->code);
+                }
+
+            }
+        }
+    }
+
     private function __don_truy_thu_dat_coc(Request $request){
         //select * from `user_transaction` where transaction_type = 'DEPOSIT_ADJUSTMENT' and object_type = 'ORDER';
         $user_transaction = UserTransaction::where([
