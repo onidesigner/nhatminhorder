@@ -27,6 +27,7 @@ class HoSiVanController extends Controller
             ['status', '!=', Order::STATUS_CANCELLED]
         ])->get();
 
+        $amount = 0;
         if($orders){
             foreach($orders as $order){
                 if(!$order instanceof Order){
@@ -35,29 +36,14 @@ class HoSiVanController extends Controller
 
 //                $amount_vnd = floatval($order->amount_vnd);
                 $amount_vnd_with_items = floatval($order->amountWithItems(true));
-                $amount_vnd_with_order_fee = 0;
-                $order_fee = OrderFee::where([
-                    ['order_id', '=', $order->id],
-                    ['name', '=', 'AMOUNT_VND']
-                ])->first();
+                $deposit_percent = $order->deposit_percent;
 
-                if($order_fee instanceof OrderFee){
-                    $amount_vnd_with_order_fee = floatval($order_fee->money);
-                }
+                $amount += $amount_vnd_with_items * $deposit_percent / 100;
 
-
-                if($amount_vnd_with_items <> $amount_vnd_with_order_fee){
-                    echo sprintf('<p>$amount_vnd_with_items: %s</p>', $amount_vnd_with_items);
-                    echo sprintf('<p>$amount_vnd_with_order_fee: %s</p>', $amount_vnd_with_order_fee);
-                    echo sprintf("<p><a href='%s'>don %s co van de</a></p>", url('order/detail', $order->id), $order->code);
-                }else{
-//                    echo sprintf('<p>$amount_vnd_with_items: %s</p>', $amount_vnd_with_items);
-//                    echo sprintf('<p>$amount_vnd_with_order_fee: %s</p>', $amount_vnd_with_order_fee);
-//                    echo sprintf("<p><a href='%s'>don %s co van de</a></p>", url('order/detail', $order->id), $order->code);
-                }
             }
         }
 
+        var_dump($amount);
     }
 
     private function __cap_nhat_dien_thoai_nhan_hang_tren_don(Request $request){

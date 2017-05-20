@@ -226,9 +226,9 @@ class HomeController extends Controller
                 ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
                 ['user_id', '!=', User::USER_ID_TEST],
                 ['created_at', '>=', $start_today],
-                ['created_at', '<=', $end_today]
+                ['created_at', '<=', $end_today],
+                ['amount', '>', 0]
             ])
-            ->having('amount', '>', 0)
             ->first();
 
         $customer_recharge_amount = 0;
