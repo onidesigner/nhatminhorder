@@ -156,6 +156,12 @@ class Cart extends Model
                     $amount = 0;
                     $total_order_quantity = 0;
 
+                    $user_address_receive_phone = null;
+                    $user_address = UserAddress::find($address_id);
+                    if($user_address instanceof UserAddress){
+                        $user_address_receive_phone = $user_address->reciver_phone;
+                    }
+
                     $insert_id_order = Order::insertGetId([
                         'code' => $order_code,
                         'avatar' => $shop->avatar ? urldecode($shop->avatar) : '',
@@ -167,6 +173,7 @@ class Cart extends Model
                         'wangwang' => $shop->wangwang,
                         'location_sale' => $shop->location_sale,
                         'user_address_id' => $address_id,
+                        'user_address_receive_phone' => $user_address_receive_phone,
                         'destination_warehouse' => $destination_warehouse,
                         'deposit_percent' => $deposit_percent,
                         'deposit_amount' => $deposit_amount,

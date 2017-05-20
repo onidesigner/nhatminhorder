@@ -72,6 +72,10 @@ class OrderController extends Controller
             $orders = $orders->where('crane_staff_id', null);
         }
 
+        if(!empty($params['user_address_receive_phone'])){
+            $orders = $orders->where('user_address_receive_phone', 'like', '%' . $params['user_address_receive_phone'] . '%');
+        }
+
         if(!empty($params['freight_bill'])){
             $query = DB::table('order_freight_bill')
                 ->select(DB::raw('GROUP_CONCAT(order_id) as order_id'))

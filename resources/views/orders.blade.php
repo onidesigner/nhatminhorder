@@ -65,6 +65,14 @@
 
                         <div class="row">
                             <div class="col-sm-3">
+                                <input type="text" class="form-control"
+                                       placeholder="Điện thoại nhận hàng"
+                                       value="{{ request()->get('user_address_receive_phone')  }}"
+                                       name="user_address_receive_phone">
+
+                            </div>
+
+                            <div class="col-sm-3">
                                 <select
                                         class="form-control _selectpicker"
                                         name="paid_staff_id">

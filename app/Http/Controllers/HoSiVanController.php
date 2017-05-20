@@ -9,6 +9,7 @@ use App\OrderFee;
 use App\Package;
 use App\Service;
 use App\User;
+use App\UserAddress;
 use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
@@ -19,6 +20,30 @@ class HoSiVanController extends Controller
     function __construct()
     {
 
+    }
+
+    private function __cap_nhat_dien_thoai_nhan_hang_tren_don(Request $request){
+        $limit = 500;
+        $orders = Order::where([
+            ['user_address_receive_phone', '=', null]
+        ])->limit($limit)
+            ->get();
+
+        if($orders){
+            foreach($orders as $order){
+                if(!$order instanceof Order){
+                    continue;
+                }
+                $user_address = UserAddress::find($order->user_address_id);
+                if($user_address instanceof UserAddress){
+                    $user_address_receive_phone = $user_address->reciver_phone;
+                    $order->user_address_receive_phone = $user_address_receive_phone;
+                    if($order->save()){
+                        echo sprintf("don hang %s<br/><br/>", $order->code);
+                    }
+                }
+            }
+        }
     }
 
     private function __cap_nhat_nguoi_duoc_phan_don_cho_nhung_don_hang_cu(Request $request){
