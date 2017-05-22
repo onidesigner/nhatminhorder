@@ -81,9 +81,51 @@
                     </form>
 
 
+
+                    <?php
+
+                        $current_user = App\User::find(Auth::user()->id);
+                        /** @var App\User $created_user */
+
+                        if($current_user->isGod()){
+                    ?>
+                    <fieldset>
+                        <legend>Quét mã vạch</legend>
+                        <select name="action" id="" class="form-control1">
+                            @if(!empty($action_list))
+                                @foreach($action_list as $key => $val)
+                                    <option value="{{$key}}">
+                                        {{$val}}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <br>
+
+                        <select name="warehouse" id="" class="form-control1">
+                            @if(!empty($warehouse_list))
+                                @foreach($warehouse_list as $key => $val)
+                                    <option
+                                            data-warehouse-type="{{$val['type']}}"
+                                            value="{{$val['code']}}">{{$val['name']}} - {{$val['description']}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <br>
+                        <input type="button" class="_btn-scan-barcode" value="Quét">
+
+                    </fieldset>
+
+                    <?php
+                    }
+                    ?>
+
                     <table class="table no-padding-leftright">
                         <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" class="_chk-all">
+                            </th>
                             <th class="">Mã kiện</th>
                             <th class="">Trạng thái</th>
                             <th class="">Đơn hàng</th>
@@ -95,6 +137,10 @@
                         @if(!empty($packages))
                             @foreach($packages as $package)
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" class="_chk" value="{{$package->logistic_package_barcode}}">
+                                        &nbsp;&nbsp;&nbsp;
+                                    </td>
                                     <td>
                                         @if($package->logistic_package_barcode)
                                             <a href="{{ url('package', $package->logistic_package_barcode)  }}">{{$package->logistic_package_barcode}}</a>
@@ -208,6 +254,49 @@
 //                style: 'btn-info',
 //                width: 'fit',
             });
+
+            $(document).on('click', '._chk-all', function(){
+                $('._chk').prop('checked', $(this).prop('checked'));
+            });
+
+            var logistic_package_barcode = [];
+
+            $(document).on('click', '._btn-scan-barcode', function(){
+
+
+                $('._chk:checked').each(function(i){
+                    var barcode = $(this).val();
+                    if(barcode){
+                        logistic_package_barcode.push(barcode);
+                    }
+                });
+
+                scan();
+            });
+
+            function scan(){
+
+                if(!logistic_package_barcode.length){
+                    return false;
+                }
+
+                var barcode = logistic_package_barcode[0];
+                logistic_package_barcode.shift();
+                request("{{ url('scan/action')  }}", 'post', {
+                    action:$('select[name="action"]').val(),
+                    warehouse:$('select[name="warehouse"]').val(),
+                    barcode:barcode,
+                    _token:"{{csrf_token()}}"
+                }).done(function(response){
+                    if(response.success){
+                        $('._chk[value="' + barcode + '"]').after('thành công');
+                    }else{
+                        $('._chk[value="' + barcode + '"]').after(response.message);
+                    }
+
+                    scan();
+                });
+            }
 
         });
 
