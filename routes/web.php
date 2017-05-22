@@ -214,3 +214,5 @@ Route::post('/gui-tin-nhan','SendSmsController@sendSms');
 #endregion
 
 Route::get('/home/statistic', 'HomeController@homeStatistic');
+
+Router::get('/send-email','SendMailerController@sendEmailToCustomer');

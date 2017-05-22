@@ -16,7 +16,6 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.
  */
-
 /**
  * PHPMailer - PHP email creation and transport class.
  * @package PHPMailer
@@ -25,6 +24,7 @@
  * @author Andy Prevost (codeworxtech) <codeworxtech@users.sourceforge.net>
  * @author Brent R. Matzelle (original founder)
  */
+
 class PHPMailer
 {
     /**
