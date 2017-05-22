@@ -33,7 +33,7 @@ class SendMailToCustomer
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
 
-        $mail->setFrom($my_gmail,$my_pass);
+        $mail->setFrom($my_gmail,'Nhatminh247.vn');
 
         $mail->addReplyTo($my_gmail, $my_pass);
         #địa chỉ mail của nơi nhận
