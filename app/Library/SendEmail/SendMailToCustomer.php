@@ -38,7 +38,7 @@ class SendMailToCustomer
         $mail->addReplyTo($my_gmail, $my_pass);
         #địa chỉ mail của nơi nhận
         $mail->addAddress($customer_mail, '');
-        $mail->Subject = 'Nhatminh247.vn1';
+        $mail->Subject = 'Nhatminh247.vn';
 
         $mail->msgHTML(file_get_contents('../public/template_email/content.html'), dirname(__FILE__));
 
