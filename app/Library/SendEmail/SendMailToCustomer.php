@@ -44,6 +44,7 @@ class SendMailToCustomer
 
         //Attach an image file
         $mail->addAttachment('../public/uploads/San_luong_van_chuyen_nhat_minh.xlsx');
+        $mail->addAttachment('../public/uploads/ssss.png');
 
         //send the message, check for errors
         if (!$mail->send()) {
