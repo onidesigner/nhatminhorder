@@ -6,20 +6,29 @@ namespace App\Library\SendEmail;
  * Date: 22/05/2017
  * Time: 13:28
  */
-include('class.smtp.php');
-include "class.phpmailer.php";
+require('class.smtp.php');
+require ("class.phpmailer.php");
 class SendMailToCustomer
 {
-    public static function sendMail(){
+    /**
+     * @param $customer_mail
+     * @param $path_template
+     * @param $patch_attach
+     * @throws phpmailerException
+     */
+    public static function sendMail($customer_mail,$path_template,$patch_attach){
+
         $my_gmail = 'nhatminh247.vn@gmail.com';
         $my_pass = 'nhatminh2017';
-        $mail = new PHPMailer();
+
+        $mail = new PHPMailer;
+
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
         $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
+        $mail->Port = 465;
+        $mail->SMTPSecure = 'ssl';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
@@ -28,15 +37,14 @@ class SendMailToCustomer
 
         $mail->addReplyTo($my_gmail, $my_pass);
         #địa chỉ mail của nơi nhận
-        $mail->addAddress('nguyengiangdhxd@gmail.com', 'Mail đầu tiên');
-        $mail->Subject = 'PHPMailer GMail SMTP test';
+        $mail->addAddress($customer_mail, '');
+        $mail->Subject = 'Nhatminh247.vn1';
 
-        $mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
+        $mail->msgHTML(file_get_contents('../public/template_email/content.html'), dirname(__FILE__));
 
-        //Replace the plain text body with one created manually
-        $mail->AltBody = 'This is a plain-text message body';
         //Attach an image file
-        $mail->addAttachment('images/phpmailer_mini.png');
+        $mail->addAttachment('../public/uploads/San_luong_van_chuyen_nhat_minh.xlsx');
+
         //send the message, check for errors
         if (!$mail->send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;

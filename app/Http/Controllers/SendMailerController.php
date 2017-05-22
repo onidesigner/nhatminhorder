@@ -17,7 +17,7 @@ class SendMailerController extends Controller
 {
     
     public function sendEmailToCustomer(){
-        var_dump('xxx');die();
-        SendMailToCustomer::sendMail();
+        $mail = "nguyengiangdhxd@gmail.com";
+        SendMailToCustomer::sendMail($mail,'','');
     }
 }
