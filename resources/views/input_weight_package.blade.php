@@ -6,11 +6,32 @@
 
 @section('content')
     <div class="row">
-        <form class="" onsubmit="return false;">
-            <input type="text" name="packageBarcode" value="">
 
-            <input type="text" name="original_bill">
-
+        <form method="post"  action="{{'/save-package-weight'}}">
+            <table class="table table-bordered" border="0">
+                <tr>
+                    <td colspan="2">{{ session('status') }}</td>
+                </tr>
+                <tr>
+                    <td>Mã Kiện</td>
+                    <td>
+                        <input type="text" name="packageBarcode" >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Cân nặng
+                    </td>
+                    <td>
+                        <input type="text" name="packageWeight">
+                    </td>
+                </tr>
+                <tr>
+                   <td colspan="2" align="center">
+                       <button type="submit">Lưu</button>
+                   </td>
+                </tr>
+            </table>
         </form>
 
     </div>
