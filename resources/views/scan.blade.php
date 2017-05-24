@@ -61,6 +61,13 @@
                                         placeholder="Quét mã kiện">
 
                             </form>
+
+
+                            {{--<hr>--}}
+                            {{--<h4>Thống kê trong ngày</h4>--}}
+                            {{--<br>--}}
+
+                            {{--<div id="statistic"></div>--}}
                         </div>
                         <div class="col-sm-8 col-xs-12">
                             <ul class="list-group scroll" style="margin-top: 57px;">
@@ -93,6 +100,17 @@
     <script src="{{asset('js/ion.sound.min.js')}}"></script>
 
     <script>
+        statistic();
+        function statistic(){
+            request('{{ url('scan/statistic')  }}', 'get', {}).done(function(response){
+                if(response.success){
+                    $('#statistic').html(response.html);
+                }else{
+                    bootbox.alert(response.message);
+                }
+            });
+        }
+
         $(document).ready(function(){
             var arr_message = JSON.parse(localStorage.getItem('scan_action.')) ? JSON.parse(localStorage.getItem('scan_action.')) : [];
             LocalStorage.init();
@@ -147,6 +165,8 @@
                             $.notify(response.message, msg_type);
                         }
                         $(that).val('').focus();
+
+                        statistic();
                     });
                 }
             });

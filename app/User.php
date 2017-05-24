@@ -56,9 +56,6 @@ class User extends Authenticatable
     ];
 
     public static $god = [
-//        'hosivan90@gmail.com',
-//        'nguyenhoanggiangdhxd@gmail.com',
-        'nguyengiangdhxd@gmail.com',
         'cherry@gmail.com',
     ];
 
@@ -73,6 +70,14 @@ class User extends Authenticatable
         self::SECTION_CRANE => 'Quản trị viên',
         self::SECTION_CUSTOMER => 'Khách hàng',
     ];
+
+    public static function findBySection($section){
+        return self::where([
+            ['section', '=', $section]
+        ])
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 
     /**
      * @author vanhs

@@ -68,6 +68,14 @@ class OrderController extends Controller
             $orders = $orders->whereIn('id', $o_ids);
         }
 
+        if(!empty($params['order_not_fights'])){
+            $orders = $orders->where('crane_staff_id', null);
+        }
+
+        if(!empty($params['user_address_receive_phone'])){
+            $orders = $orders->where('user_address_receive_phone', 'like', '%' . $params['user_address_receive_phone'] . '%');
+        }
+
         if(!empty($params['freight_bill'])){
             $query = DB::table('order_freight_bill')
                 ->select(DB::raw('GROUP_CONCAT(order_id) as order_id'))
@@ -94,8 +102,11 @@ class OrderController extends Controller
 
         if(!empty($params['customer_code_email'])){
             $user_ids = User::where(function($query) use ($params){
-                $query->where('code', '=', $params['customer_code_email'])
-                    ->orWhere('email', '=', $params['customer_code_email']);
+//                $query->where('code', '=', $params['customer_code_email'])
+//                    ->orWhere('email', '=', $params['customer_code_email']);
+
+                $query->where('id', '=', $params['customer_code_email']);
+
             })->pluck('id');
             $orders = $orders->whereIn('user_id', $user_ids);
         }
@@ -776,14 +787,14 @@ class OrderController extends Controller
             Comment::createComment(
                 $user,
                 $order_item,
-                sprintf("Sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity),
+                sprintf("Sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity),
                 Comment::TYPE_NONE,
                 Comment::TYPE_CONTEXT_ACTIVITY,
                 $order
             );
 
             $title = "Sửa số lượng sản phẩm trên đơn ".$order->code;
-            $message = sprintf(" sửa số lượng sản phẩm từ %s¥ thành %s¥", $old_order_quantity, $new_order_quantity);
+            $message = sprintf(" sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity);
             $content = $user->name. $message;
             CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }

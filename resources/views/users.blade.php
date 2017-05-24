@@ -25,44 +25,77 @@
                         <div class="col-md-12">
 
                             <form onchange="this.submit();" class="form-inline" method="get" action="{{ url('user')  }}">
-                                <div class="form-group">
-                                    <input value="{{@$condition['code']}}" placeholder="Mã NV" autofocus type="text" name="code" class="form-control1">
-                                </div>
-                                <div class="form-group">
-                                    <input value="{{@$condition['email']}}" placeholder="Email" type="text" name="email" class="form-control1">
-                                </div>
 
-                                <div class="form-group">
-                                    <select class="form-control1" name="section" id="">
-                                        <option value="">Đối tượng</option>
-                                        @foreach(App\User::$section_list as $k => $v)
-                                            <option
+                                <div class="row">
+                                    <div class="col-sm-3 col-xs-12">
+                                        {{--<input--}}
+                                                {{--class="form-control"--}}
+                                                {{--value="{{@$condition['code']}}" placeholder="Mã NV" autofocus type="text" name="code">--}}
 
-                                                    @if(isset($condition['section']) && $k == $condition['section'])
+
+                                        <select
+                                                data-live-search="true"
+                                                class="form-control _selectpicker" name="customer_code_email" id="">
+                                            <option value="">Khách hàng</option>
+                                            <?php
+                                            $customer = App\User::findBySection(App\User::SECTION_CUSTOMER);
+                                            foreach($customer as $customer_item){
+                                                $selected = $customer_item->id == request()->get('customer_code_email') ? ' selected ' : '';
+
+                                                echo '<option ' . $selected . ' value="' . $customer_item->id . '">' . $customer_item->name . ' - ' . $customer_item->email . ' - ' . $customer_item->code . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+
+
+                                    </div>
+
+                                    {{--<div class="col-sm-3 col-xs-12">--}}
+                                        {{--<input--}}
+                                                {{--class="form-control"--}}
+                                                {{--value="{{@$condition['email']}}" placeholder="Email" type="text" name="email">--}}
+                                    {{--</div>--}}
+                                    <div class="col-sm-3 col-xs-12">
+                                        <select class="form-control _selectpicker" name="section" id="">
+                                            <option value="">Đối tượng</option>
+                                            @foreach(App\User::$section_list as $k => $v)
+                                                <option
+
+                                                        @if(isset($condition['section']) && $k == $condition['section'])
                                                         selected
-                                                    @endif
+                                                        @endif
 
-                                                    value="{{$k}}">{{$v}}</option>
-                                        @endforeach
+                                                        value="{{$k}}">{{$v}}</option>
+                                            @endforeach
 
-                                    </select>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3 col-xs-12">
+                                        <select class="form-control _selectpicker" name="status" id="">
+                                            <option value="">Trạng thái</option>
+                                            @foreach(App\User::$status_list as $k => $v)
+                                                <option
+
+                                                        @if(isset($condition['status']) && $k == $condition['status'])
+                                                        selected
+                                                        @endif
+
+                                                        value="{{$k}}">{{$v}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-3 col-xs-12">
+                                        <button type="submit" class="btn btn-danger">Tìm kiếm</button>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <select class="form-control1" name="status" id="">
-                                        <option value="">Trạng thái</option>
-                                        @foreach(App\User::$status_list as $k => $v)
-                                            <option
 
-                                                    @if(isset($condition['status']) && $k == $condition['status'])
-                                                    selected
-                                                    @endif
 
-                                                    value="{{$k}}">{{$v}}</option>
-                                        @endforeach
-                                    </select>
+
+                                <div class="row">
+
                                 </div>
 
-                                <button type="submit" class="">Tìm kiếm</button>
                             </form>
 
 
@@ -124,7 +157,9 @@
                                 </tbody>
                             </table>
 
-                            {{ $users->links() }}
+{{--                            {{ $users->links() }}--}}
+
+                            {{ $users->appends(request()->input())->links() }}
 
                         </div>
                     </div>
@@ -133,6 +168,32 @@
         </div>
 
     </div>
+
+@endsection
+
+@section('js_bottom')
+    @parent
+
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('._selectpicker').selectpicker({
+//                style: 'btn-info',
+//                width: 'fit',
+            });
+        })
+    </script>
+@endsection
+
+@section('css_bottom')
+@parent
+<link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+<style>
+    .form-control{
+        width: 100%!important;
+    }
+</style>
 
 @endsection
 

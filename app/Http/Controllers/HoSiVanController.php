@@ -9,6 +9,7 @@ use App\OrderFee;
 use App\Package;
 use App\Service;
 use App\User;
+use App\UserAddress;
 use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
@@ -19,6 +20,80 @@ class HoSiVanController extends Controller
     function __construct()
     {
 
+    }
+
+    private function __doi_soat_tien_hang(Request $request){
+        $orders = Order::where([
+            ['status', '!=', Order::STATUS_CANCELLED]
+        ])->get();
+
+        $amount = 0;
+        if($orders){
+            foreach($orders as $order){
+                if(!$order instanceof Order){
+                    continue;
+                }
+
+//                $amount_vnd = floatval($order->amount_vnd);
+                $amount_vnd_with_items = floatval($order->amountWithItems(true));
+                $deposit_percent = $order->deposit_percent;
+
+                $amount += $amount_vnd_with_items * $deposit_percent / 100;
+
+            }
+        }
+
+        var_dump($amount);
+    }
+
+    private function __cap_nhat_dien_thoai_nhan_hang_tren_don(Request $request){
+        $limit = 500;
+        $orders = Order::where([
+            ['user_address_receive_phone', '=', null]
+        ])->limit($limit)
+            ->get();
+
+        if($orders){
+            foreach($orders as $order){
+                if(!$order instanceof Order){
+                    continue;
+                }
+                $user_address = UserAddress::find($order->user_address_id);
+                if($user_address instanceof UserAddress){
+                    $user_address_receive_phone = $user_address->reciver_phone;
+                    $order->user_address_receive_phone = $user_address_receive_phone;
+                    if($order->save()){
+                        echo sprintf("don hang %s<br/><br/>", $order->code);
+                    }
+                }
+            }
+        }
+    }
+
+    private function __cap_nhat_nguoi_duoc_phan_don_cho_nhung_don_hang_cu(Request $request){
+        $orders = Order::where([
+            ['crane_staff_id', '=', null],
+            ['status', '!=', Order::STATUS_DEPOSITED]
+        ])->get();
+
+        if($orders){
+            foreach($orders as $order){
+                echo sprintf("<a href='%s' target='_blank'>don hang %s (%s)</a><br/>",
+                    url('order/detail', $order->id),
+                    $order->code,
+                    Order::getStatusTitle($order->status));
+
+                $crane_buying = User::find($order->paid_staff_id);
+                if($crane_buying instanceof User){
+                    $order->crane_staff_id = $order->paid_staff_id;
+                    $order->crane_staff_at = $order->bought_at;
+                    $order->save();
+
+                    echo sprintf("nguoi mua %s - %s<hr>", $crane_buying->email, $crane_buying->code);
+                }
+
+            }
+        }
     }
 
     private function __don_truy_thu_dat_coc(Request $request){

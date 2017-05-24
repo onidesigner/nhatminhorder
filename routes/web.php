@@ -70,6 +70,7 @@ Route::put('/user/address/default', 'Customer\UserAddressController@setDefaultUs
 
 #region -- quet ma vach --
 Route::get('/scan', 'ScanController@indexs');
+Route::get('/scan/statistic', 'ScanController@statistic');
 Route::post('/scan/action', 'ScanController@action');
 #endregion
 
@@ -213,3 +214,6 @@ Route::post('/gui-tin-nhan','SendSmsController@sendSms');
 #endregion
 
 Route::get('/home/statistic', 'HomeController@homeStatistic');
+
+Route::get('/package-weight','PackageWeightController@index');
+Route::post('/save-package-weight','PackageWeightController@packageWeight');

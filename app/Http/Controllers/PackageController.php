@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Exchange;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
@@ -10,9 +11,11 @@ use App\OrderService;
 use App\Package;
 use App\PackageService;
 use App\Permission;
+use App\Scan;
 use App\Service;
 use App\User;
 use App\Util;
+use App\WareHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -173,9 +176,10 @@ class PackageController extends Controller
      *      + id dia chi dat hang
      * @param $order
      * @param null $barcode
+     * @param null $warehouse
      * @return bool|null
      */
-    private function __create_package_item($order, $barcode = null){
+    private function __create_package_item($order, $barcode = null, $warehouse = null){
         if(empty($barcode)) return null;
 
         $data_insert = [];
@@ -195,6 +199,7 @@ class PackageController extends Controller
         $data_insert['created_at'] = date('Y-m-d H:i:s');
 
         $insert_id_package = Package::insertGetId($data_insert);
+        $package = Package::find($insert_id_package);
 
         //insert package service with order service
         if($order instanceof Order){
@@ -204,13 +209,35 @@ class PackageController extends Controller
                     continue;
                 }
                 if(in_array($order_service->service_code, PackageService::$service_using)){
-                    $package = Package::find($insert_id_package);
                     PackageService::insertService($package, PackageService::TYPE_WOOD_CRATING);
                 }
             }
         }
 
+        $this->__packageInputReceiveWarehouse($package, $warehouse);
+
         return $insert_id_package;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Nhap kho sau khi tao kien hang
+     * @param Package $package
+     * @param $warehouse
+     */
+    private function __packageInputReceiveWarehouse(Package $package, $warehouse){
+        $create_user = User::find(Auth::user()->id);
+
+        $message_internal = sprintf("Kiện hàng %s nhập kho %s", $package->logistic_package_barcode, $warehouse);
+
+        $package->inputWarehouseReceive($warehouse);
+
+        $order = Order::find($package->order_id);
+        if($order instanceof Order){
+            $order->changeOrderReceivedFromSeller();
+            Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL,
+                Comment::TYPE_CONTEXT_ACTIVITY);
+        }
     }
 
     /**
@@ -222,9 +249,14 @@ class PackageController extends Controller
      */
     private function __create_package(Request $request, $package){
         $barcode = $request->get('barcode');
+        $warehouse = $request->get('warehouse');
 
         if(empty($barcode)){
             $this->action_error[] = 'Mã quét không để trống!';
+        }
+
+        if(empty($warehouse)){
+            $this->action_error[] = 'Vui lòng chọn kho nhận!';
         }
 
         $can_create = Permission::isAllow(Permission::PERMISSION_PACKAGE_ADD);
@@ -248,19 +280,21 @@ class PackageController extends Controller
             if($order_freight_bill instanceof OrderFreightBill){
                 $order = Order::find($order_freight_bill->order_id);
             }
-            $this->__create_package_item($order, $barcode);
+            $this->__create_package_item($order, $barcode, $warehouse);
         }
         return true;
     }
 
     private function __getInitData($layout = null, $barcode = null){
         $packages = null;
+        $warehouse_receive_list = WareHouse::findByType(WareHouse::TYPE_RECEIVE);
         if($barcode){
             $packages = Package::where([
                 'freight_bill' => $barcode,
-                'status' => Package::STATUS_INIT,
+                'status' => Package::STATUS_RECEIVED_FROM_SELLER,
                 'is_deleted' => 0,
             ])->orderBy('id', 'desc')
+                ->limit(1)
                 ->get();
 
             if(count($packages)){
@@ -323,6 +357,7 @@ class PackageController extends Controller
             'layout' => $layout,
             'packages' => $packages,
             'barcode' => $barcode,
+            'warehouse_receive_list' => $warehouse_receive_list
         ];
     }
 
@@ -416,15 +451,75 @@ class PackageController extends Controller
         return view('package_detail', $data);
     }
 
-    private function __getListData($layout = null){
+    public function getPackageData(Request $request){
         $per_page = 50;
 
-        $packages = Package::select('*')
-            ->where([
-                'is_deleted' => 0,
-            ])
-            ->orderBy('id', 'desc');
+        $where = [];
+
+        if($request->get('action')){
+
+        }
+
+        if($request->get('warehouse')){
+
+        }
+
+        if($request->get('from_time')
+            && Util::validateDate($request->get('from_time'), 'Y-m-d')){
+
+        }
+
+        if($request->get('end_time')
+            && Util::validateDate($request->get('from_time'), 'Y-m-d')){
+
+        }
+
+        $where[] = ['is_deleted', '=', 0];
+
+        $packages = Package::select('*');
+        $packages = $packages->where($where);
+        $packages = $packages->orderBy('id', 'desc');
         $total_packages = $packages->count();
+        $packages = $packages->paginate($per_page);
+
+        if($packages){
+            foreach($packages as $key => $package){
+                $packages[$key]->order = Order::find($package->order_id);
+                $packages[$key]->customer = User::find($package->buyer_id);
+            }
+        }
+
+    }
+
+    private function __getListData(Request $request, $layout = null){
+        $per_page = 50;
+
+        $packages = Package::select('*');
+
+        $where = [];
+
+//        if($request->get('package_has_weight') == 'on'){
+//            $where[] = ['weight', '>', 0];
+//        }
+
+        if(!empty($request->get('current_warehouse'))){
+            $where[] = ['current_warehouse', '=', $request->get('current_warehouse')];
+        }
+
+        if(!empty($request->get('warehouse_status'))){
+            $where[] = ['warehouse_status', '=', $request->get('warehouse_status')];
+        }
+
+        if(!empty($request->get('logistic_package_barcode'))){
+            $where[] = ['logistic_package_barcode', '=', $request->get('logistic_package_barcode')];
+        }
+
+        $where[] = ['is_deleted', '=', 0];
+
+        $packages = $packages->where($where);
+        $packages = $packages->orderBy('id', 'desc');
+        $total_packages = $packages->count();
+
         $packages = $packages->paginate($per_page);
 
         if($packages){
@@ -441,18 +536,20 @@ class PackageController extends Controller
             'packages' => $packages,
             'total_packages' => $total_packages,
             'can_create_package' => $can_create_package,
+            'warehouse_list' => WareHouse::getAllWarehouse(),
+            'action_list' => Scan::$action_list,
             'layout' => $layout
         ];
     }
 
-    public function indexs()
+    public function indexs(Request $request)
     {
         $can_view = Permission::isAllow(Permission::PERMISSION_PACKAGE_LIST_VIEW);
         if(!$can_view){
             return redirect('403');
         }
 
-        $data = $this->__getListData('layouts.app');
+        $data = $this->__getListData($request, 'layouts.app');
 
         return view('package_list', $data);
     }

@@ -114,8 +114,11 @@ class OrderBuyingController extends Controller
 
         if(!empty($params['customer_code_email'])){
             $user_ids = User::where(function($query) use ($params){
-                $query->where('code', '=', $params['customer_code_email'])
-                    ->orWhere('email', '=', $params['customer_code_email']);
+//                $query->where('code', '=', $params['customer_code_email'])
+//                    ->orWhere('email', '=', $params['customer_code_email']);
+
+                $query->where('id', '=', $params['customer_code_email']);
+
             })->pluck('id');
             $orders = $orders->whereIn('user_id', $user_ids);
         }

@@ -41,13 +41,40 @@
 
 
                             <div class="col-sm-3">
-                                <input type="text" placeholder="Mã khách, email..."
-                                       class="form-control"
-                                       name="customer_code_email" value="{{ request()->get('customer_code_email') }}">
+
+                                <select
+                                        data-live-search="true"
+                                        class="form-control _selectpicker" name="customer_code_email" id="">
+                                    <option value="">Khách hàng</option>
+                                    <?php
+                                    $customer = App\User::findBySection(App\User::SECTION_CUSTOMER);
+                                    foreach($customer as $customer_item){
+                                        $selected = $customer_item->id == request()->get('customer_code_email') ? ' selected ' : '';
+
+                                        echo '<option ' . $selected . ' value="' . $customer_item->id . '">' . $customer_item->name . ' - ' . $customer_item->email . ' - ' . $customer_item->code . '</option>';
+                                    }
+                                    ?>
+                                </select>
+
+                                {{--<input type="text" placeholder="Mã khách, email..."--}}
+                                       {{--class="form-control"--}}
+                                       {{--name="customer_code_email" value="{{ request()->get('customer_code_email') }}">--}}
                             </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control"
+                                       placeholder="Điện thoại nhận hàng"
+                                       value="{{ request()->get('user_address_receive_phone')  }}"
+                                       name="user_address_receive_phone">
+
+                            </div>
+
                             <div class="col-sm-3">
                                 <select
-                                        class="form-control"
+                                        class="form-control _selectpicker"
                                         name="paid_staff_id">
                                     <option value="">Nhân viên mua hàng</option>
                                     @foreach($crane_buying_list as $crane_buying_list_item)
@@ -60,6 +87,20 @@
                                                 value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <input
+                                        @if(request()->get('order_not_fights') == 'on')
+                                         checked
+                                        @endif
+                                        type="checkbox" id="order_not_fights" name="order_not_fights">
+
+                                <label for="order_not_fights">
+                                    Đơn chưa phân
+                                </label>
+
+
                             </div>
                         </div>
 
@@ -113,13 +154,22 @@
 
 @endsection
 
+@section('css_bottom')
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+@endsection
+
 @section('js_bottom')
     @parent
 
     <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
     <script>
         $(document).ready(function(){
+            $('._selectpicker').selectpicker({
+//                style: 'btn-info',
+//                width: 'fit',
+            });
 
             $(document).on('change', '._crane_staff_buying', function(){
                 var user_id = $(this).val();

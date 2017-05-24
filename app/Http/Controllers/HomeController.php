@@ -68,6 +68,8 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+
+
         $user_id = Auth::user()->id;
 
         //============phi mua hang===========
@@ -224,9 +226,9 @@ class HomeController extends Controller
                 ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_ADJUSTMENT],
                 ['user_id', '!=', User::USER_ID_TEST],
                 ['created_at', '>=', $start_today],
-                ['created_at', '<=', $end_today]
+                ['created_at', '<=', $end_today],
+                ['amount', '>', 0]
             ])
-            ->having('amount', '>', 0)
             ->first();
 
         $customer_recharge_amount = 0;
@@ -241,67 +243,42 @@ class HomeController extends Controller
             'money' => $customer_recharge_amount
         ];
 
-        $orders_cancelled = Order::getOrderIdCancelled();
-        $orders_deposited_today = null;
-        $query = DB::table('order')
-            ->select(DB::raw('GROUP_CONCAT(id) as id'))
-            ->where([
-                ['deposited_at', '>=', $start_today],
-                ['deposited_at', '<=', $end_today]
-            ])
-            ->first();
-        if($query && $query->id){
-            $orders_deposited_today = $query->id;
-        }
+        $query1 = DB::select(sprintf("
+            select sum(order_fee.money) as 'total' 
+            from order_fee 
+            inner join `order` 
+                on `order`.id = order_fee.order_id
+            where order_fee.`name` = 'AMOUNT_VND' 
+                and `order`.`deposited_at` >= '%s'
+                and `order`.`deposited_at` <= '%s'
+                and `order`.`status` != '%s';
+        ", $start_today, $end_today, Order::STATUS_CANCELLED));
+        $amount_vnd = $query1[0]->total;
 
-        $query = DB::table('order_fee')
-            ->select(DB::raw('sum(money) as money'))
-            ->where([
-                ['name', '=', 'AMOUNT_VND'],
-                ['user_id', '!=', User::USER_ID_TEST]
-            ]);
-        if($orders_cancelled){
-            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
-        }
-
-        if($orders_deposited_today){
-            $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
-        }else{
-            $query = $query->whereIn('order_id', [0]);
-        }
-        $query = $query->first();
-        $amount_vnd = $query->money;
         $statistic[] = [
             'name' => 'Tiền hàng (1)',
-//            'value' => Util::formatNumber($amount_vnd),
             'money' => $amount_vnd
         ];
 
-        $query = DB::table('order_fee')
-            ->select(DB::raw('sum(money) as money'))
-            ->where([
-                ['name', '=', 'DEPOSIT_AMOUNT_VND'],
-                ['user_id', '!=', User::USER_ID_TEST]
-            ]);
-        if($orders_cancelled){
-            $query = $query->whereNotIn('order_id', explode(',', $orders_cancelled));
-        }
-        if($orders_deposited_today){
-            $query = $query->whereIn('order_id', explode(',', $orders_deposited_today));
-        }else{
-            $query = $query->whereIn('order_id', [0]);
-        }
-        $query = $query->first();
-        $deposit_amount_vnd = $query->money;
+        $query1 = DB::select(sprintf("
+            select sum(order_fee.money) as 'total' 
+            from order_fee 
+            inner join `order` 
+                on `order`.id = order_fee.order_id
+            where order_fee.`name` = 'DEPOSIT_AMOUNT_VND' 
+                and `order`.`deposited_at` >= '%s'
+                and `order`.`deposited_at` <= '%s'
+                and `order`.`status` != '%s';
+        ", $start_today, $end_today, Order::STATUS_CANCELLED));
+        $deposit_amount_vnd = $query1[0]->total;
+
         $statistic[] = [
             'name' => 'Tiền đặt cọc (2)',
-//            'value' => Util::formatNumber($deposit_amount_vnd),
             'money' => $deposit_amount_vnd
         ];
 
         $statistic[] = [
             'name' => 'Tiền còn thiếu (3=1-2)',
-//            'value' => Util::formatNumber(($amount_vnd - $deposit_amount_vnd)),
             'money' => ($amount_vnd - $deposit_amount_vnd)
         ];
 

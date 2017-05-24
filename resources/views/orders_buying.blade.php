@@ -26,10 +26,36 @@
                             action="{{ url('order_buying')  }}" method="get" id="_form-orders">
                         <input type="hidden" name="page" value="{{ request()->get('page')  }}">
 
-                        <input type="text" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
-                        <input type="text" placeholder="Mã khách hoặc email..."
-                               class=""
-                               name="customer_code_email" value="{{ request()->get('customer_code_email') }}">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Mã đơn..." name="order_code" value="{{ request()->get('order_code') }}">
+                            </div>
+                            <div class="col-sm-3">
+
+                                <select
+                                        data-live-search="true"
+                                        class="form-control _selectpicker" name="customer_code_email" id="">
+                                    <option value="">Khách hàng</option>
+                                    <?php
+                                    $customer = App\User::findBySection(App\User::SECTION_CUSTOMER);
+                                    foreach($customer as $customer_item){
+                                        $selected = $customer_item->id == request()->get('customer_code_email') ? ' selected ' : '';
+
+                                        echo '<option ' . $selected . ' value="' . $customer_item->id . '">' . $customer_item->name . ' - ' . $customer_item->email . ' - ' . $customer_item->code . '</option>';
+                                    }
+                                    ?>
+                                </select>
+
+                                {{--<input type="text" placeholder="Mã khách, email..."--}}
+                                {{--class="form-control"--}}
+                                {{--name="customer_code_email" value="{{ request()->get('customer_code_email') }}">--}}
+                            </div>
+                        </div>
+
+
+                        {{--<input type="text" placeholder="Mã khách hoặc email..."--}}
+                               {{--class=""--}}
+                               {{--name="customer_code_email" value="{{ request()->get('customer_code_email') }}">--}}
 
                         <br><br>
 
@@ -59,13 +85,23 @@
 
 @endsection
 
+@section('css_bottom')
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-select.min.css') }}">
+@endsection
+
 @section('js_bottom')
     @parent
 
     <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
 
     <script>
         $(document).ready(function(){
+            $('._selectpicker').selectpicker({
+//                style: 'btn-info',
+//                width: 'fit',
+            });
+
             $(document).on('click', '._select-order-status', function(){
                  var selected = $(this).hasClass('selected');
                  if(selected){
