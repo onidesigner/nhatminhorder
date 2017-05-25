@@ -309,6 +309,7 @@ class UserController extends Controller
         }
         $user->order_deposit_percent = $order_deposit_percent;
         $user->updated_at = date('Y-m-d H:i:s');
+        $user->section = $request->get('section');
         $user->save();
 
         return redirect("user/detail/{$user_id}");

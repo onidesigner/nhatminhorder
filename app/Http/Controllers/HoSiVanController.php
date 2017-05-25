@@ -19,7 +19,28 @@ class HoSiVanController extends Controller
 {
     function __construct()
     {
+        $this->middleware('auth');
+    }
 
+    private function __kien_khong_tinh_phi(Request $request){
+        $packages = Package::where([
+            ['weight', '>', 0],
+            ['weight_type', '=', null]
+        ])->get();
+
+        if($packages){
+            foreach($packages as $package){
+                if(!$package instanceof Package){
+                    continue;
+                }
+                $order = $package->getOrder();
+                if($order instanceof Order){
+                    echo sprintf("<p>don hang <a href='%s'>%s</a></p>",
+                        url('order/detail', $order->id),
+                        $order->code);
+                }
+            }
+        }
     }
 
     private function __tong_tien_khach_no(Request $request){
