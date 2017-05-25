@@ -39,7 +39,7 @@ class SendSmsToCustomer extends Command
      */
     public function handle()
     {
-        // hàm xử lý chính
-        Log::info('chay command', ['commandclear111']);
+        
+
     }
 }
