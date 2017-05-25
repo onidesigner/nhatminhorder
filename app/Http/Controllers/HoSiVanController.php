@@ -22,6 +22,42 @@ class HoSiVanController extends Controller
 
     }
 
+    private function __tong_tien_khach_no(Request $request){
+        /* tien hang */
+        $a = $this->getMoneyWithName('AMOUNT_VND');
+
+        /* mua hang */
+        $b = $this->getMoneyWithName('BUYING_FEE_VND');
+
+        /* VC nội địa TQ */
+
+        $c = $this->getMoneyWithName('DOMESTIC_SHIPPING_FEE_VND');
+
+        /* VC quốc tế */
+        $d = $this->getMoneyWithName('SHIPPING_CHINA_VIETNAM_FEE_VND');
+
+
+        /* Đóng gỗ */
+        $e = $this->getMoneyWithName('WOOD_CRATING_VND');
+
+        $ee = $a + $b + $c + $d + $e;
+
+        /* tong thanh toan */
+        $f = $this->getMoneyWithName('CUSTOMER_PAYMENT_AMOUNT_VND');
+
+        $g = $ee > $f ? $ee - $f : 0;
+
+        var_dump($g);
+
+    }
+
+    private function getMoneyWithName($name){
+        $a = DB::select("select sum(money) as money 
+from `order_fee` 
+where `name` = '{$name}' and order_id not in (select id from `order` where `status` = 'CANCELLED');");
+        return $a[0]->money;
+    }
+
     private function __doi_soat_tien_hang(Request $request){
         $orders = Order::where([
             ['status', '!=', Order::STATUS_CANCELLED]
