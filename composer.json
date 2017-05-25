@@ -13,7 +13,8 @@
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.3.0",
-        "picqer/php-barcode-generator": "^0.2.1"
+        "picqer/php-barcode-generator": "^0.2.1",
+        "maatwebsite/excel": "~2.1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
