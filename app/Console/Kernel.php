@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        'App\Console\Commands\SendSmsToCustomer'
+
+        'App\Console\Commands\SendSmsInfoOrder',
     ];
 
     /**
@@ -27,8 +28,8 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('inspire')
 //            ->hourly();
 //
-//        $schedule->command('sms:customer')
-//            ->everyMinute();
+        $schedule->command('send_info_order')
+            ->everyMinute();
     }
 
 

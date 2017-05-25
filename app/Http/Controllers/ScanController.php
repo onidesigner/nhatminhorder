@@ -202,7 +202,7 @@ class ScanController extends Controller
                     // trong truong hop kho nhan hàng trùng với kho đích trên đơn thì mới
                     // chuyển trạng thái sang chờ giao hàng
                     if($warehouse->code == $order->destination_warehouse){
-                        $order->changeOrderWaitingDelivery();
+                          $order->changeOrderWaitingDelivery();
                         $user_address = UserAddress::find($order->user_address_id);
                         if($user_address instanceof UserAddress){
                             // lay ra so tien cua khach hang , neu so tien khach
@@ -221,6 +221,7 @@ class ScanController extends Controller
                                 'content' => $content,
                                 'order_id' => $order->id,
                                 'user_id' => $user_address->user_id,
+                                'send_status' => SendSmsToCustomer::NOT_YET
                             ];
                             $smsToCustomer = new SendSmsToCustomer();
                             $smsToCustomer->CustomerSms($array_data);
