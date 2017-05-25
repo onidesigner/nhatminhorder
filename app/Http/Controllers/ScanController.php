@@ -209,11 +209,17 @@ class ScanController extends Controller
                             $user_customer = User::find($order->user_id);
                             $account_banace = $user_customer->account_balance;
                             $without_money = abs($account_banace);
-                            if($account_banace < 0){
-                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối "
-                                    .$warehouse->code. " .Bạn cần nạp thêm tiền để lấy được hàng ! ";
+                            if($warehouse->code == 'K-HN'){
+                                $name_house = 'Hà Nội';
                             }else{
-                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code .".Mời bạn đến kho để lấy hàng .";
+                                $name_house = 'Sài Gòn';
+                            }
+                            if($account_banace < 0){
+
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối "
+                                    . $name_house. " .Bạn cần nạp thêm tiền để lấy hàng ! ";
+                            }else{
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ". $name_house .".Mời bạn đến kho để lấy hàng .";
                             }
 
                             $array_data = [
