@@ -31,10 +31,12 @@ class PackageWeightController extends Controller
 
         $package_weight = $barcode['packageWeight'];
 
+
         $package = Package::retrieveByCode($packageBarcode);
 
         if($package instanceof Package){
             $package->weight = $package_weight;
+            $package->weight_type = 1;
             $package->save();
             return redirect('/package-weight')->with('status','Thanh cong');
         }else{
