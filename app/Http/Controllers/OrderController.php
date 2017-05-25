@@ -310,7 +310,7 @@ class OrderController extends Controller
 
         $permission = [
             'can_change_order_bought' => $order->status == Order::STATUS_DEPOSITED
-                && $order->crane_staff_id == $current_user->id,
+                && ($order->crane_staff_id == $current_user->id || $current_user->isGod()),
 
             'can_change_order_cancel' =>
                     ( $order->isBeforeStatus(Order::STATUS_TRANSPORTING) && $order->crane_staff_id == $current_user->id )
@@ -873,7 +873,8 @@ class OrderController extends Controller
             $this->action_error[] = sprintf('Đơn hiện đang ở trạng thái [%s], không thể chuyển sang đã mua!', Order::getStatusTitle($order->status));
         }
 
-        if($user->id != $order->crane_staff_id){
+        if(!$user->isGod()
+            && $user->id != $order->crane_staff_id){
             $this->action_error[] = sprintf('Bạn không có quyền mua đơn hàng này');
             return false;
         }
