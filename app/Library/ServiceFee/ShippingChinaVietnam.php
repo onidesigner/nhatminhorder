@@ -41,7 +41,7 @@ class ShippingChinaVietnam extends AbstractService {
      */
     function calculatorFee()
     {
-        if($this->weight < 0.5){
+        if($this->weight > 0 && $this->weight < 0.5){
             $this->weight = 0.5;
         }
 
