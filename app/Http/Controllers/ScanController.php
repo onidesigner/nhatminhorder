@@ -211,7 +211,7 @@ class ScanController extends Controller
                             $without_money = abs($account_banace);
                             if($account_banace < 0){
                                 $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối "
-                                    .$warehouse->code. " .Bạn cần nạp thêm {$without_money} đ để lấy được hàng ! ";
+                                    .$warehouse->code. " .Bạn cần nạp thêm tiền để lấy được hàng ! ";
                             }else{
                                 $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code .".Mời bạn đến kho để lấy hàng .";
                             }
