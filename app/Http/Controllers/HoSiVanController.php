@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Exchange;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Order;
@@ -14,6 +15,7 @@ use App\UserTransaction;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HoSiVanController extends Controller
 {
@@ -33,7 +35,13 @@ class HoSiVanController extends Controller
                 if(!$package instanceof Package){
                     continue;
                 }
+                $package->weight_type = 1;
+                $package->save();
+
                 $order = $package->getOrder();
+
+                $this->__package_charge_fee($package, $order);
+
                 if($order instanceof Order){
                     echo sprintf("<p>don hang <a href='%s'>%s</a></p>",
                         url('order/detail', $order->id),
@@ -41,6 +49,42 @@ class HoSiVanController extends Controller
                 }
             }
         }
+    }
+
+    private function __package_charge_fee(Package $package, Order $order){
+        $create_user = User::find(Auth::user()->id);
+        $customer = User::find($order->user_id);
+
+        $factoryMethodInstance = new ServiceFactoryMethod();
+
+        $weight = $package->getWeightCalFee();
+        $weight = $weight - 0.5;
+
+        $service = $factoryMethodInstance->makeService([
+            'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
+            'weight' => $weight,
+            'destination_warehouse' => $order->destination_warehouse,
+            'apply_time' => $order->deposited_at,
+        ]);
+        $money_charge = (float)$service->calculatorFee();
+        if($money_charge > 0){
+            $money_charge = 0 - abs($money_charge);
+        }
+
+        $message = sprintf("Thu phí vận chuyển kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber(abs($money_charge)));
+
+        Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
+        Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
+
+        UserTransaction::createTransaction(
+            UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+            $message,
+            $create_user,
+            $customer,
+            $order,
+            $money_charge,
+            UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM
+        );
     }
 
     private function __tong_tien_khach_no(Request $request){
