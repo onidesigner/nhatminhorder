@@ -61,12 +61,15 @@ class HoSiVanController extends Controller
                         $customer_payment_amount_vnd
                     );
 
-                    $customer_payment_amount = $customer_payment_amount_vnd / $order->exchange_rate;
+                    /* tao giao dich thanh toan, thu not so tien con lai */
+                    $money_charge = 0 - ($need_payment_amount - $customer_payment_amount_vnd);
 
-                    $data_fee_insert = [];
-                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $customer_payment_amount ];
-                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $customer_payment_amount_vnd ];
-                    OrderFee::createFee($order, $data_fee_insert);
+
+//                    $customer_payment_amount = $customer_payment_amount_vnd / $order->exchange_rate;
+//                    $data_fee_insert = [];
+//                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $customer_payment_amount ];
+//                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $customer_payment_amount_vnd ];
+//                    OrderFee::createFee($order, $data_fee_insert);
 
                 }
 
