@@ -576,6 +576,32 @@ class Order extends Model
         return $data_return;
     }
 
+    /**
+     * @author vanhs
+     * @desc Ham lay ra tong phi cua don hang = tien hang + phi mua hang + vc noi dia TQ + vc quoc te + phi dong go (neu co)
+     * @return int
+     */
+    public function getFeeAll(){
+        $fee = 0;
+        $query = DB::table('order_fee')
+            ->select(DB::raw("sum(money) as money"))
+            ->where([
+                ['order_id', '=', $this->id],
+            ])
+            ->whereIn('name', [
+                'AMOUNT_VND',
+                'BUYING_FEE_VND',
+                'DOMESTIC_SHIPPING_FEE_VND',
+                'SHIPPING_CHINA_VIETNAM_FEE_VND',
+                'WOOD_CRATING_VND'
+            ])
+            ->first();
+        if($query){
+            return $query->money;
+        }
+        return $fee;
+    }
+
     public function original_bill(){
         return $this->hasMany('App\OrderOriginalBill', 'order_id');
     }

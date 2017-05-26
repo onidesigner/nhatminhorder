@@ -24,7 +24,50 @@ class HoSiVanController extends Controller
         $this->middleware('auth');
     }
 
+    private function __don_hang_lech_tai_chinh(Request $request){
+
+        $orders_has_change_deposit_amount = UserTransaction::where([
+            ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT],
+            ['state', '=', UserTransaction::STATE_COMPLETED],
+            ['object_type', '=', UserTransaction::OBJECT_TYPE_ORDER]
+        ])->get();
+
+        if($orders_has_change_deposit_amount){
+            foreach($orders_has_change_deposit_amount as $orders_has_change_deposit_amount_row){
+                if(!$orders_has_change_deposit_amount_row instanceof UserTransaction){
+                    continue;
+                }
+                $order = Order::find($orders_has_change_deposit_amount_row->object_id);
+                if(!$order instanceof Order){
+                    continue;
+                }
+
+                if(!$order->isAfterStatus(Order::STATUS_TRANSPORTING, true)){
+                    continue;
+                }
+
+                if($order->status == Order::STATUS_CANCELLED){
+                    continue;
+                }
+
+                /* so tien khach hang da thanh toan */
+                $customer_payment_amount_vnd = UserTransaction::getCustomerPaymentWithOrder($order->id);
+                $need_payment_amount = $order->getFeeAll();
+                if($need_payment_amount > $customer_payment_amount_vnd){
+                    echo sprintf("<p>don hang <a href='%s'>%s</a> - can thanh toan %s - da thanh toan %s</p>",
+                        url('order/detail', $order->id),
+                        $order->code,
+                        $need_payment_amount,
+                        $customer_payment_amount_vnd
+                    );
+                }
+
+            }
+        }
+    }
+
     private function __kien_khong_tinh_phi(Request $request){
+        die('ok');
         $packages = Package::where([
             ['weight', '>', 0],
             ['weight_type', '=', null]
