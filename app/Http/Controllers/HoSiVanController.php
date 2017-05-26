@@ -70,6 +70,18 @@ class HoSiVanController extends Controller
 
                     /* tao giao dich thanh toan, thu not so tien con lai */
                     $money_charge = 0 - ($need_payment_amount - $customer_payment_amount_vnd);
+                    $message = sprintf("Truy thu số tiền %s", $money_charge);
+
+                    $create_user = User::find(Auth::user()->id);
+
+                    UserTransaction::createTransaction(
+                        UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+                        $message,
+                        $create_user,
+                        $customer,
+                        $order,
+                        $money_charge
+                    );
 
 
 //                    $customer_payment_amount = $customer_payment_amount_vnd / $order->exchange_rate;
