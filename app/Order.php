@@ -891,12 +891,14 @@ class Order extends Model
                     }
                 }
 
+                $customer_payment_amount_vnd = UserTransaction::getCustomerPaymentWithOrder($this->id);
+
                 $total_need_payment = (
                         $data_fee['AMOUNT_VND']
                         + $data_fee['DOMESTIC_SHIPPING_FEE_VND']
                         + $data_fee['BUYING_FEE_VND']
                     )
-                    - $data_fee['CUSTOMER_PAYMENT_AMOUNT_VND'];
+                    - $customer_payment_amount_vnd;
                 $total_need_payment = 0 - abs($total_need_payment);
 
                 $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; Mua hàng %sđ',

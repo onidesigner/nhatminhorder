@@ -17,7 +17,7 @@ class OrderFee extends Model
         'SHIPPING_CHINA_VIETNAM_FEE_VND' => 'VC quốc tế (4)',
         'WOOD_CRATING_VND' => 'Đóng gỗ (5)',
         'TOTAL_FEE_VND' => 'Phí đơn hàng (6=1+2+3+4+5)',
-        'CUSTOMER_PAYMENT_AMOUNT_VND' => 'Tổng thanh toán (7)',
+        'CUSTOMER_PAYMENT_AMOUNT_VND' => 'Đã thanh toán (7)',
         'NEED_PAYMENT_AMOUNT_VND' => 'Còn thiếu (8=6-7)',
 
         'WITHDREW_ORDER_VND' => 'Truy thu trên đơn',

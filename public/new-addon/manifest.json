@@ -19,6 +19,14 @@
          "http://*.tmall.hk/*",
          "https://*.tmall.hk/*"
       ]
+      },
+      {
+         "js": [ "js/shopee.js" ],
+         "matches": [
+            "https://shopee.vn/",
+            "https://banhang.shopee.vn/portal/product/list/all"
+         ]
+
       }
    ],
    "description": "Công cụ Đặt hàng của nhatminh247.vn trên trình duyệt Chrome & Cờ rôm+.",

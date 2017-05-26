@@ -15,3 +15,4 @@ Homestead.yaml
 /public/addon.zip
 /public/addon.crx
 /public/addon.pem
+/public/new-addon/js/shopee.js
