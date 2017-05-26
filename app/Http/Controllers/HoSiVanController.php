@@ -26,6 +26,7 @@ class HoSiVanController extends Controller
 
     private function __don_hang_lech_tai_chinh(Request $request){
 
+        die('xong');
         $orders_has_change_deposit_amount = UserTransaction::where([
             ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT],
             ['state', '=', UserTransaction::STATE_COMPLETED],
@@ -50,23 +51,45 @@ class HoSiVanController extends Controller
                     continue;
                 }
 
+                $customer = User::find($order->user_id);
+
                 /* so tien khach hang da thanh toan */
                 $customer_payment_amount_vnd = UserTransaction::getCustomerPaymentWithOrder($order->id);
                 $need_payment_amount = $order->getFeeAll();
                 if($need_payment_amount > $customer_payment_amount_vnd){
-                    echo sprintf("<p>don hang <a href='%s'>%s</a> - can thanh toan %s - da thanh toan %s</p>",
+                    echo sprintf("<p>don hang <a href='%s'>%s</a> 
+- %s (%s)
+- can thanh toan %s 
+- da thanh toan %s</p>",
                         url('order/detail', $order->id),
                         $order->code,
+                        $customer->email,
+                        $customer->code,
                         $need_payment_amount,
                         $customer_payment_amount_vnd
                     );
 
-                    $customer_payment_amount = $customer_payment_amount_vnd / $order->exchange_rate;
+                    /* tao giao dich thanh toan, thu not so tien con lai */
+                    $money_charge = 0 - ($need_payment_amount - $customer_payment_amount_vnd);
+                    $message = sprintf("Truy thu số tiền %s", $money_charge);
 
-                    $data_fee_insert = [];
-                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $customer_payment_amount ];
-                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $customer_payment_amount_vnd ];
-                    OrderFee::createFee($order, $data_fee_insert);
+                    $create_user = User::find(Auth::user()->id);
+
+                    UserTransaction::createTransaction(
+                        UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
+                        $message,
+                        $create_user,
+                        $customer,
+                        $order,
+                        $money_charge
+                    );
+
+
+//                    $customer_payment_amount = $customer_payment_amount_vnd / $order->exchange_rate;
+//                    $data_fee_insert = [];
+//                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount', 'money' => $customer_payment_amount ];
+//                    $data_fee_insert[] = [ 'name' => 'customer_payment_amount_vnd', 'money' => $customer_payment_amount_vnd ];
+//                    OrderFee::createFee($order, $data_fee_insert);
 
                 }
 
