@@ -26,6 +26,7 @@ class HoSiVanController extends Controller
 
     private function __don_hang_lech_tai_chinh(Request $request){
 
+        die('xong');
         $orders_has_change_deposit_amount = UserTransaction::where([
             ['transaction_type', '=', UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT],
             ['state', '=', UserTransaction::STATE_COMPLETED],
