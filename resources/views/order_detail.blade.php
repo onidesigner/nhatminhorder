@@ -421,6 +421,7 @@
                                             </tbody>
                                         </table>
                             </div>
+
                             <div role="tabpanel" class="tab-pane" id="order-transaction">
                                 <h4>Phí trên đơn</h4>
 
@@ -445,6 +446,10 @@
                                     </thead>
                                     <tbody>
 
+                                    <?php
+
+                                    $customer_payment_order = 0;
+                                    ?>
                                     @foreach($transactions as $transaction)
                                         <?php
 
@@ -480,9 +485,13 @@
                                             </td>
 
                                         </tr>
+                                        <?php $customer_payment_order += (double)$transaction->amount; ?>
                                     @endforeach
                                     </tbody>
                                 </table>
+
+                                <div class="hidden _hosivan">{{$customer_payment_order}}</div>
+
                             </div>
                         </div>
                     </div>
