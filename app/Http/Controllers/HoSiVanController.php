@@ -50,13 +50,20 @@ class HoSiVanController extends Controller
                     continue;
                 }
 
+                $customer = User::find($order->user_id);
+
                 /* so tien khach hang da thanh toan */
                 $customer_payment_amount_vnd = UserTransaction::getCustomerPaymentWithOrder($order->id);
                 $need_payment_amount = $order->getFeeAll();
                 if($need_payment_amount > $customer_payment_amount_vnd){
-                    echo sprintf("<p>don hang <a href='%s'>%s</a> - can thanh toan %s - da thanh toan %s</p>",
+                    echo sprintf("<p>don hang <a href='%s'>%s</a> 
+- %s (%s)
+- can thanh toan %s 
+- da thanh toan %s</p>",
                         url('order/detail', $order->id),
                         $order->code,
+                        $customer->email,
+                        $customer->code,
                         $need_payment_amount,
                         $customer_payment_amount_vnd
                     );
