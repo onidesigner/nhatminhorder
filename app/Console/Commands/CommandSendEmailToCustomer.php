@@ -41,7 +41,6 @@ class CommandSendEmailToCustomer extends Command
      */
     public function handle()
     {
-        Log::info('chay vao trong queue mail');
         // sau khi được lưu trũ du lieu xong thi thư hienj gửi mail ở day
         $list_emails = SendEmailCustomerQueue::where('send_status',SendEmailCustomerQueue::NOT_YET)->paginate(20);
         foreach($list_emails as $item_email ){
