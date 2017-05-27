@@ -16,7 +16,7 @@ class SpeedSMSAPI {
 	
 
     private $ROOT_URL = "http://api.speedsms.vn/index.php";
-    private $accessToken = "-cW0Yml0f6WK3733qCv0zKoyt4hLWVar";
+    private $accessToken = "zX78VVxHIRB7HWbro_xTPxDDu2W6Tehr";
 
     public function getUserInfo() {
         $url = $this->ROOT_URL.'/user/info';

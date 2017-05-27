@@ -11,6 +11,8 @@ use App\OrderFreightBill;
 use App\Package;
 use App\PackageService;
 use App\Scan;
+use App\SendEmailCustomerQueue;
+use App\SendSmsToCustomer;
 use App\Service;
 use App\SystemConfig;
 use App\User;
@@ -198,31 +200,67 @@ class ScanController extends Controller
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
-                    $order->changeOrderWaitingDelivery();
-                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-                    $user_address = UserAddress::find($order->user_address_id);
-                    if($user_address instanceof UserAddress){
+                    // trong truong hop kho nhan hàng trùng với kho đích trên đơn thì mới
+                    // chuyển trạng thái sang chờ giao hàng
+                    if($warehouse->code == $order->destination_warehouse){
+                        //$order->changeOrderWaitingDelivery();
+                        $user_address = UserAddress::find($order->user_address_id);
+                        if($user_address instanceof UserAddress){
+                            // lay ra so tien cua khach hang , neu so tien khach
+                            $user_customer = User::find($order->user_id);
+                            $account_banace = $user_customer->account_balance;
+                            $without_money = abs($account_banace);
+                            if($warehouse->code == 'K-HN'){
+                                $name_house = 'Hà Nội';
+                            }else{
+                                $name_house = 'Sài Gòn';
+                            }
+                            if($account_banace < 0){
 
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối "
+                                    . $name_house. " .Bạn cần nạp thêm tiền để lấy hàng ! ";
+                            }else{
+                                $content = "Nhatminh247: Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ". $name_house .".Mời bạn đến kho để lấy hàng .";
+                            }
 
-                        $content = "Kiện hàng {$barcode} của đơn {$order->code} nhập kho phân phối ".$warehouse->code;
-                        $array_data = [
-                            'phone' => $user_address->reciver_phone,
-                            'content' => $content
-                        ];
-//                        $job = (new \App\Jobs\SendReminderEmail($array_data));
-//                        dispatch($job);
+                            #region lưu vào bảng gửi sms
+                                $array_data = [
+                                    'phone' => $user_address->reciver_phone,
+                                    'content' => $content,
+                                    'order_id' => $order->id,
+                                    'user_id' => $user_address->user_id,
+                                    'send_status' => SendSmsToCustomer::NOT_YET
+                                ];
+                            $smsToCustomer = new SendSmsToCustomer();
+                            $smsToCustomer->CustomerSms($array_data);
+                            #endregion
+                            #region lưu vào bảng gửi mail queue
+                                $array_data_email = [
+                                    'order_id' => $order->id,
+                                    'email' => User::find($user_address->user_id)->email,
+                                    'content' => $content,
+                                    'user_id' => $user_address->user_id,
+                                    'send_status' => SendEmailCustomerQueue::NOT_YET
+                                ];
+
+                                $email_to_customer = new SendEmailCustomerQueue();
+                                $email_to_customer->EmailQueueOrder($array_data_email);
+                            #endregion --luu queue guiwr mail--
+                        }
+
+                        $order_address = $order->getCustomerReceiveAddress();
+                        $user_phone = $order_address->phone;
+                        $response = array(
+                            'barcode' => $barcode,
+                            'address' => $order_address,
+                            'phone' => $user_phone,
+                            'message' => ' nhập kho phân phối '. $warehouse->code,
+                            'status' => 'success',
+                            'order_id' => $order->id
+                        );
                     }
+                    Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-                    $order_address = $order->getCustomerReceiveAddress();
-                    $user_phone = $order_address->phone;
-                    $response = array(
-                        'barcode' => $barcode,
-                        'address' => $order_address,
-                        'phone' => $user_phone,
-                        'message' => ' nhập kho phân phối '. $warehouse->code,
-                        'status' => 'success',
-                        'order_id' => $order->id
-                    );
                 }
             }
 

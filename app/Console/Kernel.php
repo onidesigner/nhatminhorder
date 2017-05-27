@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+
+        'App\Console\Commands\SendSmsInfoOrder',
+        'App\Console\Commands\CommandSendEmailToCustomer'
     ];
 
     /**
@@ -24,22 +26,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('inspire')
-                  ->hourly();
+//        $schedule->command('inspire')
+//            ->hourly();
 
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('send_info_order')
+            ->everyMinute();
 
-//        $schedule->call(function () {
-//            Log::info("anh yeu em");
-//
-//        })->everyMinute();
-
-
-//        $schedule->call(function(){
-//            DB::table('test')->truncate();
-//        });
+        $schedule->command('send_email_to_customer')
+            ->everyMinute();
     }
+
 
     /**
      * Register the Closure based commands for the application.
