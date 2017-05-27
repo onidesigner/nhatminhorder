@@ -294,11 +294,11 @@ class UserTransactionController extends Controller
                         if($data_insert['transaction_adjustment_type'] == 'negative'){
                             $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền -".$data_insert['amount']."VND . Lý do: ".$data_insert['transaction_note'];
                         }else{
-                            $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền +".$data_insert['amount']."VND . Lý do: ".$data_insert['transaction_note'];
+                            $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền +".$data_insert['amount']."VND . Lý do: nạp tiền thành công .";
                         }
                         $send_email->EmailQueueWhenCreateTransactionAdjustment($customer,$content);
                         $send_sms->sendSmsWhenCreateTransaction($customer,$content);
-                        
+
                     }
 
                     break;
