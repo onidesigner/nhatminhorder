@@ -518,4 +518,35 @@ class OrderController extends Controller
         return true;
     }
 
+    /**
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeOrderStatus(Request $request){
+
+        $order_id = Input::get('order_id');
+        $order = Order::findOneByIdOrCode($order_id);
+        if($order instanceof Order){
+
+            $order->status = Order::STATUS_RECEIVED;
+            $order->received_at = date('Y-m-d H:i:s');
+            $order->save();
+            
+            return response()->json([
+                'type' => 'success',
+                'date' => Util::formatDate($order->received_at)
+            ]);
+
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'fail',
+
+            ]);
+        }
+
+
+    }
+
 }

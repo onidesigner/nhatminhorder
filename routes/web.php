@@ -219,3 +219,8 @@ Route::get('/package-weight','PackageWeightController@index');
 Route::post('/save-package-weight','PackageWeightController@packageWeight');
 
 Route::get('/send-email','SendMailerController@sendEmailToCustomer');
+
+#region --thay thay đối trạng thái của đơn hàng và thời gian cập nh-ật-
+Route::post('/change-status-order','Customer\OrderController@changeOrderStatus');
+
+#endregion

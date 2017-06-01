@@ -85,9 +85,14 @@
                                             <p>
                                                 <a href="{{ url('don-hang', $order->id)  }}" title="{{$order->code}}">{{$order->code}}</a>
                                             </p>
-                                            <p>
+                                            <p id="_order_status_{{  $order->id }}">
                                                 {{ App\Order::getStatusTitle($order->status)  }}
                                             </p>
+                                                @if($order->status == \App\Order::STATUS_DELIVERING)
+                                            <p>
+                                                <button data-order-id="{{ $order->id }}" id ="_btn_change_status_{{ $order->id }}" type="button" class="btn btn-primary _btn_change_status" style="padding: 0 !important;">Đã nhận</button>
+                                            </p>
+                                                @endif
 
                                         </td>
 
@@ -107,7 +112,7 @@
 
                                         </td>
                                         <td>
-                                            <small>
+                                            <small id="_time_change_status_{{$order->id}}">
                                                 <?php
                                                 foreach(App\Order::$timeListOrderDetail as $k => $v){
                                                 if(empty($order->$k)){
@@ -164,6 +169,30 @@
                 $('[name="status"]').val(order_status_list.join(','));
 
                 $('#_form-orders').submit();
+            });
+
+            /**
+             * event xay ra khi click nut da nhan hang
+             */
+            $(document).on('click','._btn_change_status',function () {
+                var order_id = $(this).data('order-id');
+                $("#_btn_change_status_"+order_id).prop('disabled',true);
+                $.ajax({
+                    url : '/change-status-order',
+                    type : 'POST',
+                    data : {
+                        order_id : order_id
+                    }
+                }).done(function (response) {
+                    if(response.type == 'success'){
+                        $("#_order_status_"+order_id).html('Đã nhận hàng');
+                        $("#_btn_change_status_"+order_id).addClass('hidden');
+                        $("#_time_change_status_"+order_id).append("<p>Đã nhận hàng:</p>"+response.date);
+
+                    }else{
+                        $("#_btn_change_status_"+order_id).prop('disabled',false);
+                    }
+                });
             });
         });
     </script>
