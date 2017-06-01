@@ -277,10 +277,10 @@ class HomeController extends Controller
             'money' => $deposit_amount_vnd
         ];
 
-        $statistic[] = [
-            'name' => 'Tiền còn thiếu (3=1-2)',
-            'money' => ($amount_vnd - $deposit_amount_vnd)
-        ];
+//        $statistic[] = [
+//            'name' => 'Tiền còn thiếu (3=1-2)',
+//            'money' => ($amount_vnd - $deposit_amount_vnd)
+//        ];
 
         return $statistic;
     }
