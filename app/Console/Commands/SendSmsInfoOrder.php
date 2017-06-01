@@ -59,6 +59,8 @@ class SendSmsInfoOrder extends Command
                         ->update(['send_status' => SendSmsToCustomer::FAIL]);
                 }
 
+                Log::info('gui-tin-nhan',[$result]);
+
             }
 
         }
