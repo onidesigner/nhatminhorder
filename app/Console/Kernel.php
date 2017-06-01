@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
 
         'App\Console\Commands\SendSmsInfoOrder',
+        'App\Console\Commands\CommandSendEmailToCustomer'
     ];
 
     /**
@@ -25,10 +26,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command('inspire')
-//            ->hourly();
-//
+
+
         $schedule->command('send_info_order')
+            ->everyMinute();
+
+        $schedule->command('send_email_to_customer')
             ->everyMinute();
     }
 
