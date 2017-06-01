@@ -87,7 +87,7 @@ class SendMailToCustomer
         $mail->addReplyTo($my_gmail, 'Nhatminh247.vn');
         #địa chỉ mail của nơi nhận
         $mail->addAddress($customer_mail, '');
-        $mail->Subject = 'Nhatminh247.vn thông báo hàng đã nhập kho phân phối';
+        $mail->Subject = 'Nhatminh247.vn thông báo';
 
         // Nội dung của email
         $mail->msgHTML('
@@ -122,7 +122,7 @@ class SendMailToCustomer
                 'send_status' => SendEmailCustomerQueue::SUCCESS
             ]);
         }
-
     }
 
+    
 }

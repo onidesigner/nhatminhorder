@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\CustomerNotification;
+use App\Library\Sms\SendInfoOrderToWarehouse;
 use App\Permission;
+use App\SendEmailCustomerQueue;
+use App\SendSmsToCustomer;
 use App\UserTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -280,6 +284,22 @@ class UserTransactionController extends Controller
                         null,
                         $data_insert['amount']
                     );
+
+                    if($is_ok == true){
+
+                        // gửi mail thông báo tiền nạp thông qua sms và email
+                        $send_email = new SendEmailCustomerQueue();
+                        $send_sms = new SendSmsToCustomer();
+                        
+                        if($data_insert['transaction_adjustment_type'] == 'negative'){
+                            $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền -".$data_insert['amount']."VND . Lý do: ".$data_insert['transaction_note'];
+                        }else{
+                            $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền +".$data_insert['amount']."VND . Lý do: nạp tiền thành công .";
+                        }
+                        $send_email->EmailQueueWhenCreateTransactionAdjustment($customer,$content);
+                        $send_sms->sendSmsWhenCreateTransaction($customer,$content);
+
+                    }
 
                     break;
 

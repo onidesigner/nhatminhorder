@@ -32,4 +32,16 @@ class SendEmailCustomerQueue extends Model
         $this->save();
     }
 
+    /**
+     * @param $user
+     * @param $content
+     */
+    public function EmailQueueWhenCreateTransactionAdjustment(User $user, $content){
+        $this->email = $user->email;
+        $this->user_id = $user->id;
+        $this->content = $content;
+        $this->send_status = self::NOT_YET;
+        $this->save();
+    }
+
 }
