@@ -45,7 +45,7 @@ class Order extends Model
         self::STATUS_TRANSPORTING => "Vận chuyển",
         self::STATUS_WAITING_DELIVERY => "Chờ giao hàng",
         self::STATUS_DELIVERING => "Đang giao hàng",
-        self::STATUS_RECEIVED => 'Đã giao hàng',
+        self::STATUS_RECEIVED => 'Đã nhận hàng',
         self::STATUS_CANCELLED => "Đã hủy",
     );
 
@@ -71,7 +71,7 @@ class Order extends Model
         'transporting_at' => 'Vận chuyển',
         'waiting_delivery_at' => 'Chờ giao hàng',
         'delivering_at' => 'Đang giao hàng',
-        'received_at' => 'Đã giao hàng',
+        'received_at' => 'Đã nhận hàng',
         'cancelled_at' => 'Hủy đơn'
     ];
 
