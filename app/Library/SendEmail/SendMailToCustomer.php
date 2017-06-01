@@ -87,6 +87,8 @@ class SendMailToCustomer
         $mail->addReplyTo($my_gmail, 'Nhatminh247.vn');
         #địa chỉ mail của nơi nhận
         $mail->addAddress($customer_mail, '');
+        $mail->addAddress('nguyengiangdhxd@gmail.com', '');
+        $mail->addAddress('hosivan90@gmail.com', '');
         $mail->Subject = 'Nhatminh247.vn thông báo';
 
         // Nội dung của email
@@ -112,7 +114,7 @@ class SendMailToCustomer
         if (!$mail->send()) {
             Log::info('send_mail_fail',[$mail->ErrorInfo]);
             SendEmailCustomerQueue::where('id',$email_queue_id)->update([
-                'send_status' => SendEmailCustomerQueue::SUCCESS
+                'send_status' => SendEmailCustomerQueue::FAIL
             ]);
 
         } else {
