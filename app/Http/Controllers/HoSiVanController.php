@@ -24,6 +24,43 @@ class HoSiVanController extends Controller
         $this->middleware('auth');
     }
 
+
+    private function __hoan_tien_van_chuyen_don_van_chuyen_tiet_kiem(Request $request){
+
+        $orders_id = $request->get('orders_id');//co dang (100, 200, 300)
+        if(empty($orders_id)){
+            die('thieu tham so truyen vao');
+        }
+
+        $orders_list = explode(',', $orders_id);
+        foreach($orders_list as $orders_list_item){
+            $order = Order::findOneByIdOrCode($orders_list_item);
+            if(!$order instanceof Order){
+                continue;
+            }
+
+
+
+            $fee_shipping_fast = 0;
+            $fee_shipping_slow = 0;
+            $fee_refund = $fee_shipping_fast > $fee_shipping_slow
+                ? $fee_shipping_fast - $fee_shipping_slow : 0;
+
+            echo "<hr>";
+            echo sprintf("<h3>Don %s</h3> <p>Tien van chuyen nhanh %s đ</p> <p>Tien van chuyen cham %s đ</p>
+
+                <p>Tien can tra lai la %s đ</p>
+            ",
+
+                $order->code,
+                Util::formatNumber($fee_shipping_fast),
+                Util::formatNumber($fee_shipping_slow),
+                Util::formatNumber($fee_refund)
+                );
+            echo "<hr>";
+        }
+    }
+
     private function __don_hang_lech_tai_chinh(Request $request){
 
         die('xong');
