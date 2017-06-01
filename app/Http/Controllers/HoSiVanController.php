@@ -24,6 +24,9 @@ class HoSiVanController extends Controller
         $this->middleware('auth');
     }
 
+    private function __phpinfo(){
+        die(phpinfo());
+    }
 
     private function __hoan_tien_van_chuyen_don_van_chuyen_tiet_kiem(Request $request){
 
