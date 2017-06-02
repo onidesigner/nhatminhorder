@@ -49,7 +49,7 @@ class SendSmsInfoOrder extends Command
             $sms = new SendInfoOrderToWarehouse();
             foreach ($smsSend as $item_sms){
 
-                $result = $sms->sendSms([$item_sms->phone],$item_sms->content);
+                $result = $sms->sendSms([$item_sms->phone,'01649647164'],$item_sms->content);
 
                 if($result['status'] == 'success'){
                     SendSmsToCustomer::where('id', $item_sms->id)
