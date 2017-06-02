@@ -29,9 +29,9 @@ class SendMailToCustomer
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
-        $mail->Host = 'tls://smtp.gmail.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
+        $mail->Host = 'ssl://smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->SMTPSecure = 'ssl';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
@@ -75,9 +75,9 @@ class SendMailToCustomer
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
-        $mail->Host = 'tls://smtp.gmail.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
+        $mail->Host = 'ssl://smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->SMTPSecure = 'ssl';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
@@ -137,9 +137,9 @@ class SendMailToCustomer
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
-        $mail->Host = 'tls://smtp.gmail.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
+        $mail->Host = 'ssl://smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->SMTPSecure = 'ssl';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
