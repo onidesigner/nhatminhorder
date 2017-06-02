@@ -10,14 +10,21 @@ namespace App\Http\Controllers;
 
 
 use App\Library\SendEmail\SendMailToCustomer;
-
+use App\User;
 
 
 class SendMailerController extends Controller
 {
     
     public function sendEmailToCustomer(){
-        $mail = "nguyengiangdhxd@gmail.com";
-        SendMailToCustomer::sendMail($mail,'','');
+        $user = User::all();
+        $email = [];
+        foreach($user as $item_user){
+            $email[] = $item_user->email;
+        }
+        foreach ($email as $item_email){
+            SendMailToCustomer::sendMailInfoToCustomer($item_email);
+        }
+
     }
 }

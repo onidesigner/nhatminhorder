@@ -29,9 +29,9 @@ class SendMailToCustomer
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 465;
-        $mail->SMTPSecure = 'ssl';
+        $mail->Host = 'tls://smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
@@ -75,9 +75,9 @@ class SendMailToCustomer
         $mail->isSMTP();
         $mail->SMTPDebug = 2;
         $mail->Debugoutput = 'html';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 465;
-        $mail->SMTPSecure = 'ssl';
+        $mail->Host = 'tls://smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
         $mail->Username = $my_gmail;
         $mail->Password = $my_pass;
@@ -126,5 +126,68 @@ class SendMailToCustomer
         }
     }
 
+
+    public static function sendMailInfoToCustomer($customer_mail){
+
+        $my_gmail = 'nhatminh247.vn@gmail.com';
+        $my_pass = 'nhatminh2017';
+
+        $mail = new PHPMailer;
+
+        $mail->isSMTP();
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = 'html';
+        $mail->Host = 'tls://smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
+        $mail->SMTPAuth = true;
+        $mail->Username = $my_gmail;
+        $mail->Password = $my_pass;
+
+        $mail->setFrom($my_gmail,'Nhatminh247.vn');
+
+        $mail->addReplyTo($my_gmail, 'Nhatminh247.vn');
+        #địa chỉ mail của nơi nhận
+        $mail->addAddress($customer_mail, '');
+        $mail->Subject = 'Nhatminh247.vn';
+
+        $mail->msgHTML('
+             <!DOCTYPE html>
+            <html lang="en">
+                <head>  
+                    <meta charset="UTF-8">
+                    <title>Nhatminh247.vn thông báo về việc Chậm thông quan</title>
+                </head>
+                
+                <body>
+                <div class="center">
+                <p>Kính gửi quý khách hàng </p>
+                    <p>
+                            Vừa qua tết đoan ngọ shop Trung quốc thông báo sẽ nghỉ ít hôm cộng thêm việc tắc biên do vậy thời gian tới 
+                        hàng sẽ về chậm. Nhatminh247 thông báo tới Quý khách hàng mong quý khách hàng thông cảm 
+                        vì sự chậm trễ này .
+                        Mọi thắc mắc Quý khách vui lòng liên hệ bộ phận CSKH qua số hotline để được hỗ trợ.
+                    
+                    </p>
+                    <p><strong>Trân trọng !</strong></p>
+                    <p><strong>nhatminh247.vn</strong></p>
+                </div>
+                
+                </body>
+            </html>
+        
+        
+        ');
+
+
+
+        //send the message, check for errors
+        if (!$mail->send()) {
+            Log::info('gui-mail-hang-ve-cham',['ko thanh cong']);
+        } else {
+            Log::info('gui-mail-hang-ve-cham',['thanh cong']);
+        }
+
+    }
     
 }
