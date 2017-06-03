@@ -49,17 +49,17 @@ class SendSmsInfoOrder extends Command
             $sms = new SendInfoOrderToWarehouse();
             foreach ($smsSend as $item_sms){
 
-                $result = $sms->sendSms([$item_sms->phone],$item_sms->content);
-
-                if($result['status'] == 'success'){
-                    SendSmsToCustomer::where('id', $item_sms->id)
-                        ->update(['send_status' => SendSmsToCustomer::SUCCESS]);
-                }elseif ($result['status'] == 'error'){
-                    SendSmsToCustomer::where('id', $item_sms->id)
-                        ->update(['send_status' => SendSmsToCustomer::FAIL]);
-                }
-
-                Log::info('gui-tin-nhan',[$result]);
+//                $result = $sms->sendSms([$item_sms->phone],$item_sms->content);
+//
+//                if($result['status'] == 'success'){
+//                    SendSmsToCustomer::where('id', $item_sms->id)
+//                        ->update(['send_status' => SendSmsToCustomer::SUCCESS]);
+//                }elseif ($result['status'] == 'error'){
+//                    SendSmsToCustomer::where('id', $item_sms->id)
+//                        ->update(['send_status' => SendSmsToCustomer::FAIL]);
+//                }
+//
+//                Log::info('gui-tin-nhan',[$result]);
 
             }
 

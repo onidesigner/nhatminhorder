@@ -43,9 +43,9 @@ class CommandSendEmailToCustomer extends Command
     {
         // sau khi được lưu trũ du lieu xong thi thư hienj gửi mail ở day
         $list_emails = SendEmailCustomerQueue::where('send_status',SendEmailCustomerQueue::NOT_YET)->paginate(20);
-        foreach($list_emails as $item_email ){
-            SendMailToCustomer::sendEmailWhenImportPackage($item_email->id,
-                $item_email->email,$item_email->content);
-        }
+//        foreach($list_emails as $item_email ){
+//            SendMailToCustomer::sendEmailWhenImportPackage($item_email->id,
+//                $item_email->email,$item_email->content);
+//        }
     }
 }
