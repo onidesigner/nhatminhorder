@@ -30,69 +30,44 @@ class ReportController extends Controller
 
             ->whereIn('status',[Package::STATUS_RECEIVED,Package::STATUS_DELIVERING])->get();
 
+        $data_package_paginate = Package::where('is_deleted',0)
+
+            ->whereIn('status',[Package::STATUS_RECEIVED,Package::STATUS_DELIVERING])->get();
+
         $data_return = [];
-        $package_weight_user = [];
+
         $package_weight = 0;
         if(sizeof($data_package) > 0){
 
             foreach ($data_package as $item_package){
+                /** @var Package $item_package */
                 if($item_package->weight == 0 && $item_package->convert_weight == 0){
                         continue;
                 }
+                $package_weight += $item_package->getWeightCalFee();
 
-                $package_weight_user[] = $item_package->buyer_id;
-
-                if($item_package->weight > $item_package->convert_weight){
-                    $package_weight += $item_package->weight;
-                }else{
-                    $package_weight += $item_package->convert_weight;
+            }
+            /**
+             * laays gas trij hienj thi
+             */
+            foreach ($data_package_paginate as $item_package_panigate){
+                if($item_package_panigate->weight == 0 && $item_package_panigate->convert_weight == 0){
+                    continue;
                 }
+                $data_return[] = $item_package_panigate;
             }
         }
-        $package_user = [];
-        foreach ($package_weight_user as $item_package_user){
 
-            $package = Package::where('buyer_id',$item_package_user)->get();
-            $package_weight_belong_user = self::packageWeight($package);
-
-            $package_user[$item_package_user] = $package_weight_user;
-
-        }
 
 
         return view('report',[
             'data' => $data_return,
             'total_package' => $package_weight,
             'page_title' => 'Báo cáo sản lượng hàng tháng',
-            'package_user' => $package_weight_belong_user
         ]);
 
     }
 
-    /**
-     * ham tinh can nawng cuar kien khi truyen vafo mot mang
-     * kien hang
-     * @param $package
-     * @return int
-     */
-    private static function packageWeight($package = array()){
-        $package_weight = 0;
-        foreach ($package as $item_package){
-            if($item_package->weight == 0 && $item_package->convert_weight == 0){
-                continue;
-            }
-
-            $package_weight_user[] = $item_package->buyer_id;
-
-            if($item_package->weight > $item_package->convert_weight){
-                $package_weight += $item_package->weight;
-            }else{
-                $package_weight += $item_package->convert_weight;
-            }
-        }
-
-        return $package_weight;
-    }
 
 
 

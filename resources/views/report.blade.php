@@ -1,32 +1,44 @@
 @extends('layouts.app')
 
 @section('page_title')
-@section('page_title')
     {{$page_title}}
 @endsection
 @section('content')
-    <span>Tổng sản lượng vận chuyển {{ $total_package }} kg</span>
+    <p>
+        <span>Tổng sản lượng vận chuyển <strong>{{ $total_package }} kg</strong></span>
+    </p>
 
     <table class="table">
         <thead class="thead-default">
         <tr>
-            <th>#</th>
             <th>Khách Hàng</th>
             <th>Mã Kiện</th>
             <th>Mã đơn</th>
-            <th>Cân nặng</th>
+            <th>Cân nặng (kg)</th>
         </tr>
         </thead>
         <tbody>
         @foreach($data as $item)
             <tr>
-                <th scope="row">1</th>
-                <td></td>
+                <td>
+                    {{ \App\Util::getUserName($item->buyer_id) }}
+
+                </td>
                 <td> {{ $item->logistic_package_barcode }} </td>
-                <td></td>
-                <td>@mdo</td>
+                <td>
+                    {{ \App\Order::findOneByIdOrCode($item->order_id)->code }}
+                </td>
+                <td>
+                    {{ \App\Util::getWeightFee($item) }}
+                </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
+@endsection
+
+@section('js_bottom')
+    @parent
+
 @endsection

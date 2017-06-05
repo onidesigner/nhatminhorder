@@ -68,6 +68,7 @@ class Permission extends Model
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_INSERT = 'MANAGER_WAREHOUSE_MANUALLY_INSERT';
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE = 'MANAGER_WAREHOUSE_MANUALLY_DELETE';
     const PERMISSION_MANAGER_ADDON_LINK_ERROR = 'MANAGER_ADDON_LINK_ERROR';
+    const PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT = 'TOTAL_PACKAGE_WEIGHT';
     #endregion
 
     #region -- Statistic money --
@@ -140,6 +141,10 @@ class Permission extends Model
                     'label' => 'Quét mã vạch',
                     'description' => '',
                 ],
+                self::PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT =>[
+                    'label' => 'Xem sản lượng vận chuyển',
+                    'description' => '',
+                ]
             ]
         ],
 
