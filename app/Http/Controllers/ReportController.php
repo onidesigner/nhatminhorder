@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 
 use App\Order;
+use App\OrderFee;
 use App\Package;
 use App\User;
 
@@ -59,6 +60,20 @@ class ReportController extends Controller
         }
 
 
+        // thống kê tổng giá trị tiền vận chuyển nội địa chung quốc
+
+        # tống tiền phí dịch vụ
+        $buying_fees = OrderFee::where('name','BUYING_FEE_VND')->get();
+        foreach ($buying_fees as $item_buying){
+            /** @var $item_buying OrderFee */
+            if($this->checkStatusOrder($item_buying)){
+
+            }
+        }
+
+
+
+
 
         return view('report',[
             'data' => $data_return,
@@ -68,6 +83,22 @@ class ReportController extends Controller
 
     }
 
+    /**
+     * kiểm tra trạng thái của đơn hàng
+     * @param $order_id
+     * @return bool
+     */
+    private function checkStatusOrder($order_id){
+        $order = Order::findOneByIdOrCode($order_id);
+        if($order instanceof Order){
+            if($order->status == Order::STATUS_CANCELLED){
+                return false;
+            }else{
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 
