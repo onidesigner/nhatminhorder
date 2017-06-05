@@ -231,20 +231,20 @@ class ScanController extends Controller
                                     'user_id' => $user_address->user_id,
                                     'send_status' => SendSmsToCustomer::NOT_YET
                                 ];
-//                            $smsToCustomer = new SendSmsToCustomer();
-//                            $smsToCustomer->CustomerSms($array_data);
+                            $smsToCustomer = new SendSmsToCustomer();
+                            $smsToCustomer->CustomerSms($array_data);
                             #endregion
                             #region lưu vào bảng gửi mail queue
-//                                $array_data_email = [
-//                                    'order_id' => $order->id,
-//                                    'email' => User::find($user_address->user_id)->email,
-//                                    'content' => $content,
-//                                    'user_id' => $user_address->user_id,
-//                                    'send_status' => SendEmailCustomerQueue::NOT_YET
-//                                ];
-//
-//                                $email_to_customer = new SendEmailCustomerQueue();
-//                                $email_to_customer->EmailQueueOrder($array_data_email);
+                                $array_data_email = [
+                                    'order_id' => $order->id,
+                                    'email' => User::find($user_address->user_id)->email,
+                                    'content' => $content,
+                                    'user_id' => $user_address->user_id,
+                                    'send_status' => SendEmailCustomerQueue::NOT_YET
+                                ];
+
+                                $email_to_customer = new SendEmailCustomerQueue();
+                                $email_to_customer->EmailQueueOrder($array_data_email);
                             #endregion --luu queue guiwr mail--
                         }
 
