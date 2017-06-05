@@ -142,7 +142,7 @@ class Permission extends Model
                     'description' => '',
                 ],
                 self::PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT =>[
-                    'label' => 'Xem sản lượng vận chuyển',
+                    'label' => 'Báo cáo thông kê',
                     'description' => '',
                 ]
             ]

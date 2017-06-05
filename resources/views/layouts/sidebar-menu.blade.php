@@ -169,7 +169,7 @@ if(Auth::check()){
                     ],
                         [
                                 'url' => url('/san-luong-van-chuyen'),
-                                'title' => 'Sản lượng vận chuyển',
+                                'title' => 'Báo cáo Thống kê',
                                 'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
                         ],
                 ]

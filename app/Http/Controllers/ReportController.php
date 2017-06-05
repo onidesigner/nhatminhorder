@@ -64,13 +64,26 @@ class ReportController extends Controller
 
         # tống tiền phí dịch vụ
         $buying_fees = OrderFee::where('name','BUYING_FEE_VND')->get();
+
+        $total_buying_fee = 0;
         foreach ($buying_fees as $item_buying){
             /** @var $item_buying OrderFee */
-            if($this->checkStatusOrder($item_buying)){
-
+            if(self::checkStatusOrder($item_buying->order_id) == true){
+                $total_buying_fee += $item_buying->money;
             }
         }
+        #end tổng phí dịch vụ
 
+        #region phí vận chuyển nội địa chung quốc
+
+        $domictic_shipping_fee = OrderFee::where('name','DOMESTIC_SHIPPING_FEE_VND')->get();
+        $total_domictic_shipping_fee = 0;
+        foreach ($domictic_shipping_fee as $item_domictic){
+            /** @var $item_domictic OrderFee */
+            $total_domictic_shipping_fee += $item_domictic->money;
+        }
+
+        #endregion Phí vận chuyển nội địa trung quốc
 
 
 
@@ -78,6 +91,8 @@ class ReportController extends Controller
         return view('report',[
             'data' => $data_return,
             'total_package' => $package_weight,
+            'total_buying_fee' => $total_buying_fee,
+            'total_domictic_shipping_fee' => $total_domictic_shipping_fee,
             'page_title' => 'Báo cáo sản lượng hàng tháng',
         ]);
 
@@ -88,8 +103,8 @@ class ReportController extends Controller
      * @param $order_id
      * @return bool
      */
-    private function checkStatusOrder($order_id){
-        $order = Order::findOneByIdOrCode($order_id);
+    private static function checkStatusOrder($order_id){
+        $order = Order::where('id',$order_id)->first();
         if($order instanceof Order){
             if($order->status == Order::STATUS_CANCELLED){
                 return false;
@@ -97,6 +112,7 @@ class ReportController extends Controller
                 return true;
             }
         }
+
         return false;
     }
 

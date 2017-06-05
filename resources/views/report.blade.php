@@ -7,6 +7,12 @@
     <p>
         <span>Tổng sản lượng vận chuyển <strong>{{ $total_package }} kg</strong></span>
     </p>
+    <p>
+        <span>Tổng phí mua hàng ( 1% ) <strong>{{ $total_buying_fee }} VND</strong></span>
+    </p>
+    <p>
+        <span>Tổng tiền vận chuyển nội địa <strong>{{$total_domictic_shipping_fee}} VND</strong> </span>
+    </p>
 
     <table class="table">
         <thead class="thead-default">
