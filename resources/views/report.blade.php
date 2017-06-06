@@ -2,9 +2,9 @@
 
 @section('page_title')
     {{$page_title}}
-@endsection
+@endsectionss
 @section('content')
-    <form action="/san-luong-van-chuyen" method="POST">
+    <form action="/san-luong-van-chuyen-dieu-kien" method="GET">
         <div class="row" class="col-sm-12" >
             <p>
                 <div class="col-sm-3">
@@ -22,7 +22,7 @@
                 <div class="col-sm-3">
                     <span>
                             <div class="form-group">
-                              <select class="form-control" id="sel1">
+                              <select class="form-control" name="warehouse">
                                 <option>Chọn kho</option>
                                 <option value="CNPX">CNPX - Bằng Tường</option>
                                 <option value="CNGZ">K-HN - Hà Nội</option>

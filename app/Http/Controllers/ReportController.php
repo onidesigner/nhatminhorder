@@ -122,6 +122,16 @@ class ReportController extends Controller
         return false;
     }
 
+    /**
+     * hàm thống kê dựa trên điêu kiện kho và thời gian
+     */
+    public function reportCondition(Request $request){
+        $time_from = $request->get('date1');
+        $time_to = $request->get('date2');
+        $warehouse = $request->get('warehouse');
 
+        
+
+    }
 
 }
