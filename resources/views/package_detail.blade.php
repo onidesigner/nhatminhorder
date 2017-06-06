@@ -67,6 +67,16 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @if($package->weight_type == 2)
+                                    <tr>
+                                        <td>
+                                            Dài x Rộng x Cao
+                                        </td>
+                                        <td>
+                                            {{$package->length_package}} x {{$package->width_package}} x {{$package->height_package}} ( cm )
+                                        </td>
+                                    </tr>
+                                    @endif
                                     <tr>
                                         <td>Ghi chú: </td>
                                         <td>{{ $package->note  }}</td>
@@ -106,7 +116,7 @@
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li><a href="">Sửa</a></li>
-                                    <li><a href="">Xóa</a></li>
+                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" id="_delete_package">Xóa</a></li>
                                 </ul>
                             </div>
 
@@ -175,7 +185,21 @@
     @parent
     <script>
         $(document).ready(function(){
-
+            $('#_delete_package').click(function(){
+                $.ajax({
+                    url : '/remove-package',
+                    type: 'POST',
+                    data : {
+                        package_barcode : $(this).data('package')
+                    }
+                }).done(function (response) {
+                    if(response.message == 'success'){
+                        location.reload();
+                    }else{
+                        console.info('error');
+                    }
+                });
+            });
 
         });
 

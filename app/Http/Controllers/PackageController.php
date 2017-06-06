@@ -413,7 +413,17 @@ class PackageController extends Controller
 
     private function __getDetailData(Request $request, $layout = null){
         $package_code = $request->route('code');
-        $package = Package::retrieveByCode($package_code);
+        #$package = Package::retrieveByCode($package_code);
+        $package = Package::where([
+            'logistic_package_barcode' => $package_code,
+            'is_deleted' => 0
+        ])->first();
+
+        if(is_null($package)){
+            //redirect đang ko chính xác
+            return redirect('/packages');
+        }
+
         if(!$package instanceof Package){
             return redirect('403');
         }
@@ -552,5 +562,31 @@ class PackageController extends Controller
         $data = $this->__getListData($request, 'layouts.app');
 
         return view('package_list', $data);
+    }
+
+    /**
+     * Xóa kiện hàng
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removePackage(Request $request){
+        $package_barcode = $request->get('package_barcode');
+        $package = Package::where('logistic_package_barcode',$package_barcode)
+            ->first();
+        if($package instanceof Package){
+            $package->is_deleted = 1;
+            $package->save();
+
+             return response()->json([
+                'success' => true,
+                'message' => 'success',
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'false',
+        ]);
+
+        
     }
 }

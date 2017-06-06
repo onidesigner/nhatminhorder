@@ -228,3 +228,4 @@ Route::post('/change-status-order','Customer\OrderController@changeOrderStatus')
 #region --san luong van chuyen--
 Route::get('/san-luong-van-chuyen','ReportController@index');
 #endregion --ket thuc san luong van chuyen--
+Route::post('/remove-package','PackageController@removePackage');
