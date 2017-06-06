@@ -13,6 +13,8 @@ use App\Order;
 use App\OrderFee;
 use App\Package;
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 
 class ReportController extends Controller
 {
@@ -26,6 +28,10 @@ class ReportController extends Controller
      */
     public function index(){
 
+
+
+
+        
         // đẩy dữ liệu từ trên server xuống dưới
         $data_package = Package::where('is_deleted',0)
 
