@@ -263,4 +263,28 @@ class Util extends Model
         $d = \DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
+
+    /**
+     * trả lại username(email ) khi truyền vào user_id
+     * @param $user_id
+     * @return mixed|string
+     */
+    public static function getUserName($user_id){
+        $user = User::find($user_id);
+        if( $user instanceof User){
+            return $user->email;
+        }
+        return '';
+    }
+
+    /**
+     * Hàm lấy ra cân nặng tính phí của kiện hàng
+     * cân nặng nào lớn hơn thì lấy
+     * @param Package $package
+     * @return int
+     */
+    public static function getWeightFee(Package $package){
+        return $package->getWeightCalFee();
+    }
+
 }

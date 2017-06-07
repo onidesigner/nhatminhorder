@@ -225,4 +225,8 @@ Route::post('/change-status-order','Customer\OrderController@changeOrderStatus')
 
 #endregion
 
+#region --san luong van chuyen--
+Route::get('/san-luong-van-chuyen','ReportController@index');
+#endregion --ket thuc san luong van chuyen--
+
 Route::get('iframe_random', 'SystemController@iframe_random');
