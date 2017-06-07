@@ -24,6 +24,90 @@ class HoSiVanController extends Controller
         $this->middleware('auth');
     }
 
+    private function __order_buying_statistic_excel(Request $request){
+        $start_time = $request->get('start_time');
+        $end_time = $request->get('end_time');
+
+        if(empty($start_time) || empty($end_time)){
+            die('chua co du lieu dau vao');
+        }
+
+        if(!Util::validateDate($start_time, 'Y-m-d')){
+            die('ngay bat dau khong hop le');
+        }
+
+        if(!Util::validateDate($end_time, 'Y-m-d')){
+            die('ngay bat dau khong hop le');
+        }
+
+        $csv = "Ngày mua hàng\tNhân viên mua hàng\tMã đơn\tTỉ giá\tTiền hàng(1)\tMua Hàng(2)\tVC nội địa TQ (3)\tVC quốc tế (4)\tĐóng gỗ (5)\tPhí đơn hàng (6=1+2+3+4+5)\r\n";
+
+        $current_time = $start_time;
+        while(strtotime($current_time) <= strtotime($end_time)){
+
+            $orders_today = $this->__get_order_buying_today($current_time);
+
+            foreach($orders_today as $key => $orders_today_item){
+                $user_buying = User::find($key);
+                if(!$user_buying instanceof User){
+                    continue;
+                }
+
+                if(count($orders_today_item)){
+                    foreach($orders_today_item as $o){
+                        $o_fee = $o->fee();
+
+                        $order_list = array(
+                            $current_time,
+                            sprintf("%s - %s - %s",
+                                $user_buying->name,
+                                $user_buying->code,
+                                $user_buying->email),
+                            $o->code,
+                            $o->exchange_rate,
+                            $o_fee['AMOUNT_VND'],
+                            $o_fee['BUYING_FEE_VND'],
+                            $o_fee['DOMESTIC_SHIPPING_FEE_VND'],
+                            $o_fee['SHIPPING_CHINA_VIETNAM_FEE_VND'],
+                            $o_fee['WOOD_CRATING_VND'],
+                            $o_fee['TOTAL_FEE_VND']
+                        );
+
+                        $csv .= join("\t", $order_list)."\r\n";
+
+                    }
+                }
+            }
+
+            $current_time = date('Y-m-d', strtotime("+1 day", strtotime($current_time)));
+        }
+
+        $file_name = sprintf("thong-ke-tu-%s-den-%s.csv", $start_time, $end_time);
+
+        $csv = chr(255).chr(254).mb_convert_encoding($csv, "UTF-16LE", "UTF-8");
+        header("Content-type: application/x-msdownload");
+        header("Content-disposition: csv; filename=" . $file_name . "; size=".strlen($csv));
+        echo $csv;
+
+        die();
+    }
+
+    private function __get_order_buying_today($today){
+
+        $orders = Order::where([
+            ['bought_at', '>=', sprintf("%s 00:00:00", $today)],
+            ['bought_at', '<=', sprintf("%s 23:59:59", $today)]
+        ])->get();
+
+        $return = [];
+        if($orders){
+            foreach($orders as $order){
+                $return[sprintf("%s", $order->paid_staff_id)][] = $order;
+            }
+        }
+        return $return;
+    }
+
     private function __phpinfo(){
         die(phpinfo());
     }

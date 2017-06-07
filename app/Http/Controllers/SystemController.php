@@ -27,6 +27,12 @@ class SystemController extends Controller
         $this->middleware('auth');
     }
 
+    public function iframe_random(Request $request){
+        return view('iframe_random', [
+
+        ]);
+    }
+
     public function setDoneLinkError(Request $request){
         $id = $request->get('id');
         $product_link_error = ProductLinkError::find($id);

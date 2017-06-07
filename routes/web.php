@@ -224,3 +224,5 @@ Route::get('/send-email','SendMailerController@sendEmailToCustomer');
 Route::post('/change-status-order','Customer\OrderController@changeOrderStatus');
 
 #endregion
+
+Route::get('iframe_random', 'SystemController@iframe_random');
