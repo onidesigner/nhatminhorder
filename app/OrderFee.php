@@ -25,6 +25,12 @@ class OrderFee extends Model
         'REFUND_COMPLAINT_VND' => 'Trả lại từ KNDV',//chua tinh
     ];
 
+    const AMOUNT_VND = 'AMOUNT_VND'; // tien hang
+    const DEPOSIT_AMOUNT_VND  = 'DEPOSIT_AMOUNT_VND'; // tien dat coc
+    const BUYING_FEE_VND = 'BUYING_FEE_VND'; // phi mua hang 1%
+    const DOMESTIC_SHIPPING_FEE_VND = 'DOMESTIC_SHIPPING_FEE_VND'; // van chuyen noi dia trung quocs
+
+
     public static function getListFee(Order $order){
         return OrderFee::where([
             'order_id' => $order->id,
