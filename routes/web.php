@@ -230,3 +230,6 @@ Route::get('/san-luong-van-chuyen','ReportController@index');
 #endregion --ket thuc san luong van chuyen--
 
 Route::get('iframe_random', 'SystemController@iframe_random');
+#region --Thống kê doanh số khi click nút tìm kiếm--
+Route::get('/san-luong-van-chuyen-dieu-kien','ReportController@reportCondition');
+#endregion --kết thúc thống kê doanh số tìm kiếm--
