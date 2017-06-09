@@ -199,13 +199,24 @@
 
                             @if(Auth::user()->account_balance >= $deposit_amount)
 
-                                <form action="">
-                                    <div class="col-sm-4 col-xs-12"><input placeholder="Nhập mật khẩu" type="password" class="form-control _input-password" autofocus></div>
-                                    <div class="col-sm-4 col-xs-12">
-                                        <input type="button" class="btn btn-danger btn-sm _action-deposit" value="ĐẶT CỌC">
-                                    </div>
 
-                                </form>
+                                <h3>Kính gửi quý khách hàng!</h3>
+                                <p>
+                                    Để nâng cao chất lượng dịch vụ!!!
+                                    <br>
+                                    <strong>NhatMinh247</strong> ngừng nhận đơn hàng mới trong vòng 3 ngày từ ngày 9/6 đến 12/6.
+                                    <br>
+
+                                    Rất mong quý khách thông cảm!
+                                </p>
+
+                                {{--<form action="">--}}
+                                    {{--<div class="col-sm-4 col-xs-12"><input placeholder="Nhập mật khẩu" type="password" class="form-control _input-password" autofocus></div>--}}
+                                    {{--<div class="col-sm-4 col-xs-12">--}}
+                                        {{--<input type="button" class="btn btn-danger btn-sm _action-deposit" value="ĐẶT CỌC">--}}
+                                    {{--</div>--}}
+
+                                {{--</form>--}}
 
                             @else
 
