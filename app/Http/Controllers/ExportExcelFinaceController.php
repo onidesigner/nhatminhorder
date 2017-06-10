@@ -130,6 +130,14 @@ class ExportExcelFinaceController extends Controller
                 ->setCellValue('L2',$wood_crating_fee)
 
             ;
+            $excel_order->getActiveSheet()->getStyle('C2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('D2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('E2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('H2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('I2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('J2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('K2')->getNumberFormat()->setFormatCode('#,##0');
+            $excel_order->getActiveSheet()->getStyle('L2')->getNumberFormat()->setFormatCode('#,##0');
 
             $name = 'TÀI CHÍNH ĐƠN HÀNG' . "-" .$order->code;
             header('Content-Type: application/vnd.ms-excel');
