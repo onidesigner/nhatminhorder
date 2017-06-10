@@ -233,3 +233,7 @@ Route::get('iframe_random', 'SystemController@iframe_random');
 #region --Thống kê doanh số khi click nút tìm kiếm--
 Route::get('/san-luong-van-chuyen-dieu-kien','ReportController@reportCondition');
 #endregion --kết thúc thống kê doanh số tìm kiếm--
+
+#region --xuat excel tai chinh--
+Route::get('/export-excel-finance','ExportExcelFinaceController@exportExcelOrderFee');
+#endregion --ket thuc xuat excel tai chinh --

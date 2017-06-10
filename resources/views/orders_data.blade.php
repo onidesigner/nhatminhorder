@@ -111,6 +111,10 @@
 
                             @endif
                         @endif
+
+                        <p>
+                            <a class="_export_excel" id="_export_excel_{{$order->id}}" href="{{ url('export-excel-finance?order_id=') }}{{$order->id}}" data-order-id="{{$order->id}}">Xuất excel tài chính</a>
+                        </p>
                     </td>
 
                     <td>
@@ -156,3 +160,4 @@
 @else
     <h4>Hiện chưa có đơn hàng!</h4>
 @endif
+
