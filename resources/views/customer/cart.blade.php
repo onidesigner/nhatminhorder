@@ -147,27 +147,20 @@
                                         <small>{{$item->property}}</small>
                                         <br>
 
-                                        <form class="___form" onsubmit="return false;">
-                                            <input type="hidden" name="action" value="comment">
-                                            <input type="hidden" name="method" value="post">
-                                            <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                            <input type="hidden" name="item_id" value="{{$item->id}}">
-                                            <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                            <input type="hidden" name="response" value="customer/cart">
 
-                                            <input
-                                                    data-toggle="_tooltip"
-                                                    data-shop-id="{{$shop->shop_id}}"
-                                                    data-item-id="{{$item->id}}"
-                                                    placeholder="Ghi chú sản phẩm..."
-                                                    style="width: 250px; padding: 0 5px;"
-                                                    name="comment"
-                                                    type="text"
-                                                    data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
-                                                    class="___input-action" value="{{$item->comment}}" />
 
-                                        </form>
+                                        <input
+                                                data-toggle="_tooltip"
+                                                data-shop-id="{{$shop->shop_id}}"
+                                                data-item-id="{{$item->id}}"
+                                                placeholder="Ghi chú sản phẩm..."
+                                                style="width: 250px; padding: 0 5px;"
+                                                name="comment"
+                                                type="text"
+                                                data-url="{{ url('gio-hang/hanh-dong') }}"
+                                                data-method="post"
+                                                data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
+                                                class="__input-comment-item" value="{{$item->comment}}" />
                                     </td>
 
                                     <td>
@@ -263,6 +256,25 @@
     <script>
         $(function() {
             $('.lazy').lazy();
+
+            $(document).on('change', '.__input-comment-item', function(){
+                var shop_id = $(this).data('shop-id');
+                var item_id = $(this).data('item-id');
+                var comment = $(this).val();
+
+//                var $item = $('._shop-item[data-shop-id="'+shop_id+'"][data-shop-item-id="'+item_id+'"]');
+                request($(this).data('url'), $(this).data('method'), {
+                    _token:"{{csrf_token()}}",
+                    shop_id:shop_id,
+                    item_id:item_id,
+                    comment:comment,
+                    action:'comment'
+                }).done(function(response){
+                    if(!response.success){
+                        bootbox.alert(response.message);
+                    }
+                })
+            });
         });
     </script>
 @endsection

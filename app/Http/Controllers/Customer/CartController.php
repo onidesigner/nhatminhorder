@@ -429,18 +429,24 @@ class CartController extends Controller
                 return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
             }
 
-            $view = View::make($request->get('response'), [
-                'data' => $this->__getInitDataCart($customer),
-                'layout' => 'layouts/app_blank',
-            ]);
+            $html = null;
 
-            $html = $view->render();
+            if($request->get('response')){
+                $view = View::make($request->get('response'), [
+                    'data' => $this->__getInitDataCart($customer),
+                    'layout' => 'layouts/app_blank',
+                ]);
+
+                $html = $view->render();
+            }
+
 
             DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'success',
-                'html' => $html
+                'html' => $html,
+                'result' => $result
             ]);
 
         }catch(\Exception $e){
