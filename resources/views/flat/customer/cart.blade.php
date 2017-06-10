@@ -16,12 +16,6 @@
 
 @section('content')
 
-
-
-
-
-
-
     <div class="row-fluid">
         <div class="span12">
             @include('flat/partials/cart-step', ['active' => 1])
@@ -141,22 +135,17 @@
                                 <tr class="_shop-item" data-shop-id="{{$shop->shop_id}}" data-shop-item-id="{{$item->id}}">
                                     <td class="text-center">
 
-                                        <form class="___form">
-                                            <input type="hidden" name="action" value="remove_item">
-                                            <input type="hidden" name="method" value="post">
-                                            <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                            <input type="hidden" name="item_id" value="{{$item->id}}">
-                                            <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
-                                            <input type="hidden" name="response" value="flat/customer/cart">
-                                            <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-
-                                            <a class="___btn-action"
-                                               href="javascript:void(0)"
-                                               data-toggle="tooltip"
-                                               title="Xoá sản phẩm">
-                                                <i class="icon-trash"></i>
-                                            </a>
-                                        </form>
+                                        <a class="__remove-cart-item"
+                                           data-action="remove_item"
+                                           data-method="post"
+                                           data-shop-id="{{$shop->shop_id}}"
+                                           data-item-id="{{$item->id}}"
+                                           data-url="{{ url('gio-hang/hanh-dong') }}"
+                                           href="javascript:void(0)"
+                                           data-toggle="tooltip"
+                                           title="Xoá sản phẩm">
+                                            <i class="icon-trash"></i>
+                                        </a>
 
                                     </td>
 
@@ -223,7 +212,9 @@
 
                                     </td>
                                     <td>
-                                        <span class="text-danger">{{ App\Util::formatNumber($item->total_amount_item_vnd)  }}đ</span> / <span class="text-success">¥{{$item->total_amount_item}}</span>
+                                        <span class="text-danger _amount"
+                                        data-amount="{{$item->total_amount_item_vnd}}"
+                                        >{{ App\Util::formatNumber($item->total_amount_item_vnd)  }}đ</span> / <span class="text-success">¥{{$item->total_amount_item}}</span>
                                     </td>
 
 
@@ -291,6 +282,44 @@
     <script>
         $(function() {
             $('.lazy').lazy();
+
+            $(document).on('click', '.__remove-cart-item', function(e){
+                var item_id = $(this).data('item-id');
+                var shop_id = $(this).data('shop-id');
+                var $item = $('._shop-item[data-shop-id="' + shop_id + '"][data-shop-item-id="' + item_id + '"]');
+                var $shop = $('._shop[data-shop-id="' + shop_id + '"]');
+                request($(this).data('url'), $(this).data('method'), {
+                    shop_id:shop_id,
+                    item_id:item_id,
+                    action:$(this).data('action'),
+                    _token:"{{csrf_token()}}"
+                }).done(function(response){
+                     if(response.success){
+                         $item.remove();
+                         if(!$shop.find('._shop-item').length){
+                             $shop.remove();
+                         }
+                         console.log(Cart.getShopAmount(shop_id));
+                     }
+                });
+            });
+
+//            var Cart = {
+//                getShopAmount: function(shop_id){
+//                    var total_amount = 0;
+//                    var $shop = $('._shop[data-shop-id="' + shop_id + '"]');
+//                    $shop.find('._amount').each(function(i){
+//                        var amount = parseFloat($(this).data('amount'));
+//                        if(!isNaN(amount)){
+//                            total_amount += amount;
+//                        }
+//                    });
+//                    return total_amount;
+//                },
+//                getShopFeeBuying: function(total_amount){
+//
+//                }
+//            };
         });
     </script>
 @endsection

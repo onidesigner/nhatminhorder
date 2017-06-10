@@ -426,18 +426,22 @@ class CartController extends Controller
                 return response()->json( ['success' => false, 'message' => implode('<br>', $this->action_error)] );
             }
 
-            $view = View::make($request->get('response'), [
-                'data' => $this->__getInitDataCart($customer),
-                'layout' => 'flat/layouts/app-blank',
-            ]);
+            $html = null;
 
-            $html = $view->render();
+            if($request->get('response')){
+                $view = View::make($request->get('response'), [
+                    'data' => $this->__getInitDataCart($customer),
+                    'layout' => 'flat/layouts/app-blank',
+                ]);
+                $html = $view->render();
+            }
 
             DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'success',
-                'html' => $html
+                'html' => $html,
+                'result' => $result
             ]);
 
         }catch(\Exception $e){
@@ -517,7 +521,7 @@ class CartController extends Controller
      * @desc Xoa san pham trong shop
      * @param Request $request
      * @param User $customer
-     * @return bool
+     * @return array
      */
     private function __remove_item(Request $request, User $customer){
         $customer_id = $customer->id;
@@ -542,7 +546,32 @@ class CartController extends Controller
             ])->delete();
         endif;
 
-        return true;
+        $total_amount = 0;
+        $shop_items = CartItem::where([
+            'shop_id' => $shop_id,
+            'user_id' => $customer_id
+        ])->get();
+        if($shop_items){
+            foreach($shop_items as $shop_item){
+                if(!$shop_item instanceof CartItem){
+                    continue;
+                }
+                $price = $shop_item->getPriceCalculator();
+                $total_amount += $price * $shop_item->quantity * Exchange::getExchange();
+            }
+        }
+
+        $factoryMethodInstance = new ServiceFactoryMethod();
+        $service = $factoryMethodInstance->makeService([
+            'service_code' => Service::TYPE_BUYING,
+            'total_amount' => $total_amount,
+            'apply_time' => date('Y-m-d H:i:s')
+        ]);
+
+        return [
+            'total_amount' => $total_amount,
+            'buying_fee' => $service->calculatorFee()
+        ];
     }
 
     /**
