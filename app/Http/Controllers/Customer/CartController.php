@@ -109,8 +109,8 @@ class CartController extends Controller
      * @return mixed
      */
     public function depositOrder(Request $request){
-        return Response::json(['success' => false,
-            'message' => 'He thong tien hanh nang cap, vui long quay lại sau']);
+//        return Response::json(['success' => false,
+//            'message' => 'He thong tien hanh nang cap, vui long quay lại sau']);
 
         try{
             $user_id = Auth::user()->id;
