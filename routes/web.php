@@ -237,3 +237,7 @@ Route::get('/san-luong-van-chuyen-dieu-kien','ReportController@reportCondition')
 #region --xuat excel tai chinh--
 Route::get('/export-excel-finance','ExportExcelFinaceController@exportExcelOrderFee');
 #endregion --ket thuc xuat excel tai chinh --
+
+#region --xuat excel cho ke toan--
+Route::get('/export-excel-accounting','AccountingReportController@exportExcelAccounting');
+#endregion --xuat excel cho ke toan--

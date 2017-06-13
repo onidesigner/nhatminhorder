@@ -153,6 +153,25 @@
 
                     </form>
 
+                    <form action="{{ url('export-excel-accounting') }}" method="GET">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <select class="form-control" name="username">
+                                        <option value="0">Tất cả khách hàng</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <span>
+                                    <button type="submit" class="btn btn-primary"
+
+                                    >Xuất Khách Nợ</button>
+                                </span>
+                            </div>
+                        </div>
+
+                    </form>
 
                 </div>
             </div>
