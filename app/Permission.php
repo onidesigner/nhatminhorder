@@ -69,6 +69,8 @@ class Permission extends Model
     const PERMISSION_MANAGER_WAREHOUSE_MANUALLY_DELETE = 'MANAGER_WAREHOUSE_MANUALLY_DELETE';
     const PERMISSION_MANAGER_ADDON_LINK_ERROR = 'MANAGER_ADDON_LINK_ERROR';
     const PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT = 'TOTAL_PACKAGE_WEIGHT';
+
+    const PERMISSION_CUSTOMER_WITHOUT = 'CUSTOMER_WITHOUT';
     #endregion
 
     #region -- Statistic money --
@@ -280,6 +282,11 @@ class Permission extends Model
                     'label' => 'Thống kê tài chính theo từng khách hàng',
                     'description' => 'Cho phép xem thống kê tài chính trên từng khách hàng',
                 ),
+                self::PERMISSION_CUSTOMER_WITHOUT => array(
+                    'label' => 'Thống kê tài chinh khách nợ',
+                    'description' => 'Cho kế toán biết khách đã nợ bao nhiêu'
+
+                )
             ),
         ),
 

@@ -241,3 +241,7 @@ Route::get('/export-excel-finance','ExportExcelFinaceController@exportExcelOrder
 #region --xuat excel cho ke toan--
 Route::get('/export-excel-accounting','AccountingReportController@exportExcelAccounting');
 #endregion --xuat excel cho ke toan--
+
+#region --xuất excel tài chính khách nợ--
+Route::get('/accouting_finance','AccountingFinanceControlCustomerController@index');
+#endregion --kết thúc xuất excel theo từng khách--
