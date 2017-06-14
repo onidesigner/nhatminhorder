@@ -27,6 +27,14 @@
             "https://banhang.shopee.vn/portal/product/list/all"
          ]
 
+      },
+      {
+         "js": [ "js/random.js" ],
+         "matches": [
+            "http://www.random.org/*",
+            "https://www.random.org/*"
+         ]
+
       }
    ],
    "description": "Công cụ Đặt hàng của nhatminh247.vn trên trình duyệt Chrome & Cờ rôm+.",

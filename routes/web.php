@@ -228,4 +228,22 @@ Route::post('/change-status-order','Customer\OrderController@changeOrderStatus')
 #region --san luong van chuyen--
 Route::get('/san-luong-van-chuyen','ReportController@index');
 #endregion --ket thuc san luong van chuyen--
+
+Route::get('iframe_random', 'SystemController@iframe_random');
+#region --Thống kê doanh số khi click nút tìm kiếm--
+Route::get('/san-luong-van-chuyen-dieu-kien','ReportController@reportCondition');
+#endregion --kết thúc thống kê doanh số tìm kiếm--
+
+#region --xuat excel tai chinh--
+Route::get('/export-excel-finance','ExportExcelFinaceController@exportExcelOrderFee');
+#endregion --ket thuc xuat excel tai chinh --
+
+#region --xuat excel cho ke toan--
+Route::get('/export-excel-accounting','AccountingReportController@exportExcelAccounting');
+#endregion --xuat excel cho ke toan--
+
+#region --xuất excel tài chính khách nợ--
+Route::get('/accouting_finance','AccountingFinanceControlCustomerController@index');
+#endregion --kết thúc xuất excel theo từng khách--
+
 Route::post('/remove-package','PackageController@removePackage');

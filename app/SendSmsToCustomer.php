@@ -38,16 +38,19 @@ class SendSmsToCustomer extends Model
      * @param $content
      */
     public function sendSmsWhenCreateTransaction(User $user,$content){
-        $user_mobiles = UserMobile::where('user_id',$user->id)->get();
+        $user_mobiles = UserMobile::where('user_id',$user->id)->first();
         $mobile = "01649647164";
 
-        if(count($user_mobiles) > 0){
-            foreach ($user_mobiles as $item_mobiles){
-                if($item_mobiles->verify_times == 1){
-                    $mobile = $item_mobiles->mobile;
-                    break;
-                }
-            }
+//        if(count($user_mobiles) > 0){
+//            foreach ($user_mobiles as $item_mobiles){
+//                if($item_mobiles->verify_times == 1){
+//                    $mobile = $item_mobiles->mobile;
+//                    break;
+//                }
+//            }
+//        }
+        if($user_mobiles instanceof UserMobile){
+            $mobile = $user_mobiles->mobile;
         }
         $this->order_id = 1;
         $this->phone =  $mobile;
