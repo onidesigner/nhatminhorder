@@ -176,6 +176,10 @@ class Permission extends Model
                     'label' => 'Thống kê tài chính',
                     'description' => '',
                 ),
+                self::PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT =>[
+                    'label' => 'Báo cáo thông kê',
+                    'description' => '',
+                ]
             ),
         ),
 
@@ -263,10 +267,7 @@ class Permission extends Model
                     'label' => 'Quản lý link đặt hàng báo lỗi',
                     'description' => ''
                 ),
-                self::PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT =>[
-                    'label' => 'Báo cáo thông kê',
-                    'description' => '',
-                ]
+
             ),
         ),
 

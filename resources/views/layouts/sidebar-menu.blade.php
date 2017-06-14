@@ -102,6 +102,11 @@ if(Auth::check()){
                         'title' => 'Thông kê tài chính khách nợ',
                         'permission' => \App\Permission::PERMISSION_CUSTOMER_WITHOUT
                     ],
+                        [
+                                'url' => url('san-luong-van-chuyen'),
+                                'title' => 'Báo cáo Thống kê',
+                                'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
+                        ],
                 ]
             ],
             [
@@ -167,11 +172,7 @@ if(Auth::check()){
                         'title' => 'Quản lý link đặt hàng báo lỗi',
                         'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
                     ],
-                        [
-                                'url' => url('/san-luong-van-chuyen'),
-                                'title' => 'Báo cáo Thống kê',
-                                'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
-                        ],
+
                 ]
             ]
         ];
