@@ -13,6 +13,7 @@ use App\PackageService;
 use App\Permission;
 use App\Scan;
 use App\Service;
+use App\SystemConfig;
 use App\User;
 use App\Util;
 use App\WareHouse;
@@ -588,5 +589,77 @@ class PackageController extends Controller
         ]);
 
         
+    }
+
+
+    public function  updatePackageWeight(Request $request){
+        $net_weight = $request->get('net_weight');
+        $lenght_package = $request->get('length');
+        $width_package = $request->get('width');
+        $height = $request->get('height');
+        $logistic_package_barcode = $request->get('package_barcode');
+
+        $package = Package::where('logistic_package_barcode',$logistic_package_barcode)->first();
+        $current_user = User::find(Auth::user()->id);
+
+        #var_dump($net_weight.$lenght_package.$width_package.$height.$logistic_package_barcode);die();
+
+        if($package instanceof Package){
+            $old_package_net_weight = $package->weight;
+            if($old_package_net_weight != $net_weight){
+                $package->weight = $net_weight;
+                if($package->weight > $package->converted_weight){
+                    $package->weight_type = 1;
+                }else{
+                    $package->weight_type = 2;
+                }
+                $package->save();
+
+                $order = Order::findOneByIdOrCode($package->order_id);
+                if($order instanceof Order){
+                    $message = sprintf("Sửa cân nặng tịnh từ %s thành %s", $old_package_net_weight .' kg', $net_weight .' kg');
+                    Comment::createComment($current_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'success',
+                ]);
+            }
+            $old_convert_weight = $package->converted_weight;
+            $new_convert_weight = ($lenght_package * $width_package * $height) / 6000;
+
+            if($old_convert_weight != $new_convert_weight){
+                $old_lenght = $package->length_package;
+                $old_wight = $package->width_package;
+                $old_height = $package->height_package;
+
+                $package->length_package = $lenght_package;
+                $package->height_package = $height;
+                $package->width_package = $width_package;
+                $package->converted_weight = $new_convert_weight;
+                if($package->weight > $new_convert_weight){
+                    $package->weight_type = 1;
+                }else{
+                    $package->weight_type = 2;
+                }
+
+                $order = Order::findOneByIdOrCode($package->order_id);
+                if($order instanceof Order){
+                    $message = sprintf("Sửa cân nặng quy đổi từ %s thành %s",$old_lenght ."x". $old_wight .'x'. $old_height. '(cm)'  , $lenght_package.'x'.$width_package.'x'.$height.'(cm)');
+                    Comment::createComment($current_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                }
+                $package->save();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'success',
+                ]);
+            }
+
+
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'error',
+        ]);
     }
 }

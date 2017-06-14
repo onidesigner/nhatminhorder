@@ -247,3 +247,4 @@ Route::get('/accouting_finance','AccountingFinanceControlCustomerController@inde
 #endregion --kết thúc xuất excel theo từng khách--
 
 Route::post('/remove-package','PackageController@removePackage');
+Route::post('/update_package_weight','PackageController@updatePackageWeight');

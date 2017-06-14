@@ -115,10 +115,48 @@
                                 <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">Hành động
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="">Sửa</a></li>
+                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" data-toggle="modal" data-target="#myModal">Sửa</a></li>
                                     <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" id="_delete_package">Xóa</a></li>
                                 </ul>
                             </div>
+
+
+
+
+                            <div id="myModal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Sửa cân nặng của kiện {{$package->logistic_package_barcode}}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    Cân nặng tịnh (kg)  <input type="text" placeholder="cân nặng tịnh" value="{{$package->weight}}" class="form-control" id="_net_weight">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    Cân nặng quy đổi (cm)
+                                                  <input type="text" class="form-control" placeholder="Dài" value="{{$package->length_package}}" id="_length">
+                                                   <input type="text" class="form-control" placeholder="Rộng" value="{{$package->width_package}}" id="_width">
+                                                  <input type="text" class="form-control" placeholder="Cao" value="{{$package->height_package}}" id="_height">
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="_btn_package_weight" data-package="{{$package->logistic_package_barcode}}" >Lưu</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
 
                             <br>
                             <br>
@@ -194,6 +232,27 @@
                     }
                 }).done(function (response) {
                     if(response.message == 'success'){
+                        location.reload();
+                    }else{
+                        console.info('error');
+                    }
+                });
+            });
+
+            $('#_btn_package_weight').click(function(){
+                $.ajax({
+                    url : '/update_package_weight',
+                    type: 'POST',
+                    data : {
+                        package_barcode : $(this).data('package'),
+                        net_weight : $("#_net_weight").val(),
+                        length : $("#_length").val(),
+                        width : $("#_width").val(),
+                        height : $("#_height").val()
+                    }
+                }).done(function (response) {
+                    if(response.message == 'success'){
+
                         location.reload();
                     }else{
                         console.info('error');
