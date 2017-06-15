@@ -143,7 +143,7 @@ class ScanController extends Controller
      *      + Chuyen trang thai kien hang sang "Cho giao hang"
      *      + Gui tin nhan thong bao hang ve kho (neu la kien dau tien nhap kho phan phoi)
      *      + Chuyen trang thai don hang sang "Cho giao hang"
-     *      + Thu phi kien, neu khong phai kien chuyen thang
+     *
      * @param Request $request
      * @param WareHouse $warehouse
      * @param User $currentUser
@@ -196,23 +196,14 @@ class ScanController extends Controller
             ])->first();
 
             if($package instanceof Package){
+                $package->inputWarehouseDistribution($warehouse->code);
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
                     // trong truong hop kho nhan hàng trùng với kho đích trên đơn thì mới
                     // chuyển trạng thái sang chờ giao hàng
-
                     if($warehouse->code == $order->destination_warehouse){
-                        $package->inputWarehouseDistribution($warehouse->code);
-
                         $order->changeOrderWaitingDelivery();
-
-                        $customer = User::find($order->user_id);
-
-                        if(!$package->isTransportStraight()){
-                            $this->__packageChargeFee($package, $order, $create_user, $customer);
-                        }
-
                         $user_address = UserAddress::find($order->user_address_id);
                         if($user_address instanceof UserAddress){
                             // lay ra so tien cua khach hang , neu so tien khach
@@ -257,7 +248,6 @@ class ScanController extends Controller
                             #endregion --luu queue guiwr mail--
                         }
 
-
                         $order_address = $order->getCustomerReceiveAddress();
                         $user_phone = $order_address->phone;
                         $response = array(
@@ -269,7 +259,6 @@ class ScanController extends Controller
                             'order_id' => $order->id
                         );
                     }
-
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
                 }
@@ -294,6 +283,7 @@ class ScanController extends Controller
      * - Xuat kho phan phoi tai Viet Nam
      *      + Chuyen trang thai kien hang sang "Dang giao hang"
      *      + Chuyen trang thai don hang sang "Dang giao hang" (neu la kien dau tien xuat kho phan phoi tai VN)
+     *      + Thu phi kien, neu khong phai kien chuyen thang
      *
      * @param Request $request
      * @param WareHouse $warehouse
@@ -373,12 +363,17 @@ class ScanController extends Controller
 
                 $order = Order::find($package->order_id);
                 if($order instanceof Order){
+                    $customer = User::find($order->user_id);
                     if(!$order->changeOrderDelivering()){
                         $this->action_error[] = sprintf('Không chuyển trang thái đơn hàng sang %s', Order::getStatusTitle(Order::STATUS_DELIVERING));
                         return false;
                     }
 
                     Comment::createComment($create_user, $order, $message_internal, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+                    if(!$package->isTransportStraight()){
+                        $this->__packageChargeFee($package, $order, $create_user, $customer);
+                    }
 
                     $order_address = $order->getCustomerReceiveAddress();
                     $user_phone = $order_address->phone;
