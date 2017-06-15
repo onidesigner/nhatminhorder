@@ -19,7 +19,7 @@ class BillManageController extends Controller
         $this->middleware('auth');
     }
 
-    protected $_per_page = 1;
+    protected $_per_page = 20;
 
     /**
      * @param Request $request
@@ -33,11 +33,59 @@ class BillManageController extends Controller
             return redirect('403');
         }
 
-        $bill_mange = BillManage::orderBy('id', 'desc')->paginate($this->_per_page);
+
+        $bill_mange = BillManage::where([]);
+        $total_bill_manage = $bill_mange->count();
+
+        $bill_mange = $bill_mange->orderBy('id', 'desc');
+
+        $bill_mange = $bill_mange->paginate($this->_per_page);
+
+        $bill_mange_list = [];
+
+        if($bill_mange){
+            foreach($bill_mange as $bill_mange_item){
+                if(!$bill_mange_item instanceof BillManage){
+                    continue;
+                }
+
+                $bill_mange_item->create_user_object = null;
+                $bill_mange_item->buyer_object = null;
+
+                $create_user = User::find($bill_mange_item->create_user);
+                if($create_user instanceof User){
+                    $bill_mange_item->create_user_object = $create_user;
+                }
+
+                $buyer = User::find($bill_mange_item->buyer_address_id);
+                if($buyer instanceof User){
+                    $bill_mange_item->buyer_object = $buyer;
+                }
+
+                $orders_array = explode(',', $bill_mange_item->orders);
+                $orders_temp = [];
+                foreach($orders_array as $orders_array_item){
+                    $orders_temp[] = sprintf("<a href='%s'>%s</a>", url('order/detail', $orders_array_item), $orders_array_item);
+                }
+                $bill_mange_item->orders_links = implode(', ', $orders_temp);
+
+
+                $packages_array = explode(',', $bill_mange_item->packages);
+                $packages_temp = [];
+                foreach($packages_array as $packages_array_item){
+                    $packages_temp[] = sprintf("<a href='%s'>%s</a>", url('package', $packages_array_item), $packages_array_item);
+                }
+                $bill_mange_item->packages_links = implode(', ', $packages_temp);
+
+                $bill_mange_list[] = $bill_mange_item;
+            }
+        }
 
         return view('billManage', [
             'page_title' => 'Phiếu giao hàng',
-            'bll_manage' => $bill_mange
+            'bill_mange_list' => $bill_mange_list,
+            'bill_mange' => $bill_mange,
+            'total_bill_manage' => $total_bill_manage
         ]);
     }
 
@@ -95,6 +143,8 @@ class BillManageController extends Controller
                     'amount_cod' => $request->get('amount_cod'),
                     'packages' => $package_string,
                     'orders' => $order_string,
+                    'buyer_id' => $request->get('buyer_id'),
+                    'buyer_address_id' => $request->get('buyer_address_id'),
                     'created_at' => date('Y-m-d H:i:s')
                 ]
             );

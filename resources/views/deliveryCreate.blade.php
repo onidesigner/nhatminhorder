@@ -163,6 +163,8 @@ class="_chk">
                      amount_cod:amount_cod,
                      packages:packages,
                      orders:orders,
+                     buyer_id:"{{request()->get('user_id')}}",
+                     buyer_address_id:"{{ request()->get('user_address_id') }}",
                      _token:"{{csrf_token()}}"
 
                  }).done(function(response){
