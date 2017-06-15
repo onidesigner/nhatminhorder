@@ -181,6 +181,8 @@ class AccountingReportController extends Controller
         $arr_data['shipping_fee'] =  $shipping_fee;
         $arr_data['khach_no'] =  $khach_no;
         $arr_data['package_weight_payment'] = $package_weight_payment;
+        $arr_data['deposited_time'] = $order->deposited_at;
+
 
         return $arr_data;
     }
@@ -210,7 +212,9 @@ class AccountingReportController extends Controller
             ->setCellValue('I1', 'Tiền Khách nợ (VND)')
             ->setCellValue('J1', 'Truy Thu trên đơn (VND)')
             ->setCellValue('K1', 'Tiền trả lại (VND)')
-            ->setCellValue('L1', 'Tiền đóng gỗ (VND)');
+            ->setCellValue('L1', 'Tiền đóng gỗ (VND)')
+            ->setCellValue('M1','Thời gian đặt cọc')
+        ;
         $i = 2;
         foreach ($arr_data as $item_data) {
             $excel_order->setActiveSheetIndex(0)
@@ -225,7 +229,10 @@ class AccountingReportController extends Controller
                 ->setCellValue('I'.$i, $item_data['khach_no'])
                 ->setCellValue('J'.$i, $item_data['without_money'])
                 ->setCellValue('K'.$i, $item_data['refund_order'])
-                ->setCellValue('L'.$i, $item_data['wood_crating_fee']);
+                ->setCellValue('L'.$i, $item_data['wood_crating_fee'])
+                ->setCellValue('M'.$i, $item_data['deposited_time'])
+
+            ;
             $excel_order->getActiveSheet()->getStyle('C'.$i)->getNumberFormat()->setFormatCode('#,##0');
             $excel_order->getActiveSheet()->getStyle('D'.$i)->getNumberFormat()->setFormatCode('#,##0');
             $excel_order->getActiveSheet()->getStyle('E'.$i)->getNumberFormat()->setFormatCode('#,##0');
