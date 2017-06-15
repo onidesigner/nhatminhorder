@@ -40,7 +40,6 @@ class UserController extends Controller
         ]);
     }
 
-
     /**
      * @author vanhs
      * @desc Them user mua hang site goc

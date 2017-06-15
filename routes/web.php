@@ -237,3 +237,12 @@ Route::get('/san-luong-van-chuyen-dieu-kien','ReportController@reportCondition')
 #region --xuat excel tai chinh--
 Route::get('/export-excel-finance','ExportExcelFinaceController@exportExcelOrderFee');
 #endregion --ket thuc xuat excel tai chinh --
+
+
+#region -- chuc nang yeu cau giao hang --
+Route::get('/DeliveryManage', 'DeliveryManageController@listView');
+Route::get('/DeliveryManage/Create', 'DeliveryManageController@createView');
+Route::post('/BillManage/Create', 'BillManageController@create');
+Route::get('/BillManage/Detail/{id}', 'BillManageController@detailView');
+Route::get('/BillManage', 'BillManageController@listView');
+#endregion
