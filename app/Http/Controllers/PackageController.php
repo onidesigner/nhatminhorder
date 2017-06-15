@@ -414,20 +414,13 @@ class PackageController extends Controller
 
     private function __getDetailData(Request $request, $layout = null){
         $package_code = $request->route('code');
-        #$package = Package::retrieveByCode($package_code);
-        $package = Package::where([
-            'logistic_package_barcode' => $package_code,
-            'is_deleted' => 0
-        ])->first();
 
-        if(is_null($package)){
-            //redirect đang ko chính xác
-            return redirect('/packages');
-        }
+        $package = Package::retrieveByCode($package_code);
+//        $package = Package::where([
+//            'logistic_package_barcode' => $package_code,
+//            'is_deleted' => 0
+//        ])->first();
 
-        if(!$package instanceof Package){
-            return redirect('403');
-        }
 
         $order = null;
         $customer = null;
@@ -579,6 +572,13 @@ class PackageController extends Controller
         if($package instanceof Package){
             $package->is_deleted = 1;
             $package->save();
+            $current_user = User::find(Auth::user()->id);
+            $order = Order::findOneByIdOrCode($package->order_id);
+            if($order instanceof Order){
+                $message = sprintf("Xóa kiện hàng %s",$package->logistic_package_barcode);
+                Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+            }
+
 
              return response()->json([
                 'success' => true,
