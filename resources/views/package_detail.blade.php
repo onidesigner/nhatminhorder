@@ -21,17 +21,23 @@
 
                     <div class="row">
 
+                       @if($package->is_deleted != 0 || !$package )
 
-                        <div class="col-sm-8 col-xs-12">
-                            <h3>
-                                Kiện hàng #{{$package->logistic_package_barcode}}
-                                <small>{{ App\Package::getStatusTitle($package->status)  }}</small>
-                            </h3>
+                            <div class="col-sm-12">
+                                Kiện đã bị xóa hoặc không tồn tại !
+                            </div>
 
-                            <br>
+                      @else
+                            <div class="col-sm-8 col-xs-12">
+                                <h3>
+                                    Kiện hàng #{{$package->logistic_package_barcode}}
+                                    <small>{{ App\Package::getStatusTitle($package->status)  }}</small>
+                                </h3>
 
-                            <table class="table no-padding-leftright">
-                                <tbody>
+                                <br>
+
+                                <table class="table no-padding-leftright">
+                                    <tbody>
                                     <tr>
                                         <td width="40%">Vận đơn: </td>
                                         <td>{{ $package->freight_bill }}</td>
@@ -68,14 +74,14 @@
                                         </td>
                                     </tr>
                                     @if($package->weight_type == 2)
-                                    <tr>
-                                        <td>
-                                            Dài x Rộng x Cao
-                                        </td>
-                                        <td>
-                                            {{$package->length_package}} x {{$package->width_package}} x {{$package->height_package}} ( cm )
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                Dài x Rộng x Cao
+                                            </td>
+                                            <td>
+                                                {{$package->length_package}} x {{$package->width_package}} x {{$package->height_package}} ( cm )
+                                            </td>
+                                        </tr>
                                     @endif
                                     <tr>
                                         <td>Ghi chú: </td>
@@ -96,108 +102,120 @@
                                         </td>
                                     </tr>
 
-                                <tr>
-                                    <td>Thời gian: </td>
-                                    <td>
+                                    <tr>
+                                        <td>Thời gian: </td>
+                                        <td>
 
-                                        @foreach(App\Package::$timeListOrderDetail as $key => $value)
-                                            @if($package->$key)
-                                                {{$value}}: {{ App\Util::formatDate($package->$key) }}<br>
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                </tr>
+                                            @foreach(App\Package::$timeListOrderDetail as $key => $value)
+                                                @if($package->$key)
+                                                    {{$value}}: {{ App\Util::formatDate($package->$key) }}<br>
+                                                @endif
+                                            @endforeach
+                                        </td>
+                                    </tr>
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
 
-                            <div class="dropdown">
-                                <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">Hành động
-                                    <span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" data-toggle="modal" data-target="#myModal">Sửa</a></li>
-                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" id="_delete_package">Xóa</a></li>
-                                </ul>
-                            </div>
-
-
-
-
-                            <div id="myModal" class="modal fade" role="dialog">
-                                <div class="modal-dialog">
-
-                                    <!-- Modal content-->
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                            <h4 class="modal-title">Sửa cân nặng của kiện {{$package->logistic_package_barcode}}</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    Cân nặng tịnh (kg)  <input type="text" placeholder="cân nặng tịnh" value="{{$package->weight}}" class="form-control" id="_net_weight">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    Cân nặng quy đổi (cm)
-                                                  <input type="text" class="form-control" placeholder="Dài" value="{{$package->length_package}}" id="_length">
-                                                   <input type="text" class="form-control" placeholder="Rộng" value="{{$package->width_package}}" id="_width">
-                                                  <input type="text" class="form-control" placeholder="Cao" value="{{$package->height_package}}" id="_height">
-
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" id="_btn_package_weight" data-package="{{$package->logistic_package_barcode}}" >Lưu</button>
-                                        </div>
-                                    </div>
-
+                                <div class="dropdown">
+                                    <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">Hành động
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" data-toggle="modal" data-target="#myModal">Sửa</a></li>
+                                        <li>
+                                            <iframe
+                                                    style="display: none!important;" src="" frameborder="0"></iframe>
+                                            <a
+                                                    target="_blank"
+                                                    href="{{ url('package?action=print&logistic_package_barcode=' . $package->logistic_package_barcode)  }}"
+                                                    data-package="{{$package->logistic_package_barcode}}">In tem
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:" data-package="{{$package->logistic_package_barcode}}" id="_delete_package">Xóa</a>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </div>
 
 
 
-                            <br>
-                            <br>
 
-                            <div id="anchor-box-comment">
-                                @include('partials/__comment', [
-                                    'object_id' => $package->id,
-                                    'object_type' => App\Comment::TYPE_OBJECT_PACKAGE,
-                                    'scope_view' => App\Comment::TYPE_INTERNAL
+                                <div id="myModal" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
 
-                                ])
-                            </div>
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Sửa cân nặng của kiện {{$package->logistic_package_barcode}}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        Cân nặng tịnh (kg)  <input type="text" placeholder="cân nặng tịnh" value="{{$package->weight}}" class="form-control" id="_net_weight">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        Cân nặng quy đổi (cm)
+                                                        <input type="text" class="form-control" placeholder="Dài" value="{{$package->length_package}}" id="_length">
+                                                        <input type="text" class="form-control" placeholder="Rộng" value="{{$package->width_package}}" id="_width">
+                                                        <input type="text" class="form-control" placeholder="Cao" value="{{$package->height_package}}" id="_height">
+
+                                                    </div>
+                                                </div>
 
 
-                        </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" id="_btn_package_weight" data-package="{{$package->logistic_package_barcode}}" >Lưu</button>
+                                            </div>
+                                        </div>
 
-                        <div class="col-sm-4 col-xs-12">
-                            @if($package->order)
-                                <h3>
-                                    Đơn hàng: <a href="{{ url('order/detail', $package->order->id)  }}" target="_blank">{{ $package->order->code }}</a>
-                                </h3>
+                                    </div>
+                                </div>
+
+
 
                                 <br>
+                                <br>
 
-                                @if($packages_order)
-                                    <div class="list-group">
-                                        @foreach($packages_order as $packages_order_item)
-                                            <a href="{{ url('package', $packages_order_item->logistic_package_barcode)  }}" class="list-group-item
+                                <div id="anchor-box-comment">
+                                    @include('partials/__comment', [
+                                        'object_id' => $package->id,
+                                        'object_type' => App\Comment::TYPE_OBJECT_PACKAGE,
+                                        'scope_view' => App\Comment::TYPE_INTERNAL
+
+                                    ])
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-sm-4 col-xs-12">
+                                @if($package->order)
+                                    <h3>
+                                        Đơn hàng: <a href="{{ url('order/detail', $package->order->id)  }}" target="_blank">{{ $package->order->code }}</a>
+                                    </h3>
+
+                                    <br>
+
+                                    @if($packages_order)
+                                        <div class="list-group">
+                                            @foreach($packages_order as $packages_order_item)
+                                                <a href="{{ url('package', $packages_order_item->logistic_package_barcode)  }}" class="list-group-item
 
                                             @if($packages_order_item->logistic_package_barcode == $package->logistic_package_barcode)
-                                                    active
-                                            @endif
+                                                        active
+                                                @endif
 
-                                                    ">{{$packages_order_item->logistic_package_barcode}}</a>
-                                        @endforeach
-                                    </div>
+                                                        ">{{$packages_order_item->logistic_package_barcode}}</a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                @else
+                                    &nbsp;&nbsp;&nbsp;
                                 @endif
-                            @else
-                                &nbsp;&nbsp;&nbsp;
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </div>
 
                 </div>
