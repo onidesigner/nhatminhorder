@@ -59,7 +59,7 @@ class BillManageController extends Controller
                     $bill_mange_item->create_user_object = $create_user;
                 }
 
-                $buyer = User::find($bill_mange_item->buyer_address_id);
+                $buyer = User::find($bill_mange_item->buyer_id);
                 if($buyer instanceof User){
                     $bill_mange_item->buyer_object = $buyer;
                 }

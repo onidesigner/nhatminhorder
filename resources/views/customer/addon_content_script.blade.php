@@ -521,6 +521,10 @@ break;
 
 shop_id = shop_id ? 'taobao_' + shop_id : shop_id;
 
+if(!shop_id){
+shop_id = this.getShopName();
+}
+
 return shop_id;
 };
 
