@@ -50,6 +50,16 @@ class WareHouse extends Model
         ->get();
     }
 
+    /**
+     * @author vanhs
+     * @desc Lay danh sach cac kho thuoc 1 khu vuc, cu the la muon lay toan bo kho o ha noi, thanh pho hcm
+     * @param $alias
+     * @return mixed
+     */
+    public static function getAllWarehouesWithLocation($alias = array()){
+        return self::whereIn('alias', $alias)->get();
+    }
+
     public static function retrieveByCode($code = null){
         if(!$code) return null;
 

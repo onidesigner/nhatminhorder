@@ -68,6 +68,18 @@ if(Auth::check()){
                         'title' => 'Quét mã vạch',
                         'permission' => \App\Permission::PERMISSION_SCAN_LIST_VIEW
                     ],
+
+                    [
+                        'url' => url('DeliveryManage'),
+                        'title' => 'Yêu cầu giao hàng',
+                        'permission' => \App\Permission::PERMISSION_DELIVERY_MANAGE_LIST_VIEW
+                    ],
+                    [
+                        'url' => url('BillManage'),
+                        'title' => 'Phiếu giao hàng',
+                        'permission' => \App\Permission::PERMISSION_BILL_MANAGE_LIST_VIEW
+                    ],
+
                 ]
             ],
             [

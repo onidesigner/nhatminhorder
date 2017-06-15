@@ -29,6 +29,12 @@ class Permission extends Model
     const PERMISSION_TRANSACTION_STATISTIC = 'TRANSACTION_STATISTIC';
     #endregion
 
+    #region -- yeu cau giao hang --
+    const PERMISSION_DELIVERY_MANAGE_LIST_VIEW = 'DELIVERY_MANAGE_LIST_VIEW';
+    const PERMISSION_BILL_MANAGE_CREATE = 'BILL_MANAGE_CREATE';
+    const PERMISSION_BILL_MANAGE_LIST_VIEW = 'BILL_MANAGE_LIST_VIEW';
+    #endregion
+
     #region -- Taxonomy & post --
     const PERMISSION_MANAGER_TAXONOMY = 'MANAGER_TAXONOMY';
     const PERMISSION_MANAGER_POST = 'MANAGER_POST';
@@ -57,6 +63,8 @@ class Permission extends Model
 
     #region -- Scan permission --
     const PERMISSION_SCAN_LIST_VIEW = 'SCAN_LIST_VIEW';
+
+
     #endregion
 
     #region -- System permission --
@@ -109,6 +117,24 @@ class Permission extends Model
                 ],
                 self::PERMISSION_ORDER_CHANGE_SERVICE => [
                     'label' => 'Thêm/bỏ dịch vụ trên chi tiết đơn hàng',
+                    'description' => '',
+                ],
+            ]
+        ],
+
+        'delivery' => [
+            'label' => 'Giao hàng',
+            'permissions' => [
+                self::PERMISSION_DELIVERY_MANAGE_LIST_VIEW => [
+                    'label' => 'Xem trang yêu cầu giao hàng',
+                    'description' => '',
+                ],
+                self::PERMISSION_BILL_MANAGE_CREATE => [
+                    'label' => 'Tạo phiếu giao',
+                    'description' => '',
+                ],
+                self::PERMISSION_BILL_MANAGE_LIST_VIEW => [
+                    'label' => 'Xem danh sách phiếu giao hàng',
                     'description' => '',
                 ],
             ]
