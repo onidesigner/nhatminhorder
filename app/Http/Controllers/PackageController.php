@@ -388,6 +388,9 @@ class PackageController extends Controller
                             $o = Order::find($package->order_id);
                             if($o instanceof Order){
                                 $package->order = $o;
+                                $message = sprintf("In tem kiện %s", $logistic_package_barcode_item);
+                                $current_user = User::find(Auth::user()->id);
+                                Comment::createComment($current_user, $o, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                             }
                             $view = View::make('logistic_package_barcode_print', [
                                 'package' => $package,
@@ -396,6 +399,8 @@ class PackageController extends Controller
                                     $generator->getBarcode($logistic_package_barcode_item, $generator::TYPE_CODE_128))
                             ]);
                             $html = $view->render();
+
+
                             echo $html;
                         }else{
                             echo '<br>Khong tim thay kien #' . $logistic_package_barcode_item;
