@@ -574,6 +574,8 @@ class PackageController extends Controller
         $package_barcode = $request->get('package_barcode');
         $package = Package::where('logistic_package_barcode',$package_barcode)
             ->first();
+
+        
         if($package instanceof Package){
             $package->is_deleted = 1;
             $package->save();
@@ -618,7 +620,7 @@ class PackageController extends Controller
                 $order = Order::findOneByIdOrCode($package->order_id);
                 if($order instanceof Order){
                     $message = sprintf("Sửa cân nặng tịnh từ %s thành %s", $old_package_net_weight .' kg', $net_weight .' kg');
-                    Comment::createComment($current_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                 }
                 return response()->json([
                     'success' => true,
@@ -646,7 +648,7 @@ class PackageController extends Controller
                 $order = Order::findOneByIdOrCode($package->order_id);
                 if($order instanceof Order){
                     $message = sprintf("Sửa cân nặng quy đổi từ %s thành %s",$old_lenght ."x". $old_wight .'x'. $old_height. '(cm)'  , $lenght_package.'x'.$width_package.'x'.$height.'(cm)');
-                    Comment::createComment($current_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+                    Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                 }
                 $package->save();
                 return response()->json([

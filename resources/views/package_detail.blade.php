@@ -221,22 +221,53 @@
 
 @section('js_bottom')
     @parent
+    <script type="text/javascript" src="{{ asset('js/notify.min.js')  }}"></script>
+    <script type="text/javascript" src="{{asset('js/ion.sound.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/bootbox.min.js')}}"></script>
     <script>
         $(document).ready(function(){
+            ion.sound({
+                sounds: [
+                    {name: "success"},
+                    {name: "error"},
+                    {name : "thanh_cong"}
+                ],
+
+                // main config
+                path: "{{ asset('sounds')  }}/",
+                preload: true,
+                multiplay: true,
+                volume: 0.9
+            });
+
             $('#_delete_package').click(function(){
-                $.ajax({
-                    url : '/remove-package',
-                    type: 'POST',
-                    data : {
-                        package_barcode : $(this).data('package')
-                    }
-                }).done(function (response) {
-                    if(response.message == 'success'){
-                        location.reload();
-                    }else{
-                        console.info('error');
+                var package_barcode = $(this).data('package');
+                bootbox.confirm("Bạn có chắc chắn muốn xóa kiện ?", function(result) {
+                    if (result) {
+
+                        $.ajax({
+                            url : '/remove-package',
+                            type: 'POST',
+                            data : {
+                                package_barcode : package_barcode
+                            }
+                        }).done(function (response) {
+                            if(response.message == 'success'){
+                                ion.sound.play("thanh_cong");
+                                setInterval(function(){  window.location.replace("/packages"); }, 1000);
+
+                            }else{
+                                ion.sound.play("error");
+                                console.info('error');
+                            }
+                        });
+
+                    } else {
+                       // do nothing
                     }
                 });
+
+
             });
 
             $('#_btn_package_weight').click(function(){
@@ -252,9 +283,13 @@
                     }
                 }).done(function (response) {
                     if(response.message == 'success'){
-
-                        location.reload();
+                        // phát âm thanh sửa thành công
+                        ion.sound.play("thanh_cong");
+                        setInterval(function(){ location.reload(); }, 1000);
                     }else{
+                        ion.sound.play("error");
+                        $.notify("Liên Hệ kỹ thuật","error");
+
                         console.info('error');
                     }
                 });
