@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\BillManage;
 use App\Comment;
+use App\Location;
 use App\Order;
 use App\Package;
 use App\Permission;
 use App\User;
+use App\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -162,6 +164,113 @@ class BillManageController extends Controller
 
     /**
      * @author vanhs
+     * @desc cap nhat phi van chuyen noi dia vn, tien thu ho tren chi tiet phieu giao hang
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateFee(Request $request){
+        $bill = BillManage::find($request->get('bill_id'));
+        if(!$bill instanceof BillManage){
+            return response()->json(['success' => false, 'message' => 'phieu khong ton tai']);
+        }
+
+        $type = $request->get('type');
+        if($type == 'amount_cod'){
+
+        }else if($type == 'domestic_shipping_vietnam'){
+
+        }
+        $bill->$type = $request->get('amount');
+        $bill->save();
+
+        return response()->json(['success' => true, 'message' => '']);
+    }
+
+    /**
+     * @author vanhs
+     * @desc in phieu giao hang
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function printBill(Request $request){
+        $bill_id = $request->route('id');
+        $bill = BillManage::find($bill_id);
+        if(!$bill instanceof BillManage){
+            return redirect('404');
+        }
+
+        $bill = $this->__init_data_detail_view($bill);
+
+        return view('printBill', [
+            'page_title' => 'In phiếu giao',
+            'bill' => $bill
+        ]);
+    }
+
+    private function __init_data_detail_view(BillManage $bill){
+        $bill->create_user_object = null;
+        $bill->buyer_object = null;
+
+        $create_user = User::find($bill->create_user);
+        if($create_user instanceof User){
+            $bill->create_user_object = $create_user;
+        }
+
+        $buyer = User::find($bill->buyer_address_id);
+        if($buyer instanceof User){
+            $bill->buyer_object = $buyer;
+        }
+
+        $orders_array = explode(',', $bill->orders);
+        $orders_temp = [];
+        foreach($orders_array as $orders_array_item){
+            $orders_temp[] = sprintf("<a href='%s'>%s</a>", url('order/detail', $orders_array_item), $orders_array_item);
+        }
+        $bill->orders_links = implode(', ', $orders_temp);
+
+
+        $packages_array = explode(',', $bill->packages);
+        $packages_temp = [];
+        $packages = [];
+        foreach($packages_array as $packages_array_item){
+            $p = Package::where([
+                ['logistic_package_barcode', '=', $packages_array_item]
+            ])->first();
+            $p->order = Order::find($p->order_id);
+
+            $packages[] = $p;
+            $packages_temp[] = sprintf("<a href='%s'>%s</a>", url('package', $packages_array_item), $packages_array_item);
+        }
+        $bill->packages_links = implode(', ', $packages_temp);
+
+        $bill->buyer_address = UserAddress::find($bill->buyer_address_id);
+        $bill->buyer_address->district = null;
+        $bill->buyer_address->province = null;
+
+        $district = Location::where([
+            ['type', '=', Location::TYPE_DISTRICT],
+            ['id', '=', $bill->buyer_address->district_id]
+        ])->first();
+        if($district instanceof Location){
+            $bill->buyer_address->district = $district;
+        }
+
+        $province = Location::where([
+            ['type', '=', Location::TYPE_STATE],
+            ['id', '=', $bill->buyer_address->province_id]
+        ])->first();
+        if($province instanceof Location){
+            $bill->buyer_address->province = $province;
+        }
+
+        $bill->packages = $packages;
+
+
+        return $bill;
+    }
+
+    /**
+     * @author vanhs
      * @desc Chi tiet phieu giao hang
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
@@ -179,8 +288,11 @@ class BillManageController extends Controller
             return redirect('404');
         }
 
+        $bill = $this->__init_data_detail_view($bill);
+
         return view('billDetail', [
-            'page_title' => sprintf("Phiếu giao #%s", $bill->code)
+            'page_title' => sprintf("Phiếu giao #%s", $bill->code),
+            'bill' => $bill
         ]);
     }
 }

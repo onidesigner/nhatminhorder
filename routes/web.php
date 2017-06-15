@@ -241,6 +241,8 @@ Route::get('/DeliveryManage/Create', 'DeliveryManageController@createView');
 Route::post('/BillManage/Create', 'BillManageController@create');
 Route::get('/BillManage/Detail/{id}', 'BillManageController@detailView');
 Route::get('/BillManage', 'BillManageController@listView');
+Route::post('/BillManage/UpdateFee', 'BillManageController@updateFee');
+Route::get('/BillManage/Print/{id}', 'BillManageController@printBill');
 #endregion
 
 
