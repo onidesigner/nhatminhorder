@@ -67,6 +67,16 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @if($package->weight_type == 2)
+                                    <tr>
+                                        <td>
+                                            Dài x Rộng x Cao
+                                        </td>
+                                        <td>
+                                            {{$package->length_package}} x {{$package->width_package}} x {{$package->height_package}} ( cm )
+                                        </td>
+                                    </tr>
+                                    @endif
                                     <tr>
                                         <td>Ghi chú: </td>
                                         <td>{{ $package->note  }}</td>
@@ -105,10 +115,48 @@
                                 <button class="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">Hành động
                                     <span class="caret"></span></button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="">Sửa</a></li>
-                                    <li><a href="">Xóa</a></li>
+                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" data-toggle="modal" data-target="#myModal">Sửa</a></li>
+                                    <li><a href="javascript:" data-package="{{$package->logistic_package_barcode}}" id="_delete_package">Xóa</a></li>
                                 </ul>
                             </div>
+
+
+
+
+                            <div id="myModal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Sửa cân nặng của kiện {{$package->logistic_package_barcode}}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    Cân nặng tịnh (kg)  <input type="text" placeholder="cân nặng tịnh" value="{{$package->weight}}" class="form-control" id="_net_weight">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    Cân nặng quy đổi (cm)
+                                                  <input type="text" class="form-control" placeholder="Dài" value="{{$package->length_package}}" id="_length">
+                                                   <input type="text" class="form-control" placeholder="Rộng" value="{{$package->width_package}}" id="_width">
+                                                  <input type="text" class="form-control" placeholder="Cao" value="{{$package->height_package}}" id="_height">
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="_btn_package_weight" data-package="{{$package->logistic_package_barcode}}" >Lưu</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
 
                             <br>
                             <br>
@@ -173,9 +221,79 @@
 
 @section('js_bottom')
     @parent
+    <script type="text/javascript" src="{{ asset('js/notify.min.js')  }}"></script>
+    <script type="text/javascript" src="{{asset('js/ion.sound.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/bootbox.min.js')}}"></script>
     <script>
         $(document).ready(function(){
+            ion.sound({
+                sounds: [
+                    {name: "success"},
+                    {name: "error"},
+                    {name : "thanh_cong"}
+                ],
 
+                // main config
+                path: "{{ asset('sounds')  }}/",
+                preload: true,
+                multiplay: true,
+                volume: 0.9
+            });
+
+            $('#_delete_package').click(function(){
+                var package_barcode = $(this).data('package');
+                bootbox.confirm("Bạn có chắc chắn muốn xóa kiện ?", function(result) {
+                    if (result) {
+
+                        $.ajax({
+                            url : '/remove-package',
+                            type: 'POST',
+                            data : {
+                                package_barcode : package_barcode
+                            }
+                        }).done(function (response) {
+                            if(response.message == 'success'){
+                                ion.sound.play("thanh_cong");
+                                setInterval(function(){  window.location.replace("/packages"); }, 1000);
+
+                            }else{
+                                ion.sound.play("error");
+                                console.info('error');
+                            }
+                        });
+
+                    } else {
+                       // do nothing
+                    }
+                });
+
+
+            });
+
+            $('#_btn_package_weight').click(function(){
+                $.ajax({
+                    url : '/update_package_weight',
+                    type: 'POST',
+                    data : {
+                        package_barcode : $(this).data('package'),
+                        net_weight : $("#_net_weight").val(),
+                        length : $("#_length").val(),
+                        width : $("#_width").val(),
+                        height : $("#_height").val()
+                    }
+                }).done(function (response) {
+                    if(response.message == 'success'){
+                        // phát âm thanh sửa thành công
+                        ion.sound.play("thanh_cong");
+                        setInterval(function(){ location.reload(); }, 1000);
+                    }else{
+                        ion.sound.play("error");
+                        $.notify("Liên Hệ kỹ thuật","error");
+
+                        console.info('error');
+                    }
+                });
+            });
 
         });
 

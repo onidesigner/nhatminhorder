@@ -109,11 +109,16 @@ if(Auth::check()){
                         'title' => 'Tạo điều chỉnh tài chính',
                         'permission' => \App\Permission::PERMISSION_TRANSACTION_CREATE
                     ],
-//                    [
-//                        'url' => url('transaction/statistic'),
-//                        'title' => 'Thông kê tài chính',
-//                        'permission' => \App\Permission::PERMISSION_TRANSACTION_STATISTIC
-//                    ],
+                    [
+                        'url' => url('accouting_finance'),
+                        'title' => 'Thông kê tài chính khách nợ',
+                        'permission' => \App\Permission::PERMISSION_CUSTOMER_WITHOUT
+                    ],
+                        [
+                                'url' => url('san-luong-van-chuyen'),
+                                'title' => 'Báo cáo Thống kê',
+                                'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
+                        ],
                 ]
             ],
             [
@@ -179,11 +184,7 @@ if(Auth::check()){
                         'title' => 'Quản lý link đặt hàng báo lỗi',
                         'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
                     ],
-                        [
-                                'url' => url('/san-luong-van-chuyen'),
-                                'title' => 'Báo cáo Thống kê',
-                                'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
-                        ],
+
                 ]
             ]
         ];
