@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Permission;
+use App\SystemConfig;
+use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -62,9 +64,16 @@ class SystemRunCheckController extends Controller
         $problem_type = $request->get('problem_type');
         $long_time = $request->get('long_time');
 
+        //danh sach nv mua hang
+        $crane_buying_list = UserRole::findByRoleId(
+            [ SystemConfig::getConfigValueByKey('group_crane_buying_id') ]
+        );
+
         $view = View::make('problems/' . $problem_type, [
             'problem_type' => $problem_type,
             'long_time' => $long_time,
+            'crane_buying_list' => $crane_buying_list,
+            'crane_buying_selected' => $request->get('paid_staff_id')
         ]);
         $html = $view->render();
 

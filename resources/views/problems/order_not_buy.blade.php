@@ -31,6 +31,8 @@ if(count($orders)){
         </td>
         <td>
             {{App\Util::formatDate($order->deposited_at)}}
+
+            <small>(<abbr title="{{$order->deposited_at}}" class="_time-ago"></abbr>)</small>
         </td>
         <td>
             <a href="{{url('user/detail', $customer->id)}}">{{$customer->name}}</a> <small>{{$customer->code}}</small>
