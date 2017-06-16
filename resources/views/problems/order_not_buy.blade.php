@@ -43,7 +43,7 @@ if(count($orders)){
             <?php if($crane_staff instanceof App\User){ ?>
                 <a href="{{url('user/detail', $crane_staff->id)}}">{{$crane_staff->name}}</a> <small>{{$crane_staff->code}}</small>
             <?php }else{ ?>
-            --
+                <a href="{{ url('order?order_code=' . $order->code)  }}">>> Phân đơn</a>
             <?php } ?>
         </td>
     </tr>
