@@ -16,12 +16,14 @@ if(count($orders)){
         <th>Đơn hàng</th>
         <th>Đặt cọc lúc</th>
         <th>Khách</th>
+        <th>NV đuợc phân đơn</th>
     </tr>
     </thead>
     <tbody>
     <?php
     foreach($orders as $idx => $order){
     $customer = App\User::find($order->user_id);
+    $crane_staff = App\User::find($order->crane_staff_id);
     ?>
     <tr>
         <td>{{$idx+1}}</td>
@@ -36,6 +38,13 @@ if(count($orders)){
         </td>
         <td>
             <a href="{{url('user/detail', $customer->id)}}">{{$customer->name}}</a> <small>{{$customer->code}}</small>
+        </td>
+        <td>
+            <?php if($crane_staff instanceof App\User){ ?>
+                <a href="{{url('user/detail', $crane_staff->id)}}">{{$crane_staff->name}}</a> <small>{{$crane_staff->code}}</small>
+            <?php }else{ ?>
+            --
+            <?php } ?>
         </td>
     </tr>
 
