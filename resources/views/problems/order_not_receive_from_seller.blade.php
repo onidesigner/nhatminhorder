@@ -1,3 +1,25 @@
+<div class="row">
+    <div class="col-sm-3">
+        <select
+                class="form-control _selectpicker _paid_staff_id"
+                name="paid_staff_id">
+            <option value="">Nhân viên mua hàng</option>
+            @foreach($crane_buying_list as $crane_buying_list_item)
+                <option
+
+                        @if( request()->get('paid_staff_id') == $crane_buying_list_item->id )
+                        selected
+                        @endif
+
+                        value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
+            @endforeach
+        </select>
+    </div>
+</div>
+
+
+
+
 <?php
 //Đơn quá ? ngày kho trung quốc chưa nhận hàng, kể từ khi người bán giao hàng
 $l_time = strtotime("-{$long_time} day", strtotime(date('Y-m-d H:i:s')));
@@ -13,22 +35,7 @@ $orders = \Illuminate\Support\Facades\DB::select("
 if(count($orders)){
 ?>
 
-<div class="col-sm-3">
-    <select
-            class="form-control _selectpicker _paid_staff_id"
-            name="paid_staff_id">
-        <option value="">Nhân viên mua hàng</option>
-        @foreach($crane_buying_list as $crane_buying_list_item)
-            <option
 
-                    @if( request()->get('paid_staff_id') == $crane_buying_list_item->id )
-                    selected
-                    @endif
-
-                    value="{{$crane_buying_list_item->id}}">{{$crane_buying_list_item->name}} - {{$crane_buying_list_item->email}} - {{$crane_buying_list_item->code}}</option>
-        @endforeach
-    </select>
-</div>
 
 <table class="table">
     <thead>
