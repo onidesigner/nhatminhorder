@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/flat-admin.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/nprogress.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @show
 
@@ -263,6 +264,7 @@
 <script type="text/javascript" src="{{ asset('js/autoNumeric.min.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/notify.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
 
     <script>

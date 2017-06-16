@@ -468,9 +468,13 @@ class OrderController extends Controller
             }
 
             DB::commit();
+            $html = null;
 
-            $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'layouts/app_blank'));
-            $html = $view->render();
+            if($request->get('response')){
+                $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'layouts/app_blank'));
+                $html = $view->render();
+            }
+
 
             return response()->json([
                 'success' => true,
@@ -483,6 +487,36 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Có lỗi xảy ra, vui lòng thử lại']);
         }
 
+    }
+
+    /**
+     * @author vanhs
+     * @desc Ham cap nhat cac thong ve gia, phi van chuyen goc tren trang TQ
+     * @param Request $request
+     * @param Order $order
+     * @param User $current_user
+     * @return bool
+     */
+    private function __change_money_original(Request $request, Order $order, User $current_user){
+        if($request->get('name') == 'amount_original'){
+
+            $order->amount_original = $request->get('money');
+            Comment::createComment($current_user, $order,
+                sprintf("Cập nhật tiền hàng gốc %s¥", $request->get('money')),
+                Comment::TYPE_INTERNAL,
+                Comment::TYPE_CONTEXT_ACTIVITY);
+
+        }else if($request->get('name') == 'domestic_shipping_china_original'){
+
+            $order->domestic_shipping_china_original = $request->get('money');
+            Comment::createComment($current_user, $order,
+                sprintf("Cập nhật phí VC nội dịa gốc %s¥", $request->get('money')),
+                Comment::TYPE_INTERNAL,
+                Comment::TYPE_CONTEXT_ACTIVITY);
+
+
+        }
+        return $order->save();
     }
 
     private function __insert_freight_bill(Request $request, Order $order, User $user){
