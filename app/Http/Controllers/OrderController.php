@@ -502,17 +502,17 @@ class OrderController extends Controller
 
             $order->amount_original = $request->get('money');
             Comment::createComment($current_user, $order,
-                sprintf("Cập nhật tiền hàng gốc %s¥", $request->get('money')),
+                sprintf("Cập nhật tổng giá thực mua %s¥", $request->get('money')),
                 Comment::TYPE_INTERNAL,
                 Comment::TYPE_CONTEXT_ACTIVITY);
 
         }else if($request->get('name') == 'domestic_shipping_china_original'){
 
-            $order->domestic_shipping_china_original = $request->get('money');
-            Comment::createComment($current_user, $order,
-                sprintf("Cập nhật phí VC nội dịa gốc %s¥", $request->get('money')),
-                Comment::TYPE_INTERNAL,
-                Comment::TYPE_CONTEXT_ACTIVITY);
+//            $order->domestic_shipping_china_original = $request->get('money');
+//            Comment::createComment($current_user, $order,
+//                sprintf("Cập nhật phí VC nội dịa gốc %s¥", $request->get('money')),
+//                Comment::TYPE_INTERNAL,
+//                Comment::TYPE_CONTEXT_ACTIVITY);
 
 
         }

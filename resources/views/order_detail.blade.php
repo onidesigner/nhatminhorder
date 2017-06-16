@@ -374,17 +374,34 @@
 
                                             <tr>
                                                 <td>
-                                                    <span style="color: red;">Giá, phí ship gốc</span>
+                                                    <span style="color: red;">Tổng giá báo khách (tiền hàng + ship nội dịa TQ)</span>
+                                                </td>
+                                                <td>
+
+                                                    <?php
+//                                                    $amount_customer_view = 0;
+                                                    $amount_customer_view = $order->domestic_shipping_fee + $order->amount;
+                                                    ?>
+
+                                                    {{$amount_customer_view}} ¥
+
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <span style="color: red;">Tổng giá thực mua (tiền hàng + ship nội địa TQ)</span>
                                                 </td>
                                                 <td>
                                                     <input
                                                             type="text" class="_money-original" name="amount_original"
                                                             value="{{$order->amount_original}}"
-                                                           placeholder="Tiền hàng gốc"> ¥
+                                                           placeholder=""> ¥
 
-                                                    <input style="margin-top: 5px;" type="text" class="_money-original" name="domestic_shipping_china_original"
-                                                           value="{{$order->domestic_shipping_china_original}}"
-                                                           placeholder="Phí VC nội địa TQ gốc"> ¥ <br>
+                                                    {{--<input style="margin-top: 5px;" type="text" class="_money-original" name="domestic_shipping_china_original"--}}
+                                                           {{--value="{{$order->domestic_shipping_china_original}}"--}}
+                                                           {{--placeholder="Phí VC nội địa TQ gốc"> ¥ <br>--}}
+
                                                 </td>
                                             </tr>
 
