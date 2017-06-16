@@ -458,7 +458,7 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'message' => 'Not support action!']);
             }
 
-            if($order->isEndingStatus()){
+            if($action != '__change_money_original' && $order->isEndingStatus()){
                 return response()->json(['success' => false, 'message' => sprintf('Đơn hàng hiện đã ở trạng thái cuối (%s), không thể thay đổi thông tin!', Order::getStatusTitle($order->status))]);
             }
 
