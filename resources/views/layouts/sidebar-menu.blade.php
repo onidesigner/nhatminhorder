@@ -79,6 +79,11 @@ if(Auth::check()){
                         'title' => 'Phiếu giao hàng',
                         'permission' => \App\Permission::PERMISSION_BILL_MANAGE_LIST_VIEW
                     ],
+                    [
+                        'url' => url('SystemRunCheck'),
+                        'title' => 'Kiểm soát vận hành',
+                        'permission' => \App\Permission::PERMISSION_SYSTEM_RUN_CHECK
+                    ],
 
                 ]
             ],

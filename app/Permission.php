@@ -79,6 +79,8 @@ class Permission extends Model
     const PERMISSION_MANAGER_TOTAL_PACKAGE_WEIGHT = 'TOTAL_PACKAGE_WEIGHT';
 
     const PERMISSION_CUSTOMER_WITHOUT = 'CUSTOMER_WITHOUT';
+    const PERMISSION_SYSTEM_RUN_CHECK = 'SYSTEM_RUN_CHECK';
+
     #endregion
 
     #region -- Statistic money --
@@ -264,6 +266,12 @@ class Permission extends Model
         'system_permission' => array(
             'label' => 'Hệ thống ',
             'permissions' => array(
+
+                self::PERMISSION_SYSTEM_RUN_CHECK => array(
+                    'label' => 'Chức năng kiẻm soát vận hành',
+                    'description' => 'Cho phép quản trị viên nhìn nhận thấy các vấn đề của đơn hàng để tiến hành xử lý',
+                ),
+
                 self::PERMISSION_UPDATE_SYSTEM_CONFIG => array(
                     'label' => 'Chỉnh sửa cấu hình chung trên hệ thống ',
                     'description' => 'Quyền cho phép quản trị viên chỉnh sửa cấu hình chung trên hệ thống',

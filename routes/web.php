@@ -260,3 +260,6 @@ Route::get('/accouting_finance','AccountingFinanceControlCustomerController@inde
 
 Route::post('/remove-package','PackageController@removePackage');
 Route::post('/update_package_weight','PackageController@updatePackageWeight');
+
+Route::get('/SystemRunCheck', 'SystemRunCheckController@index');
+Route::get('/SystemRunCheck/ProblemTypeHtml', 'SystemRunCheckController@problemTypeHtml');
