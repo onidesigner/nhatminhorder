@@ -83,8 +83,7 @@ class PaidStaffSaleValueController extends Controller
 
                 $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
 
-                $order->amount_bargain = $order->amount_customer > $order->amount_original
-                    ? $order->amount_customer - $order->amount_original : 0;
+                $order->amount_bargain = $order->amount_customer - $order->amount_original;
 
                 //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
                 $order->amount_original = doubleval($order->amount_original);
