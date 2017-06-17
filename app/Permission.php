@@ -323,7 +323,26 @@ class Permission extends Model
                     'label' => 'Thống kê tài chinh khách nợ',
                     'description' => 'Cho kế toán biết khách đã nợ bao nhiêu'
 
-                )
+                ),
+
+                self::PERMISSION_SETUP_PAID_STAFF_SALE_VALUE => array(
+                    'label' => 'Quyền thiết lập lương, hoa hồng cho nhân viên mua hàng',
+                    'description' => ''
+
+                ),
+
+                self::PERMISSION_MANAGER_PAID_STAFF_SALE_VALUE => array(
+                    'label' => 'Truởng nhóm mua hàng',
+                    'description' => 'Cho phép nhìn thấy toàn bộ lương của các bạn mua hàng'
+
+                ),
+
+                self::PERMISSION_PAID_STAFF_SALE_VALUE => array(
+                    'label' => 'Xem doanh số, lương mua hàng',
+                    'description' => ''
+
+                ),
+
             ),
         ),
 
