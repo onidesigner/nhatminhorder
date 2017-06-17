@@ -16,6 +16,12 @@ class SystemConfig extends Model
             'field_name' => 'ID nhóm mua hàng',
             'key' => 'group_crane_buying_id'
         ],
+
+        [
+            'field_name' => 'Phần trăm mua hàng phải mặc cả tối thiếu',
+            'key' => 'crane_buying_percent_min'
+        ],
+
         [
             'field_name' => 'Miễn phí mua hàng với ? đơn đầu tiên',
             'key' => 'order_buying_number_fee'

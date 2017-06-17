@@ -84,7 +84,6 @@ if(Auth::check()){
                         'title' => 'Kiểm soát vận hành',
                         'permission' => \App\Permission::PERMISSION_SYSTEM_RUN_CHECK
                     ],
-
                 ]
             ],
             [
@@ -119,11 +118,17 @@ if(Auth::check()){
                         'title' => 'Thông kê tài chính khách nợ',
                         'permission' => \App\Permission::PERMISSION_CUSTOMER_WITHOUT
                     ],
-                        [
-                                'url' => url('san-luong-van-chuyen'),
-                                'title' => 'Báo cáo Thống kê',
-                                'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
-                        ],
+                    [
+                            'url' => url('san-luong-van-chuyen'),
+                            'title' => 'Báo cáo Thống kê',
+                            'permission' => \App\Permission::PERMISSION_MANAGER_ADDON_LINK_ERROR
+                    ],
+                    [
+                        'url' => url('PaidStaffSaleValue'),
+                        'title' => 'Doanh số, lương mua hàng',
+                        'permission' => \App\Permission::PERMISSION_PAID_STAFF_SALE_VALUE
+                    ],
+                    
                 ]
             ],
             [

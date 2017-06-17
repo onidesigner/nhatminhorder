@@ -263,3 +263,7 @@ Route::post('/update_package_weight','PackageController@updatePackageWeight');
 
 Route::get('/SystemRunCheck', 'SystemRunCheckController@index');
 Route::get('/SystemRunCheck/ProblemTypeHtml', 'SystemRunCheckController@problemTypeHtml');
+
+
+Route::get('/PaidStaffSaleValue', 'PaidStaffSaleValueController@index');
+Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');

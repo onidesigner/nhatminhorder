@@ -63,8 +63,6 @@ class Permission extends Model
 
     #region -- Scan permission --
     const PERMISSION_SCAN_LIST_VIEW = 'SCAN_LIST_VIEW';
-
-
     #endregion
 
     #region -- System permission --
@@ -82,6 +80,10 @@ class Permission extends Model
     const PERMISSION_SYSTEM_RUN_CHECK = 'SYSTEM_RUN_CHECK';
 
     #endregion
+
+    const PERMISSION_PAID_STAFF_SALE_VALUE = 'PAID_STAFF_SALE_VALUE';
+    const PERMISSION_MANAGER_PAID_STAFF_SALE_VALUE = 'MANAGER_PAID_STAFF_SALE_VALUE';
+    const PERMISSION_SETUP_PAID_STAFF_SALE_VALUE = 'SETUP_PAID_STAFF_SALE_VALUE';
 
     #region -- Statistic money --
     const PERMISSION_STATISTIC_QUICK = 'STATISTIC_QUICK';

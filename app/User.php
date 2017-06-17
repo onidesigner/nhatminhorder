@@ -81,6 +81,17 @@ class User extends Authenticatable
 
     /**
      * @author vanhs
+     * @desc lay danh sach nhan vien mua hang
+     * @return null
+     */
+    public static function getListCraneBuying(){
+        return UserRole::findByRoleId(
+            [ SystemConfig::getConfigValueByKey('group_crane_buying_id') ]
+        );
+    }
+
+    /**
+     * @author vanhs
      * @desc Lay tong so user dang ky moi theo ngay
      * @param $day
      * @return int
