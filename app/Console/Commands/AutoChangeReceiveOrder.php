@@ -67,7 +67,8 @@ class AutoChangeReceiveOrder extends Command
                     continue;
                 }
 
-                $order->status = Order::STATUS_RECEIVED;
+                $order->changeStatus(Order::STATUS_RECEIVED, false);
+
                 if($order->save()){
                     $message = sprintf("Đơn đang giao hàng, sau %s ngày hệ thống tự động chuyển sang Đã Nhận", $day);
                     Comment::createComment(null, $order,

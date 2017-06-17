@@ -19,6 +19,56 @@
                 <div class="card-body">
                     <h3>{{$page_title}}</h3>
 
+                    Tháng cần xem
+                    <form action="{{ url('PaidStaffSaleValue')  }}"
+                          method="get"
+                          onchange="this.submit();">
+
+                    <select class="_select_month" name="month" id="">
+
+                        <?php
+                        $max = 10;
+                        for($i = 0; $i < $max; $i++){
+
+                            $date = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+                            $date->modify("-{$i} month");
+
+
+                            $month_choose = date('m');
+                            if(request()->get('month')){
+                                $month_choose = explode('_', request()->get('month'))[0];
+                            }
+
+                            $selected = $date->format('m') == $month_choose
+                                ? ' selected ' : '';
+
+
+                            echo sprintf("<option %s value='%s'>Tháng %s</option>", $selected, $date->format('m') . '_' . $date->format('Y'), $date->format('m/Y'));
+                        }
+                        ?>
+                    </select>
+                    </form>
+
+                    <?php
+
+
+                    $statistic = [
+                        'total_amount_customer' => 0,
+                        'total_amount_original' => 0,
+                        'total_amount_bargain' => 0,
+
+                        'total_amount_customer_vnd' => 0,
+                        'total_amount_original_vnd' => 0,
+                        'total_amount_bargain_vnd' => 0,
+
+                        'total_amount_bargain_done' => 0,
+                        'total_amount_bargain_not_done' => 0,
+                        'total_amount_bargain_done_vnd' => 0,
+                        'total_amount_bargain_not_done_vnd' => 0
+                    ];
+                    ?>
+
+
                     @if(count($crane_buying_list))
 
                         @foreach($crane_buying_list as $crane_buying_list_item)
@@ -64,24 +114,7 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php
 
-
-                                                        $statistic = [
-                                                              'total_amount_customer' => 0,
-                                                              'total_amount_original' => 0,
-                                                              'total_amount_bargain' => 0,
-
-                                                              'total_amount_customer_vnd' => 0,
-                                                              'total_amount_original_vnd' => 0,
-                                                              'total_amount_bargain_vnd' => 0,
-
-                                                            'total_amount_bargain_done' => 0,
-                                                            'total_amount_bargain_not_done' => 0,
-                                                            'total_amount_bargain_done_vnd' => 0,
-                                                            'total_amount_bargain_not_done_vnd' => 0
-                                                        ];
-                                                        ?>
                                                         @foreach ($orders_with_crane_buying[$crane_buying_list_item->id] as $idx => $orders_with_crane_buying_item)
 
                                                             <tr class="@if($orders_with_crane_buying_item->is_done) done @else not-done @endif">
@@ -90,6 +123,17 @@
                                                                 <td>
                                                                     <a href="{{url('order/detail', $orders_with_crane_buying_item->id)}}">{{$orders_with_crane_buying_item->code}}</a>
                                                                     <small>{{App\Order::getStatusTitle($orders_with_crane_buying_item->status)}}</small>
+
+
+                                                                    <br>
+                                                                    <p>
+                                                                        Mua lúc: {{ App\Util::formatDate($orders_with_crane_buying_item->bought_at)  }}
+                                                                    </p>
+                                                                    @if($orders_with_crane_buying_item->received_at)
+                                                                    <p>
+                                                                        Nhận hàng lúc: {{ App\Util::formatDate($orders_with_crane_buying_item->received_at)  }}
+                                                                    </p>
+                                                                    @endif
                                                                 </td>
                                                                 <td class="text-right">
                                                                     {{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer)}}¥

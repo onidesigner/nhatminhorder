@@ -29,8 +29,21 @@ class PaidStaffSaleValueController extends Controller
             return redirect('403');
         }
 
-        $start_month = $request->get('start_month');
-        $end_month = $request->get('end_month');
+        $start_month = null;
+        $end_month = null;
+
+        if($request->get('month')){
+            $temp = explode('_', $request->get('month'));
+            $m = $temp[0];
+            $y = $temp[1];
+            $d = cal_days_in_month(CAL_GREGORIAN, $m, $y);
+
+            $start_month = sprintf("%s-%s-01", $y, $m);
+            $end_month = sprintf("%s-%s-%s", $y, $m, $d);
+        }
+
+//        $start_month = $request->get('start_month');
+//        $end_month = $request->get('end_month');
 
         if(empty($start_month)) $start_month = sprintf("%s-%s-01", date('Y'), date('m'));
         if(empty($end_month)) $end_month = sprintf("%s-%s-%s", date('Y'), date('m'), date('t'));
