@@ -13,6 +13,11 @@ class SystemConfig extends Model
 
     public static $system_config_data = [
         [
+            'field_name' => 'Hệ thống tự động chuyển đơn ở trạng thái đang giao hàng sang đã nhận hàng',
+            'key' => 'day_auto_change_order_receive'
+        ],
+
+        [
             'field_name' => 'ID nhóm mua hàng',
             'key' => 'group_crane_buying_id'
         ],

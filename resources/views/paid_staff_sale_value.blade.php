@@ -133,15 +133,15 @@
                                                         <tr>
                                                             <td></td>
                                                             <td></td>
-                                                            <td class="text-right" style="font-size: 20px;">{{App\Util::formatNumber($statistic['total_amount_customer'])}} ¥
+                                                            <td class="text-right">{{App\Util::formatNumber($statistic['total_amount_customer'])}} ¥
                                                                 <br>
                                                                 {{App\Util::formatNumber($statistic['total_amount_customer_vnd'])}} đ
                                                             </td>
-                                                            <td class="text-right" style="font-size: 20px;">{{App\Util::formatNumber($statistic['total_amount_original'])}} ¥
+                                                            <td class="text-right">{{App\Util::formatNumber($statistic['total_amount_original'])}} ¥
                                                                 <br>
                                                                 {{App\Util::formatNumber($statistic['total_amount_original_vnd'])}} đ
                                                             </td>
-                                                            <td class="text-right" style="font-size: 20px;">{{App\Util::formatNumber($statistic['total_amount_bargain'])}} ¥
+                                                            <td class="text-right">{{App\Util::formatNumber($statistic['total_amount_bargain'])}} ¥
                                                                 <br>
                                                                 {{App\Util::formatNumber($statistic['total_amount_bargain_vnd'])}} đ
 

@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
 
         'App\Console\Commands\SendSmsInfoOrder',
-        'App\Console\Commands\CommandSendEmailToCustomer'
+        'App\Console\Commands\CommandSendEmailToCustomer',
+        'App\Console\Commands\AutoChangeReceiveOrder',
     ];
 
     /**
@@ -32,6 +33,12 @@ class Kernel extends ConsoleKernel
             ->everyMinute();
 
         $schedule->command('send_email_to_customer')
+            ->everyMinute();
+
+//        $schedule->command('auto_change_receive_order')
+//            ->dailyAt('13:00');
+
+        $schedule->command('auto_change_receive_order')
             ->everyMinute();
     }
 
