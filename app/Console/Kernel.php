@@ -35,11 +35,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('send_email_to_customer')
             ->everyMinute();
 
-//        $schedule->command('auto_change_receive_order')
-//            ->dailyAt('13:00');
-
         $schedule->command('auto_change_receive_order')
-            ->everyMinute();
+            ->dailyAt('13:00');
+
+//        $schedule->command('auto_change_receive_order')
+//            ->everyMinute();
     }
 
 

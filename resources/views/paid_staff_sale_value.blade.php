@@ -222,7 +222,7 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
                                     $hoa_hong_mac_ca_kha_dung = $statistic['total_amount_bargain_done_vnd'] * $crane_buying_list_item->sale_percent / 100;
                                     $tien_thuc_linh = $hoa_hong_mac_ca_kha_dung + $crane_buying_list_item->sale_basic;
                                     ?>
-                                    Lương thực lĩnh (Lương cơ bản + {{$crane_buying_list_item->sale_percent}}% hoa hồng - số tiền mặc cả khả dụng):
+                                    Lương thực lĩnh (Lương cơ bản + {{$crane_buying_list_item->sale_percent}}% hoa hồng, số tiền mặc cả khả dụng):
                                     {{App\Util::formatNumber($crane_buying_list_item->sale_basic)}} đ
                                         + {{App\Util::formatNumber($hoa_hong_mac_ca_kha_dung)}} đ
                                         = {{App\Util::formatNumber($tien_thuc_linh)}} đ
