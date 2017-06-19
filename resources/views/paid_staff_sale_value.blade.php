@@ -136,7 +136,7 @@
                                                                     @endif
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer)}}¥
+                                                                    <span class="_amount_customer" data-value="{{$orders_with_crane_buying_item->amount_customer}}">{{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer)}}</span>¥
                                                                     <br>
                                                                     {{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer_vnd)}}đ
                                                                 </td>
