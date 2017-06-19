@@ -49,24 +49,7 @@
                     </select>
                     </form>
 
-                    <?php
 
-
-                    $statistic = [
-                        'total_amount_customer' => 0,
-                        'total_amount_original' => 0,
-                        'total_amount_bargain' => 0,
-
-                        'total_amount_customer_vnd' => 0,
-                        'total_amount_original_vnd' => 0,
-                        'total_amount_bargain_vnd' => 0,
-
-                        'total_amount_bargain_done' => 0,
-                        'total_amount_bargain_not_done' => 0,
-                        'total_amount_bargain_done_vnd' => 0,
-                        'total_amount_bargain_not_done_vnd' => 0
-                    ];
-                    ?>
 
 
                     @if(count($crane_buying_list))
@@ -87,6 +70,25 @@
 
                                 ?>
 
+                                <?php
+
+
+                                $statistic = [
+                                'total_amount_customer' => 0,
+                                'total_amount_original' => 0,
+                                'total_amount_bargain' => 0,
+
+                                'total_amount_customer_vnd' => 0,
+                                'total_amount_original_vnd' => 0,
+                                'total_amount_bargain_vnd' => 0,
+
+                                'total_amount_bargain_done' => 0,
+                                'total_amount_bargain_not_done' => 0,
+                                'total_amount_bargain_done_vnd' => 0,
+                                'total_amount_bargain_not_done_vnd' => 0
+                                ];
+                                ?>
+
                                 {{--<p>Lương cơ bản: {{App\Util::formatNumber($crane_buying_list_item->sale_basic)}}đ</p>--}}
                                 {{--<p>Hoa hồng: {{$crane_buying_list_item->sale_percent}}%</p>--}}
 
@@ -100,6 +102,20 @@
                                                 <h4 class="modal-title">Đơn hàng</h4>
                                             </div>
                                             <div class="modal-body">
+
+                                                <p>
+                                                    <i class="box-color" style="background: rgba(41, 199, 95, 0.65);"></i> Đơn hàng khách đã nhận hàng, tiền mặc cả của đơn được tính vào lương
+                                                </p>
+
+                                                <p>
+                                                    <i class="box-color" style="background: rgba(251, 255, 150, 0.56);"></i> Đơn hàng khách chưa ấn nhận hàng, tiền mặc cả của đơn chưa được tính vào lương
+                                                </p>
+
+                                                <p>
+                                                    <i class="box-color" style="background: rgb(236, 45, 45)"></i> Đơn hàng chưa điền tổng giá thực mua (nếu không điền thì hệ thống mặc định đặt tiền mặc cả của đơn là 0¥)
+                                                </p>
+
+
                                                 @if(isset($orders_with_crane_buying[$crane_buying_list_item->id])
                                                                             && count($orders_with_crane_buying[$crane_buying_list_item->id]))
 
@@ -122,7 +138,7 @@
                                                                 <td>{{$idx+1}}</td>
                                                                 <td>
                                                                     <a href="{{url('order/detail', $orders_with_crane_buying_item->id)}}">{{$orders_with_crane_buying_item->code}}</a>
-                                                                    <small>{{App\Order::getStatusTitle($orders_with_crane_buying_item->status)}}</small>
+                                                                    <small>({{App\Order::getStatusTitle($orders_with_crane_buying_item->status)}})</small>
 
 
                                                                     <br>
@@ -136,11 +152,14 @@
                                                                     @endif
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <span class="_amount_customer" data-value="{{$orders_with_crane_buying_item->amount_customer}}">{{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer)}}</span>¥
+                                                                    <span class="_amount_customer @if($orders_with_crane_buying_item->is_done) _done @else _not-done @endif" data-value="{{$orders_with_crane_buying_item->amount_customer}}">{{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer)}}</span>¥
                                                                     <br>
                                                                     {{App\Util::formatNumber($orders_with_crane_buying_item->amount_customer_vnd)}}đ
                                                                 </td>
-                                                                <td class="text-right">
+                                                                <td class="text-right
+
+@if($orders_with_crane_buying_item->amount_original == 0) order-not-original-amount @endif
+">
                                                                     {{App\Util::formatNumber($orders_with_crane_buying_item->amount_original)}}¥
                                                                     <br>
                                                                     {{App\Util::formatNumber($orders_with_crane_buying_item->amount_original_vnd)}}đ
@@ -205,6 +224,8 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
                                                 @else
                                                     <h5>Không có đơn hàng!</h5>
                                                 @endif
+
+
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
@@ -252,6 +273,15 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
         }
         .not-done{
             background: rgba(251, 255, 150, 0.56);
+        }
+        .box-color{
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+        .order-not-original-amount{
+            background: rgb(236, 45, 45);
+            color: #fff;
         }
     </style>
 @endsection

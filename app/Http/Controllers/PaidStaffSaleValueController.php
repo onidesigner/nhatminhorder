@@ -100,7 +100,6 @@ class PaidStaffSaleValueController extends Controller
 
                 //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
                 $order->amount_original = doubleval($order->amount_original);
-//                var_dump($order->amount_original);
                 if($order->amount_original <= 0){
                     $order->amount_bargain = 0;
                 }
