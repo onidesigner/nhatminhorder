@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Order;
 use App\Permission;
 use App\User;
+use App\UserPaidSaleSetting;
 use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use League\Flysystem\Exception;
 
 class PaidStaffSaleValueController extends Controller
 {
@@ -134,6 +136,18 @@ class PaidStaffSaleValueController extends Controller
             }
         }
 
+        $crane_value_setting_list = [];
+        $sql_crane_value_setting = "
+            select * from user_paid_sale_setting 
+            where paid_user_id in (".$crane_buying_ids_string.") 
+            order by id asc
+        ";
+        $crane_value_setting = DB::select($sql_crane_value_setting);
+        if($crane_value_setting){
+            foreach($crane_value_setting as $crane_value_setting_item){
+                $crane_value_setting_list[$crane_value_setting_item->paid_user_id][] = $crane_value_setting_item;
+            }
+        }
 
 //        $sql = "
 //
@@ -190,8 +204,48 @@ class PaidStaffSaleValueController extends Controller
             'crane_buying_list' => $crane_buying_list,
             'orders_with_crane_buying' => [],
             'orders_buying_list' => $orders_buying_list,
-            'orders_overrun_list' => $orders_overrun_list
+            'orders_overrun_list' => $orders_overrun_list,
+            'crane_value_setting_list' => $crane_value_setting_list,
+            'begin_year' => date('Y'),
+            'end_year' => (date('Y') + 10)
         ]);
+
+    }
+
+    /**
+     * @author vanhs
+     * @desc Luu cau hinh luong cua nhan vien mua hang
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setting(Request $request){
+        try{
+            DB::beginTransaction();
+            $data = [];
+            $items = $request->get('items');
+            foreach($items as $item){
+                $activated_at = sprintf("%s-%s-01 00:00:00", $item['start_year'], $item['start_month']);
+                $day_of_month = cal_days_in_month(CAL_GREGORIAN, $item['end_month'], $item['end_year']);
+                $deadlined_at = sprintf("%s-%s-%s 23:59:59", $item['end_year'], $item['end_month'], $day_of_month);
+                $data[] = [
+                    'paid_user_id' => $request->get('paid_user_id'),
+                    'activated_at' => $activated_at,
+                    'deadlined_at' => $deadlined_at,
+                    'salary_basic' => $item['salary_basic'],
+                    'rose_percent' => $item['rose_percent'],
+                    'created_at' => date('Y-m-d H:i:s')
+                ];
+            }
+            DB::statement(sprintf("delete from user_paid_sale_setting 
+                                      where paid_user_id = %s", $request->get('paid_user_id')));
+
+            UserPaidSaleSetting::insert($data);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => '']);
+        }catch (Exception $e){
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
 
     }
 }

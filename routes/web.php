@@ -266,6 +266,7 @@ Route::get('/SystemRunCheck/ProblemTypeHtml', 'SystemRunCheckController@problemT
 
 
 Route::get('/PaidStaffSaleValue', 'PaidStaffSaleValueController@index');
+Route::post('/PaidStaffSaleValue/Setting', 'PaidStaffSaleValueController@setting');
 Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 
 
