@@ -76,8 +76,7 @@ class PaidStaffSaleValueController extends Controller
         $sql_orders_buying = "
             select * from `order` 
             where 
-            `bought_at` <= '".$end_month."'
-            and paid_staff_id in (".$crane_buying_ids_string.") 
+            paid_staff_id in (".$crane_buying_ids_string.") 
             and `status` not in ('CANCELLED', 'RECEIVED')
             order by bought_at asc
         ";
