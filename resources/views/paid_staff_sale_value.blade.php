@@ -74,7 +74,7 @@
 
                                 <h3
                                         style="cursor: pointer"
-                                        data-toggle="collapse" data-target="#order-overrun-{{$crane_buying_list_item->id}}">Đơn hàng doanh số <small>(
+                                        data-toggle="collapse" data-target="#order-overrun-{{$crane_buying_list_item->id}}">Đơn hàng đã về <small>(
                                         @if(isset($orders_overrun_list[$crane_buying_list_item->id]))
                                             {{count($orders_overrun_list[$crane_buying_list_item->id])}}
                                         @else
@@ -191,7 +191,7 @@
 
                                 <h3
                                         style="cursor: pointer"
-                                        data-toggle="collapse" data-target="#order-buying-{{$crane_buying_list_item->id}}">Đơn hàng phát sinh <small>(
+                                        data-toggle="collapse" data-target="#order-buying-{{$crane_buying_list_item->id}}">Đơn hàng chưa về <small>(
                                         @if(isset($orders_buying_list[$crane_buying_list_item->id]))
                                             {{count($orders_buying_list[$crane_buying_list_item->id])}}
                                         @else
