@@ -42,9 +42,6 @@ class PaidStaffSaleValueController extends Controller
             $end_month = sprintf("%s-%s-%s", $y, $m, $d);
         }
 
-//        $start_month = $request->get('start_month');
-//        $end_month = $request->get('end_month');
-
         if(empty($start_month)) $start_month = sprintf("%s-%s-01", date('Y'), date('m'));
         if(empty($end_month)) $end_month = sprintf("%s-%s-%s", date('Y'), date('m'), date('t'));
 
@@ -75,61 +72,127 @@ class PaidStaffSaleValueController extends Controller
 
         $crane_buying_ids_string = implode(',', $crane_buying_ids);
 
-        $sql = "
-        
-        select * from `order` 
-        where 
-        ((`received_at` >= '".$start_month."' and `received_at` <= '".$end_month."') 
-        or (`bought_at` >= '".$start_month."' and `bought_at` <= '".$end_month."'))
-        and paid_staff_id in (".$crane_buying_ids_string.") 
-        and `status` not in ('CANCELLED')
-
+        //don hang phat sinh
+        $sql_orders_buying = "
+            select * from `order` 
+            where 
+            `bought_at` <= '".$end_month."'
+            and paid_staff_id in (".$crane_buying_ids_string.") 
+            and `status` not in ('CANCELLED', 'RECEIVED')
+            order by bought_at asc
         ";
-
-        $orders = DB::select($sql);
-        $orders_with_crane_buying = [];
-        if($orders){
-            foreach($orders as $order){
-
+        $orders_buying = DB::select($sql_orders_buying);
+        $orders_buying_list = [];
+        if($orders_buying){
+            foreach($orders_buying as $order){
                 $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
                 $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
 
+                $order->amount_original = doubleval($order->amount_original);
                 $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
 
                 $order->amount_bargain = $order->amount_customer - $order->amount_original;
 
                 //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
-                $order->amount_original = doubleval($order->amount_original);
                 if($order->amount_original <= 0){
                     $order->amount_bargain = 0;
                 }
                 $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
 
-                $order->is_done = $order->status == Order::STATUS_RECEIVED;
-
-                $order->amount_bargain_done = 0;
-                $order->amount_bargain_done_vnd = 0;
-                $order->amount_bargain_not_done = 0;
-                $order->amount_bargain_not_done_vnd = 0;
-
-                if($order->is_done){
-                    $order->amount_bargain_done = $order->amount_bargain;
-                    $order->amount_bargain_done_vnd = $order->amount_bargain_vnd;
-                }else{
-                    $order->amount_bargain_not_done = $order->amount_bargain;
-                    $order->amount_bargain_not_done_vnd = $order->amount_bargain_vnd;
-                }
-
-                $orders_with_crane_buying[$order->paid_staff_id][] = $order;
-
+                $orders_buying_list[$order->paid_staff_id][] = $order;
             }
         }
+
+        //don hang doanh so
+        $sql_orders_overrun = "
+        select * from `order` 
+        where 
+        `received_at` >= '".$start_month."' and `received_at` <= '".$end_month."' 
+        and paid_staff_id in (".$crane_buying_ids_string.") 
+        and `status` in ('RECEIVED')
+        and `status` not in ('CANCELLED')
+        order by `received_at` asc
+        ";
+        $orders_overrun = DB::select($sql_orders_overrun);
+        $orders_overrun_list = [];
+        if($orders_overrun){
+            foreach($orders_overrun as $order){
+                $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
+                $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
+
+                $order->amount_original = doubleval($order->amount_original);
+                $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
+
+                $order->amount_bargain = $order->amount_customer - $order->amount_original;
+
+                //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
+                if($order->amount_original <= 0){
+                    $order->amount_bargain = 0;
+                }
+                $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
+
+                $orders_overrun_list[$order->paid_staff_id][] = $order;
+            }
+        }
+
+
+//        $sql = "
+//
+//        select * from `order`
+//        where
+//        ((`received_at` >= '".$start_month."' and `received_at` <= '".$end_month."')
+//        or (`bought_at` >= '".$start_month."' and `bought_at` <= '".$end_month."'))
+//        and paid_staff_id in (".$crane_buying_ids_string.")
+//        and `status` not in ('CANCELLED')
+//
+//        ";
+//
+//        $orders = DB::select($sql);
+//        $orders_with_crane_buying = [];
+//        if($orders){
+//            foreach($orders as $order){
+//
+//                $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
+//                $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
+//
+//                $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
+//
+//                $order->amount_bargain = $order->amount_customer - $order->amount_original;
+//
+//                //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
+//                $order->amount_original = doubleval($order->amount_original);
+//                if($order->amount_original <= 0){
+//                    $order->amount_bargain = 0;
+//                }
+//                $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
+//
+//                $order->is_done = $order->status == Order::STATUS_RECEIVED;
+//
+//                $order->amount_bargain_done = 0;
+//                $order->amount_bargain_done_vnd = 0;
+//                $order->amount_bargain_not_done = 0;
+//                $order->amount_bargain_not_done_vnd = 0;
+//
+//                if($order->is_done){
+//                    $order->amount_bargain_done = $order->amount_bargain;
+//                    $order->amount_bargain_done_vnd = $order->amount_bargain_vnd;
+//                }else{
+//                    $order->amount_bargain_not_done = $order->amount_bargain;
+//                    $order->amount_bargain_not_done_vnd = $order->amount_bargain_vnd;
+//                }
+//
+//                $orders_with_crane_buying[$order->paid_staff_id][] = $order;
+//
+//            }
+//        }
 
         return view('paid_staff_sale_value', [
            'page_title' => 'Doanh số, lương mua hàng',
             'crane_buying_list' => $crane_buying_list,
-//            'orders' => $orders,
-            'orders_with_crane_buying' => $orders_with_crane_buying
+            'orders_with_crane_buying' => [],
+            'orders_buying_list' => $orders_buying_list,
+            'orders_overrun_list' => $orders_overrun_list
         ]);
+
     }
 }

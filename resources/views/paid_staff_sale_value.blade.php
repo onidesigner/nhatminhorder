@@ -17,61 +17,313 @@
                     ]
                 )
                 <div class="card-body">
-                    <h3>{{$page_title}}</h3>
+{{--                    <h3>{{$page_title}}</h3>--}}
 
-                    Tháng cần xem
-                    <form action="{{ url('PaidStaffSaleValue')  }}"
-                          method="get"
-                          onchange="this.submit();">
+                    <div class="row">
+                        <form action="{{ url('PaidStaffSaleValue')  }}"
+                              method="get"
+                              onchange="this.submit();">
 
-                    <select class="_select_month" name="month" id="">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <select class="_select_month form-control" name="month" id="">
 
-                        <?php
-                        $max = 10;
-                        for($i = 0; $i < $max; $i++){
+                                                <?php
+                                                $max = 10;
+                                                for($i = 0; $i < $max; $i++){
 
-                            $date = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
-                            $date->modify("-{$i} month");
+                                                    $date = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+                                                    $date->modify("-{$i} month");
 
+                                                    $month_choose = date('m');
+                                                    if(request()->get('month')){
+                                                        $month_choose = explode('_', request()->get('month'))[0];
+                                                    }
 
-                            $month_choose = date('m');
-                            if(request()->get('month')){
-                                $month_choose = explode('_', request()->get('month'))[0];
-                            }
-
-                            $selected = $date->format('m') == $month_choose
-                                ? ' selected ' : '';
-
-
-                            echo sprintf("<option %s value='%s'>Tháng %s</option>", $selected, $date->format('m') . '_' . $date->format('Y'), $date->format('m/Y'));
-                        }
-                        ?>
-                    </select>
-                    </form>
+                                                    $selected = $date->format('m') == $month_choose
+                                                        ? ' selected ' : '';
 
 
+                                                    echo sprintf("<option %s value='%s'>Tháng %s</option>", $selected, $date->format('m') . '_' . $date->format('Y'), $date->format('m/Y'));
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
 
+                                    </div>
+
+
+                                </div>
+
+
+                        </form>
+                    </div>
+
+                    <div class="row">
+                        <i class="order-not-original-amount box-color"></i> Đơn chưa nhập giá thực mua
+                    </div>
 
                     @if(count($crane_buying_list))
 
                         @foreach($crane_buying_list as $crane_buying_list_item)
                             <div class="row" style="margin-bottom: 30px;">
-                                <h4>
+                                <h1>
                                     <a href="{{ url('user/detail', $crane_buying_list_item->id)  }}">{{$crane_buying_list_item->name}}</a> <small>{{$crane_buying_list_item->code}}</small>
-                                </h4>
+                                </h1>
+
+                                <h3
+                                        style="cursor: pointer"
+                                        data-toggle="collapse" data-target="#order-overrun-{{$crane_buying_list_item->id}}">Đơn hàng doanh số <small>(
+                                        @if(isset($orders_overrun_list[$crane_buying_list_item->id]))
+                                            {{count($orders_overrun_list[$crane_buying_list_item->id])}}
+                                        @else
+                                            0
+                                        @endif
+                                        )</small></h3>
+
+
+                                <div id="order-overrun-{{$crane_buying_list_item->id}}" class="collapse">
+                                    @if(isset($orders_overrun_list[$crane_buying_list_item->id]))
+                                        <?php
+                                        $total_amount_customer = 0;
+                                        $total_amount_original = 0;
+                                        $total_amount_bargain = 0;
+
+                                        $total_amount_customer_vnd = 0;
+                                        $total_amount_original_vnd = 0;
+                                        $total_amount_bargain_vnd = 0;
+                                        ?>
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                            <tr>
+                                                <td>TT</td>
+                                                <td>Đơn hàng</td>
+                                                <td class="text-right">(1) Báo khách <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
+                                                <td class="text-right">(2) Thực mua <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
+                                                <td class="text-right">(1) - (2) Mặc cả</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            @foreach($orders_overrun_list[$crane_buying_list_item->id] as $idx => $orders_overrun_list_item)
+                                                <tr
+                                                        class="
+                                                        @if($orders_overrun_list_item->amount_original <= 0)
+                                                            order-not-original-amount
+                                                        @endif
+                                                    "
+                                                >
+                                                    <td>{{$idx+1}}</td>
+                                                    <td>
+                                                        <a href="{{url('order/detail', $orders_overrun_list_item->id)}}">{{$orders_overrun_list_item->code}}</a>
+                                                        <small>({{App\Order::getStatusTitle($orders_overrun_list_item->status)}})</small>
+
+                                                        @if($orders_overrun_list_item->bought_at)
+
+                                                            <p>Mua: {{App\Util::formatDate($orders_overrun_list_item->bought_at)}}</p>
+                                                        @endif
+
+                                                        @if($orders_overrun_list_item->received_at)
+                                                            <p>Nhận: {{App\Util::formatDate($orders_overrun_list_item->received_at)}}</p>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_customer)}}¥
+                                                        /
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_customer_vnd)}}đ
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_original)}}¥
+                                                        /
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_original_vnd)}}đ
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_bargain)}}¥ /
+                                                        {{App\Util::formatNumber($orders_overrun_list_item->amount_bargain_vnd)}}đ
+                                                    </td>
+
+                                                </tr>
+
+                                                <?php
+                                                $total_amount_customer += $orders_overrun_list_item->amount_customer;
+                                                $total_amount_original += $orders_overrun_list_item->amount_original;
+                                                $total_amount_bargain += $orders_overrun_list_item->amount_bargain;
+
+                                                $total_amount_customer_vnd += $orders_overrun_list_item->amount_customer_vnd;
+                                                $total_amount_original_vnd += $orders_overrun_list_item->amount_original_vnd;
+                                                $total_amount_bargain_vnd += $orders_overrun_list_item->amount_bargain_vnd;
+                                                ?>
+                                            @endforeach
+
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-right">
+                                                    <h4>
+
+                                                        {{App\Util::formatNumber($total_amount_customer)}}¥ / {{App\Util::formatNumber($total_amount_customer_vnd)}} đ
+
+                                                    </h4>
+                                                </td>
+                                                <td class="text-right">
+                                                    <h4>
+
+                                                        {{App\Util::formatNumber($total_amount_original)}}¥ / {{App\Util::formatNumber($total_amount_original_vnd)}} đ
+
+                                                    </h4>
+                                                </td>
+                                                <td class="text-right">
+                                                    <h4>
+                                                        {{App\Util::formatNumber($total_amount_bargain)}}¥ / {{App\Util::formatNumber($total_amount_bargain_vnd)}} đ
+                                                    </h4>
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <h6>Không có gì!</h6>
+                                    @endif
+                                </div>
+
+
+
+                                <h3
+                                        style="cursor: pointer"
+                                        data-toggle="collapse" data-target="#order-buying-{{$crane_buying_list_item->id}}">Đơn hàng phát sinh <small>(
+                                        @if(isset($orders_buying_list[$crane_buying_list_item->id]))
+                                            {{count($orders_buying_list[$crane_buying_list_item->id])}}
+                                        @else
+                                            0
+                                        @endif
+                                        )</small></h3>
+
+                                <div id="order-buying-{{$crane_buying_list_item->id}}" class="collapse">
+                                    @if(isset($orders_buying_list[$crane_buying_list_item->id]))
+                                        <table class="table table-hover table-striped">
+                                            <?php
+                                            $total_amount_customer1 = 0;
+                                            $total_amount_original1 = 0;
+                                            $total_amount_bargain1 = 0;
+
+                                            $total_amount_customer_vnd1 = 0;
+                                            $total_amount_original_vnd1 = 0;
+                                            $total_amount_bargain_vnd1 = 0;
+                                            ?>
+
+                                            <thead>
+                                            <tr>
+                                                <td>TT</td>
+                                                <td>Đơn hàng</td>
+                                                <td class="text-right">(1) Báo khách <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
+                                                <td class="text-right">(2) Thực mua <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
+                                                <td class="text-right">(1) - (2) Mặc cả</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            @foreach($orders_buying_list[$crane_buying_list_item->id] as $idx => $orders_buying_list_item)
+                                                <tr
+                                                        class="
+                                                        @if($orders_buying_list_item->amount_original <= 0)
+                                                                order-not-original-amount
+                                                            @endif
+                                                                "
+                                                >
+                                                    <td>{{$idx+1}}</td>
+                                                    <td>
+                                                        <a href="{{url('order/detail', $orders_buying_list_item->id)}}">{{$orders_buying_list_item->code}}</a>
+                                                        <small>({{App\Order::getStatusTitle($orders_buying_list_item->status)}})</small>
+
+                                                        @if($orders_buying_list_item->bought_at)
+
+                                                            <p>Mua: {{App\Util::formatDate($orders_buying_list_item->bought_at)}}</p>
+                                                        @endif
+
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_customer)}}¥
+                                                        /
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_customer_vnd)}}đ
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_original)}}¥
+                                                        /
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_original_vnd)}}đ
+                                                    </td>
+                                                    <td class="text-right text-danger">
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_bargain)}}¥ /
+                                                        {{App\Util::formatNumber($orders_buying_list_item->amount_bargain_vnd)}}đ
+                                                    </td>
+
+                                                </tr>
+
+                                                <?php
+                                                $total_amount_customer1 += $orders_buying_list_item->amount_customer;
+                                                $total_amount_original1 += $orders_buying_list_item->amount_original;
+                                                $total_amount_bargain1 += $orders_buying_list_item->amount_bargain;
+
+                                                $total_amount_customer_vnd1 += $orders_buying_list_item->amount_customer_vnd;
+                                                $total_amount_original_vnd1 += $orders_buying_list_item->amount_original_vnd;
+                                                $total_amount_bargain_vnd1 += $orders_buying_list_item->amount_bargain_vnd;
+                                                ?>
+                                            @endforeach
+
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-right">
+                                                    <h4>
+
+                                                        {{App\Util::formatNumber($total_amount_customer1)}}¥ / {{App\Util::formatNumber($total_amount_customer_vnd1)}} đ
+
+                                                    </h4>
+                                                </td>
+                                                <td class="text-right">
+                                                    <h4>
+
+                                                        {{App\Util::formatNumber($total_amount_original1)}}¥ / {{App\Util::formatNumber($total_amount_original_vnd1)}} đ
+
+                                                    </h4>
+                                                </td>
+                                                <td class="text-right">
+                                                    <h4>
+                                                        {{App\Util::formatNumber($total_amount_bargain1)}}¥ / {{App\Util::formatNumber($total_amount_bargain_vnd1)}} đ
+                                                    </h4>
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <h6>Không có gì!</h6>
+                                    @endif
+                                </div>
+
+
+
+                                <!-- ket thuc don hang phat sinh -->
 
                                 <?php
 
-//                                function sum($v1,$v2)
-//                                {
-//                                    return $v1->amount_bargain + $v2->amount_bargain;
-//                                }
-//                                print_r(array_reduce($orders_with_crane_buying[$crane_buying_list_item->id], "sum"));
-
+                                $sale_rose = $crane_buying_list_item->sale_percent * $total_amount_bargain_vnd1 / 100;
+                                $sale_finish = $crane_buying_list_item->sale_basic + $sale_rose;
                                 ?>
 
-                                <?php
+                                <h3>Lương <i class="fa fa-question-circle"
 
+                                    data-toggle="tooltip"
+                                             data-html="true"
+                                             title="
+
+<p>Lương cơ bản: {{ App\Util::formatNumber($crane_buying_list_item->sale_basic)  }} đ</p>
+<p>Phần trăm tính doanh số: {{$crane_buying_list_item->sale_percent}} %</p>
+<p>Lương doanh số: {{ App\Util::formatNumber($sale_rose)  }} đ</p>
+"
+                                    ></i>: {{App\Util::formatNumber($sale_finish)}} đ</h3>
+
+                                <?php
 
                                 $statistic = [
                                 'total_amount_customer' => 0,
@@ -92,7 +344,7 @@
                                 {{--<p>Lương cơ bản: {{App\Util::formatNumber($crane_buying_list_item->sale_basic)}}đ</p>--}}
                                 {{--<p>Hoa hồng: {{$crane_buying_list_item->sale_percent}}%</p>--}}
 
-                                <a class="btn btn-primary" data-toggle="modal" href='#modal-id-{{$crane_buying_list_item->id}}'>>> Xem đơn hàng</a>
+                                {{--<a class="btn btn-primary" data-toggle="modal" href='#modal-id-{{$crane_buying_list_item->id}}'>>> Xem đơn hàng</a>--}}
 
                                 <div class="modal fade" id="modal-id-{{$crane_buying_list_item->id}}">
                                     <div class="modal-dialog modal-lg">
@@ -229,7 +481,6 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                                                {{--<button type="button" class="btn btn-primary">Save changes</button>--}}
                                             </div>
                                         </div>
                                     </div>
@@ -238,16 +489,7 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
 
 
 
-                                <h5>
-                                    <?php
-                                    $hoa_hong_mac_ca_kha_dung = $statistic['total_amount_bargain_done_vnd'] * $crane_buying_list_item->sale_percent / 100;
-                                    $tien_thuc_linh = $hoa_hong_mac_ca_kha_dung + $crane_buying_list_item->sale_basic;
-                                    ?>
-                                    Lương thực lĩnh (Lương cơ bản + {{$crane_buying_list_item->sale_percent}}% hoa hồng, số tiền mặc cả khả dụng):
-                                    {{App\Util::formatNumber($crane_buying_list_item->sale_basic)}} đ
-                                        + {{App\Util::formatNumber($hoa_hong_mac_ca_kha_dung)}} đ
-                                        = {{App\Util::formatNumber($tien_thuc_linh)}} đ
-                                </h5>
+
 
                             </div>
 
@@ -278,11 +520,17 @@ Khả dụng {{  App\Util::formatNumber($statistic['total_amount_bargain_done'])
             width: 20px;
             height: 20px;
             display: inline-block;
+            float: left;
+            margin-right: 10px;
         }
         .order-not-original-amount{
-            background: rgb(236, 45, 45);
-            color: #fff;
+            /*background: rgb(236, 45, 45);*/
+            /*color: #fff;*/
+
+            background: rgba(208, 89, 89, 0.23)!important;
         }
+
+
     </style>
 @endsection
 
