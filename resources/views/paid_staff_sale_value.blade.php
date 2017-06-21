@@ -61,11 +61,16 @@
                     </div>
 
                     <div class="row">
+                        <h5>*** Lưu ý: </h5>
                         <i class="order-not-original-amount box-color"></i> Đơn chưa nhập giá thực mua
                     </div>
 
                     @if(count($crane_buying_list))
                         @foreach($crane_buying_list as $crane_buying_list_item)
+                            <?php
+                            $crane_value_setting = isset($crane_value_setting_list[$crane_buying_list_item->id])
+                                ? $crane_value_setting_list[$crane_buying_list_item->id] : [];
+                            ?>
                             <div class="row" style="margin-bottom: 30px;">
                                 <h1>
                                     <a href="{{ url('user/detail', $crane_buying_list_item->id)  }}">{{$crane_buying_list_item->name}}</a>
@@ -191,7 +196,6 @@
                                         @endif
                                         )</small></h3>
 
-
                                 <div id="order-overrun-{{$crane_buying_list_item->id}}" class="collapse">
                                     <?php
                                     $total_amount_customer = 0;
@@ -201,6 +205,9 @@
                                     $total_amount_customer_vnd = 0;
                                     $total_amount_original_vnd = 0;
                                     $total_amount_bargain_vnd = 0;
+
+                                    $total_real_amount_vnd = 0;
+                                    $total_real_amount_ndt = 0;
                                     ?>
 
                                     @if(isset($orders_overrun_list[$crane_buying_list_item->id]))
@@ -213,6 +220,7 @@
                                                 <td class="text-right">(1) Báo khách <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
                                                 <td class="text-right">(2) Thực mua <i class="fa fa-question-circle" data-toggle="tooltip" title="tiền hàng + ship nội dịa TQ"></i></td>
                                                 <td class="text-right">(1) - (2) Mặc cả</td>
+                                                <td class="text-right">Nhận</td>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -253,7 +261,20 @@
                                                         {{App\Util::formatNumber($orders_overrun_list_item->amount_bargain)}}¥ /
                                                         {{App\Util::formatNumber($orders_overrun_list_item->amount_bargain_vnd)}}đ
                                                     </td>
+                                                    <td class="text-right text-danger">
+                                                        <?php
+                                                        $rose_percent = App\UserPaidSaleSetting::getValuePercentWithCraneAndTime($crane_value_setting, $orders_overrun_list_item->bought_at);
+                                                        $real_amount_vnd = App\UserPaidSaleSetting::getRealAmountVnd($orders_overrun_list_item->amount_bargain_vnd, $rose_percent);
+                                                        $real_amount_ndt = App\UserPaidSaleSetting::getRealAmountNdt($orders_overrun_list_item->amount_bargain, $rose_percent);
 
+                                                        $total_real_amount_vnd += $real_amount_vnd;
+                                                        $total_real_amount_ndt += $real_amount_ndt;
+                                                        ?>
+                                                        {{App\Util::formatNumber($real_amount_ndt)}}¥ /
+                                                        {{App\Util::formatNumber($real_amount_vnd)}}đ
+                                                        <br>
+                                                        <i style="color: #000;" class="fa fa-question-circle" data-toggle="tooltip" title="" data-original-title="{{$rose_percent}}%"></i>
+                                                    </td>
                                                 </tr>
 
                                                 <?php
@@ -271,23 +292,29 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
 
                                                         {{App\Util::formatNumber($total_amount_customer)}}¥ / {{App\Util::formatNumber($total_amount_customer_vnd)}} đ
 
-                                                    </h4>
+                                                    </h5>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
 
                                                         {{App\Util::formatNumber($total_amount_original)}}¥ / {{App\Util::formatNumber($total_amount_original_vnd)}} đ
 
-                                                    </h4>
+                                                    </h5>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
                                                         {{App\Util::formatNumber($total_amount_bargain)}}¥ / {{App\Util::formatNumber($total_amount_bargain_vnd)}} đ
-                                                    </h4>
+                                                    </h5>
+                                                </td>
+
+                                                <td class="text-right">
+                                                    <h5>
+                                                        {{App\Util::formatNumber($total_real_amount_ndt)}}¥ / {{App\Util::formatNumber($total_real_amount_vnd)}} đ
+                                                    </h5>
                                                 </td>
                                             </tr>
 
@@ -386,23 +413,23 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
 
                                                         {{App\Util::formatNumber($total_amount_customer1)}}¥ / {{App\Util::formatNumber($total_amount_customer_vnd1)}} đ
 
-                                                    </h4>
+                                                    </h5>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
 
                                                         {{App\Util::formatNumber($total_amount_original1)}}¥ / {{App\Util::formatNumber($total_amount_original_vnd1)}} đ
 
-                                                    </h4>
+                                                    </h5>
                                                 </td>
                                                 <td class="text-right">
-                                                    <h4>
+                                                    <h5>
                                                         {{App\Util::formatNumber($total_amount_bargain1)}}¥ / {{App\Util::formatNumber($total_amount_bargain_vnd1)}} đ
-                                                    </h4>
+                                                    </h5>
                                                 </td>
                                             </tr>
 
@@ -419,19 +446,24 @@
 
                                 <?php
 
-                                $sale_rose = $crane_buying_list_item->sale_percent * $total_amount_bargain_vnd / 100;
-                                $sale_finish = $crane_buying_list_item->sale_basic + $sale_rose;
-                                ?>
+                                $sale_finish = App\UserPaidSaleSetting::getSalaryWithCraneAndTime($crane_value_setting, request()->get('month')) + $total_real_amount_vnd;
+                                $time_cal_value = date('m') . '/' . date('Y');
+                                $month_selected = request()->get('month');
+                                if(isset($month_selected)){
+                                    $month_temp = explode('_', $month_selected);
+                                    $time_cal_value = $month_temp[0] . '/' . $month_temp[1];
+                                }
 
-                                <h3>Lương <i class="fa fa-question-circle"
+                                ?>
+                                <h3>Lương tháng {{$time_cal_value}} <i class="fa fa-question-circle"
 
                                     data-toggle="tooltip"
                                              data-html="true"
                                              title="
 
-<p>Lương cơ bản: {{ App\Util::formatNumber($crane_buying_list_item->sale_basic)  }} đ</p>
-<p>Phần trăm tính doanh số: {{$crane_buying_list_item->sale_percent}} %</p>
-<p>Lương doanh số: {{ App\Util::formatNumber($sale_rose)  }} đ</p>
+{{--<p>Lương cơ bản: {{ App\Util::formatNumber($crane_buying_list_item->sale_basic)  }} đ</p>--}}
+{{--<p>Phần trăm tính doanh số: {{$crane_buying_list_item->sale_percent}} %</p>--}}
+<p>Doanh số: {{ App\Util::formatNumber($total_real_amount_vnd)  }} đ</p>
 "
                                     ></i>: {{App\Util::formatNumber($sale_finish)}} đ</h3>
 

@@ -9,6 +9,7 @@ use App\Order;
 use App\OrderFee;
 use App\Package;
 use App\Service;
+use App\SystemConfig;
 use App\User;
 use App\UserAddress;
 use App\UserTransaction;
@@ -110,6 +111,29 @@ class HoSiVanController extends Controller
 
     private function __phpinfo(){
         die(phpinfo());
+    }
+
+    private function __cap_nhat_lai_thoi_gian_nhan_hang_tren_don(Request $request){
+        $day_auto_change_order_receive = SystemConfig::getConfigValueByKey('day_auto_change_order_receive');
+
+        $orders = DB::select(" select * from `order` where `status` = 'RECEIVED'; ");
+        if($orders){
+            foreach($orders as $o){
+                $order = Order::find($o->id);
+                if(!$order instanceof Order){
+                    continue;
+                }
+                $delivering_at = $order->delivering_at;
+                if(Util::validateDate($delivering_at, 'Y-m-d H:i:s')){
+
+                    if($day_auto_change_order_receive){
+                        $received_at = strtotime(date("Y-m-d H:i:s", strtotime($delivering_at)) . " +{$day_auto_change_order_receive} day");
+                        $order->received_at = date('Y-m-d H:i:s', $received_at);
+                        $order->save();
+                    }
+                }
+            }
+        }
     }
 
     private function __hoan_tien_van_chuyen_don_van_chuyen_tiet_kiem(Request $request){

@@ -114,6 +114,7 @@ class PaidStaffSaleValueController extends Controller
         and `status` not in ('CANCELLED')
         order by `received_at` asc
         ";
+//        echo $sql_orders_overrun;
         $orders_overrun = DB::select($sql_orders_overrun);
         $orders_overrun_list = [];
         if($orders_overrun){
