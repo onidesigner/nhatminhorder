@@ -84,4 +84,20 @@ class UserPaidSaleSetting extends Model
     public static function getRealAmountNdt($amount, $percent){
         return $amount * $percent / 100;
     }
+
+    public static function getTotalRealAmountOrderBuyingInMonth($crane_buying_id, $start_time, $end_time){
+//        $money = 0;
+//        $sql = sprintf("
+//        select sum(amount_original) as amount_original
+//        from `order`
+//        where `status` not in ('CANCELLED') and paid_staff_id = %s
+//        and bought_at >= '%s'
+//        and bought_at <= '%s';
+//        ", $crane_buying_id, $start_time, $end_time);
+//        $query = DB::select($sql);
+//        if($query){
+//
+//        }
+//        return $money;
+    }
 }

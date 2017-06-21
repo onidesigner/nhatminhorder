@@ -62,7 +62,8 @@
 
                     <div class="row">
                         <h5>*** Lưu ý: </h5>
-                        <i class="order-not-original-amount box-color"></i> Đơn chưa nhập giá thực mua
+                        <i class="order-not-original-amount box-color"></i> Đơn chưa nhập giá thực mua <br>
+                        {{--<div class="box-color text-center"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></div> Hoàn thanh chỉ tiêu mặc cả--}}
                     </div>
 
                     @if(count($crane_buying_list))
@@ -76,6 +77,11 @@
                                     <a href="{{ url('user/detail', $crane_buying_list_item->id)  }}">{{$crane_buying_list_item->name}}</a>
 
 
+                                    <?php
+                                    $can_setup_paid_staff_value = App\Permission::isAllow(App\Permission::PERMISSION_SETUP_PAID_STAFF_SALE_VALUE);
+                                    ?>
+
+                                    @if($can_setup_paid_staff_value)
                                     <a
 
                                             class="" data-toggle="modal" href='#modal-crane-buying-setup-{{$crane_buying_list_item->id}}'>
@@ -86,6 +92,7 @@
                                                 class="fa fa-cog" aria-hidden="true"></i>
 
                                     </a>
+                                    @endif
 
                                     <div class="modal fade" id="modal-crane-buying-setup-{{$crane_buying_list_item->id}}">
                                         <div class="modal-dialog modal-lg">
@@ -101,10 +108,12 @@
                                                         <table class="table table-striped table-bordered setting-list">
                                                             <thead>
                                                             <tr>
-                                                                <th>Từ tháng</th>
-                                                                <th>Đến tháng</th>
+                                                                <th>Từ</th>
+                                                                <th>Đến</th>
                                                                 <th>Lương cơ bản</th>
-                                                                <th>% mặc cả</th>
+                                                                <th>HH tối đa %</th>
+                                                                <th>HH tối thiểu %</th>
+                                                                <th>Mặc cả tối thiểu %</th>
                                                                 <th></th>
                                                             </tr>
                                                             </thead>
@@ -134,6 +143,7 @@
                                                                                 </select>
                                                                             </td>
                                                                             <td>
+
                                                                                 <select name="end_month">
                                                                                     <?php
                                                                                     for($j = 1; $j <= 12; $j++){
@@ -142,6 +152,7 @@
                                                                                     }
                                                                                     ?>
                                                                                 </select>
+
                                                                                 <select name="end_year">
                                                                                     <?php
                                                                                     for($jj = $begin_year; $jj <= $end_year; $jj++){
@@ -150,12 +161,19 @@
                                                                                     }
                                                                                     ?>
                                                                                 </select>
+
                                                                             </td>
                                                                             <td>
                                                                                 <input type="number" name="salary_basic" value="{{$crane_value_setting_list_item->salary_basic}}">
                                                                             </td>
                                                                             <td>
-                                                                                <input type="number" name="rose_percent" max="100" value="{{$crane_value_setting_list_item->rose_percent}}">
+                                                                                <input type="number" name="rose_percent" value="{{$crane_value_setting_list_item->rose_percent}}">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" name="rose_percent_min" value="{{$crane_value_setting_list_item->rose_percent_min}}">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="number" name="require_min_bargain_percent" value="{{$crane_value_setting_list_item->require_min_bargain_percent}}">
                                                                             </td>
                                                                             <td>
                                                                                 <a href="javascript:void(0)" class="_remove-row"><i class="fa fa-times"></i></a>
@@ -173,7 +191,7 @@
 
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng lại</button>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                                                     <button type="button"
 
                                                             data-paid-user-id="{{$crane_buying_list_item->id}}"
@@ -553,8 +571,10 @@
                         row += '</select>';
 
                     row += '</td>';
-                    row += '<td><input type="number" name="salary_basic" max="100" value="0" /></td>';
-                    row += '<td><input type="number" name="rose_percent" max="100" value="0" /></td>';
+                    row += '<td><input type="number" name="salary_basic" value="0" /></td>';
+                    row += '<td><input type="number" name="rose_percent" value="0" /></td>';
+                    row += '<td><input type="number" name="rose_percent_min" value="0" /></td>';
+                    row += '<td><input type="number" name="require_min_bargain_percent" value="0" /></td>';
                     row += '<td><a href="javascript:void(0)" class="_remove-row"><i class="fa fa-times"></i></a></td>';
                     row += '</tr>';
 
@@ -578,7 +598,9 @@
                         end_month:$(this).find('select[name="end_month"]').val(),
                         end_year:$(this).find('select[name="end_year"]').val(),
                         salary_basic:$(this).find('input[name="salary_basic"]').val(),
-                        rose_percent:$(this).find('input[name="rose_percent"]').val()
+                        rose_percent:$(this).find('input[name="rose_percent"]').val(),
+                        require_min_bargain_percent:$(this).find('input[name="require_min_bargain_percent"]').val(),
+                        rose_percent_min:$(this).find('input[name="rose_percent_min"]').val()
                     });
                 });
                 request("{{url('PaidStaffSaleValue/Setting')}}", "post", {

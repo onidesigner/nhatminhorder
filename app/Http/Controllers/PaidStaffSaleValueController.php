@@ -68,6 +68,8 @@ class PaidStaffSaleValueController extends Controller
 
         if($crane_buying_list){
             foreach($crane_buying_list as $crane_buying_list_item){
+                $crane_buying_list_item->total_amount_orders_buying_in_month = 0;//tong tien bao khach
+                $crane_buying_list_item->total_real_amount_orders_buying_in_month = 0;//tong tien thuc mua
                 $crane_buying_ids[] = $crane_buying_list_item->id;
             }
         }
@@ -220,6 +222,11 @@ class PaidStaffSaleValueController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function setting(Request $request){
+        $can_save = Permission::isAllow(Permission::PERMISSION_SETUP_PAID_STAFF_SALE_VALUE);
+        if(!$can_save){
+            return response()->json(['success' => false, 'message' => 'ban khong co quyen thuc hien hanh dong nay']);
+        }
+
         try{
             DB::beginTransaction();
             $data = [];
@@ -234,6 +241,8 @@ class PaidStaffSaleValueController extends Controller
                     'deadlined_at' => $deadlined_at,
                     'salary_basic' => $item['salary_basic'],
                     'rose_percent' => $item['rose_percent'],
+                    'rose_percent_min' => $item['rose_percent_min'],
+                    'require_min_bargain_percent' => $item['require_min_bargain_percent'],
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             }
@@ -245,7 +254,7 @@ class PaidStaffSaleValueController extends Controller
             return response()->json(['success' => true, 'message' => '']);
         }catch (Exception $e){
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'co loi xay ra, vui long thu lai']);
         }
 
     }
