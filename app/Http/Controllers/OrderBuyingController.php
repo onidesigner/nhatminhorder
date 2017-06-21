@@ -9,6 +9,7 @@ use App\OrderService;
 use App\Permission;
 use App\Service;
 use App\User;
+use App\UserFollowObject;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,8 +52,9 @@ class OrderBuyingController extends Controller
     }
 
     /**
-     * @author vanhs
+     * @author vanhs , giangnh
      * @desc Gan/bo gan don hang cho nhan vien mua hang
+     * @desc nguoi mua hang cung la nguoi theo doi don
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -89,6 +91,14 @@ class OrderBuyingController extends Controller
 
             $message = sprintf("Phân đơn hàng cho nhân viên %s (%s)", $user->email, $user->code);
             Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            #region --gawns ngupi theo doi down--
+            $customer_user = User::find($order->user_id);
+            $user_follow = new UserFollowObject();
+            $user_follow->createUserFollow($order,$user); // nguoi mua hang
+            $user_follow = new UserFollowObject();
+            $user_follow->createUserFollow($order,$customer_user);
+            #endregion --gan nguoi theo doi don--
         }
         $order->save();
 

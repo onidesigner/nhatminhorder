@@ -183,6 +183,7 @@ class ScanController extends Controller
             }
 
             $this->message = $message_internal;
+            $this->__writeActionScanLog($request, $warehouse, $currentUser);
             return $response;
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
@@ -265,10 +266,11 @@ class ScanController extends Controller
             }
 
             $this->message = $message_internal;
+            $this->__writeActionScanLog($request, $warehouse, $currentUser);
             return $response;
         }
 
-        $this->__writeActionScanLog($request, $warehouse, $currentUser);
+
 
         return true;
     }
@@ -345,7 +347,7 @@ class ScanController extends Controller
             }
 
             $this->message = $message_internal;
-
+            $this->__writeActionScanLog($request, $warehouse, $currentUser);
             return $response;
 
         }else if($warehouse->type == WareHouse::TYPE_DISTRIBUTION){
@@ -390,10 +392,11 @@ class ScanController extends Controller
 
             $this->message = $message_internal;
 
+            $this->__writeActionScanLog($request, $warehouse, $currentUser);
             return $response;
         }
 
-        $this->__writeActionScanLog($request, $warehouse, $currentUser);
+
         return true;
     }
 

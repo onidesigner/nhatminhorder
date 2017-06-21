@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Permission;
+use App\UserFollowObject;
 use App\UserTransaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -186,6 +187,10 @@ class CartController extends Controller
         if($ids){
             $list = explode(',', $ids);
             if(count($list)){
+                foreach ($list as $id) {
+                    $user_follow_obj = new UserFollowObject();
+                    $user_follow_obj->createUserFollow(Order::find($id),Auth::user());
+                }
                 $orders = Order::whereIn('id', $list)->get();
             }
         }

@@ -203,7 +203,12 @@ Route::get('/complaint','ComplaintServiceController@index');
 Route::get('/complaint-detail/{complaint_id}','ComplaintServiceController@complaintDetail');
 #region --thông báo dành cho quản trị viên--
 Route::get('/notification','NotificationController@index');
+Route::get('/tat-ca-thong-bao','Customer\CustomerSystemNotificationController@index');
+Route::get('/load-count-notify','Customer\CustomerSystemNotificationController@countNotificationFollowerUser');
+Route::get('/load-content-notify','Customer\CustomerSystemNotificationController@loadContentNotify');
+Route::get('/change-status-follower','Customer\CustomerSystemNotificationController@changeStatusFollow');
 #endregion --kết thúc thông báo cho quản trị viên--
+
 
 
 

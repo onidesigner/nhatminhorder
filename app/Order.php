@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\Customer\CustomerNotificationController;
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Library\ServiceFee\WoodCrating;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,8 @@ class Order extends Model
     protected $factoryMethodInstance = null;
     protected $order_buying_number_fee = 3;
 
+
+    const NOT_ORDER = 1; // bien de luu type
     const STATUS_DEPOSITED = 'DEPOSITED';
     const STATUS_BOUGHT = 'BOUGHT';
     const STATUS_SELLER_DELIVERY = 'SELLER_DELIVERY';
@@ -786,11 +789,11 @@ class Order extends Model
                 $status_title_after_change = self::getStatusTitle(self::STATUS_RECEIVED_FROM_SELLER);
 
                 $type_context = Comment::TYPE_CONTEXT_LOG;
-                $message_external = sprintf("Đơn hàng chuyển sang trạng thái %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $status_title_after_change);
+                $message_external = sprintf("Đơn hàng %s chuyển sang trạng thái %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $this->code,$status_title_after_change);
                 $message_internal = sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change);
                 if($manualy){
                     $type_context = Comment::TYPE_CONTEXT_ACTIVITY;
-                    $message_external = sprintf("Chuyển trạng thái đơn sang %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $status_title_after_change);
+                    $message_external = sprintf("Chuyển trạng thái đơn %s sang %s (Đã nhận hàng từ người bán, chuẩn bị vận chuyển về Việt Nam)", $this->code,$status_title_after_change);
                     $message_internal = sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change);
                 }
 
@@ -799,7 +802,7 @@ class Order extends Model
 
                 $title = "Trạng thái đơn hàng";
                 $content = $create_user->name . $message_external;
-                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                CustomerNotification::notificationCustomer($this,$title,$content,CustomerNotification::TYPE_ORDER);
 
 
             }
@@ -898,9 +901,9 @@ class Order extends Model
 
                 #region --tạo notification cho khách--
                 $title = 'Trạng thái đơn hàng '.$this->code;
-                $content_message = sprintf(" đơn hàng chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $status_title_after_change);
+                $content_message = sprintf(" đơn hàng %s chuyển sang trạng thái %s (Bắt đầu vận chuyển về Việt Nam)", $this->code ,$status_title_after_change);
                 $content = $create_user->name.$content_message;
-                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+
                 #endregion -- kết thúc tạo notification cho khách --
 
                 $data_fee = OrderFee::$fee_field_order_detail;
@@ -927,7 +930,7 @@ class Order extends Model
                     - $customer_payment_amount_vnd;
                 $total_need_payment = 0 - abs($total_need_payment);
 
-                $message = sprintf('Hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; Mua hàng %sđ',
+                $message = sprintf(' hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; Mua hàng %sđ',
                     Util::formatNumber($data_fee['AMOUNT_VND'] - $data_fee['DEPOSIT_AMOUNT_VND']),
                     Util::formatNumber($data_fee['DOMESTIC_SHIPPING_FEE_VND']),
                     Util::formatNumber($data_fee['BUYING_FEE_VND']));
@@ -945,10 +948,10 @@ class Order extends Model
                 Comment::createComment($create_user, $this, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
 
                 #region --tạo notification cho khách--
-                $title = 'Tài chính đơn hàng '.$this->code;
-                $content_message = $message;
-                $content = $create_user->name.' '.$content_message;
-                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+//
+                $notify = new SystemNotification();
+                $notify->createSystemNotificationOrderStatus($this,$title,$content);
+
                 #endregion -- kết thúc tạo notification cho khách --
 
             }
@@ -987,9 +990,10 @@ class Order extends Model
 
                 #region --tạo notification cho khách--
                 $title = 'Trạng thái đơn hàng '.$this->code;
-                $content_message = sprintf(" đơn hàng chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)", $status_title_after_change);
+                $content_message = sprintf(" đơn hàng %s chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)",$this->code ,$status_title_after_change);
                 $content = $create_user->name.$content_message;
-                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                $notify = new SystemNotification();
+                $notify->createSystemNotificationOrderStatus($this,$title,$content);
                 #endregion -- kết thúc tạo notification cho khách --
 
             }
@@ -1025,9 +1029,10 @@ class Order extends Model
 
                 #region --tạo notification cho khách--
                 $title = 'Trạng thái đơn hàng '.$this->code;
-                $content_message = sprintf("Đơn hàng chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $status_title_after_change);
+                $content_message = sprintf(" đơn hàng %s chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $this->code,$status_title_after_change);
                 $content = $create_user->name.$content_message;
-                CustomerNotification::notificationCustomer($this,$title,$content,'ORDER');
+                $notify = new SystemNotification();
+                $notify->createSystemNotificationOrderStatus($this,$title,$content);
                 #endregion -- kết thúc tạo notification cho khách --
             }
             #endregion
