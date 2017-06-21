@@ -106,7 +106,7 @@
                                     <li class="dropdown-header _system_notify">Thông báo</li>
 
                                     <li class="dropdown-footer">
-                                        <a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                        {{--<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
                                     </li>
                                 </ul>
                             </div>
