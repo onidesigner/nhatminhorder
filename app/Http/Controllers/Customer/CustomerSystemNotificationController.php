@@ -220,9 +220,31 @@ class CustomerSystemNotificationController extends Controller
     }
 
 
+    /**
+     * check ham
+     */
     public function convertNotification(){
-        $oldNotifycation = CustomerNotification::where([
 
-        ])->get();
+        $oldNotifycation = CustomerNotification::whereIn('is_view',['VIEW','READ'])->get();
+
+        foreach($oldNotifycation as $item_old){
+
+            $new_notify = new SystemNotification();
+            $new_notify->object_id = $item_old->order_id;
+            $new_notify->follower_id = $item_old->user_id;
+            $new_notify->title = $item_old->title;
+            $new_notify->notification_content = $item_old->notification_content;
+            $new_notify->object_type = $item_old->type;
+            $new_notify->type = $item_old->is_view;
+            $new_notify->notify_status = $item_old->is_view;
+
+            if($new_notify->save()){
+                var_dump( $item_old->id." success");
+            }else{
+                var_dump( $item_old->id." fail");
+            }
+
+
+        }
     }
 }
