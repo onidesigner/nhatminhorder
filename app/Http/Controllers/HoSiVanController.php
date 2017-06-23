@@ -151,15 +151,15 @@ class HoSiVanController extends Controller
      * @param Request $request
      */
     private function __cap_nhat_thong_tin_don_hang1(Request $request){
-        $orders = DB::select("
-        select id from `order`;
-        ");
+        $orders = DB::select(" select id from `order` where flag is null limit 250; ");
+
         if($orders){
             foreach($orders as $o){
                 $order = Order::find($o->id);
                 if(!$order instanceof Order){
                     continue;
                 }
+                $order->flag = 1;
                 $order->save();
             }
         }
