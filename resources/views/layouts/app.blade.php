@@ -102,12 +102,12 @@
                                 <div class="count width-auto _count_notification"></div>
                             </a>
                             <div class="dropdown-menu" style="max-height: 500px; overflow-y: auto;">
-                                <ul>
+                                <ul class="_display_notify">
                                     <li class="dropdown-header _system_notify">Thông báo</li>
 
-                                    <li class="dropdown-footer">
+                                    {{--<li class="dropdown-footer">--}}
                                         {{--<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
-                                    </li>
+                                    {{--</li>--}}
                                 </ul>
                             </div>
                         </li>
@@ -180,7 +180,13 @@
 @section('css_bottom')
     <link rel="stylesheet" href=" {{asset('css/jquery.scrollbar.css') }}">
 
-
+    <style>
+        .ajax-load {
+            background: #e1e1e1;
+            padding: 10px 0px;
+            width: 100%;
+        }
+    </style>
 
 @show
 
@@ -192,47 +198,33 @@
 <script type="text/javascript" src="{{ asset('js/nprogress.js')  }}"></script>
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/jquery.scrollbar.min.js') }}"></script>
 
     <script>
         $( document ).ready(function() {
-
-
-            function load_unseen_notification() {
-                $.ajax({
-                    url: "{{ url('/load-count-notify') }}",
-                    type: 'GET',
-                    data: {},
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.type == 'success') {
-                            // dispaly con so owr dday
-                            $("._count_notification").html(response.notification_count);
-                        }
-                    }
-                });
-            }
-            load_unseen_notification();
-
-           function content_notification(){
+            var xhr;
+           function content_notification(view){
                $.ajax({
                    url: "{{ url('/load-content-notify') }}",
                    type: 'GET',
                    data: {},
                    dataType: 'json',
                    success: function (response) {
+
                        if (response.type == 'success') {
-                            $("._system_notify").after(response.notification);
+                           // count notifycation
+                           $("._count_notification").html(response.count_notify);
+                           if(view == true){
+                               $("._system_notify").after(response.notification);
+                           }
 
                        }
                    }
                });
            }
-            content_notification();
+            content_notification(true);
 
-            setInterval(function(){ load_unseen_notification(); }, 4000);
-            setInterval(function(){ content_notification(); }, 4000);
+            setInterval(function(){ content_notification(false); }, 30000);
 
             /**
              * đổi trạng thái đơn sang đã đọc
@@ -255,6 +247,55 @@
                     }
                 });
             });
+
+
+            var page = 1;
+
+            $('.dropdown-menu').scroll(function() {
+                if($('.dropdown-menu').scrollTop() + $('.dropdown-menu').height() >= $('.dropdown-menu').height()) {
+
+                    page++;
+                    //console.info(page);
+                  ///  loadMoreData(page);
+                }
+            });
+
+            function loadMoreData(page){
+                if(xhr && xhr.readyState != 4){
+                    xhr.abort();
+                }
+              xhr =   $.ajax(
+                        {
+                            url: "{{ url('/load-content-notify') }}",
+                            type: "get",
+                            data :{
+                                currentPage : page,
+                                pageSize : 10
+                            },
+                            beforeSend: function()
+                            {
+                                $('.ajax-load').show();
+                            }
+                        })
+                        .done(function(data)
+                        {
+
+
+                            if(data.html == " "){
+                             //   $('.ajax-load').html("No more records found");
+                                return;
+                            }
+                            $('.ajax-load').hide();
+                            $("._display_notify").append(data.notification);
+
+
+                        })
+                        .fail(function(jqXHR, ajaxOptions, thrownError)
+                        {
+                            console.info('server not responding...');
+                        });
+            }
+
         });
 
     </script>

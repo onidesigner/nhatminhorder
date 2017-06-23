@@ -68,78 +68,57 @@ class CustomerSystemNotificationController extends Controller
         ]);
     }
 
+
     /**
-     * đếm số thông báo hiển thị cho người dùng
+     * load nội dung và con số đếm hiển thị
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function countNotificationFollowerUser(){
+    public function loadContentNotify( Request $request ){
+        $currentPage = $request->get('currentPage',1);
+        $pageSize = $request->get('pageSize',10);
+
+        $currentPage = $currentPage - 1;
+
         $current_user = User::find(Auth::user()->id);
-        $user_follows = UserFollowObject::where([
-            'follower_id' => $current_user->id,
-            'status' => UserFollowObject::STATUS_ACTIVE
-        ])->get();
-        $list_notification_count = 0;
-        $list_notification = [];
-        if(count($user_follows) > 0){
-            $list_order = [];
-            $list_complaint = [];
-            foreach ($user_follows as $item_followers){
-                /** @var UserFollowObject $item_followers */
-                if($item_followers->object_type == 'ORDER'){
-                    $list_order[] = $item_followers->object_id;
-                }
-            }
-            $list_notification_count =
-                SystemNotification::where('follower_id',"=", $current_user->id)
-                    ->whereIn('notify_status',
-                        [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
-                    #->whereIn('object_id',$list_order)
-                    ->count();
 
-            $list_notification =
-                SystemNotification::where('follower_id',"=", $current_user->id)
-                    ->whereIn('notify_status',
-                        [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
-                   # ->whereIn('object_id',$list_order)
-                   ->orderby('id','desc')
-                    ->get();
 
-        }
+        #count notify
 
-        return response()->json([
-            'notification_count' => $list_notification_count,
-            'list_notification' => $list_notification,
-            'type' => 'success'
-        ]);
-    }
+        $list_notification_count =
+            SystemNotification::where('follower_id',"=", $current_user->id)
+                ->whereIn('notify_status',
+                    [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
+                ->count();
 
-    public function loadContentNotify(){
-        $current_user = User::find(Auth::user()->id);
+        # endcount notify
+
+
         $user_follows = UserFollowObject::where([
             'follower_id' => $current_user->id,
             'status' => UserFollowObject::STATUS_ACTIVE
         ])->get();
         $output = '';
         if(count($user_follows) > 0){
-            $list_order = [];
-            $list_complaint = [];
-            foreach ($user_follows as $item_followers){
-                /** @var UserFollowObject $item_followers */
-                if($item_followers->object_type == 'ORDER'){
-                    $list_order[] = $item_followers->object_id;
-                }
-            }
 
             $list_notification =
-                SystemNotification::where('follower_id',"=", $current_user->id)
-//                    ->whereIn('notify_status',
-//                        [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
-                 #   ->whereIn('object_id',$list_order)
+                $d = SystemNotification::where('follower_id',"=", $current_user->id)
                     ->orderby('id','desc')
+                    ->offset($currentPage*$pageSize)
+                    ->limit($pageSize)
                     ->get();
 
+            $list_notification =
+            $d = SystemNotification::where('follower_id',"=", $current_user->id)
+                ->orderby('id','desc')
+//                ->offset($currentPage*$pageSize)
+//                ->limit($pageSize)
+                ->get();
+
+            $id = [];
            if(count($list_notification) > 0){
                 foreach ($list_notification as $item_notification){
+                    $id[] = $item_notification->id;
                     $user_id = $item_notification->follower_id;
                     if(in_array($item_notification->notify_status,[SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW])){
                         $status = 'Mới';
@@ -167,15 +146,14 @@ class CustomerSystemNotificationController extends Controller
                     
                     
                     ';
-
                 }
-           }else{
-               $output .= '<li><a href="#" class="text-bold text-italic">Bạn không có thông báo mới</a></li>';
            }
         }
         return response()->json([
             'notification' => $output,
-            'type' => 'success'
+            'count_notify' => $list_notification_count,
+            'type' => 'success',
+
         ]);
     }
 

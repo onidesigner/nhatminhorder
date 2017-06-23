@@ -76,6 +76,7 @@ class CommentController extends Controller
 
     }
 
+
     /**
      * @author vanhs
      * @desc Them comment
@@ -84,6 +85,7 @@ class CommentController extends Controller
      */
     private function __comment(Request $request, $user){
         try{
+
             if(empty($request->get('message'))){
                 $this->action_error[] = 'Nội dung không để trống!';
             }
@@ -91,7 +93,6 @@ class CommentController extends Controller
             if(count($this->action_error)){
                 return false;
             }
-            $order_id = $request->get('object_id');
 
 
             $object_id = $request->get('object_id');
@@ -105,48 +106,52 @@ class CommentController extends Controller
             $comment->type_context = Comment::TYPE_CONTEXT_CHAT;
             $comment->is_public_profile = $request->get('is_public_profile');
             $comment->save();
-            $order = Order::findOneByIdOrCode($order_id);
-            $tile = 'Trao đổi trên đơn'.' '.$order->code;
-            $notification_content = $user->name." trao đổi trên đơn hàng ".$order->code;
-            // điều kiện nào để update vào bảng
 
-            // lấy ra giá trị của đối tượng xem có nhận được ko
-            $user_follow = UserFollowObject::where([
-                'object_id' => $object_id,
-                'follower_id' => $user->id,
-                'status' => UserFollowObject::STATUS_ACTIVE
-            ])->get();
-            // nguoi theo doi la nguoi cat tren don luon
-            if(count($user_follow) == 0){
-                $user_follow_object = new UserFollowObject();
-                $user_follow_object->createUserFollow($order,$user);
-            }
+            if($request->get('scope') == Comment::TYPE_EXTERNAL) {
 
-            $list_user_follow = UserFollowObject::where([
-                'object_id' => $object_id,
-                'status' => UserFollowObject::STATUS_ACTIVE
-            ])->get();
+                $order = Order::findOneByIdOrCode($object_id);
+                $tile = 'Trao đổi trên đơn' . ' ' . $order->code;
+                $notification_content = $user->name . " trao đổi trên đơn hàng " . $order->code;
+                // điều kiện nào để update vào bảng
 
-            $list_follower_id = [];
-            foreach($list_user_follow as $item_user){
-                /** @var UserFollowObject $item_user */
-                $list_follower_id[] = $item_user->follower_id;
+                // lấy ra giá trị của đối tượng xem có nhận được ko
+                $user_follow = UserFollowObject::where([
+                    'object_id' => $object_id,
+                    'follower_id' => $user->id,
+                    'status' => UserFollowObject::STATUS_ACTIVE
+                ])->get();
+                // nguoi theo doi la nguoi cat tren don luon
+                if (count($user_follow) == 0) {
+                    $user_follow_object = new UserFollowObject();
+                    $user_follow_object->createUserFollow($order, $user);
+                }
 
-            }
+                $list_user_follow = UserFollowObject::where([
+                    'object_id' => $object_id,
+                    'status' => UserFollowObject::STATUS_ACTIVE
+                ])->get();
 
-            if(count($list_follower_id) > 0){
-                $key = array_search($user->id, $list_follower_id);
-                unset($list_follower_id[$key]);
-            }
-            $list_users = User::whereIn('id',$list_follower_id)->get();
+                $list_follower_id = [];
+                foreach ($list_user_follow as $item_user) {
+                    /** @var UserFollowObject $item_user */
+                    $list_follower_id[] = $item_user->follower_id;
+
+                }
+
+                if (count($list_follower_id) > 0) {
+                    $key = array_search($user->id, $list_follower_id);
+                    unset($list_follower_id[$key]);
+                }
+                $list_users = User::whereIn('id', $list_follower_id)->get();
 
 
-            // kiểm tra xem có cho lưu hay ko
+                // kiểm tra xem có cho lưu hay ko
 
 
-            foreach ($list_users as $item_user){
-                $notify = new SystemNotification();
-                $notify->createSystemNotificationChat($order,$item_user,$tile,$notification_content);
+                foreach ($list_users as $item_user) {
+                    $notify = new SystemNotification();
+                    $notify->createSystemNotificationChat($order, $item_user, $tile, $notification_content);
+                }
             }
                 return true;
         }catch ( Exception $e){

@@ -94,15 +94,41 @@ class OrderBuyingController extends Controller
 
             #region --gawns ngupi theo doi down--
             $customer_user = User::find($order->user_id);
-            $user_follow = new UserFollowObject();
-            $user_follow->createUserFollow($order,$user); // nguoi mua hang
-            $user_follow = new UserFollowObject();
-            $user_follow->createUserFollow($order,$customer_user);
+
+            $exists_user = $this->checkExistsUserFollow($order,$user);
+            if($exists_user){
+                $user_follow = new UserFollowObject();
+                $user_follow->createUserFollow($order,$user); // nguoi mua hang
+            }
+
+            $exists_customer_user = $this->checkExistsUserFollow($order,$user);
+            if($exists_customer_user){
+                $user_follow = new UserFollowObject();
+                $user_follow->createUserFollow($order,$customer_user);
+            }
+
             #endregion --gan nguoi theo doi don--
         }
         $order->save();
 
         return response()->json(['success' => true, 'message' => '']);
+    }
+
+    /**
+     * neu da ton tai thi ko them moi nua
+     * @param $order
+     * @param $user
+     * @return bool
+     */
+    private function checkExistsUserFollow($order,$user){
+        $userExists = UserFollowObject::where([
+            'object_id' => $order->id,
+            'follower_id' => $user->id
+        ])->get();
+        if(count($userExists) > 0){
+            return false;
+        }
+        return true;
     }
 
     /**
