@@ -1,0 +1,46 @@
+/*
+ * Custom CSS
+ * Onizuka Nghia
+ */
+
+.count-info .label {
+    left: 50%;
+    right: auto;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.top-navigation #right-sidebar{
+    top: 50px;
+    bottom: 39px;
+}
+
+.sidebar-container ul.nav-tabs li:not(.active) a:hover{
+    background: #2F4050;
+    color: #fff;
+}
+.sidebar-content .wrapper, .wrapper.sidebar-content {
+    padding-right: 270px !important;
+}
+.sidebar-container .sidebar-message .media-body{
+    display: block;
+    width: auto;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    border-bottom-color: #fff;
+}
+@media (max-width: 768px) {
+    .sidebar-content .wrapper, .body-small .sidebar-content .wrapper {
+        padding-right: 0!important;
+    }
+}
+@media (min-width: 768px) {
+    .top-navigation #right-sidebar {
+        right: 0;
+    }
+}
