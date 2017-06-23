@@ -218,4 +218,11 @@ class CustomerSystemNotificationController extends Controller
             'type' => 'error'
         ]);
     }
+
+
+    public function convertNotification(){
+        $oldNotifycation = CustomerNotification::where([
+
+        ])->get();
+    }
 }
