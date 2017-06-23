@@ -33,9 +33,9 @@
                             <li role="presentation">
                                 <a href="#order-transaction" aria-controls="tab" role="tab" data-toggle="tab">Phí & LS Giao dịch</a>
                             </li>
-                            {{--<li role="presentation">--}}
-                                {{--<a href="#order-complaint" aria-controls="tab" role="tab" data-toggle="tab">Khiếu nại</a>--}}
-                            {{--</li>--}}
+                            <li role="presentation">
+                                <a href="#order-complaint" aria-controls="tab" role="tab" data-toggle="tab">Khiếu nại</a>
+                            </li>
                         </ul>
 
                         <!-- Tab panes -->
