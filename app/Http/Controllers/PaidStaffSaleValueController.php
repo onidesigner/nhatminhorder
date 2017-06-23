@@ -19,6 +19,133 @@ class PaidStaffSaleValueController extends Controller
         $this->middleware('auth');
     }
 
+    protected $_order_receive_ids = [];
+
+    /**
+     * @author vanhs
+     * @desc Lay danh sach don hang da ve cua nv mua hang
+     * @param $start_month
+     * @param $end_month
+     * @param $crane_buying_ids
+     * @return array
+     */
+    private function __getOrdersReceive($start_month, $end_month, $crane_buying_ids){
+        $orders_overrun_list = [];
+
+        if(!count($crane_buying_ids)){
+            return $orders_overrun_list;
+        }
+
+        $crane_buying_ids_string = implode(',', $crane_buying_ids);
+
+        $sql_orders_overrun = "
+        select * from `order` 
+        where 
+            `received_at` >= '".$start_month."' and `received_at` <= '".$end_month."' 
+            and paid_staff_id in (".$crane_buying_ids_string.") 
+            and `status` in ('RECEIVED')
+            and `status` not in ('CANCELLED')
+        order by `received_at` asc
+        ";
+//        var_dump($sql_orders_overrun);
+
+        $orders_overrun = DB::select($sql_orders_overrun);
+
+        if($orders_overrun){
+            $array_check_exits = [];
+            foreach($orders_overrun as $order){
+                $this->_order_receive_ids[] = $order->id;
+
+                $order_buying_month = strtolower(date("m_Y", strtotime($order->bought_at)));
+                $crane_buying_id = $order->paid_staff_id;
+                $key_check = sprintf("%s_%s", $order_buying_month, $crane_buying_id);
+
+                if(isset($array_check_exits[$key_check])){
+                    $order->percent_real_cal = $array_check_exits[$key_check];
+                }else{
+                    $array_check_exits[$key_check] = UserPaidSaleSetting::getPercentRealCalValueWithCraneAndBuyingMonth($crane_buying_id, $order->bought_at);
+                    $order->percent_real_cal = $array_check_exits[$key_check];
+                }
+
+                $order->amount_bargain_real_cal = $order->amount_bargain * $order->percent_real_cal / 100;
+                $order->amount_bargain_real_cal_vnd = $order->amount_bargain_vnd * $order->percent_real_cal / 100;
+
+                $orders_overrun_list[$order->paid_staff_id][] = $order;
+            }
+        }
+        return $orders_overrun_list;
+    }
+
+
+    /**
+     * @author vanhs
+     * @desc Lay danh sach don hang chua ve cua nv mua hang
+     * @param $start_month
+     * @param $end_month
+     * @param $crane_buying_ids
+     * @return array
+     */
+    private function __getOrdersNotReceive($start_month, $end_month, $crane_buying_ids){
+        $orders_buying_list = [];
+
+        if(!count($crane_buying_ids)){
+            return $orders_buying_list;
+        }
+
+        $crane_buying_ids_string = implode(',', $crane_buying_ids);
+
+//        $sql_where = "";
+//        if(count($this->_order_receive_ids)){
+//            $sql_where .= sprintf(" and id not in (%s) ", implode(',', $this->_order_receive_ids));
+//        }
+//        $sql_orders_buying = "
+//            select * from `order`
+//            where
+//                paid_staff_id in (".$crane_buying_ids_string.")
+//                {$sql_where}
+//                and `status` not in ('CANCELLED')
+//            order by bought_at asc
+//        ";
+
+        $sql = "
+        select * from `order` 
+        where `status` not in ('CANCELLED') 
+            and paid_staff_id in ({$crane_buying_ids_string}) 
+            and (received_at is null or received_at > '{$end_month}') 
+        order by bought_at asc;
+        ";
+
+        $orders_buying = DB::select($sql);
+
+        if($orders_buying){
+            foreach($orders_buying as $order){
+                $orders_buying_list[$order->paid_staff_id][] = $order;
+            }
+        }
+        return $orders_buying_list;
+    }
+
+    /**
+     * @author vanhs
+     * @desc Lay danh sach cau hinh luong cua toan bo nv mua hang
+     * @return array
+     */
+    private function __getUsersPaidSettingList(){
+        $crane_value_setting_list = [];
+
+        $sql_crane_value_setting = "
+            select * from user_paid_sale_setting
+            order by id asc
+        ";
+        $crane_value_setting = DB::select($sql_crane_value_setting);
+        if($crane_value_setting){
+            foreach($crane_value_setting as $crane_value_setting_item){
+                $crane_value_setting_list[$crane_value_setting_item->paid_user_id][] = $crane_value_setting_item;
+            }
+        }
+        return $crane_value_setting_list;
+    }
+
     /**
      * @author vanhs
      * @desc Thong ke doanh so mua hang
@@ -65,152 +192,81 @@ class PaidStaffSaleValueController extends Controller
             $crane_buying_list[] = User::find(Auth::user()->id);
         }
 
+        $crane_value_setting_list = $this->__getUsersPaidSettingList($start_month, $end_month);
 
         if($crane_buying_list){
             foreach($crane_buying_list as $crane_buying_list_item){
-                $crane_buying_list_item->total_amount_orders_buying_in_month = 0;//tong tien bao khach
-                $crane_buying_list_item->total_real_amount_orders_buying_in_month = 0;//tong tien thuc mua
+                $crane_buying_list_item->setting = UserPaidSaleSetting::getSettingWithCranePaidId($crane_buying_list_item->id, $start_month);
+                $crane_buying_list_item->crane_value_setting =
+                    isset($crane_value_setting_list[$crane_buying_list_item->id])
+                    ? $crane_value_setting_list[$crane_buying_list_item->id] : [];
+
+                //tong tien bao khach trong thang
+                $crane_buying_list_item->amount_customer_current_month_vnd = UserPaidSaleSetting::getOrderAmountWithCranePaidAndMonth(
+                    $crane_buying_list_item->id,
+                    'customer_amount_vnd',
+                    $start_month,
+                    $end_month
+                );
+                //tong tien thuc mua trong thang
+                $crane_buying_list_item->amount_original_current_month_vnd = UserPaidSaleSetting::getOrderAmountWithCranePaidAndMonth(
+                    $crane_buying_list_item->id,
+                    'amount_original_vnd',
+                    $start_month,
+                    $end_month
+                );
+
+                //tien mac ca trong thang
+//                $crane_buying_list_item->amount_bargain_current_month_vnd = UserPaidSaleSetting::getOrderAmountWithCranePaidAndMonth(
+//                    $crane_buying_list_item->id,
+//                    'amount_bargain_vnd',
+//                    $start_month,
+//                    $end_month
+//                );
+                $crane_buying_list_item->amount_bargain_current_month_vnd = $crane_buying_list_item->amount_customer_current_month_vnd
+                    - $crane_buying_list_item->amount_original_current_month_vnd;
+
+                //phan tram mac ca trong thang
+                $crane_buying_list_item->percent_bargain_current_month = 0;
+                if($crane_buying_list_item->amount_customer_current_month_vnd){
+                    $crane_buying_list_item->percent_bargain_current_month = $crane_buying_list_item->amount_bargain_current_month_vnd * 100
+                        / $crane_buying_list_item->amount_customer_current_month_vnd;
+                }
+
+                //dat chi tieu mac ca trong thang hay khong?
+                $crane_buying_list_item->is_bargain_target = false;
+                if($crane_buying_list_item->setting
+                    && $crane_buying_list_item->percent_bargain_current_month >= $crane_buying_list_item->setting->require_min_bargain_percent){
+                    $crane_buying_list_item->is_bargain_target = true;
+                }
+
+                //phan tram thuc tinh doanh so
+                $crane_buying_list_item->rose_percent_real_cal = 0;
+                if($crane_buying_list_item->setting){
+                    $crane_buying_list_item->rose_percent_real_cal = $crane_buying_list_item->is_bargain_target
+                        ? $crane_buying_list_item->setting->rose_percent : $crane_buying_list_item->setting->rose_percent_min;
+                }
+
                 $crane_buying_ids[] = $crane_buying_list_item->id;
             }
         }
 
-        $crane_buying_ids_string = implode(',', $crane_buying_ids);
+        //don hang da ve
+        $orders_overrun_list = $this->__getOrdersReceive($start_month, $end_month, $crane_buying_ids);
 
-        //don hang phat sinh
-        $sql_orders_buying = "
-            select * from `order` 
-            where 
-            paid_staff_id in (".$crane_buying_ids_string.") 
-            and `status` not in ('CANCELLED', 'RECEIVED')
-            order by bought_at asc
-        ";
-        $orders_buying = DB::select($sql_orders_buying);
-        $orders_buying_list = [];
-        if($orders_buying){
-            foreach($orders_buying as $order){
-                $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
-                $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
-
-                $order->amount_original = doubleval($order->amount_original);
-                $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
-
-                $order->amount_bargain = $order->amount_customer - $order->amount_original;
-
-                //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
-                if($order->amount_original <= 0){
-                    $order->amount_bargain = 0;
-                }
-                $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
-
-                $orders_buying_list[$order->paid_staff_id][] = $order;
-            }
-        }
-
-        //don hang doanh so
-        $sql_orders_overrun = "
-        select * from `order` 
-        where 
-        `received_at` >= '".$start_month."' and `received_at` <= '".$end_month."' 
-        and paid_staff_id in (".$crane_buying_ids_string.") 
-        and `status` in ('RECEIVED')
-        and `status` not in ('CANCELLED')
-        order by `received_at` asc
-        ";
-//        echo $sql_orders_overrun;
-        $orders_overrun = DB::select($sql_orders_overrun);
-        $orders_overrun_list = [];
-        if($orders_overrun){
-            foreach($orders_overrun as $order){
-                $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
-                $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
-
-                $order->amount_original = doubleval($order->amount_original);
-                $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
-
-                $order->amount_bargain = $order->amount_customer - $order->amount_original;
-
-                //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
-                if($order->amount_original <= 0){
-                    $order->amount_bargain = 0;
-                }
-                $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
-
-                $orders_overrun_list[$order->paid_staff_id][] = $order;
-            }
-        }
-
-        $crane_value_setting_list = [];
-        $sql_crane_value_setting = "
-            select * from user_paid_sale_setting 
-            where paid_user_id in (".$crane_buying_ids_string.") 
-            order by id asc
-        ";
-        $crane_value_setting = DB::select($sql_crane_value_setting);
-        if($crane_value_setting){
-            foreach($crane_value_setting as $crane_value_setting_item){
-                $crane_value_setting_list[$crane_value_setting_item->paid_user_id][] = $crane_value_setting_item;
-            }
-        }
-
-//        $sql = "
-//
-//        select * from `order`
-//        where
-//        ((`received_at` >= '".$start_month."' and `received_at` <= '".$end_month."')
-//        or (`bought_at` >= '".$start_month."' and `bought_at` <= '".$end_month."'))
-//        and paid_staff_id in (".$crane_buying_ids_string.")
-//        and `status` not in ('CANCELLED')
-//
-//        ";
-//
-//        $orders = DB::select($sql);
-//        $orders_with_crane_buying = [];
-//        if($orders){
-//            foreach($orders as $order){
-//
-//                $order->amount_customer = $order->amount + $order->domestic_shipping_fee;
-//                $order->amount_customer_vnd = $order->amount_customer * $order->exchange_rate;
-//
-//                $order->amount_original_vnd = $order->amount_original * $order->exchange_rate;
-//
-//                $order->amount_bargain = $order->amount_customer - $order->amount_original;
-//
-//                //neu khong dien tong gia thuc mua thi don nay coi nhu khong mac ca duoc gi
-//                $order->amount_original = doubleval($order->amount_original);
-//                if($order->amount_original <= 0){
-//                    $order->amount_bargain = 0;
-//                }
-//                $order->amount_bargain_vnd = $order->amount_bargain * $order->exchange_rate;
-//
-//                $order->is_done = $order->status == Order::STATUS_RECEIVED;
-//
-//                $order->amount_bargain_done = 0;
-//                $order->amount_bargain_done_vnd = 0;
-//                $order->amount_bargain_not_done = 0;
-//                $order->amount_bargain_not_done_vnd = 0;
-//
-//                if($order->is_done){
-//                    $order->amount_bargain_done = $order->amount_bargain;
-//                    $order->amount_bargain_done_vnd = $order->amount_bargain_vnd;
-//                }else{
-//                    $order->amount_bargain_not_done = $order->amount_bargain;
-//                    $order->amount_bargain_not_done_vnd = $order->amount_bargain_vnd;
-//                }
-//
-//                $orders_with_crane_buying[$order->paid_staff_id][] = $order;
-//
-//            }
-//        }
+        //don hang chua ve
+        $orders_buying_list = $this->__getOrdersNotReceive($start_month, $end_month, $crane_buying_ids);
 
         return view('paid_staff_sale_value', [
            'page_title' => 'Doanh số, lương mua hàng',
             'crane_buying_list' => $crane_buying_list,
-            'orders_with_crane_buying' => [],
             'orders_buying_list' => $orders_buying_list,
             'orders_overrun_list' => $orders_overrun_list,
             'crane_value_setting_list' => $crane_value_setting_list,
             'begin_year' => date('Y'),
-            'end_year' => (date('Y') + 10)
+            'end_year' => (date('Y') + 10),
+            'start_month' => $start_month,
+            'end_month' => $end_month
         ]);
 
     }

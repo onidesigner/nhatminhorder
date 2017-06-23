@@ -527,7 +527,6 @@
                 'object_type' => App\Comment::TYPE_OBJECT_ORDER,
                 'scope_view' => App\Comment::TYPE_EXTERNAL
             ])
-
         </div>
     </div>
 @endsection
