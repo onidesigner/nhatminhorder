@@ -83,7 +83,7 @@
                                                         <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
                                                         <input type="hidden" name="item_id" value="{{$item->id}}">
                                                         <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
-                                                        <input type="hidden" name="response" value="customer/cart">
+                                                        <input type="hidden" name="response" value="onicustomer/cart">
                                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
                                                         <a class="___btn-action text-muted"
@@ -107,7 +107,7 @@
                                                     <input type="hidden" name="item_id" value="{{$item->id}}">
                                                     <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
                                                     <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                                    <input type="hidden" name="response" value="customer/cart">
+                                                    <input type="hidden" name="response" value="onicustomer/cart">
 
                                                     <input
                                                             data-toggle="_tooltip"

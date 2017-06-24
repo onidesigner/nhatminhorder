@@ -270,3 +270,12 @@ Route::post('/PaidStaffSaleValue/Setting', 'PaidStaffSaleValueController@setting
 Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 
 
+Route::get('/onihome', 'OniHomeController@index');
+Route::get('/cart', 'OniDev\CartController@showCart');
+Route::get('/deposit', 'OniDev\CartController@showDeposit');
+Route::get('/deposit-success', 'OniDev\CartController@depositSuccess');
+
+#region -- don hang --
+Route::get('/orders', 'OniDev\OrderController@orders');
+Route::get('/order/{id}', 'OniDev\OrderController@order');
+Route::post('/order/{id}/action', 'OniDev\OrderController@action');

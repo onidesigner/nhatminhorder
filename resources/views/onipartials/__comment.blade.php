@@ -39,7 +39,7 @@
                     <input type="hidden" name="is_public_profile" value="1">
                     <input type="hidden" name="anchor" value="#anchor-box-comment">
                     <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                    <input type="hidden" name="response" value="partials/__comment">
+                    <input type="hidden" name="response" value="onipartials/__comment">
 
                     <input
                             name="message"
@@ -101,7 +101,7 @@
                     <input type="hidden" name="is_public_profile" value="1">
                     <input type="hidden" name="anchor" value="#anchor-box-comment">
                     <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                    <input type="hidden" name="response" value="partials/__comment">
+                    <input type="hidden" name="response" value="onipartials/__comment">
                     <input
                             name="message"
                             type="text"

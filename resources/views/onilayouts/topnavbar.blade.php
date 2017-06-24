@@ -11,7 +11,7 @@ if(Auth::check()){
             ],
 
             [
-                'url' => url('home'),
+                'url' => url('onihome'),
                 'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
             ],

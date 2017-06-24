@@ -9,7 +9,7 @@
         Đơn hàng ở trạng thái "Đang Giao Hàng", sau 3 ngày khách không ấn "Đã Nhận", hệ thống sẽ tự động chuyển sang trạng thái "Đã Nhận".
     </div>
     <div class="ibox-content m-b-sm border-bottom">
-        <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
+        <form onchange="this.submit();" action="{{ url('orders')  }}" method="get" id="_form-orders">
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
@@ -106,8 +106,19 @@
                                             @if($order->status == \App\Order::STATUS_DELIVERING)
                                                 <button class="btn-white btn btn-xs _btn_change_status" data-order-id="{{ $order->id }}" id ="_btn_change_status_{{ $order->id }}" type="button">Đã nhận</button>
                                             @endif
-                                            @if($order->status != \App\Order::STATUS_RECEIVED)
-                                                <button class="btn-white btn btn-xs">Hủy đơn</button>
+                                            @if($order->status == \App\Order::STATUS_BOUGHT)
+                                                <form class="___form">
+                                                    <input type="hidden" name="action" value="cancel_order">
+                                                    <input type="hidden" name="method" value="post">
+                                                    <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                    <input type="hidden" name="response" value="onicustomer/order_detail">
+
+                                                    <a
+                                                        style="display: inline-block;width: 100%;padding: 0 15px;"
+                                                        href="javascript:void(0)"
+                                                        class="btn-white btn btn-xs ___btn-action">Hủy đơn</a>
+                                                </form>
                                             @endif
                                         </div>
                                     </td>

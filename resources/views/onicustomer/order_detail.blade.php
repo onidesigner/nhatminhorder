@@ -43,7 +43,7 @@
                                         <input type="hidden" name="method" value="post">
                                         <input type="hidden" name="service" value="{{$service['code']}}">
                                         <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
-                                        <input type="hidden" name="response" value="customer/order_detail">
+                                        <input type="hidden" name="response" value="onicustomer/order_detail">
                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
                                         <?php
