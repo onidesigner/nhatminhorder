@@ -105,7 +105,7 @@
                                 <ul class="_display_notify">
                                     <li class="dropdown-header _system_notify" style="height: 40px">
                                         <span class="pull-left" >Thông báo</span>
-                                        <span class="pull-right _mark_read_all " style="cursor: pointer!important;color: #365899;">Đánh dấu tất cả đã đọc</span>
+                                        {{--<span class="pull-right _mark_read_all " style="cursor: pointer!important;color: #365899;">Đánh dấu tất cả đã đọc</span>--}}
                                     </li>
 
                                     {{--<li class="dropdown-footer">--}}
