@@ -317,12 +317,12 @@ if(Auth::check()){
                         <i class="fa fa-user-circle-o" aria-hidden="true"></i> {{ Auth::user()->name }}
                     </a>
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                        <li><a href="{{ url('san-pham-da-luu')  }}">Sản phẩm đã lưu</a></li>
+                        <li><a href="{{ url('wishlist')  }}">Sản phẩm đã lưu</a></li>
                         <li>
                             @if(Auth::user()->section == App\User::SECTION_CRANE)
                                 <a href="{{ url('user/detail', Auth::user()->id)  }}">
                                     @else
-                                        <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
+                                        <a href="{{ url('user', Auth::user()->id)  }}">
                                             @endif
                                             Thông tin cá nhân
                                         </a>

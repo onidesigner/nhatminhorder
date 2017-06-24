@@ -270,12 +270,22 @@ Route::post('/PaidStaffSaleValue/Setting', 'PaidStaffSaleValueController@setting
 Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 
 
+
+# Redesign Customer template
 Route::get('/onihome', 'OniHomeController@index');
 Route::get('/cart', 'OniDev\CartController@showCart');
 Route::get('/deposit', 'OniDev\CartController@showDeposit');
 Route::get('/deposit-success', 'OniDev\CartController@depositSuccess');
 
-#region -- don hang --
 Route::get('/orders', 'OniDev\OrderController@orders');
 Route::get('/order/{id}', 'OniDev\OrderController@order');
 Route::post('/order/{id}/action', 'OniDev\OrderController@action');
+
+Route::get('/wishlist', 'OniDev\ProductFavoriteController@indexs');
+
+
+Route::get('/user/{id}', 'OniDev\UserController@detail');
+Route::post('/user/phone', 'OniDev\UserController@add_user_phone');
+Route::put('/user/phone', 'OniDev\UserController@delete_user_phone');
+Route::get('/user/edit/{id}', 'OniDev\UserController@get_user');
+Route::post('/user/edit/{id}', 'OniDev\UserController@update_user');

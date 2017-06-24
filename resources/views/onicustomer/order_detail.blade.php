@@ -475,10 +475,12 @@
 
 @section('header-scripts')
     <link href="{!! asset('oniasset/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') !!}" rel="stylesheet"/>
+    <link href="{!! asset('oniasset/css/plugins/footable/footable.core.css') !!}" rel="stylesheet"/>
 @endsection
 
 @section('footer-scripts')
     <script src="{!! asset('oniasset/js/plugins/slimscroll/jquery.slimscroll.min.js') !!}"></script>
+    <script src="{{ asset('oniasset/js/plugins/footable/footable.all.min.js') }}"></script>
 
     <script>
     $(document).ready(function() {
@@ -488,6 +490,8 @@
         railOpacity: 0.4,
         wheelStep: 10
         });
+
+        $('.footable').footable();
     });
     </script>
 @endsection
