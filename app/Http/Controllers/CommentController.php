@@ -150,7 +150,7 @@ class CommentController extends Controller
 
                 foreach ($list_users as $item_user) {
                     $notify = new SystemNotification();
-                    $notify->createSystemNotificationChat($order, $item_user, $tile, $notification_content);
+                    $notify->createSystemNotificationChat($order, $item_user, $tile, $notification_content,$user);
                 }
             }
                 return true;

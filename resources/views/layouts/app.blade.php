@@ -103,7 +103,10 @@
                             </a>
                             <div class="dropdown-menu" style="max-height: 500px; overflow-y: auto;">
                                 <ul class="_display_notify">
-                                    <li class="dropdown-header _system_notify">Thông báo</li>
+                                    <li class="dropdown-header _system_notify" style="height: 40px">
+                                        <span class="pull-left" >Thông báo</span>
+                                        <span class="pull-right _mark_read_all " style="cursor: pointer!important;color: #365899;">Đánh dấu tất cả đã đọc</span>
+                                    </li>
 
                                     {{--<li class="dropdown-footer">--}}
                                         {{--<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
@@ -179,14 +182,10 @@
 
 @section('css_bottom')
     <link rel="stylesheet" href=" {{asset('css/jquery.scrollbar.css') }}">
+    <link rel="stylesheet" href=" {{asset('css/font-awesome.min.css') }}">
 
-    <style>
-        .ajax-load {
-            background: #e1e1e1;
-            padding: 10px 0px;
-            width: 100%;
-        }
-    </style>
+
+
 
 @show
 
@@ -213,7 +212,12 @@
 
                        if (response.type == 'success') {
                            // count notifycation
-                           $("._count_notification").html(response.count_notify);
+                           if(response.count_notify != 0){
+                               $("._count_notification").html(response.count_notify);
+                           }else{
+                               $("._count_notification").hide();
+                           }
+
                            if(view == true){
                                $("._system_notify").after(response.notification);
                            }
@@ -224,7 +228,7 @@
            }
             content_notification(true);
 
-            setInterval(function(){ content_notification(false); }, 30000);
+            /*setInterval(function(){ content_notification(false); }, 30000);*/
 
             /**
              * đổi trạng thái đơn sang đã đọc

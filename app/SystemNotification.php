@@ -30,7 +30,7 @@ class SystemNotification extends Model
      * @param $title
      * @param $notification_content
      */
-    public function createSystemNotificationChat($object,$follower,$title,$notification_content){
+    public function createSystemNotificationChat($object,$follower,$title,$notification_content,$current_user){
 
        $system_notification = SystemNotification::where([
             'object_id' => $object->id,
@@ -44,6 +44,7 @@ class SystemNotification extends Model
             $this->object_id = $object->id;
             $this->object_type = self::TYPE_ORDER;
             $this->follower_id = $follower->id;
+            $this->user_id = $current_user->id;
             $this->title = $title;
             $this->notification_content = $notification_content;
             $this->type = self::TYPE_READ;
@@ -60,9 +61,10 @@ class SystemNotification extends Model
      * @param $title
      * @param $notification_content
      */
-    public function createSystemNotificationFinance($follower,$title,$notification_content){
+    public function createSystemNotificationFinance($follower,$title,$notification_content,$current_user){
         $this->object_type = self::TYPE_FINANCE;
         $this->follower_id = $follower->id;
+        $this->user_id = $current_user->id;
         $this->title = $title;
         $this->notification_content = $notification_content;
         $this->type = self::TYPE_VIEW;
@@ -75,11 +77,11 @@ class SystemNotification extends Model
     /**
      * neu chuyen doi trang thai
      * @param $object
-     * @param $follower
      * @param $title
      * @param $notification_content
+     * @param $current_user
      */
-    public function createSystemNotificationOrderStatus($object,$title,$notification_content){
+    public function createSystemNotificationOrderStatus($object,$title,$notification_content,$current_user){
         $user_follower = UserFollowObject::where([
             'object_id' => $object->id,
             'object_type' => self::TYPE_ORDER,
@@ -87,15 +89,20 @@ class SystemNotification extends Model
         ])->get();
 
         foreach ($user_follower as $item_user){
-            $this->object_id = $object->id;
-            $this->object_type = self::TYPE_ORDER;
-            $this->follower_id = $item_user->id;
-            $this->title = $title;
-            $this->notification_content = $notification_content;
-            $this->type = self::TYPE_VIEW;
-            $this->notify_status = self::TYPE_VIEW;
+            if($item_user->follower_id != $current_user->id){
+                $notify = new SystemNotification();
+                $notify->object_id = $object->id;
+                $notify->object_type = self::TYPE_ORDER;
+                $notify->follower_id = $item_user->follower_id;
+                $notify->user_id = $current_user->id;
+                $notify->title = $title;
+                $notify->notification_content = $notification_content;
+                $notify->type = self::TYPE_VIEW;
+                $notify->notify_status = self::TYPE_VIEW;
 
-            $this->save();
+                $notify->save();
+            }
+
         }
 
 

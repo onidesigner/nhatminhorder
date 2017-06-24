@@ -25,7 +25,7 @@ class UserFollowObject extends Model
      * @param $order
      * @param $follow_user
      */
-    public  function createUserFollow($order,$follow_user){
+    public function createUserFollow($order,$follow_user){
         $this->object_id = $order->id;
         $this->object_type = self::TYPE_ORDER;
         $this->follower_id = $follow_user->id;

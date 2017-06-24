@@ -96,12 +96,13 @@ class OrderBuyingController extends Controller
             $customer_user = User::find($order->user_id);
 
             $exists_user = $this->checkExistsUserFollow($order,$user);
+            // nếu user đó đã tồn tại mà
             if($exists_user){
                 $user_follow = new UserFollowObject();
                 $user_follow->createUserFollow($order,$user); // nguoi mua hang
             }
 
-            $exists_customer_user = $this->checkExistsUserFollow($order,$user);
+            $exists_customer_user = $this->checkExistsUserFollow($order,$customer_user);
             if($exists_customer_user){
                 $user_follow = new UserFollowObject();
                 $user_follow->createUserFollow($order,$customer_user);
@@ -126,9 +127,26 @@ class OrderBuyingController extends Controller
             'follower_id' => $user->id
         ])->get();
         if(count($userExists) > 0){
-            return false;
+            
         }
         return true;
+    }
+
+    /**
+     * neu thay doi nguoi mua don
+     * thi update lại id của nguoi mua đơn đó
+     * @param $order
+     * @return bool
+     */
+    private function checkCraneSaff($order){
+        $follower_order = UserFollowObject::where([
+            'object_id' => $order->id
+        ])->get();
+        if(count($follower_order) > 0){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**

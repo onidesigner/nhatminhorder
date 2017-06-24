@@ -309,18 +309,11 @@ class UserTransactionController extends Controller
                         $send_sms->sendSmsWhenCreateTransaction($customer,$content);
 
                         // thêm thông báo tai chinh , hien thi tren trang chu
-                        $array_data = [
-                            "notification_content" =>  $content_notify,
-                            "type" => CustomerNotification::TYPE_FINANCE,
-                            "is_view" => CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,
-                            "section" => User::SECTION_CUSTOMER
-                        ];
                         
-                        #$customer_notification = new CustomerNotification();
-                        #$customer_notification->createNewNotification($customer->id,Order::NOT_ORDER,$array_data);
+
                         $title = "Điều chỉnh tài chính";
                         $notify = new SystemNotification();
-                        $notify->createSystemNotificationFinance($customer,$title,$content_notify);
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
 
                     }
 
@@ -354,7 +347,7 @@ class UserTransactionController extends Controller
                         // thêm thông báo tai chinh , hien thi tren trang chu
                         $title = "Điều chỉnh tài chinh";
                         $notify = new SystemNotification();
-                        $notify->createSystemNotificationFinance($customer,$title,$content_notify);
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
                     }
 
                     break;
@@ -407,7 +400,7 @@ class UserTransactionController extends Controller
 
                         $title = "Điều chỉnh tài chính";
                         $notify = new SystemNotification();
-                        $notify->createSystemNotificationFinance($customer,$title,$content_notify);
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
 
 
                     }

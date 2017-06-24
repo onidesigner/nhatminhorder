@@ -540,7 +540,7 @@ class OrderController extends Controller
             $content = " Đơn hàng chuyển sang trạng thái ". $status_title_after_change;
             #CustomerNotification::notificationCustomer($order,$title,sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change),'ORDER');
             $notify = new SystemNotification();
-            $notify->createSystemNotificationOrderStatus($order,$title,$content);
+            $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
         }
 
@@ -927,7 +927,7 @@ class OrderController extends Controller
         $message =   " đơn hàng ".$order->code." đã được mua thành công ";
         $content = $user->name. $message;
         $notify = new SystemNotification();
-        $notify->createSystemNotificationOrderStatus($order,$title,$content);
+        $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
 
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
@@ -956,11 +956,6 @@ class OrderController extends Controller
                 $user_transaction_amount
             );
 
-//            $title = "Tài chính đơn hàng ".$order->code;
-//            $content = $user->name." ".$message.' trên đơn '.$order->code;
-////            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
-//            $notify = new SystemNotification();
-//            $notify->createSystemNotificationFinance();
         }
 
         return true;
@@ -1013,7 +1008,7 @@ class OrderController extends Controller
         $content = $user->name . " hủy đơn hàng";
        
         $notify = new SystemNotification();
-        $notify->createSystemNotificationOrderStatus($order,$title,$content);
+        $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
 
         return true;

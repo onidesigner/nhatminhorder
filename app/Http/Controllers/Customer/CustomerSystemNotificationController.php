@@ -102,14 +102,7 @@ class CustomerSystemNotificationController extends Controller
         if(count($user_follows) > 0){
 
             $list_notification =
-                $d = SystemNotification::where('follower_id',"=", $current_user->id)
-                    ->orderby('id','desc')
-                    ->offset($currentPage*$pageSize)
-                    ->limit($pageSize)
-                    ->get();
-
-            $list_notification =
-            $d = SystemNotification::where('follower_id',"=", $current_user->id)
+                SystemNotification::where('follower_id',"=", $current_user->id)
                 ->orderby('id','desc')
 //                ->offset($currentPage*$pageSize)
 //                ->limit($pageSize)
@@ -119,20 +112,19 @@ class CustomerSystemNotificationController extends Controller
            if(count($list_notification) > 0){
                 foreach ($list_notification as $item_notification){
                     $id[] = $item_notification->id;
-                    $user_id = $item_notification->follower_id;
+                    $color = '';
                     if(in_array($item_notification->notify_status,[SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW])){
                         $status = 'Mới';
+                        $color = 'badge badge-danger';
                     }else{
-                        $status = 'Đã Xem';
+                        $status = '<i class="fa fa-check" aria-hidden="true" style="color: #0e90d2"></i>';
                     }
 
-                    $user = User::find($user_id);
-                    // gawns link vao comment
                     $output .= '
                     
                           <li class="_change_status" data-follower-id="'.$item_notification->id.'">          
                                         <a  target="_blank" href="'.$this->buidLink($item_notification).'" >
-                                            <span class="badge badge-danger pull-right">'.
+                                            <span class=" '. $color.' pull-right">'.
                                                                 $status
                                             .'</span>
                                             <div class="message">
@@ -143,8 +135,6 @@ class CustomerSystemNotificationController extends Controller
                                             </div>
                                         </a>
                                     </li>
-                    
-                    
                     ';
                 }
            }

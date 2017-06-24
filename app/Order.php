@@ -950,7 +950,7 @@ class Order extends Model
                 #region --tạo notification cho khách--
 //
                 $notify = new SystemNotification();
-                $notify->createSystemNotificationOrderStatus($this,$title,$content);
+                $notify->createSystemNotificationOrderStatus($this,$title,$content,$create_user);
 
                 #endregion -- kết thúc tạo notification cho khách --
 
@@ -993,7 +993,7 @@ class Order extends Model
                 $content_message = sprintf(" đơn hàng %s chuyển sang trạng thái %s (Hàng đã về kho phân phối, sẵn sàng giao cho quý khách)",$this->code ,$status_title_after_change);
                 $content = $create_user->name.$content_message;
                 $notify = new SystemNotification();
-                $notify->createSystemNotificationOrderStatus($this,$title,$content);
+                $notify->createSystemNotificationOrderStatus($this,$title,$content,$create_user);
                 #endregion -- kết thúc tạo notification cho khách --
 
             }
@@ -1032,7 +1032,7 @@ class Order extends Model
                 $content_message = sprintf(" đơn hàng %s chuyển sang trạng thái %s (Hàng đang trên đường đi giao cho quý khách)", $this->code,$status_title_after_change);
                 $content = $create_user->name.$content_message;
                 $notify = new SystemNotification();
-                $notify->createSystemNotificationOrderStatus($this,$title,$content);
+                $notify->createSystemNotificationOrderStatus($this,$title,$content,$create_user);
                 #endregion -- kết thúc tạo notification cho khách --
             }
             #endregion
