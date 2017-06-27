@@ -19,11 +19,13 @@ class Complaints extends Model
     const STATUS_CREATE = 'CREATE'; // khoi tao
     const STATUS_ACCEPT = 'ACCEPT'; // chap nhan
     const STATUS_FINISH = 'FINISH'; // hoan thanh
+    const STATUS_DOING = 'DOING'; // đang xử lý
     const STATUS_REJECT = 'REJECT'; // tu cho
 
     public static $alias_array = [
         self::STATUS_CREATE => 'Khởi tạo',
-        self::STATUS_ACCEPT => 'Tiếp nhận và xử lý',
+        self::STATUS_ACCEPT => 'Tiếp nhận',
+        self::STATUS_DOING => 'Đang xử lý',
         self::STATUS_FINISH => 'Hoàn thành',
         self::STATUS_REJECT => 'Từ chối'
     ];
@@ -39,7 +41,7 @@ class Complaints extends Model
             'order_id' => $complaint['order_id'],
             'customer_id' => $complaint['customer_id'],
             'description' => $complaint['comment'],
-            'status' => $complaint['status'], // trang thai la khoi tao
+            'status' => self::STATUS_CREATE, // trang thai la khoi tao
             'title' => $complaint['title'],
             'created_time' =>   date('Y-m-d H:i:s',time())
         ]);

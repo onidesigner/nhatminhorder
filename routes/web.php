@@ -191,6 +191,10 @@ Route::get('/view-notification-crane','NotificationController@changeStatus');
 #region --danh sách khiếu nại --
 Route::get('/tao-khieu-nai/{order_id}','Customer\ComplaintServiceController@index');
 Route::get('/danh-sach-khieu-nai','Customer\ComplaintServiceController@listComplaint');
+
+Route::post('/upload-image','Customer\ComplaintServiceController@uploadImageInComplaint');
+// gửi dữ liệu tạo khiếu nại
+Route::post('/khach-hang-tao-khieu-nai','Customer\ComplaintServiceController@createComplaintCustomer');
 #endregion --danh sách khiếu nại--
 #region -- router tạo khiếu nại người bán--
 Route::post('/create-complaint','Customer\ComplaintServiceController@createComplaint');
@@ -268,5 +272,7 @@ Route::get('/SystemRunCheck/ProblemTypeHtml', 'SystemRunCheckController@problemT
 Route::get('/PaidStaffSaleValue', 'PaidStaffSaleValueController@index');
 Route::post('/PaidStaffSaleValue/Setting', 'PaidStaffSaleValueController@setting');
 Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
+
+
 
 
