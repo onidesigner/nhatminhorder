@@ -5,50 +5,94 @@
 @endsection
 
 @section('content')
-    <div class="alert alert-warning">
-        Đơn hàng ở trạng thái "Đang Giao Hàng", sau 3 ngày khách không ấn "Đã Nhận", hệ thống sẽ tự động chuyển sang trạng thái "Đã Nhận".
-    </div>
-    <div class="ibox-content m-b-sm border-bottom">
-        <form onchange="this.submit();" action="{{ url('orders')  }}" method="get" id="_form-orders">
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label class="control-label" for="order_code">Order ID</label>
-                        <input type="text" placeholder="Mã đơn..." id="order_code" name="order_code" value="{{  @$params['order_code'] }}" class="form-control">
-                        <input type="hidden" placeholder="Mã khách hoặc email..." name="customer_code_email" value="{{ @$params['customer_code_email']  }}">
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content orderbox-content">
+                        <a class="btn btn-block btn-primary compose-mail" href="#">Tạo đơn hàng mới</a>
+                        <div class="space-25"></div>
+                        <div class="file-manager">
+                            <h5>Đơn hàng</h5>
+                            <ul class="folder-list m-b-md" style="padding: 0">
+                                <li>
+                                    <a href="{{ url('orders') }}">
+                                        Tất cả <!--<span class="label label-warning pull-right">16</span>-->
+                                    </a>
+                                </li>
+
+                                @foreach($status_list as $status_list_item)
+                                    <?php   if($status_list_item['selected']) $selected='selected';
+                                            else $selected='';?>
+                                        <li>
+                                            <a href="{{ url('orders?status='.$status_list_item['key']) }}" class="{{$selected}}" data-status="{{ $status_list_item['key'] }}">
+                                                {{ $status_list_item['val']  }}
+                                                @if($status_list_item['count'])
+                                                <span class="label label-warning pull-right">{{ $status_list_item['count']  }}</span>
+                                                @endif
+                                            </a>
+                                        </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    @foreach($status_list as $status_list_item)
-                        @if($status_list_item['selected'])
-                            <a class="_select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}</span>
-                            </a>
-                        @else
-                            <a class="_select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                <span class="label label-success"><span>{{ $status_list_item['val']  }}</span></span>
-                            </a>
-                        @endif
-                    @endforeach
+            <div class="col-lg-9 order-box animated fadeInRight">
+                <div class="order-box-header">
+                    <div class="order-tools tooltip-demo">
+                        <form onchange="this.submit();" action="{{ url('orders')  }}" method="get" id="_form-orders">
+                            <div class="row">
+                                <!-- Ma don hang -->
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label" for="order_code">Mã đơn hàng</label>
+                                        <input type="text" class="form-control input-sm" placeholder="Nhập mã đơn hàng" id="order_code" name="order_code" value="{{  @$params['order_code'] }}">
+                                    </div>
+                                </div>
+                                <!-- Thoi gian -->
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Thời gian</label>
+                                        <div class="input-daterange input-group" id="datepicker">
+                                            <input type="text" class="input-sm form-control" name="start" value="{{  @$params['start'] }}"/>
+                                            <span class="input-group-addon">đến</span>
+                                            <input type="text" class="input-sm form-control" name="end" value="{{  @$params['end'] }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Trang thai -->
+                                <div class="col-sm-12">
+                                    <div>
+                                        @foreach($status_list as $status_list_item)
+                                            @if($status_list_item['selected'])
+                                                <a class="btn btn-sm btn-danger m-b-xs _select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                                    <i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}
+                                                </a>
+                                            @else
+                                                <a class="btn btn-sm btn-primary m-b-xs _select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                                    <span>{{ $status_list_item['val']  }}</span>
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                        <input type="hidden" name="status" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" name="status" value="">
-        </form>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox">
-                <div class="ibox-content">
+                <div class="alert alert-warning">
+                    Đơn hàng ở trạng thái "Đang Giao Hàng", sau 3 ngày khách không ấn "Đã Nhận", hệ thống sẽ tự động chuyển sang trạng thái "Đã Nhận".
+                </div>
+                <div class="order-box-content">
                     @if(count($orders))
-                        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                        <table class="footable table table-stripped toggle-arrow-tiny table-hover table-order" data-page-size="15">
                             <thead>
                             <tr>
 
-                                <th style="width:120px">Mã đơn hàng</th>
-                                <th data-sort-ignore="true" data-hide="phone">Đơn hàng</th>
+                                <th style="width:130px">Mã đơn hàng</th>
+                                <th data-sort-ignore="true" data-hide="phone">Thông tin đơn hàng</th>
                                 <th data-sort-ignore="true" data-hide="phone,tablet">Phí trên đơn</th>
                                 <th data-sort-ignore="true" data-hide="phone">Thời gian</th>
                                 <th>Trạng thái</th>
@@ -76,8 +120,8 @@
                                                 <p>
                                                     {!! $order_fee_item['label'] !!}:
                                                     <span class="text-danger">
-                                                                <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
-                                                            </span>
+                                                                            <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
+                                                                        </span>
                                                 </p>
                                             @endforeach
                                         </small>
@@ -95,9 +139,9 @@
                                         </small>
                                     </td>
                                     <td>
-                                    <span id="_order_status_{{  $order->id }}"class="label label-primary">
-                                        {{ App\Order::getStatusTitle($order->status)  }}
-                                    </span>
+                                                <span id="_order_status_{{  $order->id }}"class="label label-primary">
+                                                    {{ App\Order::getStatusTitle($order->status)  }}
+                                                </span>
                                     </td>
                                     <td class="text-right">
                                         <div class="btn-group">
@@ -115,9 +159,9 @@
                                                     <input type="hidden" name="response" value="onicustomer/order_detail">
 
                                                     <a
-                                                        style="display: inline-block;width: 100%;padding: 0 15px;"
-                                                        href="javascript:void(0)"
-                                                        class="btn-white btn btn-xs ___btn-action">Hủy đơn</a>
+                                                            style="display: inline-block;width: 100%;padding: 0 15px;"
+                                                            href="javascript:void(0)"
+                                                            class="btn-white btn btn-xs ___btn-action">Hủy đơn</a>
                                                 </form>
                                             @endif
                                         </div>
@@ -137,13 +181,25 @@
 
 @section('header-scripts')
     <link href="{!! asset('oniasset/css/plugins/footable/footable.core.css') !!}" rel="stylesheet"/>
+    <link href="{!! asset('oniasset/css/plugins/datapicker/datepicker3.css') !!}" rel="stylesheet"/>
+    <link href="{!! asset('oniasset/css/plugins/select2/select2.min.css') !!}" rel="stylesheet"/>
 @endsection
 
 @section('footer-scripts')
+    <script src="{{ asset('oniasset/js/plugins/datapicker/bootstrap-datepicker.js') }}"></script>
     <script src="{{ asset('oniasset/js/plugins/footable/footable.all.min.js') }}"></script>
+    <script src="{{ asset('oniasset/js/plugins/select2/select2.full.min.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             $('.footable').footable();
+            $('.input-daterange').datepicker({
+                format: 'dd-mm-yyyy',
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true
+            });
+            $(".select2_demo_2").select2();
         });
     </script>
 

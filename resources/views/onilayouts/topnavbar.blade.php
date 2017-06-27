@@ -21,7 +21,7 @@ if(Auth::check()){
                 'title' => 'Đơn hàng',
             ],
             [
-                'url' => url('giao-dich'),
+                'url' => url('transactions'),
                 'icon' => 'fa-money',
                 'title' => 'Giao dịch',
             ],
@@ -316,6 +316,55 @@ if(Auth::check()){
                     <a class="count-info" data-toggle="dropdown" href="#">
                         <i class="fa fa-user-circle-o" aria-hidden="true"></i> {{ Auth::user()->name }}
                     </a>
+                    <div class="dropdown-menu dropdown-user animated fadeInRight m-t-xs">
+                        <?php
+                        $current_user = App\User::find(Auth::user()->id);
+                        ?>
+                        <div class="contact-box">
+                            <div href="#">
+                                <div class="col-sm-4">
+                                    <div class="text-center">
+                                        <img alt="image" class="img-circle m-t-xs img-responsive" src="{{ asset('images/default-avatar.png') }}">
+                                        <div class="m-t-xs font-bold"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8">
+                                    <h3 class="m-b-none"><strong>{{ Auth::user()->name }}</strong></h3>
+                                    <p>{{App\User::getSectionName($current_user->section)}} <strong>#{{ $current_user->code }}</strong></p>
+                                    <ul class="user-links list-unstyled m-l-n-xs m-t-md">
+                                        <li>
+                                            <a href="{{ url('wishlist')  }}">
+                                                <span class="fa fa-bookmark m-r-xs"></span>
+                                                Sản phẩm đã lưu
+                                            </a>
+                                        </li>
+                                        <li>
+                                            @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                                <a href="{{ url('user/detail', Auth::user()->id)  }}">
+                                            @else
+                                                <a href="{{ url('user', Auth::user()->id)  }}">
+                                            @endif
+                                                <span class="fa fa-address-book m-r-xs"></span>
+                                                Thông tin cá nhân
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                <span class="fa fa-power-off m-r-xs"></span>
+                                                Thoát
+                                            </a>
+
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                                {{ csrf_field() }}
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
                         <li><a href="{{ url('wishlist')  }}">Sản phẩm đã lưu</a></li>
                         <li>
@@ -337,6 +386,7 @@ if(Auth::check()){
                             </form>
                         </li>
                     </ul>
+                    -->
                 </li>
             </ul>
         </div>

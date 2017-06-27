@@ -43,4 +43,10 @@ $(document).ready(function() {
     $('.right-sidebar-toggle').on('click', function () {
         $('#right-sidebar').toggleClass('sidebar-open');
     });
+
+// Tooltips demo
+    $('.tooltip-demo').tooltip({
+        selector: "[data-toggle=tooltip]",
+        container: "body"
+    });
 });

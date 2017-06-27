@@ -5,169 +5,171 @@
 @endsection
 
 @section('content')
-    <div class="row animated fadeInRight">
-        <div class="col-md-4">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Thành viên #{{$user->code}}</h5>
-                    <div class="ibox-tools">
-                        <a href="{{ url('user/edit', $user_id)  }}" class="collapse-link">
-                            <i class="fa fa-pencil-square"></i> Sửa thông tin
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="ibox-content no-padding border-left-right">
-                        <img alt="image" class="img-responsive" src="http://webapplayers.com/inspinia_admin-v2.7/img/profile_big.jpg">
-                    </div>
-                    <div class="ibox-content profile-content">
-                        <h4><strong>{{$user->name}}</strong></h4>
-                        <p><i class="fa fa-check-square-o"></i> Trạng thái: {{ App\User::getStatusName($user->status) }}</p>
-                        <p><i class="fa fa-calendar"></i> Tham gia: {{ App\Util::formatDate($user->created_at)  }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-8">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Thông tin chung</h5>
-                </div>
-                <div>
-                    <div class="ibox-content">
-                        <fieldset class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Họ & tên: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{$user->name}}</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Mã thành viên: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{$user->code}}</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Cú pháp nạp tiền: </label>
-                                <div class="col-sm-9">
-                                    <?php $user_mobile_default = $user->getMobile();?>
-                                    <p class="form-control-static">
-                                        NM {{$user->code}}
-                                        @if($user_mobile_default)
-                                            {{ $user_mobile_default  }}
-                                        @else
-                                            &lt;Số Điện Thoại&gt;
-                                        @endif
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Số dư: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Email: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{$user->email}}</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Trạng thái: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{ App\User::getStatusName($user->status) }}</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Gia nhập: </label>
-                                <div class="col-sm-9">
-                                    <p class="form-control-static">{{ App\Util::formatDate($user->created_at)  }}</p>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Điện thoại: </label>
-                                <div class="col-sm-9">
-                                    @if(!empty($user_mobiles))
-                                        <div id="_list-user-phone" style="list-style: none;margin: 0 0 15px 0;padding: 0;">
-                                            @foreach($user_mobiles as $user_mobile)
-                                                <div class="input-group _row-user-phone">
-                                                    <input type="text" disabled class="form-control" value="{{$user_mobile->mobile}}">
-                                                    @if($permission['can_remove_mobile'])
-                                                    <span class="input-group-btn">
-                                                        <a data-phone="{{$user_mobile->mobile}}"
-                                                           data-id="{{ $user_mobile->id }}" href="javascript:void(0)" class="btn btn-primary _remove-user-phone">
-                                                            Xóa
-                                                        </a>
-                                                    </span>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-
-                                    @if($permission['can_add_mobile'])
-                                        <div class="input-group">
-                                            <input type="text" class="form-control _input-user-phone" placeholder="Nhập điện thoại...">
-                                            @if($permission['can_remove_mobile'])
-                                                <span class="input-group-btn">
-                                                        <a href="javascript:void(0)" class="btn btn-primary _add-user-phone">
-                                                            Thêm
-                                                        </a>
-                                                    </span>
-                                            @endif
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>Giới thiệu khách hàng</h5>
-                </div>
-                <div>
-                    <div class="ibox-content">
-                        <div class="input-group">
-                            <input type="text" id="_link-user-register" class="form-control" value="{{ $user_refer['link']  }}">
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary" data-clipboard-action="copy" data-clipboard-text="Đã sao chép."> Sao chép liên kết </button>
-                            </span>
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Thành viên #{{$user->code}}</h5>
+                        <div class="ibox-tools">
+                            <a href="{{ url('user/edit', $user_id)  }}" class="collapse-link">
+                                <i class="fa fa-pencil-square"></i> Sửa thông tin
+                            </a>
                         </div>
+                    </div>
+                    <div>
+                        <div class="ibox-content no-padding border-left-right">
+                            <img alt="image" class="img-responsive" src="{{ asset('images/order.jpg') }}">
+                        </div>
+                        <div class="ibox-content profile-content">
+                            <h4><strong>{{$user->name}}</strong></h4>
+                            <p><i class="fa fa-check-square-o"></i> Trạng thái: {{ App\User::getStatusName($user->status) }}</p>
+                            <p><i class="fa fa-calendar"></i> Tham gia: {{ App\Util::formatDate($user->created_at)  }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        @if($user_refer['total'] > 0)
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>TT</th>
-                                <th>Khách hàng</th>
-                                <th>Số đơn đạt yêu cầu</th>
-                                <th>Hoa hồng tháng {{ date('m/Y')  }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($user_refer['data'] as $key => $val)
+            <div class="col-md-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Thông tin chung</h5>
+                    </div>
+                    <div>
+                        <div class="ibox-content">
+                            <fieldset class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Họ & tên: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{$user->name}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Mã thành viên: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{$user->code}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Cú pháp nạp tiền: </label>
+                                    <div class="col-sm-9">
+                                        <?php $user_mobile_default = $user->getMobile();?>
+                                        <p class="form-control-static">
+                                            NM {{$user->code}}
+                                            @if($user_mobile_default)
+                                                {{ $user_mobile_default  }}
+                                            @else
+                                                &lt;Số Điện Thoại&gt;
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Số dư: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{ App\Util::formatNumber($user->account_balance)  }} <sup>đ</sup></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Email: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{$user->email}}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Trạng thái: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{ App\User::getStatusName($user->status) }}</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Gia nhập: </label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">{{ App\Util::formatDate($user->created_at)  }}</p>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Điện thoại: </label>
+                                    <div class="col-sm-9">
+                                        @if(!empty($user_mobiles))
+                                            <div id="_list-user-phone">
+                                                @foreach($user_mobiles as $user_mobile)
+                                                    <div class="input-group _row-user-phone">
+                                                        <input type="text" disabled class="form-control" value="{{$user_mobile->mobile}}">
+                                                        @if($permission['can_remove_mobile'])
+                                                        <span class="input-group-btn">
+                                                            <a data-phone="{{$user_mobile->mobile}}"
+                                                               data-id="{{ $user_mobile->id }}" href="javascript:void(0)" class="btn btn-primary _remove-user-phone">
+                                                                Xóa
+                                                            </a>
+                                                        </span>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+
+                                        @if($permission['can_add_mobile'])
+                                            <div class="input-group">
+                                                <input type="text" class="form-control _input-user-phone" placeholder="Nhập điện thoại...">
+                                                @if($permission['can_remove_mobile'])
+                                                    <span class="input-group-btn">
+                                                            <a href="javascript:void(0)" class="btn btn-primary _add-user-phone">
+                                                                Thêm
+                                                            </a>
+                                                        </span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Giới thiệu khách hàng</h5>
+                    </div>
+                    <div>
+                        <div class="ibox-content">
+                            <div class="input-group">
+                                <input type="text" id="_link-user-register" class="form-control" value="{{ $user_refer['link']  }}">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary" data-clipboard-action="copy" data-clipboard-text="Đã sao chép."> Sao chép liên kết </button>
+                                </span>
+                            </div>
+
+                            @if($user_refer['total'] > 0)
+                            <table class="table table-striped">
+                                <thead>
                                 <tr>
-                                    <td>{{$key+1}}</td>
-                                    <td>
-
-                                    </td>
-                                    <td></td>
-                                    <td></td>
+                                    <th>TT</th>
+                                    <th>Khách hàng</th>
+                                    <th>Số đơn đạt yêu cầu</th>
+                                    <th>Hoa hồng tháng {{ date('m/Y')  }}</th>
                                 </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                        @else
+                                </thead>
+                                <tbody>
+                                @foreach($user_refer['data'] as $key => $val)
+                                    <tr>
+                                        <td>{{$key+1}}</td>
+                                        <td>
 
-                            <p>Hiện ban chưa giới thiệu khách nào!</p>
-                        @endif
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                            @else
+
+                                <p>Hiện ban chưa giới thiệu khách nào!</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

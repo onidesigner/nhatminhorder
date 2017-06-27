@@ -17,7 +17,7 @@ input::-webkit-inner-spin-button {
 
 .top-navigation #right-sidebar{
     top: 50px;
-    bottom: 39px;
+/*    bottom: 39px; */
 }
 
 .sidebar-container ul.nav-tabs li:not(.active) a:hover{
@@ -43,4 +43,101 @@ input::-webkit-inner-spin-button {
     .top-navigation #right-sidebar {
         right: 0;
     }
+}
+
+
+.navbar-top-links .dropdown-user {
+    width: 310px;
+    min-width: 0;
+}
+.navbar-top-links .dropdown-user .contact-box{
+    border: none;
+    padding: 20px 10px;
+    margin-bottom: 0;
+}
+.navbar-top-links .dropdown-menu .user-links a{
+    padding: 3px 5px;
+    min-height: 0;
+    display: block;
+    color: #676a6c;
+}
+.navbar-top-links .dropdown-menu .user-links a .fa{
+    width: 14px;
+    text-align: center;
+}
+
+/* order BOX */
+.order-box .alert{
+    border-radius: 0;
+    margin-bottom: 0;
+}
+.order-box-content {
+    background-color: #ffffff;
+    border: 1px solid #e7eaec;
+    border-top: 0;
+    padding: 5px 20px;
+    margin-bottom: 20px;
+}
+.order-box-header {
+    background-color: #ffffff;
+    border: 1px solid #e7eaec;
+    border-bottom: 0;
+    padding: 30px 20px 20px 20px;
+}
+.order-box-header h2 {
+    margin-top: 0;
+}
+a.compose-mail {
+    padding: 8px 10px;
+}
+.order-search {
+    max-width: 300px;
+}
+.orderbox-content .tag-list li a {
+    background: #ffffff;
+}
+.order-body {
+    border-top: 1px solid #e7eaec;
+    padding: 20px;
+}
+.order-text {
+    border-top: 1px solid #e7eaec;
+}
+.order-text .note-toolbar {
+    padding: 10px 15px;
+}
+.order-body .form-group {
+    margin-bottom: 5px;
+}
+.order-text .note-editor .note-toolbar {
+    background-color: #F9F8F8;
+}
+.order-attachment {
+    border-top: 1px solid #e7eaec;
+    padding: 20px;
+    font-size: 12px;
+}
+.orderbox-content {
+    background: none;
+    border: none;
+    padding: 10px;
+}
+.order-ontact {
+    width: 23%;
+}
+
+.footable-toggle{
+    width: 15px;
+    text-align: center;
+}
+.folder-list li{
+    margin: 0 10px;
+}
+.folder-list li a{
+    padding: 5px 10px;
+}
+.folder-list li a.selected{
+    font-weight: bold;
+    border-left: 3px solid;
+    margin-left: -3px;
 }

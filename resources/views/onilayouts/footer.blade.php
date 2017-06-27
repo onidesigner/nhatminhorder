@@ -1,4 +1,4 @@
-<div class="footer fixed_full">
+<div class="footer">
     <div class="pull-right">
         ...
     </div>

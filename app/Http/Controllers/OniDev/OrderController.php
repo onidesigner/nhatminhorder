@@ -79,6 +79,7 @@ class OrderController extends Controller
             $status_list[] = [
                 'key' => $key,
                 'val' => $val,
+                'count' => Order::select('*')->where('user_id', Auth::user()->id)->where('status', $key)->count(),
                 'selected' => $selected
             ];
         }

@@ -289,3 +289,5 @@ Route::post('/user/phone', 'OniDev\UserController@add_user_phone');
 Route::put('/user/phone', 'OniDev\UserController@delete_user_phone');
 Route::get('/user/edit/{id}', 'OniDev\UserController@get_user');
 Route::post('/user/edit/{id}', 'OniDev\UserController@update_user');
+
+Route::get('transactions', 'OniDev\UserTransactionController@getTransactions');

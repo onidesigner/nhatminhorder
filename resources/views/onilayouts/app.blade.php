@@ -34,9 +34,7 @@
         @show
 
         <!-- Main view  -->
-        <div class="wrapper wrapper-content animated fadeInRight">
         @yield('content')
-        </div>
 
         <!-- Footer -->
         @include('onilayouts.footer')

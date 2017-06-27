@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    <div class="wrapper wrapper-content">
     @if($current_user->section == App\User::SECTION_CRANE)
         <div class="row">
             <div class="col-sm-4">
@@ -174,6 +175,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection
 
