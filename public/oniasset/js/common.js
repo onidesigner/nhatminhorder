@@ -234,7 +234,10 @@ function call_ajax($that, data_send){
                 }
 
             }else{
-                bootbox.alert(response.message);
+                swal({
+                    title: "Thông báo",
+                    text: response.message
+                })
             }
             $that.removeClass('disabled');
         },
@@ -244,3 +247,4 @@ function call_ajax($that, data_send){
     });
 }
 //============= end function global ===========
+

@@ -333,19 +333,25 @@ if(Auth::check()){
                                     <p>{{App\User::getSectionName($current_user->section)}} <strong>#{{ $current_user->code }}</strong></p>
                                     <ul class="user-links list-unstyled m-l-n-xs m-t-md">
                                         <li>
+                                            @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                                <a href="{{ url('user/detail', Auth::user()->id)  }}">
+                                            @else
+                                                 <a href="{{ url('user', Auth::user()->id)  }}">
+                                            @endif
+                                                 <span class="fa fa-address-book m-r-xs"></span>
+                                                 Thông tin cá nhân
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a href="{{ url('wishlist')  }}">
                                                 <span class="fa fa-bookmark m-r-xs"></span>
                                                 Sản phẩm đã lưu
                                             </a>
                                         </li>
                                         <li>
-                                            @if(Auth::user()->section == App\User::SECTION_CRANE)
-                                                <a href="{{ url('user/detail', Auth::user()->id)  }}">
-                                            @else
-                                                <a href="{{ url('user', Auth::user()->id)  }}">
-                                            @endif
-                                                <span class="fa fa-address-book m-r-xs"></span>
-                                                Thông tin cá nhân
+                                            <a href="{{ url('transactions')  }}">
+                                                <span class="fa fa-exchange m-r-xs"></span>
+                                                Lịch sử Giao dịch
                                             </a>
                                         </li>
                                         <li>

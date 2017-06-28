@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content animated fadeInRight">
         <div class="ibox">
             <div class="ibox-content">
                 @if($total_product_favorite)
@@ -16,7 +15,7 @@
                             <th data-sort-ignore="true" data-hide="phone">Sản phẩm</th>
                             <th data-hide="phone" class="text-center">Website</th>
                             <th class="text-center">Ngày lưu</th>
-                            <th data-sort-ignore="true" class="text-center">Action</th>
+                            <!--<th data-sort-ignore="true" class="text-center">Action</th>-->
                         </tr>
                         </thead>
                         <tbody>
@@ -43,18 +42,20 @@
                             <td width="100" class="text-center" data-value="{{$product_favorite_item->updated_at}}">
                                 {{ App\Util::formatDate($product_favorite_item->updated_at)  }}
                             </td>
+                            <!--
                             <td width="100" class="text-center">
                                 <div class="btn-group">
                                     <a href="{{$product_favorite_item->link}}" class="btn-white btn btn-xs" target="_blank">Chi tiết</a>
                                     <a href="#" class="btn-white btn btn-xs">Xóa</a>
                                 </div>
                             </td>
+                            -->
                         </tr>
                         @endforeach
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="4">
                                 <ul class="pagination pull-right"></ul>
                             </td>
                         </tr>
@@ -66,7 +67,6 @@
                 @endif
             </div>
         </div>
-    </div>
 @endsection
 
 @section('header-scripts')

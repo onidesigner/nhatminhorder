@@ -133,20 +133,17 @@
                                                 continue;
                                             }
                                             ?>
-
                                             @if($count == 1)
                                                 <tr>
                                                     <td width="30%" class="border-top-none">{{$v}}</td>
                                                     <td class="border-top-none">{{ App\Util::formatDate($order->$k) }}</td>
                                                 </tr>
-
                                             @else
                                                 <tr>
                                                     <td>{{$v}}</td>
                                                     <td>{{ App\Util::formatDate($order->$k)  }}</td>
                                                 </tr>
                                             @endif
-
                                             <?php } ?>
 
                                             </tbody>
@@ -165,7 +162,6 @@
 
                                             @foreach($transactions as $transaction)
                                                 <?php
-
                                                 $user = App\User::find($transaction->user_id);
                                                 $order2 = App\Order::find($transaction->object_id);
 
@@ -173,31 +169,21 @@
                                                 if(!$order2) $order2 = new App\Order();
                                                 ?>
                                                 <tr>
-
-
                                                     <td>
-                                                        <p>
-                                                            Loại: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }} ({{ App\Util::formatDate($transaction->created_at)  }})
-                                                        </p>
+                                                        <p>Loại: {{ App\UserTransaction::$transaction_type[$transaction->transaction_type]  }} ({{ App\Util::formatDate($transaction->created_at)  }})</p>
                                                         {{$transaction->transaction_code}}<br>
                                                         <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
                                                     </td>
-
                                                     <td>
-
-
-                                        <span class="@if($transaction->state == App\UserTransaction::STATE_COMPLETED) label label-success @endif">
-                                    {{ App\UserTransaction::$transaction_state[$transaction->state]  }}
-                                        </span>
+                                                        <span class="@if($transaction->state == App\UserTransaction::STATE_COMPLETED) label label-success @endif">
+                                                            {{ App\UserTransaction::$transaction_state[$transaction->state]  }}
+                                                        </span>
                                                     </td>
-
-
                                                     <td>
-                                    <span class="text-danger">
-                                        {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
-                                    </span>
+                                                        <span class="text-danger">
+                                                            {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
+                                                        </span>
                                                     </td>
-
                                                 </tr>
                                             @endforeach
                                             </tbody>
@@ -444,7 +430,7 @@
                             <form class="___form">
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="method" value="post">
-                                <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
+                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                 <input type="hidden" name="response" value="customer/order_detail">
 

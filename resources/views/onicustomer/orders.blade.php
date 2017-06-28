@@ -5,19 +5,19 @@
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content">
+    <div class="wrapper wrapper-content orders-page">
         <div class="row">
             <div class="col-lg-3">
                 <div class="ibox float-e-margins">
                     <div class="ibox-content orderbox-content">
-                        <a class="btn btn-block btn-primary compose-mail" href="#">Tạo đơn hàng mới</a>
+                        <!--<a class="btn btn-block btn-primary compose-mail" href="#">Tạo đơn hàng mới</a>-->
                         <div class="space-25"></div>
                         <div class="file-manager">
                             <h5>Đơn hàng</h5>
                             <ul class="folder-list m-b-md" style="padding: 0">
                                 <li>
                                     <a href="{{ url('orders') }}">
-                                        Tất cả <!--<span class="label label-warning pull-right">16</span>-->
+                                        Tất cả <span class="label label-warning pull-right">{{ $orders_count }}</span>
                                     </a>
                                 </li>
 
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9 order-box animated fadeInRight">
+            <div class="col-lg-9 order-box animated fadeInRight m-b-md">
                 <div class="order-box-header">
                     <div class="order-tools tooltip-demo">
                         <form onchange="this.submit();" action="{{ url('orders')  }}" method="get" id="_form-orders">
@@ -55,6 +55,18 @@
                                     <div class="form-group">
                                         <label class="control-label">Thời gian</label>
                                         <div class="input-daterange input-group" id="datepicker">
+                                            <div class="input-group-btn dropdown">
+                                                <button id="status_time" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    Tất cả <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="javascript:void(0)" data-status="ALL">Tất cả</a></li>
+                                                    @foreach($status_list as $status_list_item)
+                                                    <li><a href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">{{ $status_list_item['val']  }}</a></li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                            <input type="hidden" name="status_time_input" value="">
                                             <input type="text" class="input-sm form-control" name="start" value="{{  @$params['start'] }}"/>
                                             <span class="input-group-addon">đến</span>
                                             <input type="text" class="input-sm form-control" name="end" value="{{  @$params['end'] }}" />
@@ -90,27 +102,29 @@
                         <table class="footable table table-stripped toggle-arrow-tiny table-hover table-order" data-page-size="15">
                             <thead>
                             <tr>
-
-                                <th style="width:130px">Mã đơn hàng</th>
-                                <th data-sort-ignore="true" data-hide="phone">Thông tin đơn hàng</th>
+                                <th>Thông tin đơn hàng</th>
                                 <th data-sort-ignore="true" data-hide="phone,tablet">Phí trên đơn</th>
-                                <th data-sort-ignore="true" data-hide="phone">Thời gian</th>
-                                <th>Trạng thái</th>
-                                <th data-sort-ignore="true" class="text-right">Action</th>
-
+                                <th width="200" data-sort-ignore="true" data-hide="phone">Thời gian</th>
+                                <th width="100" class="text-center">Trạng thái</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($orders as $order)
-                                <tr>
-                                    <td>
-                                        {{$order->code}}
-                                    </td>
-                                    <td>
-                                        <div style="position: relative; display: inline-block;">
-                                            <img src="{{ $order->avatar }}" style="width: 100px;" alt="">
-                                            <div style="position: absolute; bottom: 2px;">
-                                                {!! App\Util::showSite($order->site) !!}
+                                <tr class="order-item">
+                                    <td data-value="{{$order->code}}">
+                                        <div class="item-inner">
+                                            <div class="item-thumb">
+                                                <a href="{{ url('order', $order->id)  }}" title="Xem chi tiết đơn hàng">
+                                                    <img src="{{ $order->avatar }}" class="img-responsive">
+                                                    {!! App\Util::showSite($order->site) !!}
+                                                </a>
+                                            </div>
+                                            <div class="item-details">
+                                                <a href="{{ url('order', $order->id)  }}" title="Xem chi tiết đơn hàng">
+                                                    <h3 class="item-title">Mã đơn: #{{$order->code}}</h3>
+                                                </a>
+                                                <p class="m-b-none">Giá trị hàng: {!! App\Util::formatNumber($order->amount * $order->exchange_rate) !!} <sup>đ</sup></p>
+                                                <p class="m-b-none">Đã đặt cọc: {!! App\Util::formatNumber($order->deposit_amount) !!} <sup>đ</sup> ({!! App\Util::formatNumber($order->deposit_percent) !!}%)</p>
                                             </div>
                                         </div>
                                     </td>
@@ -120,8 +134,8 @@
                                                 <p>
                                                     {!! $order_fee_item['label'] !!}:
                                                     <span class="text-danger">
-                                                                            <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
-                                                                        </span>
+                                                        <strong>{{$order_fee_item['value']}}<sup>đ</sup></strong>
+                                                    </span>
                                                 </p>
                                             @endforeach
                                         </small>
@@ -138,40 +152,20 @@
                                             <?php } ?>
                                         </small>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                                 <span id="_order_status_{{  $order->id }}"class="label label-primary">
                                                     {{ App\Order::getStatusTitle($order->status)  }}
                                                 </span>
-                                    </td>
-                                    <td class="text-right">
-                                        <div class="btn-group">
-                                            <a href="{{ url('order', $order->id)  }}" class="btn-white btn btn-xs">Chi tiết</a>
-                                            <!--<button class="btn-white btn btn-xs">Edit</button>-->
-                                            @if($order->status == \App\Order::STATUS_DELIVERING)
-                                                <button class="btn-white btn btn-xs _btn_change_status" data-order-id="{{ $order->id }}" id ="_btn_change_status_{{ $order->id }}" type="button">Đã nhận</button>
-                                            @endif
-                                            @if($order->status == \App\Order::STATUS_BOUGHT)
-                                                <form class="___form">
-                                                    <input type="hidden" name="action" value="cancel_order">
-                                                    <input type="hidden" name="method" value="post">
-                                                    <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                                    <input type="hidden" name="response" value="onicustomer/order_detail">
-
-                                                    <a
-                                                            style="display: inline-block;width: 100%;padding: 0 15px;"
-                                                            href="javascript:void(0)"
-                                                            class="btn-white btn btn-xs ___btn-action">Hủy đơn</a>
-                                                </form>
-                                            @endif
-                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
                     @else
-                        <h4>Hiện chưa có đơn hàng!</h4>
+                        <div class="no-content">
+                            <i class="fa fa-shopping-basket icon"></i>
+                            <h4 class="title">Hiện chưa có đơn hàng!</h4>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -200,10 +194,17 @@
                 autoclose: true
             });
             $(".select2_demo_2").select2();
+
+
+            $("#datepicker .dropdown-menu li a").click(function(){
+                $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+                $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+
+            });
         });
     </script>
 
-            @parent
+    @parent
     <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
     <script>
         $(function() {
@@ -222,7 +223,7 @@
                     order_status_list.push($(this).data('status'));
                 });
 
-                $('[name="status"]').val(order_status_list.join(','));
+                $('[name="status"]').val(order_status_list.join('-'));
 
                 $('#_form-orders').submit();
             });

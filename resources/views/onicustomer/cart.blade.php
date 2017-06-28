@@ -12,7 +12,7 @@
                     @foreach($data['shops'] as $shop)
 
 
-                        <div id="shop-{{$shop->shop_id}}" class="ibox">
+                        <div id="shop-{{$shop->shop_id}}" class="shop ibox">
                             <div class="ibox-title">
                                 <span class="pull-right">(<strong>{{count($shop->items)}}</strong>) sản phẩm</span>
                                 <h5>
@@ -60,20 +60,20 @@
                                                         <dt style="display: inline-block; margin-right: 10px;">Thuộc tính:</dt>
                                                         <dd style="display: inline-block;">{{$item->property}}</dd>
                                                         {{--
-                                                                                                            <dt>Ghi chú sản phẩm</dt>
-                                                                                                            <dd>
-                                                                                                                <input
-                                                                                                                    data-toggle="_tooltip"
-                                                                                                                    data-shop-id="{{$shop->shop_id}}"
-                                                                                                                    data-item-id="{{$item->id}}"
-                                                                                                                    placeholder="Ghi chú sản phẩm..."
-                                                                                                                    name="comment"
-                                                                                                                    type="text"
-                                                                                                                    data-url="{{ url('gio-hang/hanh-dong') }}"
-                                                                                                                    data-method="post"
-                                                                                                                    data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
-                                                                                                                    class="form-control __input-comment-item" value="{{$item->comment}}" />
-                                                                                                            </dd>
+                                                        <dt>Ghi chú sản phẩm</dt>
+                                                        <dd>
+                                                             <input
+                                                                 data-toggle="_tooltip"
+                                                                 data-shop-id="{{$shop->shop_id}}"
+                                                                 data-item-id="{{$item->id}}"
+                                                                 placeholder="Ghi chú sản phẩm..."
+                                                                 name="comment"
+                                                                 type="text"
+                                                                 data-url="{{ url('cart/action') }}"
+                                                                 data-method="post"
+                                                                 data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
+                                                                 class="form-control __input-comment-item" value="{{$item->comment}}" />
+                                                        </dd>
                                                         --}}
                                                     </dl>
 
@@ -83,12 +83,14 @@
                                                             <input type="hidden" name="method" value="post">
                                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
                                                             <input type="hidden" name="item_id" value="{{$item->id}}">
-                                                            <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
+                                                            <input type="hidden" name="url" value="{{ url('cart/action') }}">
                                                             <input type="hidden" name="response" value="onicustomer/cart">
                                                             <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
-                                                            <a class="___btn-action text-muted"
+                                                            <!-- ___btn-action -->
+                                                            <a class=" text-muted"
                                                                href="javascript:void(0)"
+                                                               onclick="_removeItem('{{$item->id}}', '{{$shop->shop_id}}')"
                                                                data-toggle="tooltip"
                                                                title="Xoá sản phẩm">
                                                                 <i class="fa fa-trash"></i> Xoá sản phẩm
@@ -106,7 +108,7 @@
                                                         <input type="hidden" name="method" value="post">
                                                         <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
                                                         <input type="hidden" name="item_id" value="{{$item->id}}">
-                                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
+                                                        <input type="hidden" name="url" value="{{ url('cart/action') }}">
                                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                                         <input type="hidden" name="response" value="onicustomer/cart">
 
@@ -144,18 +146,19 @@
                                                     <input type="hidden" name="action" value="choose_service">
                                                     <input type="hidden" name="method" value="post">
                                                     <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                                    <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
+                                                    <input type="hidden" name="url" value="{{ url('cart/action') }}">
                                                     <input type="hidden" name="response" value="customer/cart">
                                                     <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                                     <input type="hidden" name="service" value="{{$service['code']}}">
 
                                                     <div class="checkbox m-r-xs">
                                                         <input
-                                                                @if(in_array($service['code'], $shop->services)) checked @endif
-                                                        type="checkbox"
-                                                                value="{{$service['code']}}"
-                                                                class="___btn-action"
-                                                                id="checkbox_{{$service['code']}}_{{$shop->id}}">
+                                                            @if(in_array($service['code'], $shop->services)) checked @endif
+                                                            type="checkbox"
+                                                            value="{{$service['code']}}"
+                                                            class="___btn-action"
+                                                            id="checkbox_{{$service['code']}}_{{$shop->id}}">
+
                                                         <label for="checkbox_{{$service['code']}}_{{$shop->id}}">
                                                             {{$service['title']}}
                                                         </label>
@@ -207,15 +210,17 @@
                                         <input type="hidden" name="action" value="remove_shop">
                                         <input type="hidden" name="method" value="post">
                                         <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
+                                        <input type="hidden" name="url" value="{{ url('cart/action') }}">
                                         <input type="hidden" name="confirm" value="Bạn có chắc muốn xoá shop này?">
                                         <input type="hidden" name="response" value="customer/cart">
                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
+                                        <!--___btn-action-->
                                         <a href="javascript:void(0)"
-                                           class="___btn-action btn btn-danger"
+                                           class="btn btn-danger"
                                            data-toggle="tooltip"
                                            data-shop-id="{{$shop->shop_id}}"
+                                           onclick="_removeShop('{{$shop->shop_id}}', true)"
                                            title="Xoá shop">
                                             <i class="fa fa-trash-o"></i> Xóa shop
                                         </a>

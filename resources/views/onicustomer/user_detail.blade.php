@@ -5,32 +5,6 @@
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-title">
-                        <h5>Thành viên #{{$user->code}}</h5>
-                        <div class="ibox-tools">
-                            <a href="{{ url('user/edit', $user_id)  }}" class="collapse-link">
-                                <i class="fa fa-pencil-square"></i> Sửa thông tin
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="ibox-content no-padding border-left-right">
-                            <img alt="image" class="img-responsive" src="{{ asset('images/order.jpg') }}">
-                        </div>
-                        <div class="ibox-content profile-content">
-                            <h4><strong>{{$user->name}}</strong></h4>
-                            <p><i class="fa fa-check-square-o"></i> Trạng thái: {{ App\User::getStatusName($user->status) }}</p>
-                            <p><i class="fa fa-calendar"></i> Tham gia: {{ App\Util::formatDate($user->created_at)  }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-8">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>Thông tin chung</h5>
@@ -172,9 +146,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('footer-scripts')

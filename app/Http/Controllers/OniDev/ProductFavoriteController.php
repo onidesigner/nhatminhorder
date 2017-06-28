@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OniDev;
 
 use App\ProductFavorite;
 use Illuminate\Http\Request;
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,7 +28,9 @@ class ProductFavoriteController extends Controller
 
         return view('onicustomer/product_favorite', [
             'page_title' => 'Sản phẩm đã lưu',
-            'layout' => 'onilayouts.app',
+            'layout' => 'onilayouts.member',
+            'user_id' => Auth::user()->id,
+            'user' => User::find(Auth::user()->id),
             'product_favorite' => $product_favorite,
             'total_product_favorite' => $total_product_favorite,
         ]);

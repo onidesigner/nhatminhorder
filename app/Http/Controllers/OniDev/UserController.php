@@ -41,7 +41,7 @@ class UserController extends Controller
 
         return view('onicustomer/user_detail', [
             'page_title' => "Thông tin cá nhân",
-            'layout' => 'onilayouts.app',
+            'layout' => 'onilayouts.member',
             'user' => $user,
             'user_id' => $user_id,
             'user_mobiles' => $user->mobile,
@@ -198,7 +198,7 @@ class UserController extends Controller
 
         return view('onicustomer/user_form', [
             'page_title' => "Sửa thông tin cá nhân",
-            'layout' => 'onilayouts.app',
+            'layout' => 'onilayouts.member',
             'user_id' => $user_id,
             'user' => $user
         ]);

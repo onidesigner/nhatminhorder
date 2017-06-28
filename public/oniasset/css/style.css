@@ -2,6 +2,13 @@
  * Custom CSS
  * Onizuka Nghia
  */
+body {
+    background-color: #fff;
+}
+
+.top-navigation .wrapper.wrapper-content {
+    padding: 30px 15px;
+}
 
 .count-info .label {
     left: 50%;
@@ -87,9 +94,6 @@ input::-webkit-inner-spin-button {
 .order-box-header h2 {
     margin-top: 0;
 }
-a.compose-mail {
-    padding: 8px 10px;
-}
 .order-search {
     max-width: 300px;
 }
@@ -129,9 +133,31 @@ a.compose-mail {
 .footable-toggle{
     width: 15px;
     text-align: center;
+    position: absolute;
+}
+.item-inner{
+    margin-left: 20px;
+}
+.item-inner .item-thumb{
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin-right: 10px;
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.item-inner .item-thumb .label{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.item-inner .item-title{
+    margin-top: 0;
 }
 .folder-list li{
-    margin: 0 10px;
+    margin: 0 0 0 10px;
 }
 .folder-list li a{
     padding: 5px 10px;
@@ -140,4 +166,51 @@ a.compose-mail {
     font-weight: bold;
     border-left: 3px solid;
     margin-left: -3px;
+}
+
+#status_time{
+    background-color: #eeeeee;
+    margin-right: -2px;
+}
+.input-group-btn.dropdown .dropdown-menu > li > a{
+    line-height: 16px;
+}
+
+@media (min-width: 998px) {
+    .top-navigation .navbar {
+        -webkit-transition-duration: 0s;
+        transition-duration: 0s;
+    }
+
+    body.modal-open, body.modal-open.top-navigation .navbar,
+    body.stop-scrolling, body.stop-scrolling.top-navigation .navbar{
+        margin-right: 15px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .orders-page > .row > .col-lg-3 {
+        width: 20%;
+    }
+    .orders-page > .row > .col-lg-9 {
+        width: 80%;
+    }
+}
+
+.sidebar-container .sidebar-title {
+    border-bottom: 0;
+}
+.no-content{
+    text-align: center;
+    padding: 50px 10px;
+}
+.no-content .icon{
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+.no-content .title{
+    font-size: 18px;
+}
+.no-content .subtitle{
+
 }

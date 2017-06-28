@@ -157,7 +157,7 @@ class CartController extends Controller
                 $deposit_percent, $deposit_amount);
 
             if($result){
-                $redirect_url = url('dat-coc-thanh-cong?orders=' . implode(',', $result));
+                $redirect_url = url('deposit-success?orders=' . implode(',', $result));
 
                 return Response::json(['success' => true,
                     'redirect_url' => $redirect_url,
@@ -247,7 +247,6 @@ class CartController extends Controller
 
         $data = [
             'page_title' => 'Đặt cọc',
-            'layout' => 'onilayouts.app',
             'user_address' => UserAddress::findByUserId($user_id),
             'max_user_address' => UserAddress::checkMaxUserAddress($user_id),
             'all_provinces' => Location::getAllProvinces(),

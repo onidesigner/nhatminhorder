@@ -274,7 +274,9 @@ Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 # Redesign Customer template
 Route::get('/onihome', 'OniHomeController@index');
 Route::get('/cart', 'OniDev\CartController@showCart');
+Route::post('/cart/action', 'OniDev\CartController@action');
 Route::get('/deposit', 'OniDev\CartController@showDeposit');
+Route::post('/deposit', 'OniDev\CartController@depositOrder');
 Route::get('/deposit-success', 'OniDev\CartController@depositSuccess');
 
 Route::get('/orders', 'OniDev\OrderController@orders');

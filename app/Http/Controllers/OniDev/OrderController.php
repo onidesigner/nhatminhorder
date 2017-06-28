@@ -64,24 +64,26 @@ class OrderController extends Controller
         $orders = $orders->where('user_id', Auth::user()->id);
 
         if(!empty($params['status'])){
-            $orders = $orders->whereIn('status', explode(',', $params['status']));
+            $orders = $orders->whereIn('status', explode('-', $params['status']));
         }
         $total_orders = $orders->count();
         $orders = $orders->paginate($per_page);
 
-
         $status_list = [];
+        $orders_count = 0;
         foreach(Order::$statusTitle as $key => $val){
             $selected = false;
             if(!empty($params['status'])){
-                $selected = in_array($key, explode(',', $params['status']));
+                $selected = in_array($key, explode('-', $params['status']));
             }
+            $count = Order::select('*')->where('user_id', Auth::user()->id)->where('status', $key)->count();
             $status_list[] = [
                 'key' => $key,
                 'val' => $val,
-                'count' => Order::select('*')->where('user_id', Auth::user()->id)->where('status', $key)->count(),
+                'count' => $count,
                 'selected' => $selected
             ];
+            $orders_count += $count;
         }
 
         foreach($orders as $order){
@@ -117,6 +119,7 @@ class OrderController extends Controller
             'page_title' => 'Danh sách đơn hàng',
             'layout' => 'onilayouts.app',
             'status_list' => $status_list,
+            'orders_count' => $orders_count,
             'exchange_rage' => $exchange_rage,
             'orders' => $orders,
             'params' => $params,

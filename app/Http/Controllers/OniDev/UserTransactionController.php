@@ -40,7 +40,9 @@ class UserTransactionController extends Controller
 
         return view('onicustomer/transactions', [
             'page_title' => 'Lịch sử giao dịch ',
-            'layout' => 'onilayouts.app',
+            'layout' => 'onilayouts.member',
+            'user_id' => Auth::user()->id,
+            'user' => User::find(Auth::user()->id),
             'transactions' => $transactions
         ]);
     }

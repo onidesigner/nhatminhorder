@@ -5,19 +5,18 @@
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content animated fadeInRight">
         <div class="ibox">
             <div class="ibox-content">
                 <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                     <thead>
                     <tr>
                         <th>Mã GD</th>
-                        <th data-hide="phone">Loại</th>
+                        <th data-hide="phone" width="120">Loại</th>
                         <th data-hide="phone" class="text-center" width="120">Trạng thái</th>
                         <th data-hide="phone" class="text-center">Đối tượng</th>
                         <th data-hide="phone" class="text-center" width="120">Thời gian</th>
-                        <th class="text-right" width="150">Giá trị </th>
-                        <th class="text-right" width="150">Số dư cuối </th>
+                        <th class="text-right" width="120">Giá trị </th>
+                        <th class="text-right" width="120">Số dư cuối </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -73,7 +72,6 @@
                 </table>
             </div>
         </div>
-    </div>
 @endsection
 
 @section('header-scripts')

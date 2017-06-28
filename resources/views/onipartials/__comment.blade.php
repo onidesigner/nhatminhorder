@@ -50,30 +50,31 @@
                 </form>
                 <small><i class="fa fa-tim"></i> Nhập và ENTER để gửi.</small>
             </div>
-            <div>
+            <div class="ibox-content">
+                <div class="feed-activity-list">
                 @if($comments_public)
                     @foreach($comments_public as $comment_public)
-                        <div class="sidebar-message">
-                            <a href="#">
-                                @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
-                                    <div class="pull-left text-center">
-                                        <img alt="image" class="img-circle message-avatar" src="{{ asset('images/home/_logo.png')  }}">
-                                    </div>
-                                @endif
-                                <div class="media-body">
-                                    @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
-                                        <?php
-                                        $user_comment = App\User::find($comment_public->user_id);
-                                        ?>
-                                        <strong>{{$user_comment->name}}</strong>
-                                    @endif
-                                    <p class="m-b-none">{{$comment_public->message}}</p>
-                                    <small class="text-muted">{{ App\Util::formatDate($comment_public->created_at)  }}</small>
+                        <div class="feed-element">
+                            @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
+                                <div class="pull-left">
+                                    <img alt="image" class="img-circle" src="{{ asset('images/home/_logo.png')  }}">
                                 </div>
-                            </a>
+                            @endif
+                            <div class="media-body ">
+                                @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
+                                    <?php
+                                    $user_comment = App\User::find($comment_public->user_id);
+                                    ?>
+                                    <strong>{{$user_comment->name}}</strong>
+                                @endif
+                                {{$comment_public->message}} <br>
+                                <small class="text-muted">{{ App\Util::formatDate($comment_public->created_at)  }}</small>
+
+                            </div>
                         </div>
                     @endforeach
                 @endif
+                </div>
             </div>
         </div>
     @endif
@@ -111,31 +112,32 @@
                 </form>
                 <small><i class="fa fa-tim"></i> Nhập để gửi trao đổi.</small>
             </div>
-                <div>
+            <div class="ibox-content">
+                <div class="feed-activity-list">
                     @if($comments_private)
                         @foreach($comments_private as $comment_private)
-                            <div class="sidebar-message">
-                                <a href="#">
-                                    @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
-                                        <div class="pull-left text-center">
-                                            <img alt="image" class="img-circle message-avatar" src="{{ asset('images/home/_logo.png')  }}">
-                                        </div>
-                                    @endif
-                                    <div class="media-body">
-                                        @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
-                                            <?php
-                                            $user_comment = App\User::find($comment_private->user_id);
-                                            ?>
-                                            <strong>{{$user_comment->name}}</strong>
-                                        @endif
-                                        <p class="m-b-none">{{$comment_private->message}}</p>
-                                        <small class="text-muted">{{ App\Util::formatDate($comment_private->created_at)  }}</small>
+                            <div class="feed-element">
+                                @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
+                                    <div class="pull-left">
+                                        <img alt="image" class="img-circle" src="{{ asset('images/home/_logo.png')  }}">
                                     </div>
-                                </a>
+                                @endif
+                                <div class="media-body ">
+                                    @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
+                                        <?php
+                                        $user_comment = App\User::find($comment_private->user_id);
+                                        ?>
+                                        <strong>{{$user_comment->name}}</strong>
+                                    @endif
+                                    {{$comment_private->message}} <br>
+                                    <small class="text-muted">{{ App\Util::formatDate($comment_private->created_at)  }}</small>
+
+                                </div>
                             </div>
                         @endforeach
                     @endif
                 </div>
+            </div>
         </div>
     @endif
 </div>

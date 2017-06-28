@@ -1,165 +1,165 @@
-@extends($layout)
+@extends('onilayouts.app')
 
 @section('page_title')
     {{@$page_title}}
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="wrapper wrapper-content">
         <div class="row">
-            <div class="col-md-6">
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h5>
-                            Địa chỉ nhận hàng
-                        </h5>
-                    </div>
-                    <div class="ibox-content">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th width="5">TT</th>
-                                <th>Thông tin địa chỉ</th>
-                                <th width="100">Thao tác</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($user_address as $idx => $user_address_item)
-                                <?php
-                                $province = App\Location::find($user_address_item->province_id)->label;
-                                $district = App\Location::find($user_address_item->district_id)->label;
-                                ?>
-                                <tr class="_user-address"
-                                    data-is-default="{{ $user_address_item->is_default }}"
-                                    data-id="{{$user_address_item->id}}">
-                                    <th>{{ $idx + 1 }}</th>
-                                    <td>
-                                        <p>
-                                            <strong>
-                                                <i class="fa fa-user-circle-o" aria-hidden="true"></i> {{$user_address_item->reciver_name}} / <i class="fa fa-phone" aria-hidden="true"></i> {{$user_address_item->reciver_phone}}
-                                            </strong>
 
-                                            @if($user_address_item->is_default)
-                                                <span class="label label-danger text-uppercase">Mặc định</span>
-                                            @endif
-                                        </p>
-
-                                        <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{$user_address_item->detail}}, {{$district}}, {{$province}}</p>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a data-toggle="tooltip" title="Sửa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" data-json="{{ json_encode($user_address_item)  }}" class="btn-white btn btn-xs _btn-action-edit">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                            &nbsp;&nbsp;
-                                            <a data-toggle="tooltip" title="Xóa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="btn-white btn btn-xs _btn-action-delete">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                            &nbsp;&nbsp;
-                                            @if(!$user_address_item->is_default)
-                                                <a data-toggle="tooltip" title="Đặt mặc định" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="btn-white btn btn-xs _btn-action-set-default">
-                                                    <i class="fa fa-check"></i>
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </td>
+            @if(count($shops))
+                <div class="col-md-6">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>
+                                Địa chỉ nhận hàng
+                            </h5>
+                        </div>
+                        <div class="ibox-content">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Thông tin địa chỉ</th>
+                                    <th width="100">Thao tác</th>
                                 </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                @foreach($user_address as $idx => $user_address_item)
+                                    <?php
+                                    $province = App\Location::find($user_address_item->province_id)->label;
+                                    $district = App\Location::find($user_address_item->district_id)->label;
+                                    ?>
+                                    <tr class="_user-address"
+                                        data-is-default="{{ $user_address_item->is_default }}"
+                                        data-id="{{$user_address_item->id}}">
+                                        <td>
+                                            <p>
+                                                <strong>
+                                                    <i class="fa fa-user-circle-o" aria-hidden="true"></i> {{$user_address_item->reciver_name}} / <i class="fa fa-phone" aria-hidden="true"></i> {{$user_address_item->reciver_phone}}
+                                                </strong>
 
-                        @if($max_user_address)
-                            <a class="btn btn-primary" id="_add-user-address">Thêm địa chỉ</a>
-                        @endif
+                                                @if($user_address_item->is_default)
+                                                    <span class="label label-danger text-uppercase">Mặc định</span>
+                                                @endif
+                                            </p>
 
-                        <div class="modal inmodal fade" id="modal-id" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title">Cập nhật địa chỉ nhận hàng</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="_form-update-user-address"  class="form-horizontal" action="{{ url('user/address')  }}" method="post">
-
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label" for="reciver_name">Tên người nhận</label>
-                                                <div class="col-sm-10">
-                                                    <input required type="text" id="reciver_name" name="reciver_name" class="form-control" placeholder="Tên người nhận">
-                                                </div>
+                                            <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{$user_address_item->detail}}, {{$district}}, {{$province}}</p>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a data-toggle="tooltip" title="Sửa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" data-json="{{ json_encode($user_address_item)  }}" class="btn-white btn btn-xs _btn-action-edit">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                &nbsp;&nbsp;
+                                                <a data-toggle="tooltip" title="Xóa địa chỉ" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="btn-white btn btn-xs _btn-action-delete">
+                                                    <i class="fa fa-times"></i>
+                                                </a>
+                                                &nbsp;&nbsp;
+                                                @if(!$user_address_item->is_default)
+                                                    <a data-toggle="tooltip" title="Đặt mặc định" href="javascript:void(0)" data-id="{{$user_address_item->id}}" class="btn-white btn btn-xs _btn-action-set-default">
+                                                        <i class="fa fa-check"></i>
+                                                    </a>
+                                                @endif
                                             </div>
-                                            <div class="hr-line-dashed"></div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label" for="reciver_phone">Điện thoại</label>
-                                                <div class="col-sm-10">
-                                                    <input required type="text" id="reciver_phone" name="reciver_phone" class="form-control" placeholder="Điện thoại">
+                            @if($max_user_address)
+                                <a class="btn btn-primary" id="_add-user-address">Thêm địa chỉ</a>
+                            @endif
+
+                            <div class="modal inmodal fade" id="modal-id" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Cập nhật địa chỉ nhận hàng</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="_form-update-user-address"  class="form-horizontal" action="{{ url('user/address')  }}" method="post">
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="reciver_name">Tên người nhận</label>
+                                                    <div class="col-sm-10">
+                                                        <input required type="text" id="reciver_name" name="reciver_name" class="form-control" placeholder="Tên người nhận">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="hr-line-dashed"></div>
+                                                <div class="hr-line-dashed"></div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label" for="province_id">Địa chỉ</label>
-                                                <div class="col-sm-10">
-                                                    <div class="row m-b">
-                                                        <div class="col-md-6">
-                                                            <select required id="province_id" name="province_id" class="_autofocus form-control" id="">
-                                                                <option value="">Tỉnh / thành phố</option>
-                                                                @foreach($all_provinces as $province)
-                                                                    <option value="{{$province->id}}">{{$province->label}}</option>
-                                                                @endforeach
-                                                            </select>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="reciver_phone">Điện thoại</label>
+                                                    <div class="col-sm-10">
+                                                        <input required type="text" id="reciver_phone" name="reciver_phone" class="form-control" placeholder="Điện thoại">
+                                                        <span class="help-block m-b-none">Vui lòng chỉ nhập ký tự số.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="hr-line-dashed"></div>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="province_id">Địa chỉ</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="row m-b">
+                                                            <div class="col-md-6">
+                                                                <select required id="province_id" name="province_id" class="_autofocus form-control" id="">
+                                                                    <option value="">Tỉnh / thành phố</option>
+                                                                    @foreach($all_provinces as $province)
+                                                                        <option value="{{$province->id}}">{{$province->label}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <select required id="district_id" name="district_id" class="form-control" id="">
+                                                                    <option value="">Quận / huyện</option>
+                                                                    @foreach($all_districts as $district)
+                                                                        <option class="hidden" data-province-id="{{ $district->parent_id  }}" value="{{$district->id}}">{{$district->label}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <select required id="district_id" name="district_id" class="form-control" id="">
-                                                                <option value="">Quận / huyện</option>
-                                                                @foreach($all_districts as $district)
-                                                                    <option class="hidden" data-province-id="{{ $district->parent_id  }}" value="{{$district->id}}">{{$district->label}}</option>
-                                                                @endforeach
-                                                            </select>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <input required type="text" id="detail" name="detail" class="form-control" placeholder="Địa chỉ">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-sm-12">
-                                                            <input required type="text" id="detail" name="detail" class="form-control" placeholder="Địa chỉ">
-                                                        </div>
+                                                </div>
+                                                <div class="hr-line-dashed"></div>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" for="note">Ghi chú</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea id="note" name="note" rows="3" class="form-control" placeholder="Ghi chú"></textarea>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="hr-line-dashed"></div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label" for="note">Ghi chú</label>
-                                                <div class="col-sm-10">
-                                                    <textarea id="note" name="note" rows="3" class="form-control" placeholder="Ghi chú"></textarea>
-                                                </div>
-                                            </div>
+                                                <input type="hidden" name="user_address_id" id="user_address_id" value="0">
 
-                                            <input type="hidden" name="user_address_id" id="user_address_id" value="0">
+                                            </form>
 
-                                        </form>
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="_btn-update-user-address">Cập nhật</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="_btn-update-user-address">Cập nhật</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <span class="pull-right">(<strong>{{count($shops)}}</strong>) shop</span>
-                        <h5>
-                            Danh sách shop kết đơn
-                        </h5>
-                    </div>
-                    <div class="ibox-content">
-                        @if(count($shops))
+                <div class="col-md-6">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <span class="pull-right">(<strong>{{count($shops)}}</strong>) shop</span>
+                            <h5>
+                                Danh sách shop kết đơn
+                            </h5>
+                        </div>
+                        <div class="ibox-content">
                             <div class="table-responsive">
                                 <table class="table table-hover table-striped shoping-cart-table">
                                     <thead>
@@ -201,8 +201,8 @@
                                         </tr>
                                     @endforeach
                                 </table>
-
-
+                            </div>
+                            <div class="table">
                                 <table class="table invoice-total">
                                     <tbody>
                                     <tr>
@@ -226,46 +226,40 @@
                                     </tbody>
                                 </table>
                             </div>
-                        @endif
-                    </div>
-
-                    <div class="ibox-content ibox-footer">
-                        @if(Auth::user()->account_balance >= $deposit_amount)
-                            <form action="">
-                                <p>Nhập mật khẩu tài khoản để xác nhận đặt cọc.</p>
-                                <div class="input-group">
-                                    <input placeholder="Nhập mật khẩu" type="password" class="form-control _input-password">
-                                    <span class="input-group-btn">
-                                            <button type="button" class="btn btn-primary _action-deposit">Đặt cọc</button>
-                                        </span>
+                            @if(Auth::user()->account_balance >= $deposit_amount)
+                                <form action="" class="form-inline">
+                                    <p>Nhập mật khẩu tài khoản để xác nhận đặt cọc.</p>
+                                    <div class="input-group">
+                                        <input placeholder="Nhập mật khẩu" type="password" class="form-control _input-password">
+                                        <span class="input-group-btn">
+                                                <button type="button" class="btn btn-primary _action-deposit">Đặt cọc</button>
+                                            </span>
+                                    </div>
+                                </form>
+                            @else
+                                <div class="text-danger">
+                                    Hiện số tiền trong tài khoản không đủ để đặt cọc. <br>
+                                    Hiện bạn còn thiếu {{  App\Util::formatNumber(abs(Auth::user()->account_balance - $deposit_amount)) }} <sup>d</sup> <br>
+                                    Vui lòng nạp tiền vào tài khoản để tiến hành đặt cọc đơn hàng. <br>
+                                    Liên hệ HOTLINE 04.2262.6699 - 04.2265.6699 để được hỗ trợ!
                                 </div>
-                            </form>
-                        @else
-                            <div class="text-danger">
-                                Hiện số tiền trong tài khoản không đủ để đặt cọc. <br>
-                                Hiện bạn còn thiếu {{  App\Util::formatNumber(abs(Auth::user()->account_balance - $deposit_amount)) }} <sup>d</sup> <br>
-                                Vui lòng nạp tiền vào tài khoản để tiến hành đặt cọc đơn hàng. <br>
-                                Liên hệ HOTLINE 04.2262.6699 - 04.2265.6699 để được hỗ trợ!
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <h4>Không có sản phẩm ở SHOP này.</h4>
+            @endif
         </div>
     </div>
 @endsection
 
 @section('header-scripts')
-<!-- Sweet Alert -->
-<link href="{!! asset('oniasset/css/plugins/sweetalert/sweetalert.css') !!}" rel="stylesheet">
 @endsection
 
 
 @section('footer-scripts')
     @parent
-    <!-- Sweet alert -->
-    <script src="{!! asset('oniasset/js/plugins/sweetalert/sweetalert.min.js') !!}"></script>
-
     <script>
         $(document).ready(function(){
 
@@ -281,25 +275,29 @@
                  var $that = $(this);
 
 
-
                  var password = $('._input-password').val();
-
                  var address_id = $('._user-address[data-is-default=1]').data('id');
 
                  if(!$('._user-address').length){
-                     bootbox.alert('Hiện chưa có địa chỉ nhận hàng!');
+                     swal({
+                         title: "Lỗi!",
+                         text: "Hiện chưa có địa chỉ nhận hàng!"
+                     });
                      return false;
                  }
 
                  if(!address_id){
-                     bootbox.alert('Vui lòng thiết lập 1 địa chỉ nhận hàng làm mặc định!');
+                     swal({
+                         title: "Lỗi!",
+                         text: "Vui lòng thiết lập 1 địa chỉ nhận hàng làm mặc định!"
+                     });
                      return false;
                  }
 
                 $that.prop('disabled', true);
 
                  $.ajax({
-                   url: "{{ url('dat-coc')  }}",
+                   url: "{{ url('deposit')  }}",
                    method: 'post',
                    data: {
                        password: password,
@@ -309,15 +307,15 @@
                    },
                    success:function(response) {
                        if(!response.success){
-
                            $that.prop('disabled', false);
-                           bootbox.alert(response.message);
+                           swal({
+                               title: "Lỗi!",
+                               text: response.message
+                           });
                            $('._input-password').focus();
                        }else{
-                           //bootbox.alert(response.message);
                            window.location.href = response.redirect_url;
                        }
-
                    },
                    error: function(){
                        $that.prop('disabled', false);
@@ -397,30 +395,6 @@
                         swal("Đã hủy", "Đã hủy bỏ thao tác xóa địa chỉ này.", "error");
                     }
                 });
-
-/*--
-                bootbox.confirm("Bạn có chắc muốn xóa địa chỉ này?", function(result){
-                    if(result){
-                        $.ajax({
-                            url: "{{ url('user/address/delete')  }}",
-                            method: 'put',
-                            data: {
-                                _token: "{{ csrf_token() }}",
-                                action: 'delete',
-                                id: user_address_id
-                            },
-                            success: function(response){
-                                if(response.success){
-                                    window.location.reload();
-                                }
-                            },
-                            error: function () {
-
-                            }
-                        });
-                    }
-                });
---*/
             });
 
             $(document).on('click', '._btn-action-edit', function(event){
@@ -465,7 +439,11 @@
                         if(response.success){
                             window.location.reload();
                         }else{
-                            bootbox.alert(response.message);
+                            swal({
+                                title: "Lỗi!",
+                                text: response.message,
+                                html: true
+                            });
                         }
                     },
                     error: function () {
