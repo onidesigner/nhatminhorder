@@ -65,14 +65,14 @@
                                                     @if($user_mobile_default)
                                                         {{ $user_mobile_default  }}
                                                     @else
-                                                        &lt;Số Điện Thoại&gt;
+                                                        &lt; Số Điện Thoại &gt;
                                                     @endif
 
                                                 </td>
 
 
 
-                                                </td>
+
                                             </tr>
                                             <tr>
                                                 <td class="no-padding-leftright"><strong>Tỉ lệ đặt cọc (%)</strong>:
@@ -138,6 +138,22 @@
 
                                         @if($permission['can_add_mobile'])
                                             <a href="javascript:void(0)" class="_add-user-phone"><i class="fa fa-plus"></i> Thêm</a>
+                                        @endif
+
+                                        @if($permission['can_setup_sale_crane_buying'])
+                                        <h4>Thiết lập luong nhân viên mua hàng</h4>
+                                        Lương cơ bản: <br><input
+                                                    class="_sale-value"
+                                                    type="number" name="sale_basic"
+                                                             value="{{$user->sale_basic}}"> đ<br>
+                                        Phần trăm hoa hồng: <br><input
+                                                    class="_sale-value"
+                                                    type="number"
+                                                    max="100"
+
+                                                                   value="{{$user->sale_percent}}"
+
+                                                                   name="sale_percent">%
                                         @endif
                                     </div>
                                 </div>
@@ -230,6 +246,23 @@
     @parent
     <script>
         $(document).ready(function(){
+
+            $(document).on('change', '._sale-value', function(){
+                var name = $(this).attr('name');
+                var value = $(this).val();
+
+                request("{{ url('user/SetupSaleBuying')  }}", 'post', {
+                    name:name,
+                    value:value,
+                    user_id:"{{$user->id}}"
+                }).done(function(response){
+                    if(response.success){
+                        $.notify("Cập nhật thành công", {type:"success"});
+                    }else{
+                        bootbox.alert(response.message);
+                    }
+                });
+            });
 
             $(document).on('click', '._remove-user-phone', function(){
                  var user_phone = $(this).data('phone');

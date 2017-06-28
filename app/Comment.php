@@ -22,7 +22,8 @@ class Comment extends Model
     const TYPE_OBJECT_PACKAGE = 'PACKAGE';
     const TYPE_OBJECT_COMPLAINT = 'COMPLAINT';
 
-    public static function createComment(User $create, $object, $message, $scope, $type_context, $parent_object = null){
+    public static function createComment($create, $object, $message, $scope, $type_context, $parent_object = null){
+        /** @var User $create */
         $object_id = null;
         $object_type = null;
         if($object instanceof Order){
@@ -41,7 +42,12 @@ class Comment extends Model
         }
 
         $comment = new self();
-        $comment->user_id = $create->id;
+        $user_id = 0;
+        if($create instanceof User){
+            $user_id = $create->id;
+        }
+        $comment->user_id = $user_id;
+
         $comment->object_id = $object_id;
         $comment->object_type = $object_type;
 

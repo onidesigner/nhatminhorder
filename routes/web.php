@@ -246,6 +246,8 @@ Route::get('/DeliveryManage/Create', 'DeliveryManageController@createView');
 Route::post('/BillManage/Create', 'BillManageController@create');
 Route::get('/BillManage/Detail/{id}', 'BillManageController@detailView');
 Route::get('/BillManage', 'BillManageController@listView');
+Route::post('/BillManage/UpdateFee', 'BillManageController@updateFee');
+Route::get('/BillManage/Print/{id}', 'BillManageController@printBill');
 #endregion
 
 
@@ -263,6 +265,17 @@ Route::get('/accouting_finance','AccountingFinanceControlCustomerController@inde
 
 Route::post('/remove-package','PackageController@removePackage');
 Route::post('/update_package_weight','PackageController@updatePackageWeight');
+
+Route::get('/SystemRunCheck', 'SystemRunCheckController@index');
+Route::get('/SystemRunCheck/ProblemTypeHtml', 'SystemRunCheckController@problemTypeHtml');
+
+
+Route::get('/PaidStaffSaleValue', 'PaidStaffSaleValueController@index');
+Route::post('/PaidStaffSaleValue/Setting', 'PaidStaffSaleValueController@setting');
+Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
+
+
+
 Route::get('/convert-notify','Customer\CustomerSystemNotificationController@convertNotification');
 
 Route::get('/don-dang-theo-doi','UserFollowerObjectController@index');

@@ -235,6 +235,8 @@ class UserController extends Controller
             'data' => $user_refer_data
         ];
 
+        $can_setup_sale_crane_buying = Permission::isAllow(Permission::PERMISSION_SETUP_PAID_STAFF_SALE_VALUE);
+
         return view('user_detail', [
             'page_title' => "Thông tin nhân viên [" . $user->email . "]",
             'user' => $user,
@@ -246,9 +248,40 @@ class UserController extends Controller
                 'can_add_mobile' => $can_add_mobile,
                 'can_remove_mobile' => $can_remove_mobile,
                 'can_edit_user' => $can_edit_user,
+                'can_setup_sale_crane_buying' => $can_setup_sale_crane_buying
             ]
         ]);
 
+    }
+
+    /**
+     * @author vanhs
+     * @desc Luu luong co ban, phan tram hoa hong cho nhan vien mua hang
+     * @param Request $request
+     * @return mixed
+     */
+    public function setupSaleValue(Request $request){
+        $can_save = Permission::isAllow(Permission::isAllow(Permission::PERMISSION_SETUP_PAID_STAFF_SALE_VALUE));
+        if(!$can_save){
+            return response()->json(['success' => false, 'message' => 'ban khong co quyen thuc hien hanh dong nay.']);
+        }
+
+        $user_id = $request->get('user_id');
+        $user = User::find($user_id);
+        if(!$user instanceof User){
+            return response()->json(['success' => false, 'message' => 'khong tim thay nhan vien']);
+        }
+
+        if($request->get('name') == 'sale_percent'){
+            $user->sale_percent = $request->get('value');
+        }else if($request->get('name') == 'sale_basic'){
+            $user->sale_basic = $request->get('value');
+        }
+        if($user->save()){
+            return response()->json(['success' => true, 'message' => '']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'co loi xay ra, vui long thu lai.']);
     }
 
     /**

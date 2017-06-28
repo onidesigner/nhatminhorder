@@ -83,7 +83,7 @@
                                         </td>
                                         <td>
                                             <small>
-                                                <p><a href="">In phiếu</a></p>
+                                                <p><a href="{{ url('BillManage/Print', $bill_mange_item->id)  }}" target="_blank">In phiếu</a></p>
                                                 <p><a href="{{ url('BillManage/Detail', $bill_mange_item->id)  }}">Xem chi tiết</a></p>
                                             </small>
 

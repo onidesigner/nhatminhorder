@@ -52,6 +52,8 @@
 
                         <p>Tìm thấy {{ $total_orders }} đơn hàng</p>
 
+                        <p class="text-danger">Đơn hàng ở trạng thái "Đang Giao Hàng", sau 3 ngày khách không ấn "Đã Nhận", hệ thống sẽ tự động chuyển sang trạng thái "Đã Nhận"</p>
+
                         <div class="table-responsive">
                             <table class="table table-striped table-hover no-padding-leftright">
                                 <thead>

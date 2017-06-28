@@ -20,7 +20,27 @@
 {{--    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>--}}
     <script>
         $(document).ready(function(){
-            //todo
+            var order_id = "{{ $order->id  }}";
+            $(document).on('change', '._money-original', function(){
+                var $that = $(this);
+                var money = $that.val();
+                var name = $that.attr('name');
+
+                request("{{ url('order/' . $order->id . '/action')  }}", 'post', {
+                    action:'change_money_original',
+                    method:'post',
+                    money:money,
+                    name:name,
+                    order_id:order_id,
+                    _token:"{{csrf_token()}}"
+                }).done(function(response){
+                    if(response.success){
+                        $.notify("Thêm thành công", {type:"success"});
+                    } else{
+                        bootbox.alert(response.message);
+                    }
+                });
+            });
         });
     </script>
 @endsection
@@ -349,6 +369,39 @@
                                                     @else
                                                         {{ $order->domestic_shipping_fee  }}
                                                     @endif
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <span style="color: red;">Tổng giá báo khách (tiền hàng + ship nội dịa TQ)</span>
+                                                </td>
+                                                <td>
+
+                                                    <?php
+//                                                    $amount_customer_view = 0;
+                                                    $amount_customer_view = $order->domestic_shipping_fee + $order->amount;
+                                                    ?>
+
+                                                    {{$amount_customer_view}} ¥
+
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <span style="color: red;">Tổng giá thực mua (tiền hàng + ship nội địa TQ)</span>
+                                                </td>
+                                                <td>
+                                                    <input
+                                                            type="text" class="_money-original" name="amount_original"
+                                                            value="{{$order->amount_original}}"
+                                                           placeholder=""> ¥
+
+                                                    {{--<input style="margin-top: 5px;" type="text" class="_money-original" name="domestic_shipping_china_original"--}}
+                                                           {{--value="{{$order->domestic_shipping_china_original}}"--}}
+                                                           {{--placeholder="Phí VC nội địa TQ gốc"> ¥ <br>--}}
+
                                                 </td>
                                             </tr>
 
