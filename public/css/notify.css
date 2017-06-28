@@ -1,3 +1,231 @@
+
+
+.panel-notify {
+    display: inline-block;
+    position: relative;
+    width: 426px;
+    top: 14px;
+}
+@media (max-width: 480px) {
+    .panel-notify {
+        top: 0;
+        display: inline-block !important;
+        width: 100% !important;
+    }
+}
+.panel-notify > a {
+    float: right;
+}
+.panel-notify .notify-wrapper {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    z-index: 99999;
+    display: inline-block;
+    width: 426px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #bababa;
+    float: left;
+}
+@media not all and (max-width: 480px) {
+    .panel-notify .notify-wrapper {
+        overflow: hidden;
+        height: 560px;
+        -webkit-box-shadow: 0px 2px 8px 2px #bababa;
+        -moz-box-shadow: 0px 2px 8px 2px #bababa;
+        box-shadow: 0px 2px 8px 2px #bababa;
+    }
+}
+@media (max-width: 480px) {
+    .panel-notify .notify-wrapper {
+        display: inline-block !important;
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        border-radius: 0;
+    }
+}
+.panel-notify .notify-wrapper .notify-header {
+    display: inline-block;
+    width: 100%;
+    float: left;
+    background: #fff;
+    border-bottom: 1px solid #bfbfbf;
+    padding: 7px 0;
+    text-align: center;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #032d3e;
+    font-weight: bold;
+    position: relative;
+    z-index: 10;
+}
+.panel-notify .notify-wrapper .notify-header .arrow-up {
+    position: absolute;
+    top: -8px;
+    right: 32px;
+    background: transparent;
+    width: 10px;
+    height: 20px;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #fff;
+}
+@media (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-header .arrow-up {
+        display: none !important;
+    }
+}
+.panel-notify .notify-wrapper .notify-body {
+    display: inline-block;
+    width: 100%;
+    float: left;
+    background: transparent;
+    position: relative;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar {
+    z-index: 9;
+    width: 68px;
+    display: inline-block;
+    float: left;
+    background: #f9f9f9;
+    position: relative;
+    border-right: 1px solid #dbdbdb;
+}
+@media not all and (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-body .notify-sidebar {
+        height: 526px;
+        -webkit-box-shadow: inset -2px 0px 5px 0px #dbdbdb;
+        -moz-box-shadow: inset -2px 0px 5px 0px #dbdbdb;
+        box-shadow: inset -2px 0px 5px 0px #dbdbdb;
+    }
+}
+@media (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-body .notify-sidebar {
+        width: 58px !important;
+    }
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul {
+    display: inline-block;
+    list-style: none;
+    background: #e9e9e9;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li:hover {
+    cursor: pointer;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 23px 0;
+    border-bottom: 1px solid #e9e9e9;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a:hover, .panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a.active {
+    background: #219ae8;
+    cursor: pointer;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a:hover > i, .panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a.active > i {
+    color: #fff;
+}
+.panel-notify .notify-wrapper .notify-body .notify-sidebar > ul > li > a > i {
+    font-size: 16px;
+    color: #748893;
+}
+.panel-notify .notify-wrapper .notify-body .notify-primary {
+    width: 100%;
+    display: inline-block;
+    float: left;
+    border-top: 1px solid #eaeaea;
+    background: #fff;
+    position: absolute;
+    left: 0;
+    padding-left: 67px;
+    z-index: 0;
+}
+@media not all and (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-body .notify-primary {
+        height: 526px;
+    }
+}
+@media (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-body .notify-primary {
+        position: relative;
+        padding-left: 57px !important;
+    }
+}
+.panel-notify .notify-wrapper .notify-body .notify-primary .empty-message {
+    font-size: 12px;
+   /* color: #748893;*/
+    padding: 30px 40px 30px 40px;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    background: #fff;
+}
+@media (max-width: 480px) {
+    .panel-notify .notify-wrapper .notify-body .notify-primary .empty-message {
+        padding: 20px 30px;
+    }
+}
+.panel-notify .notification-view {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 526px !important;
+}
+.panel-notify .notification-view .notifications {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications {
+    width: 100% !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify {
+    width: 100% !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li {
+    width: 100% !important;
+    background: rgba(237, 239, 245, 0.98) !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li .noti-title {
+    width: 100% !important;
+    position: relative;
+    padding-right: 0px;
+    color: red;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li .noti-image {
+    position: absolute !important;
+    top: 15px !important;
+    right: 0 !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li.consumed {
+    background: #fff !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li.consumed .noti-title {
+    color: #032d3e !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li.consumed .noti-title .noti-time > i {
+    color: #0b6198 !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li:hover .noti-title {
+   /* color: #fff !important;*/
+    background: #0b6198 !important;
+}
+.panel-notify .notification-view .notifications ul.ul-notifications ul.list-notify > li:hover .noti-title .noti-time > i {
+   /* color: #fff !important;*/
+}
+
+
+
+
 .notify{
 	position: fixed;
 	width: 400px;

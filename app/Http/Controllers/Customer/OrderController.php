@@ -13,6 +13,7 @@ use App\OrderItem;
 use App\OrderService;
 use App\Package;
 use App\Service;
+use App\SystemNotification;
 use App\User;
 use App\UserAddress;
 use App\UserOriginalSite;
@@ -423,9 +424,11 @@ class OrderController extends Controller
         $paid_user = User::find($order->paid_staff_id); // thoong tin nguowif mua hang
 
         #region --thông báo hủy đơn hàng cho quản trị--
-        $title = "Thay đổi trạng thái đơn hàng ";
+        $title = "Thay đổi trạng thái đơn hàng ".$order->code;
         $content = $user->name." hủy đơn hàng ".$order->code;
-        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
+        $notify = new SystemNotification();
+        $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
+        
         #region --end --
 
         return true;
@@ -445,9 +448,15 @@ class OrderController extends Controller
 
         #region --thông báo hủy đơn hàng cho quản trị--
 
-        $title = " Comment trên sản phẩm của đơn ".$order->code;
+        $title = "Comment trên sản phẩm của đơn";
         $content =  $user->name." comment trên sản phẩm của đơn ".$order->code;
-        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
+
+        $notify = new SystemNotification();
+        $follower_id = $order->paid_staff_id;
+        $follower = User::find($follower_id);
+        if($follower instanceof User){
+            $notify->createSystemNotificationChat($order,$follower,$title,$content,$user);
+        }
 
         #region --end --
 
@@ -505,15 +514,7 @@ class OrderController extends Controller
 
         Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-        // tạo notification cho hành động
-
-        #region --tạo notification--
-
-        $title = "Thay đổi dịch vụ đơn hàng ".$order->code;
-        $content = $user->name." ".$message." đơn ".$order->code;
-        CustomerNotification::notificationCrane($order,$title,$content,'ORDER');
-
-        #endregion
+        
 
         return true;
     }

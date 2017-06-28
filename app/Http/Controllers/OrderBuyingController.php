@@ -9,6 +9,7 @@ use App\OrderService;
 use App\Permission;
 use App\Service;
 use App\User;
+use App\UserFollowObject;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,8 +52,9 @@ class OrderBuyingController extends Controller
     }
 
     /**
-     * @author vanhs
+     * @author vanhs , giangnh
      * @desc Gan/bo gan don hang cho nhan vien mua hang
+     * @desc nguoi mua hang cung la nguoi theo doi don
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -89,10 +91,62 @@ class OrderBuyingController extends Controller
 
             $message = sprintf("Phân đơn hàng cho nhân viên %s (%s)", $user->email, $user->code);
             Comment::createComment($current_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
+
+            #region --gawns ngupi theo doi down--
+            $customer_user = User::find($order->user_id);
+
+            $exists_user = $this->checkExistsUserFollow($order,$user);
+            // nếu user đó đã tồn tại mà
+            if($exists_user){
+                $user_follow = new UserFollowObject();
+                $user_follow->createUserFollow($order,$user); // nguoi mua hang
+            }
+
+            $exists_customer_user = $this->checkExistsUserFollow($order,$customer_user);
+            if($exists_customer_user){
+                $user_follow = new UserFollowObject();
+                $user_follow->createUserFollow($order,$customer_user);
+            }
+
+            #endregion --gan nguoi theo doi don--
         }
         $order->save();
 
         return response()->json(['success' => true, 'message' => '']);
+    }
+
+    /**
+     * neu da ton tai thi ko them moi nua
+     * @param $order
+     * @param $user
+     * @return bool
+     */
+    private function checkExistsUserFollow($order,$user){
+        $userExists = UserFollowObject::where([
+            'object_id' => $order->id,
+            'follower_id' => $user->id
+        ])->get();
+        if(count($userExists) > 0){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * neu thay doi nguoi mua don
+     * thi update lại id của nguoi mua đơn đó
+     * @param $order
+     * @return bool
+     */
+    private function checkCraneSaff($order){
+        $follower_order = UserFollowObject::where([
+            'object_id' => $order->id
+        ])->get();
+        if(count($follower_order) > 0){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**

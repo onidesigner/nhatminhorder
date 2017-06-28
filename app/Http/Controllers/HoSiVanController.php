@@ -136,6 +136,35 @@ class HoSiVanController extends Controller
         }
     }
 
+    /**
+     * @author vanhs
+     * @desc
+     * cap nhat them cac thong tin
+     *
+     * - tong gia thuc mua vnd
+     * - tien hang vnd
+     * - tong gia bao khach
+     * - tong gia bao khach vnd
+     * - tien mac ca
+     * - tien mac ca vnd
+     *
+     * @param Request $request
+     */
+    private function __cap_nhat_thong_tin_don_hang1(Request $request){
+        $orders = DB::select(" select id from `order` where flag is null limit 250; ");
+
+        if($orders){
+            foreach($orders as $o){
+                $order = Order::find($o->id);
+                if(!$order instanceof Order){
+                    continue;
+                }
+                $order->flag = 1;
+                $order->save();
+            }
+        }
+    }
+
     private function __hoan_tien_van_chuyen_don_van_chuyen_tiet_kiem(Request $request){
 
         $orders_id = $request->get('orders_id');//co dang (100, 200, 300)

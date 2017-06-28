@@ -323,13 +323,16 @@ class Cart extends Model
         DB::beginTransaction();
 
         try {
-            $price_range = [];
+            $params['site'] = strtolower($params['site']);
+
+            $price_range = null;
             if(!empty($params['price_range'])){
-                $price_range = $params['price_range'];
+                if($params['site'] == '1688'){
+                    $price_range = json_encode($params['price_range']);
+                }
                 unset($params['price_range']);
             }
 
-            $params['site'] = strtolower($params['site']);
             $user_id = Auth::user()->id;
             $insert_id_cart = null;
 
@@ -378,6 +381,7 @@ class Cart extends Model
                 $data_insert_item['cart_id'] = $insert_id_cart;
                 $data_insert_item['property_md5'] = CartItem::genPropertyMd5($params['item_id'], @$params['property']);
                 $data_insert_item['created_at'] = date('Y-m-d H:i:s');
+                $data_insert_item['price_table'] = $price_range;
 
                 unset($data_insert_item['brand']);
                 unset($data_insert_item['category_name']);
@@ -394,14 +398,72 @@ class Cart extends Model
                 ]);
             endif;
 
+            self::__change_price_of_items_when_add_to_cart_1688($price_range, $params['site'],
+                $params['shop_id'], $params['item_id'], $user_id);
+
             DB::commit();
             return true;
         } catch (\Exception $e) {
-            echo $e->getMessage();exit;
             DB::rollback();
             return false;
         }
 
+    }
+
+    /**
+     * @author vanhs
+     * @desc Cap nhat lai gia san pham theo khoang gia, site 1688
+     * @param $price_range
+     * @param $site
+     * @param $shop_id
+     * @param $item_id
+     * @param $customer_id
+     * @return bool
+     */
+    public static function __change_price_of_items_when_add_to_cart_1688($price_range, $site,
+                                                                         $shop_id, $item_id, $customer_id){
+
+        
+        if($site == '1688'){
+            $total_quantity_order = 0;
+            $sql_where = " user_id = {$customer_id} and shop_id = {$shop_id} and item_id = {$item_id} ";
+            $query = DB::select("select sum(quantity) as quantity 
+                        from cart_items 
+                        where {$sql_where}");
+            if($query){
+                $total_quantity_order = $query[0]->quantity;
+            }
+            if($price_range){
+                $price_range = json_decode($price_range, true);
+                $price_finish = 0;
+                foreach($price_range as $price_range_item){
+                    $begin = (int)$price_range_item['begin'];
+                    $end = (int)$price_range_item['end'];
+                    $price = (float)$price_range_item['price'];
+
+                    if($begin && $end){
+                        if($total_quantity_order >= $begin
+                            && $total_quantity_order <= $end){
+                            $price_finish = $price;
+                            break;
+                        }
+                    }else if($begin && !$end){
+                        if($total_quantity_order >= $begin){
+                            $price_finish = $price;
+                            break;
+                        }
+                    }
+                }
+
+                if($price_finish){
+                    DB::statement("update cart_items 
+                            set price_origin = {$price_finish}, price_promotion = {$price_finish} 
+                            where {$sql_where}");
+                }
+            }
+
+        }
+        return true;
     }
 
     public function cart_item(){

@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/flat-admin.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/nprogress.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">
+    {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">--}}
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @show
 
@@ -91,101 +91,30 @@
                                 <div class="title">New Orders</div>
                                 <div class="count width-auto">
                                     {{ App\Cart::getCartTotalQuantityItem(Auth::user()->id)  }}
+
                                 </div>
                             </a>
                         </li>
 
-                        <li class="arrow-none dropdown notification danger">
-                            <a href="
-                            <?php if(Auth::user()->section == App\User::SECTION_CUSTOMER){ ?>
-
-                                {{ url('thong-bao') }}
-
-                                    <?php }else{ ?>
-
-                                    {{ url('notification') }}
-
-                                <?php }?>
-                                    " class="dropdown-toggle
-                            <?php if(Auth::user()->section == App\User::SECTION_CUSTOMER){
-
-                                echo "_read_notification_customer";
-
-                            }else{
-                                echo "_read_notification_crane";
-                            }?>
-
-
-                            " data-toggle="dropdown1111">
+                        <li class="dropdown notification danger">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
                                 <div class="title">System Notifications</div>
-                                <div class="count width-auto">
-                                    <?php
-                                    if(Auth::user()->section == App\User::SECTION_CUSTOMER){
-                                        // đây là giao diện dành cho khách hàng
-                                        $user_id = \Illuminate\Support\Facades\Auth::user()->id;
-                                        $count_notification = \App\CustomerNotification::where([
-                                                'section' => App\User::SECTION_CUSTOMER,
-                                                'is_view' => App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,
-                                                'user_id' => $user_id
-                                        ])->count();
-                                        ;
-                                        echo $count_notification;
-                                    }else{
-                                        // giao dien dành cho quản trị
-                                        $user_id = \Illuminate\Support\Facades\Auth::user()->id;
-                                        $count_notification = \App\CustomerNotification::
-                                                where([
-                                                        'section' => App\User::SECTION_CRANE,
-                                                        'is_view' => App\CustomerNotification::CUSTOMER_NOTIFICATION_VIEW,
-                                                        'user_id' => $user_id
-                                                ])->count();
-                                        ;
-                                        echo $count_notification;
-                                    }
-                                    ?>
-                                </div>
+                                <div class="count width-auto _count_notification"></div>
                             </a>
-                        </li>
+                            <div class="dropdown-menu" style="max-height: 500px; overflow-y: auto;">
+                                <ul class="_display_notify">
+                                    <li class="dropdown-header _system_notify" style="height: 40px">
+                                        <span class="pull-left" >Thông báo</span>
+                                        {{--<span class="pull-right _mark_read_all " style="cursor: pointer!important;color: #365899;">Đánh dấu tất cả đã đọc</span>--}}
+                                    </li>
 
-                        {{--<li class="dropdown notification danger">--}}
-                            {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">--}}
-                                {{--<div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>--}}
-                                {{--<div class="title">System Notifications</div>--}}
-                                {{--<div class="count width-auto">10</div>--}}
-                            {{--</a>--}}
-                            {{--<div class="dropdown-menu">--}}
-                                {{--<ul>--}}
-                                    {{--<li class="dropdown-header">Notification</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="#">--}}
-                                            {{--<span class="badge badge-danger pull-right">8</span>--}}
-                                            {{--<div class="message">--}}
-                                                {{--<div class="content">--}}
-                                                    {{--<div class="title">New Order</div>--}}
-                                                    {{--<div class="description">$400 total</div>--}}
-                                                {{--</div>--}}
-                                            {{--</div>--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="#">--}}
-                                            {{--<span class="badge badge-danger pull-right">14</span>--}}
-                                            {{--Inbox--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
-                                    {{--<li>--}}
-                                        {{--<a href="#">--}}
-                                            {{--<span class="badge badge-danger pull-right">5</span>--}}
-                                            {{--Issues Report--}}
-                                        {{--</a>--}}
-                                    {{--</li>--}}
                                     {{--<li class="dropdown-footer">--}}
-                                        {{--<a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
+                                        {{--<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
                                     {{--</li>--}}
-                                {{--</ul>--}}
-                            {{--</div>--}}
-                        {{--</li>--}}
+                                </ul>
+                            </div>
+                        </li>
 
                         <li class="dropdown profile">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
@@ -208,17 +137,19 @@
                                         <a href="{{ url('san-pham-da-luu')  }}">Sản phẩm đã lưu</a>
                                     </li>
                                     <li>
-
-
                                         @if(Auth::user()->section == App\User::SECTION_CRANE)
                                              <a href="{{ url('user/detail', Auth::user()->id)  }}">
                                         @else
                                             <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
                                         @endif
                                             Thông tin cá nhân
-                                        </a>
+                                            </a>
                                     </li>
-
+                                    @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                    <li>
+                                        <a href="{{ url('don-dang-theo-doi')  }}">Đơn đang theo dõi</a>
+                                    </li>
+                                    @endif
                                     <li>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
@@ -255,6 +186,12 @@
 @yield('widget')
 
 @section('css_bottom')
+    <link rel="stylesheet" href=" {{asset('css/jquery.scrollbar.css') }}">
+    <link rel="stylesheet" href=" {{asset('css/font-awesome.min.css') }}">
+
+
+
+
 @show
 
 @section('js_bottom')
@@ -266,32 +203,64 @@
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/notify.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery.scrollbar.min.js') }}"></script>
 
     <script>
         $( document ).ready(function() {
-            $( "._read_notification_customer" ).click(function() {
-                $.ajax({
-                    url : '/view-notification',
-                    data : {
+            var xhr;
+           function content_notification(view){
+               $.ajax({
+                   url: "{{ url('/load-content-notify') }}",
+                   type: 'GET',
+                   data: {},
+                   dataType: 'json',
+                   success: function (response) {
 
+                       if (response.type == 'success') {
+                           // count notifycation
+                           if(response.count_notify != 0){
+                               $("._count_notification").html(response.count_notify);
+                           }else{
+                               $("._count_notification").hide();
+                           }
+
+                           if(view == true){
+                               $("._system_notify").after(response.notification);
+                           }
+
+                       }
+                   }
+               });
+           }
+            content_notification(true);
+
+            /*setInterval(function(){ content_notification(false); }, 30000);*/
+
+            /**
+             * đổi trạng thái đơn sang đã đọc
+             */
+
+
+            $(document).on("click","._change_status",function() {
+                var follower_id = $(this).data('follower-id');
+                $.ajax({
+                    url: "{{ url('/change-status-follower') }}",
+                    type: 'GET',
+                    data: {
+                        follower_id : follower_id
                     },
-                    type : 'GET'
-                }).done(function (response) {
-                    console.info(response);
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.type == 'success') {
+                                // do nothing
+                        }
+                    }
                 });
             });
-            $( "._read_notification_crane" ).click(function() {
-                $.ajax({
-                    url : '/view-notification',
-                    data : {
 
-                    },
-                    type : 'GET'
-                }).done(function (response) {
-                    console.info(response);
-                });
-            })
+
         });
+
     </script>
 @show
 

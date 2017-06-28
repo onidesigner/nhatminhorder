@@ -16,6 +16,7 @@ use App\Package;
 use App\Permission;
 use App\Service;
 use App\SystemConfig;
+use App\SystemNotification;
 use App\User;
 use App\UserAddress;
 use App\UserOriginalSite;
@@ -570,7 +571,10 @@ class OrderController extends Controller
             Comment::createComment($user, $order, sprintf("Chuyển trạng thái đơn sang %s", $status_title_after_change), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
             # tạo notification cho khách
             $title = sprintf("Thay đổi trạng thái trên đơn %s", $order->code);
-            CustomerNotification::notificationCustomer($order,$title,sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change),'ORDER');
+            $content = " Đơn hàng chuyển sang trạng thái ". $status_title_after_change;
+            #CustomerNotification::notificationCustomer($order,$title,sprintf("Đơn hàng chuyển sang trạng thái %s", $status_title_after_change),'ORDER');
+            $notify = new SystemNotification();
+            $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
         }
 
@@ -615,9 +619,9 @@ class OrderController extends Controller
                 $message = sprintf("Chọn dịch vụ %s", Service::getServiceName($service));
 
 
-                $title = "Chọn dịch vụ trên đơn ". $order->code;
-                $content = $user->name . " chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;
-                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//                $title = "Chọn dịch vụ trên đơn ". $order->code;
+//                $content = $user->name . " chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;
+//                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
                 
             }
         }else{
@@ -628,9 +632,9 @@ class OrderController extends Controller
                 ])->delete();
 
                 $message = sprintf("Bỏ chọn dịch vụ %s", Service::getServiceName($service));
-                $title = sprintf("Bỏ chọn dịch vụ trên đơn %s", $order->code);
-                $content = $user->name . " bỏ chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;;
-                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//                $title = sprintf("Bỏ chọn dịch vụ trên đơn %s", $order->code);
+//                $content = $user->name . " bỏ chọn dịch vụ " .Service::getServiceName($service)." đơn ".$order->code;;
+//                CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
             }
         }
 
@@ -755,9 +759,9 @@ class OrderController extends Controller
                     Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     Comment::createComment($user, $order, sprintf("Chọn dịch vụ %s", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-                    $title = "Chọn dịch vụ trên đơn ". $order->code;
-                    $content = $user->name . " chọn dịch vụ " .$service_name;
-                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//                    $title = "Chọn dịch vụ trên đơn ". $order->code;
+//                    $content = $user->name . " chọn dịch vụ " .$service_name;
+//                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
 
 
                 }
@@ -769,9 +773,9 @@ class OrderController extends Controller
                     Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
                     Comment::createComment($user, $order, sprintf("Bỏ chọn dịch vụ %", $service_name), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-                    $title = "Bỏ dịch vụ trên đơn ".$order->code;
-                    $content = $user->name . " bỏ chọn dịch vụ " .$service_name;
-                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//                    $title = "Bỏ dịch vụ trên đơn ".$order->code;
+//                    $content = $user->name . " bỏ chọn dịch vụ " .$service_name;
+//                    CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
                 }
                 break;
         }
@@ -828,9 +832,9 @@ class OrderController extends Controller
             );
 
             $title = "Sửa số lượng sản phẩm trên đơn ".$order->code;
-            $message = sprintf(" sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity);
-            $content = $user->name. $message;
-            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//            $message = sprintf(" sửa số lượng sản phẩm từ %s thành %s", $old_order_quantity, $new_order_quantity);
+//            $content = $user->name. $message;
+//            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
 
@@ -886,9 +890,9 @@ class OrderController extends Controller
                 $order
             );
             $title = "Sửa giá sản phẩm trên đơn ".$order->code;
-            $message =   sprintf(" sửa giá sản phẩm từ %s thành %s", $old_order_item_price, $new_order_item_price);
-            $content = $user->name. $message;
-            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+//            $message =   sprintf(" sửa giá sản phẩm từ %s thành %s", $old_order_item_price, $new_order_item_price);
+//            $content = $user->name. $message;
+//            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
         return true;
@@ -953,10 +957,11 @@ class OrderController extends Controller
         Comment::createComment($user, $order, "Đơn hàng đã được mua thành công.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Chuyển trạng thái đơn hàng sang đã mua.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-        $title = "Đơn hàng được mua thành công ";
+        $title = 'Trạng thái đơn hàng '.$order->code;
         $message =   " đơn hàng ".$order->code." đã được mua thành công ";
         $content = $user->name. $message;
-        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+        $notify = new SystemNotification();
+        $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
 
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
@@ -985,9 +990,6 @@ class OrderController extends Controller
                 $user_transaction_amount
             );
 
-            $title = "Tài chính đơn hàng";
-            $content = $user->name." ".$message.' trên đơn '.$order->code;
-            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
         }
 
         return true;
@@ -1036,9 +1038,11 @@ class OrderController extends Controller
 
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, "Hủy đơn hàng.", Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
-        $title = "Trạng thái đơn hàng";
+        $title = "Trạng thái đơn hàng ".$order->code;
         $content = $user->name . " hủy đơn hàng";
-        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+       
+        $notify = new SystemNotification();
+        $notify->createSystemNotificationOrderStatus($order,$title,$content,$user);
 
 
         return true;
@@ -1213,9 +1217,7 @@ class OrderController extends Controller
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-            $title = "Thay đối tỷ lệ đặt cọc trên đơn ";
-            $content = $user->name." ".$message." trên đơn ".$order->code;
-            CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
+
         }
         return true;
     }
@@ -1254,10 +1256,6 @@ class OrderController extends Controller
         Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
         Comment::createComment($user, $order, sprintf('Cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee), Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_ACTIVITY);
 
-        $title = "Phí vận chuyển nội địa";
-        $message = sprintf(' cập nhật phí vận chuyển nội địa TQ %s ¥', $domestic_shipping_fee);
-        $content = $user->name . $message;
-        CustomerNotification::notificationCustomer($order,$title,$content,'ORDER');
 
         return true;
     }

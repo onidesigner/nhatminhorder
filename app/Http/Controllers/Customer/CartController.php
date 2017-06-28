@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Library\ServiceFee\ServiceFactoryMethod;
 use App\Permission;
+use App\UserFollowObject;
 use App\UserTransaction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -186,6 +187,10 @@ class CartController extends Controller
         if($ids){
             $list = explode(',', $ids);
             if(count($list)){
+                foreach ($list as $id) {
+                    $user_follow_obj = new UserFollowObject();
+                    $user_follow_obj->createUserFollow(Order::find($id),Auth::user());
+                }
                 $orders = Order::whereIn('id', $list)->get();
             }
         }
@@ -468,12 +473,20 @@ class CartController extends Controller
         $shop_id = $request->get('shop_id');
         $quantity = $request->get('quantity');
 
-        CartItem::where([
-            'id' => $item_id,
-            'user_id' => $customer->id
-        ])->update([
-            'quantity' => $quantity
-        ]);
+//        CartItem::where([
+//            'id' => $item_id,
+//            'user_id' => $customer->id
+//        ])->update([
+//            'quantity' => $quantity
+//        ]);
+
+        $cart_item = CartItem::find($item_id);
+        $cart_item->quantity = $quantity;
+        $cart_item->save();
+
+        Cart::__change_price_of_items_when_add_to_cart_1688($cart_item->price_table,
+                            $cart_item->site, $cart_item->shop_id,
+                            $cart_item->item_id, $cart_item->user_id);
 
         return true;
     }

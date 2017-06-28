@@ -7,6 +7,7 @@ use App\Library\Sms\SendInfoOrderToWarehouse;
 use App\Permission;
 use App\SendEmailCustomerQueue;
 use App\SendSmsToCustomer;
+use App\SystemNotification;
 use App\UserTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -250,6 +251,12 @@ class UserTransactionController extends Controller
         return ['success' => true];
     }
 
+    /**
+     * hàm tạo các giao dịch : điều chỉnh , truy thu , quà tặng , hoàn trả
+     * mỗi giao dịch đều được gửi thông báo trên trang , gửi email và tin nhắn đến khách hàng
+     * @param Request $request
+     * @return mixed
+     */
     public function createTransactionAdjustment(Request $request){
         try{
 
@@ -290,14 +297,23 @@ class UserTransactionController extends Controller
                         // gửi mail thông báo tiền nạp thông qua sms và email
                         $send_email = new SendEmailCustomerQueue();
                         $send_sms = new SendSmsToCustomer();
-                        
+
                         if($data_insert['transaction_adjustment_type'] == 'negative'){
                             $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền ".$data_insert['amount']."VND . Lý do: ".$data_insert['transaction_note'];
+                            $content_notify = "Tài khoản của bạn vừa được điều chỉnh số tiền ".$data_insert['amount']."VND";
                         }else{
                             $content = "Nhatminh247: Tài khoản của bạn vừa được điều chỉnh số tiền +".$data_insert['amount']."VND . Lý do: nạp tiền thành công .";
+                            $content_notify = "Tài khoản của bạn vừa được điều chỉnh số tiền +".$data_insert['amount']."VND ";
                         }
                         $send_email->EmailQueueWhenCreateTransactionAdjustment($customer,$content);
                         $send_sms->sendSmsWhenCreateTransaction($customer,$content);
+
+                        // thêm thông báo tai chinh , hien thi tren trang chu
+                        
+
+                        $title = "Điều chỉnh tài chính";
+                        $notify = new SystemNotification();
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
 
                     }
 
@@ -315,6 +331,24 @@ class UserTransactionController extends Controller
                         null,
                         $data_insert['amount']
                     );
+                    // qua tang cho khach hang
+                    if($is_ok == true){
+
+                        // gửi mail thông báo điều chỉnh tài chính thông qua sms và email
+                        $send_email = new SendEmailCustomerQueue();
+                        $send_sms = new SendSmsToCustomer();
+
+                        $content = "Nhatminh247 tặng bạn số tiền ".$data_insert['amount']." VND vào tài khoản";
+                        $content_notify = "Tài khoản của bạn được tặng số tiền ".$data_insert['amount']." VND";
+
+                        $send_email->EmailQueueWhenCreateTransactionAdjustment($customer,$content);
+                        $send_sms->sendSmsWhenCreateTransaction($customer,$content);
+
+                        // thêm thông báo tai chinh , hien thi tren trang chu
+                        $title = "Điều chỉnh tài chinh";
+                        $notify = new SystemNotification();
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
+                    }
 
                     break;
 
@@ -346,6 +380,30 @@ class UserTransactionController extends Controller
                         $object,
                         $data_insert['amount']
                     );
+
+                    if($is_ok == true){
+
+                        // gửi mail thông báo điều chỉnh tài chính thông qua sms và email
+                        $send_email = new SendEmailCustomerQueue();
+                        $send_sms = new SendSmsToCustomer();
+
+                        if($data_insert['transaction_type'] == UserTransaction::TRANSACTION_TYPE_PAYMENT ){
+                            $content = "Nhatminh247 truy thu số tiền ".$data_insert['amount']."VND trên đơn ".$object->code." Lý do: ".$data_insert['transaction_note'];
+                            $content_notify = "Truy thu số tiền ".$data_insert['amount']." VND trên đơn hàng " .$object->code;
+                        }else{
+                            $content = "Nhatminh247 hoàn lại số tiền +".$data_insert['amount']."VND . Lý do: nạp tiền thành công .";
+                            $content_notify = "Đơn hàng ".$object->code." của bạn được hoàn lại số tiền +".$data_insert['amount']."VND ";
+                        }
+                        $send_email->EmailQueueWhenCreateTransactionAdjustment($customer,$content);
+                        $send_sms->sendSmsWhenCreateTransaction($customer,$content);
+
+
+                        $title = "Điều chỉnh tài chính";
+                        $notify = new SystemNotification();
+                        $notify->createSystemNotificationFinance($customer,$title,$content_notify,$user_create);
+
+
+                    }
 
                     break;
 
