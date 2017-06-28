@@ -127,7 +127,7 @@ class OrderBuyingController extends Controller
             'follower_id' => $user->id
         ])->get();
         if(count($userExists) > 0){
-            
+            return false;
         }
         return true;
     }
