@@ -813,9 +813,9 @@ class Order extends Model
                 Comment::createComment($create_user, $this, $message_external, Comment::TYPE_EXTERNAL, $type_context);
                 Comment::createComment($create_user, $this, $message_internal, Comment::TYPE_INTERNAL, $type_context);
 
-                $title = "Trạng thái đơn hàng";
-                $content = $create_user->name . $message_external;
-                CustomerNotification::notificationCustomer($this,$title,$content,CustomerNotification::TYPE_ORDER);
+//                $title = "Trạng thái đơn hàng";
+//                $content = $create_user->name . $message_external;
+//                CustomerNotification::notificationCustomer($this,$title,$content,CustomerNotification::TYPE_ORDER);
 
 
             }
