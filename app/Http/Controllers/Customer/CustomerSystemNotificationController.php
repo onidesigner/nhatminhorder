@@ -17,6 +17,7 @@ use App\UserFollowObject;
 use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class CustomerSystemNotificationController extends Controller
@@ -214,26 +215,61 @@ class CustomerSystemNotificationController extends Controller
      */
         public function convertNotification(){
 
-        $oldNotifycation = CustomerNotification::whereIn('is_view',['VIEW','READ'])->get();
+            $value =  SystemNotification::where('is_deleted',0)
+                ->whereIn('notify_status',['READ','VIEW'])
+                ->orderby('id','desc')
+                ->get();
+            foreach ($value as $item){
 
-        foreach($oldNotifycation as $item_old){
+                    $user_follow = new UserFollowObject();
+                    $user_follow->object_id = $item->object_id;
+                    $user_follow->object_type = 'ORDER';
+                    $user_follow->follower_id = $item->follower_id;
+                    $user_follow->status = 'ACTIVE';
+                    $user_follow->save();
+            }
 
-            $new_notify = new SystemNotification();
-            $new_notify->object_id = $item_old->order_id;
-            $new_notify->follower_id = $item_old->user_id;
-            $new_notify->title = $item_old->title;
-            $new_notify->notification_content = $item_old->notification_content;
-            $new_notify->object_type = $item_old->type;
-            $new_notify->type = $item_old->is_view;
-            $new_notify->notify_status = $item_old->is_view;
+            
 
-            if($new_notify->save()){
-                var_dump( $item_old->id." success");
-            }else{
-                var_dump( $item_old->id." fail");
+            $users = DB::table('user_follow_object')
+                ->select(DB::raw(' min(id)'))
+                ->where('id', '>', 1)
+                ->groupBy('object_id','follower_id')
+                ->having(DB::raw('count(*)'), '>', 1)
+                ->get();
+
+
+
+            $array = [];
+            foreach ($users as $items){
+                $items =  get_object_vars($items);
+                $array[] = $items['min(id)'];
             }
 
 
-        }
+            foreach ($array as $arr_item){
+                $user_follow =  UserFollowObject::where('id',$arr_item)->first();
+                $user_follow_remove = UserFollowObject::where([
+                    'object_id' => $user_follow->object_id,
+                    'follower_id' => $user_follow->follower_id
+                ])->get();
+
+               foreach ($user_follow_remove as $item_remove){
+
+                   if($item_remove->id != $arr_item ){
+                       var_dump($item_remove->id);
+                       /** @var $item_remove UserFollowObject $x */
+                       $x = $item_remove->delete();
+                       var_dump($x);
+                   }
+               }
+            }
+
+
+
+
+
+
+
     }
 }
