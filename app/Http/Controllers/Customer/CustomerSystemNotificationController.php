@@ -209,6 +209,31 @@ class CustomerSystemNotificationController extends Controller
         ]);
     }
 
+    /**
+     * đánh dấu tất cả đã đọc
+     */
+    public function markreadall(){
+
+        $current_user = Auth::user();
+        $list_notification = SystemNotification::where('follower_id',"=", $current_user->id)
+                ->where('is_deleted',0)
+                ->whereIn('notify_status',
+                [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
+                ->orderby('id','desc')
+                ->get();
+
+        foreach ($list_notification as $item){
+                if($item->type == SystemNotification::TYPE_READ){
+                    $item->notify_status = SystemNotification::STATUS_READ;
+                }else{
+                    $item->notify_status = SystemNotification::STATUS_VIEWED;
+                }
+                $item->save();
+        }
+        return response()->json([
+            'type' => 'success'
+        ]);
+    }
 
     /**
      * check ham
@@ -229,7 +254,7 @@ class CustomerSystemNotificationController extends Controller
                     $user_follow->save();
             }
 
-            
+
 
             $users = DB::table('user_follow_object')
                 ->select(DB::raw(' min(id)'))
