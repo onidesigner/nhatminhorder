@@ -144,7 +144,11 @@
                                             Thông tin cá nhân
                                             </a>
                                     </li>
-
+                                    @if(Auth::user()->section == App\User::SECTION_CRANE)
+                                    <li>
+                                        <a href="{{ url('don-dang-theo-doi')  }}">Đơn đang theo dõi</a>
+                                    </li>
+                                    @endif
                                     <li>
                                         <a href="{{ route('logout') }}"
                                            onclick="event.preventDefault();
@@ -252,53 +256,6 @@
                 });
             });
 
-
-            var page = 1;
-
-            $('.dropdown-menu').scroll(function() {
-                if($('.dropdown-menu').scrollTop() + $('.dropdown-menu').height() >= $('.dropdown-menu').height()) {
-
-                    page++;
-                    //console.info(page);
-                  ///  loadMoreData(page);
-                }
-            });
-
-            function loadMoreData(page){
-                if(xhr && xhr.readyState != 4){
-                    xhr.abort();
-                }
-              xhr =   $.ajax(
-                        {
-                            url: "{{ url('/load-content-notify') }}",
-                            type: "get",
-                            data :{
-                                currentPage : page,
-                                pageSize : 10
-                            },
-                            beforeSend: function()
-                            {
-                                $('.ajax-load').show();
-                            }
-                        })
-                        .done(function(data)
-                        {
-
-
-                            if(data.html == " "){
-                             //   $('.ajax-load').html("No more records found");
-                                return;
-                            }
-                            $('.ajax-load').hide();
-                            $("._display_notify").append(data.notification);
-
-
-                        })
-                        .fail(function(jqXHR, ajaxOptions, thrownError)
-                        {
-                            console.info('server not responding...');
-                        });
-            }
 
         });
 

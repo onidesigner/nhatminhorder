@@ -264,3 +264,6 @@ Route::get('/accouting_finance','AccountingFinanceControlCustomerController@inde
 Route::post('/remove-package','PackageController@removePackage');
 Route::post('/update_package_weight','PackageController@updatePackageWeight');
 Route::get('/convert-notify','Customer\CustomerSystemNotificationController@convertNotification');
+
+Route::get('/don-dang-theo-doi','UserFollowerObjectController@index');
+Route::get('/bo-theo-doi','UserFollowerObjectController@unfollow');
