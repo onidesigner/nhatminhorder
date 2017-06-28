@@ -33,6 +33,15 @@
                                     <div class="col-sm-3">
                                         <select class="selectpicker" name="status_complaint">
                                             <option value="0">Trạng thái của KN</option>
+                                            @foreach($complaint_status as $key => $val)
+                                                <option value="{{$key}}"
+                                                        @if($key == @request()->get('status_complaint'))
+                                                        selected
+                                                        @endif
+                                                >
+                                                    {{$val}}
+                                                </option>
+                                            @endforeach
                                         </select>
 
                                     </div>
@@ -56,8 +65,9 @@
                                 <th>Chi tiết</th>
                             </tr>
                             </thead>
-                            <tbody>
+
                             @if(!empty($data))
+                                <tbody>
                                 @foreach($data as $complaint)
 
                                     <tr>
@@ -69,8 +79,10 @@
                                     </tr>
 
                                 @endforeach
+                                </tbody>
+                            @else
+                                <h3 align="center">Không tồn tại khiếu nại</h3>
                             @endif
-                            </tbody>
                         </table>
                         {{ $data->links() }}
                     </div>

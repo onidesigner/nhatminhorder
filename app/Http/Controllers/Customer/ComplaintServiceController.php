@@ -101,7 +101,7 @@ class ComplaintServiceController extends Controller
        
        return view('customer/complaint_list',[
            'data' => $list->appends($condition),
-
+           'complaint_status' => Complaints::$alias_array,
            'page_title' => 'Khiếu nại'
        ]);
 

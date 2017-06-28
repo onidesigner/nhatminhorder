@@ -25,11 +25,11 @@
                     </div>
                 @endif
 
-                @if(session('error'))
-                <div class="alert alert-warning">
-                    {{session('error')}}
+
+                <div class="alert alert-warning _error hidden">
+
                 </div>
-                @endif
+
 
                 <div class="form-group">
                     <label class="col-md-2 control-label">Mã đơn hàng </label>
@@ -198,7 +198,9 @@
                     success:function(data){
                         if(data.type == 'success'){
                             window.location.href ="{{ url('chi-tiet-khieu-nai') }}"+"/" + data.complaint_id;
-
+                        }else{
+                            $("._error").removeClass('hidden');
+                            $("._error").html(data.message);
                         }
                     }
                 });
