@@ -473,12 +473,20 @@ class CartController extends Controller
         $shop_id = $request->get('shop_id');
         $quantity = $request->get('quantity');
 
-        CartItem::where([
-            'id' => $item_id,
-            'user_id' => $customer->id
-        ])->update([
-            'quantity' => $quantity
-        ]);
+//        CartItem::where([
+//            'id' => $item_id,
+//            'user_id' => $customer->id
+//        ])->update([
+//            'quantity' => $quantity
+//        ]);
+
+        $cart_item = CartItem::find($item_id);
+        $cart_item->quantity = $quantity;
+        $cart_item->save();
+
+        Cart::__change_price_of_items_when_add_to_cart_1688($cart_item->price_table,
+                            $cart_item->site, $cart_item->shop_id,
+                            $cart_item->item_id, $cart_item->user_id);
 
         return true;
     }
