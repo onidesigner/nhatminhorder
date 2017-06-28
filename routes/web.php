@@ -280,3 +280,4 @@ Route::get('/convert-notify','Customer\CustomerSystemNotificationController@conv
 
 Route::get('/don-dang-theo-doi','UserFollowerObjectController@index');
 Route::get('/bo-theo-doi','UserFollowerObjectController@unfollow');
+Route::post('/mark-read-all','Customer\CustomerSystemNotificationController@markreadall');
