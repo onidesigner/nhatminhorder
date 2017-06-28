@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 
+use App\SystemNotification;
 use App\UserFollowObject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,14 @@ class UserFollowerObjectController extends Controller
         ])->update([
             'status' => UserFollowObject::STATUS_INACTIVE
         ]);
+
+        $update_notification = SystemNotification::where([
+            'object_id' => $order_id,
+            'follower_id' => $current_user
+        ])->update([
+            'is_deleted' => 1
+        ]);
+
         if($update){
 
             return response()->json([

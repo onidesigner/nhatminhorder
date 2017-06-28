@@ -75,10 +75,7 @@ class CustomerSystemNotificationController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function loadContentNotify( Request $request ){
-        $currentPage = $request->get('currentPage',1);
-        $pageSize = $request->get('pageSize',10);
 
-        $currentPage = $currentPage - 1;
 
         $current_user = User::find(Auth::user()->id);
 
@@ -87,6 +84,7 @@ class CustomerSystemNotificationController extends Controller
 
         $list_notification_count =
             SystemNotification::where('follower_id',"=", $current_user->id)
+                ->where('is_deleted',0)
                 ->whereIn('notify_status',
                     [SystemNotification::TYPE_VIEW,SystemNotification::TYPE_READ])
                 ->count();
@@ -98,18 +96,19 @@ class CustomerSystemNotificationController extends Controller
             'follower_id' => $current_user->id,
             'status' => UserFollowObject::STATUS_ACTIVE
         ])->get();
+
         $output = '';
         if(count($user_follows) > 0){
 
             $list_notification =
                 SystemNotification::where('follower_id',"=", $current_user->id)
+                    ->where('is_deleted',0)
                 ->orderby('id','desc')
-//                ->offset($currentPage*$pageSize)
-//                ->limit($pageSize)
                 ->get();
 
             $id = [];
            if(count($list_notification) > 0){
+
                 foreach ($list_notification as $item_notification){
                     $id[] = $item_notification->id;
                     $color = '';
@@ -213,7 +212,7 @@ class CustomerSystemNotificationController extends Controller
     /**
      * check ham
      */
-    public function convertNotification(){
+        public function convertNotification(){
 
         $oldNotifycation = CustomerNotification::whereIn('is_view',['VIEW','READ'])->get();
 

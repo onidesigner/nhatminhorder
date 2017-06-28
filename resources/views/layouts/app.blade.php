@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/vendor.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/flat-admin.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/nprogress.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">
+    {{--<link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">--}}
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @show
 
