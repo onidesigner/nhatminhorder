@@ -32,11 +32,15 @@ class CustomerSystemNotificationController extends Controller
         $page = $request->get('page');
         $status = $request->get('status');
 
-        $where = [];
         if($status){
             if($status == 'READ'){
-
+                $where = [SystemNotification::STATUS_READ,SystemNotification::STATUS_VIEWED];
+            }else{
+                $where = [SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW];
             }
+        }else{
+            $where = [SystemNotification::STATUS_READ,SystemNotification::STATUS_VIEWED,
+                SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW];
         }
 
         $per_page = 20;
@@ -52,16 +56,15 @@ class CustomerSystemNotificationController extends Controller
             'follower_id' => $current_user->id,
             'status' => UserFollowObject::STATUS_ACTIVE
         ])->get();
-        $list_notification_all = [];
+        $list_notification_all = 0;
         if(count($user_follows) > 0){
 
             $list_notification_all =
                 SystemNotification::where('follower_id',"=", $current_user->id)
                     ->where('is_deleted',0)
+                    ->whereIn('notify_status',$where)
                     ->orderby('id','desc')
                     ->paginate($per_page);
-
-
         }
 
         return view('customer/customer_system_notification', [
