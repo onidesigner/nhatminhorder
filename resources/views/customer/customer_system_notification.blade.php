@@ -88,7 +88,7 @@
     <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
     <script>
         $(document).ready(function(){
-            $(".selectpicker").refresh();
+            $('.selectpicker').selectpicker('refresh');
         });
 
     </script>
