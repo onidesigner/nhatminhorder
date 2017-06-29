@@ -943,10 +943,9 @@ class Order extends Model
                     - $customer_payment_amount_vnd;
                 $total_need_payment = 0 - abs($total_need_payment);
 
-                $message = sprintf(' hệ thống truy thu số tiền hàng còn lại sau khi đặt cọc %sđ; VC nội địa TQ %sđ; Mua hàng %sđ',
-                    Util::formatNumber($data_fee['AMOUNT_VND'] - $data_fee['DEPOSIT_AMOUNT_VND']),
-                    Util::formatNumber($data_fee['DOMESTIC_SHIPPING_FEE_VND']),
-                    Util::formatNumber($data_fee['BUYING_FEE_VND']));
+                $message = sprintf("Thanh toán đơn hàng %s với số tiền %s",
+                    $this->code,
+                    Util::formatNumber($total_need_payment));
 
                 UserTransaction::createTransaction(
                     UserTransaction::TRANSACTION_TYPE_ORDER_PAYMENT,
@@ -973,10 +972,6 @@ class Order extends Model
             return true;
         }catch(\Exception $e){
             DB::rollback();
-
-            Log::info('can-not-changeOrderTransporting' . $e->getMessage());
-
-//            throw new Exception($e->getMessage());
             return false;
         }
     }

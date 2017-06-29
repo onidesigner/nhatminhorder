@@ -410,20 +410,30 @@ class ScanController extends Controller
      */
     private function __packageChargeFee(Package $package, Order $order,
                                         User $create_user, User $customer){
+        $package->setDone();
+
+        $order = Order::find($order->id);
+
         $factoryMethodInstance = new ServiceFactoryMethod();
 
         $service = $factoryMethodInstance->makeService([
             'service_code' => Service::TYPE_SHIPPING_CHINA_VIETNAM,
-            'weight' => $package->getWeightCalFee(),
+            'weight' => $order->package_weight_calculate,
             'destination_warehouse' => $order->destination_warehouse,
             'apply_time' => $order->deposited_at,
         ]);
-        $money_charge = (float)$service->calculatorFee();
-        if($money_charge > 0){
-            $money_charge = 0 - abs($money_charge);
+        $order_shipping_need_payment = (float)$service->calculatorFee();//so tien van chuyen can thanh toan
+        $order_shipping_paid = abs(UserTransaction::getOrderShippingAmountPaid($order->id));//tien van chuyen da tra tren don hang
+
+        if($order_shipping_need_payment > $order_shipping_paid){//truy thu them tien vc
+            $money_charge = 0 - $order_shipping_need_payment - $order_shipping_paid;
+        }else if($order_shipping_need_payment < $order_shipping_paid){//tra lai tien vc
+            $money_charge = $order_shipping_paid - $order_shipping_need_payment;
         }
 
-        $message = sprintf("Thu phí vận chuyển kiện hàng %s, số tiền %sđ", $package->logistic_package_barcode, Util::formatNumber(abs($money_charge)));
+        $message = sprintf("Thanh toán đơn hàng %s, số tiền %sđ",
+            $order->code,
+            Util::formatNumber($money_charge));
 
         Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
         Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
@@ -468,7 +478,6 @@ class ScanController extends Controller
             );
         }
 
-        $package->setDone();
     }
 
     private function __writeActionScanLog(Request $request, WareHouse $warehouse, User $currentUser){

@@ -165,6 +165,28 @@ class HoSiVanController extends Controller
         }
     }
 
+    /**
+     * @author vanhs
+     * @desc them cot calculate_weight trong bang packages, can phai cap nhat lai du lieu cho truong nay
+     * @param Request $request
+     */
+    private function __cap_nhat_can_nang_tinh_phi_kien_hang(Request $request){
+        $packages = DB::select(" select id from packages where calculate_weight is null limit 500; ");
+        if($packages){
+            foreach($packages as $package){
+                $package = Package::find($package->id);
+                if(!$package instanceof Package){
+                    continue;
+                }
+                $calculate_weight = $package->getWeightCalFee();
+                $package->calculate_weight = $calculate_weight;
+                if($package->save()){
+                    var_dump('cap nhat can nang tinh phi kien hang #' . $package->logistic_package_barcode);
+                }
+            }
+        }
+    }
+
     private function __hoan_tien_van_chuyen_don_van_chuyen_tiet_kiem(Request $request){
 
         $orders_id = $request->get('orders_id');//co dang (100, 200, 300)
