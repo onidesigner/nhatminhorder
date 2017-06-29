@@ -44,7 +44,7 @@ class CustomerSystemNotificationController extends Controller
                 SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW];
         }
 
-        $per_page = 2;
+        $per_page = 20;
 
 
        
