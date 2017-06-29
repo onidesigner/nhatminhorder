@@ -109,9 +109,12 @@
                                         <span class="pull-right _mark_read_all " style="cursor: pointer!important;color: #365899;">Đánh dấu tất cả đã đọc</span>
                                     </li>
 
-                                    {{--<li class="dropdown-footer">--}}
-                                        {{--<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>--}}
-                                    {{--</li>--}}
+                                 {{--   <li class="dropdown-footer">
+                                        <a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem thêm <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                    </li>--}}
+                                    {{--<li class="dropdown-footer">
+                                        <a>Xem thêm <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                    </li>--}}
                                 </ul>
                             </div>
                         </li>
@@ -188,9 +191,7 @@
 @section('css_bottom')
     <link rel="stylesheet" href=" {{asset('css/jquery.scrollbar.css') }}">
     <link rel="stylesheet" href=" {{asset('css/font-awesome.min.css') }}">
-
-
-
+    <link rel="stylesheet" href=" {{asset('css/jquery.custom-scrollbar.css') }}">
 
 @show
 
@@ -203,11 +204,16 @@
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/notify.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/jquery.scrollbar.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery.custom-scrollbar.js') }}"></script>
+
 
     <script>
         $( document ).ready(function() {
+
+
             var xhr;
+
+            var page = 2;
            function content_notification(view){
                $.ajax({
                    url: "{{ url('/load-content-notify') }}",
@@ -225,9 +231,17 @@
                            }
 
                            if(view == true){
-                               $("._system_notify").after(response.notification);
-                           }
 
+                               $("._system_notify").after(response.notification);
+                               if(response.count_notify > 10){
+                                   
+                                   $("._display_notify").append(
+                                       '<li class="dropdown-footer _load_more">'+
+                                       '<a>Xem thêm <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+
+                                           '</li>'
+                                   );
+                               }
+                           }
                        }
                    }
                });
@@ -236,11 +250,61 @@
 
             /*setInterval(function(){ content_notification(false); }, 30000);*/
 
+
+
+            /**
+             * sự kiện khi click vào load more
+             */
+            $(document).on("click","._load_more",function () {
+                $.ajax(
+                        {
+                            url: "{{ url('/load-content-notify') }}",
+                            type: "get",
+                            data :{
+                                currentPage : page
+
+                            }
+                        })
+                        .done(function(data)
+                        {
+                            if(data.html == " "){
+                                return;
+                            }
+                            $("._load_more").remove();
+                            $("._display_notify").append(data.notification);
+
+                            page++;
+
+                            $("._display_notify").append(
+                                    '<li class="dropdown-footer _load_more">'+
+                                    '<a>Xem thêm <i class="fa fa-angle-right" ' +
+                                    'aria-hidden="true"></i></a>'+
+                                    '</li>'
+                            );
+                            // nếu đã load hết thì xóa đi
+
+                            if( $("._change_status").length > 30){
+                                $("._load_more").remove();
+
+                                $("._display_notify").append(
+                                        '<li class="dropdown-footer">'+
+                                        '<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+
+                                        '</li>'
+                                );
+                                // neeus gia tri nho hon 30 thi xoa di ko hien thi nua
+                            }else if($("._change_status").length == data.notification_display
+                                    && data.notification_display <= 30){
+                                $("._load_more").remove();
+                            }
+                        })
+
+
+            });
+            
             /**
              * đổi trạng thái đơn sang đã đọc
              */
-
-
+            
             $(document).on("click","._change_status",function() {
                 var follower_id = $(this).data('follower-id');
                 $.ajax({
@@ -274,6 +338,43 @@
                     }
                 });
             })
+
+
+            function loadMoreData(page){
+                if(xhr && xhr.readyState != 4){
+                    xhr.abort();
+                }
+                xhr =   $.ajax(
+                        {
+                            url: "{{ url('/load-content-notify') }}",
+                            type: "get",
+                            data :{
+                                currentPage : page,
+                                pageSize : 10
+                            },
+                            beforeSend: function()
+                            {
+                                $('.ajax-load').show();
+                            }
+                        })
+                        .done(function(data)
+                        {
+
+
+                            if(data.html == " "){
+                                //   $('.ajax-load').html("No more records found");
+                                return;
+                            }
+                            $('.ajax-load').hide();
+                            $("._display_notify").append(data.notification);
+
+
+                        })
+                        .fail(function(jqXHR, ajaxOptions, thrownError)
+                        {
+                            console.info('server not responding...');
+                        });
+            }
 
 
         });

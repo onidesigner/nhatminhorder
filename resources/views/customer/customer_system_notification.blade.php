@@ -29,7 +29,14 @@
                                 <tr>
                                     <td>{{$item_notification->title}}</td>
                                     <td>{{$item_notification->notification_content}}</td>
+                                    <td>Đã đọc</td>
                                     <td>{{ App\Util::formatDate($item_notification->created_at) }}</td>
+                                    <td>
+                                        <a href="{{ \App\Http\Controllers\Customer\CustomerSystemNotificationController::buidLink($item_notification) }}" target="_blank">
+                                            Chi tiết
+                                        </a>
+                                    </td>
+
                                 </tr>
                             @endforeach
                             </tbody>
