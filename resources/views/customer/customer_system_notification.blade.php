@@ -23,6 +23,29 @@
                 <div class="card-body">
                     <div role="tabpanel">
                         <h4><strong>Thông báo của bạn</strong></h4>
+
+                        <form method="get" action="{{ url('')}}" >
+                            <div class="form-group">
+                                <div class="row">
+
+                                    <div class="col-sm-3">
+                                        <select class="selectpicker" name="status_complaint">
+                                            <option value="0">Trạng thái</option>
+                                            <option value="READ">Đã đọc</option>
+                                            <option value="UNREAD">Chưa đọc</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </form>
+
+
                         <table class="table table-hover">
                             <tbody>
                             @foreach($data as $item_notification)
@@ -65,7 +88,7 @@
     <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
     <script>
         $(document).ready(function(){
-            //todo
+            $(".selectpicker").refresh();
         });
 
     </script>
