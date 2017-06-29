@@ -9,12 +9,11 @@
 namespace App\Http\Controllers\Customer;
 
 
-use App\CustomerNotification;
+
 use App\Http\Controllers\Controller;
 use App\SystemNotification;
 use App\User;
 use App\UserFollowObject;
-use App\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,27 +28,25 @@ class CustomerSystemNotificationController extends Controller
 
     public function index( Request $request ){
 
-        $page = $request->get('page');
         $status = $request->get('status');
 
+        $condition = [];
         if($status){
             if($status == 'READ'){
                 $where = [SystemNotification::STATUS_READ,SystemNotification::STATUS_VIEWED];
+
             }else{
                 $where = [SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW];
             }
+            $condition['status'] = $status;
         }else{
             $where = [SystemNotification::STATUS_READ,SystemNotification::STATUS_VIEWED,
                 SystemNotification::TYPE_READ,SystemNotification::TYPE_VIEW];
         }
 
-        $per_page = 20;
+        $per_page = 2;
 
-        if(!$page || $page == 1){
-            $page = 0;
-        }else{
-            $page = $page - 1;
-        }
+
        
         $current_user = User::find(Auth::user()->id);
         $user_follows = UserFollowObject::where([
@@ -69,9 +66,8 @@ class CustomerSystemNotificationController extends Controller
 
         return view('customer/customer_system_notification', [
             'page_title' => 'notifications',
-            'data' => $list_notification_all,
+            'data' => $list_notification_all->appends($condition),
             'per_page' => $per_page,
-            'page' => $page
         ]);
     }
 
@@ -89,10 +85,7 @@ class CustomerSystemNotificationController extends Controller
         $pageSize = 10;
         $current_user = Auth::user();
 
-
-
         #count notify
-
         $list_notification_count =
             SystemNotification::where('follower_id',"=", $current_user->id)
                 ->where('is_deleted',0)
@@ -102,13 +95,13 @@ class CustomerSystemNotificationController extends Controller
 
         # endcount notify
 
-
         $user_follows = UserFollowObject::where([
             'follower_id' => $current_user->id,
             'status' => UserFollowObject::STATUS_ACTIVE
         ])->get();
 
         $output = '';
+        $list_notification_all = 0;
         if(count($user_follows) > 0){
 
             /**
@@ -124,6 +117,7 @@ class CustomerSystemNotificationController extends Controller
              * content trả về
              */
             $list_notification =  SystemNotification::where('follower_id',"=", $current_user->id)
+                ->where('is_deleted',0)
                 ->orderby('id','desc')
                 ->offset($current_page*$pageSize)
                 ->limit($pageSize)
@@ -177,10 +171,7 @@ class CustomerSystemNotificationController extends Controller
      */
     public static function buidLink($system_notification){
         $object_type = $system_notification->object_type;
-        $follower_id = $system_notification->follower_id;
-        $type_notify = $system_notification->type;
 
-        $link = '';
         $user = Auth::user();
         if($object_type == SystemNotification::TYPE_ORDER || $object_type == 'CHAT'){
 
