@@ -248,9 +248,6 @@
            }
             content_notification(true);
 
-            /*setInterval(function(){ content_notification(false); }, 30000);*/
-
-
 
             /**
              * sự kiện khi click vào load more
@@ -289,11 +286,11 @@
 
 
             });
-            
+
             /**
              * đổi trạng thái đơn sang đã đọc
              */
-            
+
             $(document).on("click","._change_status",function() {
                 var follower_id = $(this).data('follower-id');
                 $.ajax({
@@ -326,44 +323,10 @@
                         }
                     }
                 });
-            })
+            });
 
 
-            function loadMoreData(page){
-                if(xhr && xhr.readyState != 4){
-                    xhr.abort();
-                }
-                xhr =   $.ajax(
-                        {
-                            url: "{{ url('/load-content-notify') }}",
-                            type: "get",
-                            data :{
-                                currentPage : page,
-                                pageSize : 10
-                            },
-                            beforeSend: function()
-                            {
-                                $('.ajax-load').show();
-                            }
-                        })
-                        .done(function(data)
-                        {
 
-
-                            if(data.html == " "){
-                                //   $('.ajax-load').html("No more records found");
-                                return;
-                            }
-                            $('.ajax-load').hide();
-                            $("._display_notify").append(data.notification);
-
-
-                        })
-                        .fail(function(jqXHR, ajaxOptions, thrownError)
-                        {
-                            console.info('server not responding...');
-                        });
-            }
 
 
         });

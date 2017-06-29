@@ -242,17 +242,34 @@ class CustomerSystemNotificationController extends Controller
                 ->orderby('id','desc')
                 ->get();
 
+        if(count($list_notification) == 0){
+            return response()->json([
+                'type' => 'success'
+            ]);
+        }
+        $arr_view = [];
+        $arr_read = [];
         foreach ($list_notification as $item){
                 if($item->type == SystemNotification::TYPE_READ){
-                    $item->notify_status = SystemNotification::STATUS_READ;
+                    $arr_read[] = $item->id;
                 }else{
-                    $item->notify_status = SystemNotification::STATUS_VIEWED;
+                    $arr_view[] = $item->id;
                 }
-                $item->save();
         }
+
+        if(count($arr_read) > 0){
+            SystemNotification::whereIn('id',$arr_read)
+                ->update(['notify_status' => SystemNotification::STATUS_READ]);
+        }
+        if(count($arr_view) >0){
+            SystemNotification::whereIn('id',$arr_view)
+                ->update(['notify_status' => SystemNotification::STATUS_VIEWED]);
+        }
+
         return response()->json([
             'type' => 'success'
         ]);
+
     }
 
     /**
