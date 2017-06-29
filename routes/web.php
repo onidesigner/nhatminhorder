@@ -272,7 +272,7 @@ Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 
 
 # Redesign Customer template
-Route::get('/onihome', 'OniHomeController@index');
+Route::get('/home', 'OniHomeController@index');
 Route::get('/gio-hang', 'OniDev\CartController@showCart');
 Route::post('/gio-hang/hanh-dong', 'OniDev\CartController@action');
 Route::get('/dat-coc', 'OniDev\CartController@showDeposit');

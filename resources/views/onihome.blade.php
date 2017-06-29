@@ -125,6 +125,7 @@
                 </div>
             </div>
         </div>
+<!--
         <div class="col-sm-6">
             <div class="ibox">
                 <div class="ibox-title">
@@ -175,6 +176,7 @@
                 </div>
             </div>
         </div>
+-->
     </div>
     </div>
 @endsection

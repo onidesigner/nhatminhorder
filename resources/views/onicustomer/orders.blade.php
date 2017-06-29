@@ -107,7 +107,6 @@
                                 <th>Thông tin đơn hàng</th>
                                 <th data-sort-ignore="true" data-hide="phone,tablet">Phí trên đơn</th>
                                 <th width="200" data-sort-ignore="true" data-hide="phone">Thời gian</th>
-                                <th width="100" class="text-center">Trạng thái</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -123,10 +122,13 @@
                                             </div>
                                             <div class="item-details">
                                                 <a href="{{ url('don-hang', $order->id)  }}" title="Xem chi tiết đơn hàng">
-                                                    <h3 class="item-title">Mã đơn: #{{$order->code}}</h3>
+                                                    <h3 class="item-title">#{{$order->code}}</h3>
+                                                    <span id="_order_status_{{  $order->id }}"class="label label-primary">
+                                                        {{ App\Order::getStatusTitle($order->status)  }}
+                                                    </span>
                                                 </a>
-                                                <p class="m-b-none">Giá trị hàng: {!! App\Util::formatNumber($order->amount * $order->exchange_rate) !!} <sup>đ</sup></p>
-                                                <p class="m-b-none">Đã đặt cọc: {!! App\Util::formatNumber($order->deposit_amount) !!} <sup>đ</sup> ({!! App\Util::formatNumber($order->deposit_percent) !!}%)</p>
+                                                <p class="m-b-none">Tiền hàng: {!! App\Util::formatNumber($order->amount * $order->exchange_rate) !!} <sup>đ</sup></p>
+                                                <p class="m-b-none">Đặt cọc: {!! App\Util::formatNumber($order->deposit_amount) !!} <sup>đ</sup> ({!! App\Util::formatNumber($order->deposit_percent) !!}%)</p>
                                             </div>
                                         </div>
                                     </td>
@@ -153,11 +155,6 @@
                                             <p>{{$v}}: {{ App\Util::formatDate($order->$k) }}</p>
                                             <?php } ?>
                                         </small>
-                                    </td>
-                                    <td class="text-center">
-                                                <span id="_order_status_{{  $order->id }}"class="label label-primary">
-                                                    {{ App\Order::getStatusTitle($order->status)  }}
-                                                </span>
                                     </td>
                                 </tr>
                             @endforeach
