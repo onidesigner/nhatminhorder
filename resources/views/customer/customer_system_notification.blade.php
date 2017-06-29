@@ -14,7 +14,7 @@
                                 [
                                     'urls' => [
                                         ['name' => 'Trang chủ', 'link' => url('home')],
-                                        ['name' => 'Đơn hàng', 'link' => url('don-hang')],
+                                        ['name' => 'Thông báo', ''],
 
                                     ]
                                 ]
