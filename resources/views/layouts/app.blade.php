@@ -204,7 +204,7 @@
 <script type="text/javascript" src="{{ asset('js/underscore-min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/notify.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/common.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/jquery.custom-scrollbar.js') }}"></script>
+
 
 
     <script>
