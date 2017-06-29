@@ -7,41 +7,43 @@
 @section('content')
     <div class="wrapper wrapper-content orders-page">
         <div class="row">
-            <div class="col-lg-3">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content orderbox-content">
-                        <!--<a class="btn btn-block btn-primary compose-mail" href="#">Tạo đơn hàng mới</a>-->
-                        <div class="space-25"></div>
-                        <div class="file-manager">
-                            <h5>Đơn hàng</h5>
-                            <ul class="folder-list m-b-md" style="padding: 0">
-                                <li>
-                                    <a href="{{ url('orders') }}">
-                                        Tất cả <span class="label label-warning pull-right">{{ $orders_count }}</span>
-                                    </a>
-                                </li>
+            <div class="col-sm-3 col-md-3 col-lg-3">
+                <div class="order_sidebar" data-spy="affix" data-offset-top="11" data-offset-bottom="64">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content orderbox-content">
+                            <!--<a class="btn btn-block btn-primary compose-mail" href="#">Tạo đơn hàng mới</a>
+                            <div class="space-25"></div>-->
+                            <div class="file-manager">
+                                <h5>Đơn hàng</h5>
+                                <ul class="folder-list m-b-md" style="padding: 0">
+                                    <li>
+                                        <a href="{{ url('don-hang') }}">
+                                            Tất cả <span class="label label-warning pull-right">{{ $orders_count }}</span>
+                                        </a>
+                                    </li>
 
-                                @foreach($status_list as $status_list_item)
-                                    <?php   if($status_list_item['selected']) $selected='selected';
-                                            else $selected='';?>
+                                    @foreach($status_list as $status_list_item)
+                                        <?php   if($status_list_item['selected']) $selected='selected';
+                                        else $selected='';?>
                                         <li>
-                                            <a href="{{ url('orders?status='.$status_list_item['key']) }}" class="{{$selected}}" data-status="{{ $status_list_item['key'] }}">
+                                            <a href="{{ url('don-hang?status='.$status_list_item['key']) }}" class="{{$selected}}" data-status="{{ $status_list_item['key'] }}">
                                                 {{ $status_list_item['val']  }}
                                                 @if($status_list_item['count'])
-                                                <span class="label label-warning pull-right">{{ $status_list_item['count']  }}</span>
+                                                    <span class="label label-warning pull-right">{{ $status_list_item['count']  }}</span>
                                                 @endif
                                             </a>
                                         </li>
-                                @endforeach
-                            </ul>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9 order-box animated fadeInRight m-b-md">
+            <div class="col-sm-9 col-md-9 col-lg-9 order-box animated fadeInRight m-b-md">
                 <div class="order-box-header">
                     <div class="order-tools tooltip-demo">
-                        <form onchange="this.submit();" action="{{ url('orders')  }}" method="get" id="_form-orders">
+                        <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
                             <div class="row">
                                 <!-- Ma don hang -->
                                 <div class="col-sm-6">
@@ -114,13 +116,13 @@
                                     <td data-value="{{$order->code}}">
                                         <div class="item-inner">
                                             <div class="item-thumb">
-                                                <a href="{{ url('order', $order->id)  }}" title="Xem chi tiết đơn hàng">
+                                                <a href="{{ url('don-hang', $order->id)  }}" title="Xem chi tiết đơn hàng">
                                                     <img src="{{ $order->avatar }}" class="img-responsive">
                                                     {!! App\Util::showSite($order->site) !!}
                                                 </a>
                                             </div>
                                             <div class="item-details">
-                                                <a href="{{ url('order', $order->id)  }}" title="Xem chi tiết đơn hàng">
+                                                <a href="{{ url('don-hang', $order->id)  }}" title="Xem chi tiết đơn hàng">
                                                     <h3 class="item-title">Mã đơn: #{{$order->code}}</h3>
                                                 </a>
                                                 <p class="m-b-none">Giá trị hàng: {!! App\Util::formatNumber($order->amount * $order->exchange_rate) !!} <sup>đ</sup></p>

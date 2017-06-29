@@ -273,23 +273,23 @@ Route::post('/user/SetupSaleBuying', 'UserController@setupSaleValue');
 
 # Redesign Customer template
 Route::get('/onihome', 'OniHomeController@index');
-Route::get('/cart', 'OniDev\CartController@showCart');
-Route::post('/cart/action', 'OniDev\CartController@action');
-Route::get('/deposit', 'OniDev\CartController@showDeposit');
-Route::post('/deposit', 'OniDev\CartController@depositOrder');
-Route::get('/deposit-success', 'OniDev\CartController@depositSuccess');
+Route::get('/gio-hang', 'OniDev\CartController@showCart');
+Route::post('/gio-hang/hanh-dong', 'OniDev\CartController@action');
+Route::get('/dat-coc', 'OniDev\CartController@showDeposit');
+Route::post('/dat-coc', 'OniDev\CartController@depositOrder');
+Route::get('/dat-coc-thanh-cong', 'OniDev\CartController@depositSuccess');
 
-Route::get('/orders', 'OniDev\OrderController@orders');
-Route::get('/order/{id}', 'OniDev\OrderController@order');
-Route::post('/order/{id}/action', 'OniDev\OrderController@action');
+Route::get('/don-hang', 'OniDev\OrderController@orders');
+Route::get('/don-hang/{id}', 'OniDev\OrderController@order');
+Route::post('/don-hang/{id}/action', 'OniDev\OrderController@action');
 
-Route::get('/wishlist', 'OniDev\ProductFavoriteController@indexs');
+Route::get('/san-pham-da-luu', 'OniDev\ProductFavoriteController@indexs');
 
 
-Route::get('/user/{id}', 'OniDev\UserController@detail');
-Route::post('/user/phone', 'OniDev\UserController@add_user_phone');
-Route::put('/user/phone', 'OniDev\UserController@delete_user_phone');
-Route::get('/user/edit/{id}', 'OniDev\UserController@get_user');
-Route::post('/user/edit/{id}', 'OniDev\UserController@update_user');
+Route::get('/nhan-vien/{id}', 'OniDev\UserController@detail');
+Route::post('/nhan-vien/dien-thoai', 'OniDev\UserController@add_user_phone');
+Route::put('/nhan-vien/dien-thoai', 'OniDev\UserController@delete_user_phone');
+Route::get('/nhan-vien/sua/{id}', 'OniDev\UserController@get_user');
+Route::post('/nhan-vien/sua/{id}', 'OniDev\UserController@update_user');
 
-Route::get('transactions', 'OniDev\UserTransactionController@getTransactions');
+Route::get('giao-dich', 'OniDev\UserTransactionController@getTransactions');

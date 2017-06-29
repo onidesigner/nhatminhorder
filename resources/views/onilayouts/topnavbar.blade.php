@@ -16,12 +16,12 @@ if(Auth::check()){
                 'title' => 'Bảng chung',
             ],
             [
-                'url' => url('orders'),
+                'url' => url('don-hang'),
                 'icon' => 'fa-cubes',
                 'title' => 'Đơn hàng',
             ],
             [
-                'url' => url('transactions'),
+                'url' => url('giao-dich'),
                 'icon' => 'fa-money',
                 'title' => 'Giao dịch',
             ],
@@ -265,7 +265,7 @@ if(Auth::check()){
                     <span class="m-r-sm text-muted">Số dư: <strong class="text-danger"><?php echo App\Util::formatNumber(Auth::user()->account_balance) ?> <sup>đ</sup></strong></span>
                 </li>
                 <li>
-                    <a class="count-info" href="{{ url('cart') }}">
+                    <a class="count-info" href="{{ url('gio-hang') }}">
                         <i class="fa fa-shopping-basket"></i>  <span class="label label-warning">{{ App\Cart::getCartTotalQuantityItem(Auth::user()->id)  }}</span>
                     </a>
                 </li>
@@ -336,20 +336,20 @@ if(Auth::check()){
                                             @if(Auth::user()->section == App\User::SECTION_CRANE)
                                                 <a href="{{ url('user/detail', Auth::user()->id)  }}">
                                             @else
-                                                 <a href="{{ url('user', Auth::user()->id)  }}">
+                                                 <a href="{{ url('nhan-vien', Auth::user()->id)  }}">
                                             @endif
                                                  <span class="fa fa-address-book m-r-xs"></span>
                                                  Thông tin cá nhân
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ url('wishlist')  }}">
+                                            <a href="{{ url('san-pham-da-luu')  }}">
                                                 <span class="fa fa-bookmark m-r-xs"></span>
                                                 Sản phẩm đã lưu
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="{{ url('transactions')  }}">
+                                            <a href="{{ url('giao-dich')  }}">
                                                 <span class="fa fa-exchange m-r-xs"></span>
                                                 Lịch sử Giao dịch
                                             </a>

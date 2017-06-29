@@ -214,3 +214,24 @@ input::-webkit-inner-spin-button {
 .no-content .subtitle{
 
 }
+
+
+.cart_sidebar.affix{
+    position: fixed!important;
+    top: 70px;
+    width: 286px;
+}
+.order_sidebar.affix{
+    position: fixed!important;
+    top: 70px;
+    width: 222px;
+}
+
+.widget-text-box{
+    border-top: none;
+}
+
+.widget-text-box:last-child{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}

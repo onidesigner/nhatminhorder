@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="wrapper wrapper-content">
         <div class="row">
             <div class="col-md-9">
                 @if(!empty($data['shops']))
@@ -14,7 +14,7 @@
 
                         <div id="shop-{{$shop->shop_id}}" class="shop ibox">
                             <div class="ibox-title">
-                                <span class="pull-right">(<strong>{{count($shop->items)}}</strong>) sản phẩm</span>
+                                <span class="pull-right">(<strong class="shop_items_count">{{count($shop->items)}}</strong>) sản phẩm</span>
                                 <h5>
                                     {!! App\Util::showSite($shop->site) !!}
 
@@ -69,7 +69,7 @@
                                                                  placeholder="Ghi chú sản phẩm..."
                                                                  name="comment"
                                                                  type="text"
-                                                                 data-url="{{ url('cart/action') }}"
+                                                                 data-url="{{ url('gio-hang/hanh-dong') }}"
                                                                  data-method="post"
                                                                  data-key-global="cart-item-comment-{{$shop->shop_id}}-{{$item->id}}"
                                                                  class="form-control __input-comment-item" value="{{$item->comment}}" />
@@ -83,14 +83,12 @@
                                                             <input type="hidden" name="method" value="post">
                                                             <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
                                                             <input type="hidden" name="item_id" value="{{$item->id}}">
-                                                            <input type="hidden" name="url" value="{{ url('cart/action') }}">
+                                                            <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
                                                             <input type="hidden" name="response" value="onicustomer/cart">
                                                             <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
-                                                            <!-- ___btn-action -->
-                                                            <a class=" text-muted"
+                                                            <a class="__removeItem text-muted"
                                                                href="javascript:void(0)"
-                                                               onclick="_removeItem('{{$item->id}}', '{{$shop->shop_id}}')"
                                                                data-toggle="tooltip"
                                                                title="Xoá sản phẩm">
                                                                 <i class="fa fa-trash"></i> Xoá sản phẩm
@@ -108,7 +106,7 @@
                                                         <input type="hidden" name="method" value="post">
                                                         <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
                                                         <input type="hidden" name="item_id" value="{{$item->id}}">
-                                                        <input type="hidden" name="url" value="{{ url('cart/action') }}">
+                                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
                                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                                         <input type="hidden" name="response" value="onicustomer/cart">
 
@@ -120,7 +118,7 @@
                                                                 data-shop-item-id="{{$item->id}}"
                                                                 data-key-global="cart-item-quantity-{{$shop->shop_id}}-{{$item->id}}"
                                                                 name="quantity"
-                                                                class="form-control text-center touchspin ___input-action" value="{{$item->quantity}}" />
+                                                                class="form-control text-center touchspin __changeQty" value="{{$item->quantity}}" />
                                                     </form>
                                                 </td>
                                                 <td width="100">
@@ -146,7 +144,7 @@
                                                     <input type="hidden" name="action" value="choose_service">
                                                     <input type="hidden" name="method" value="post">
                                                     <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                                    <input type="hidden" name="url" value="{{ url('cart/action') }}">
+                                                    <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
                                                     <input type="hidden" name="response" value="customer/cart">
                                                     <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                                     <input type="hidden" name="service" value="{{$service['code']}}">
@@ -210,17 +208,16 @@
                                         <input type="hidden" name="action" value="remove_shop">
                                         <input type="hidden" name="method" value="post">
                                         <input type="hidden" name="shop_id" value="{{$shop->shop_id}}">
-                                        <input type="hidden" name="url" value="{{ url('cart/action') }}">
+                                        <input type="hidden" name="url" value="{{ url('gio-hang/hanh-dong') }}">
                                         <input type="hidden" name="confirm" value="Bạn có chắc muốn xoá shop này?">
                                         <input type="hidden" name="response" value="customer/cart">
                                         <input type="hidden" name="_token" value="{{ csrf_token()  }}">
 
                                         <!--___btn-action-->
                                         <a href="javascript:void(0)"
-                                           class="btn btn-danger"
+                                           class="btn btn-danger __removeShop"
                                            data-toggle="tooltip"
                                            data-shop-id="{{$shop->shop_id}}"
-                                           onclick="_removeShop('{{$shop->shop_id}}', true)"
                                            title="Xoá shop">
                                             <i class="fa fa-trash-o"></i> Xóa shop
                                         </a>
@@ -228,7 +225,7 @@
                                     <!--/ button Xoa cua hang -->
 
                                     <!-- button dat coc -->
-                                    <a href="{{ url('deposit?shop_id=' . $shop->shop_id)  }}" class="btn btn-primary">
+                                    <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-primary">
                                         <i class="fa fa-shopping-cart"></i> Đặt cọc
                                     </a>
                                     <!--/ button dat coc -->
@@ -255,38 +252,42 @@
                 @endif
             </div>
             <div class="col-md-3">
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h5>Thông tin giỏ hàng hiện tại</h5>
-                    </div>
-                    <div class="ibox-content">
-                        <span>Cửa hàng</span>
-                        <h2 class="font-bold">
-                            {{$data['statistic']['total_shops']}}
-                        </h2>
-                        <span>Sản phẩm</span>
-                        <h2 class="font-bold">
-                            {{$data['statistic']['total_items']}}
-                        </h2>
-                        <span>Tiền hàng</span>
-                        <h2 class="font-bold">
-                            {{ App\Util::formatNumber($data['statistic']['total_amount'])  }} <sup>đ</sup>
-                        </h2>
+                <div class="cart_sidebar" data-spy="affix" data-offset-top="11" data-offset-bottom="64">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>Thông tin giỏ hàng hiện tại</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <span>Cửa hàng</span>
+                            <h2 class="font-bold">
+                                <span class="shops_count">{{$data['statistic']['total_shops']}}</span>
+                            </h2>
+                            <span>Sản phẩm</span>
+                            <h2 class="font-bold">
+                                <span class="cart_qty">{{$data['statistic']['total_items']}}</span>
+                            </h2>
+                            <span>Tiền hàng</span>
+                            <h2 class="font-bold">
+                                <span class="cart_total">{{ App\Util::formatNumber($data['statistic']['total_amount'])  }}</span> <sup>đ</sup>
+                            </h2>
 
-                        <hr>
-                        <span class="text-muted small">
+                            <hr>
+                            <span class="text-muted small">
                                 <ul>
                                     <li>Đây là những sản phẩm hiện tại có trong giỏ hàng của bạn.</li>
                                     <li>Bạn có thể thay đổi sản phẩm hoặc xóa sản phẩm nếu không muốn đặt nữa.</li>
+                                    <li>Tiền hàng ở trên chưa bao gồm chi phí vận chuyển và các dịch vụ khác.</li>
+                                </ul>
                             </span>
-                        <!--
-                        <div class="m-t-sm">
-                            <div class="btn-group btn-group-justified">
-                                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-shopping-cart"></i>  ĐẶT CỌC</a>
-                                <a href="#" class="btn btn-white btn-sm"> XÓA TẤT CẢ </a>
+                            <!--
+                            <div class="m-t-sm">
+                                <div class="btn-group btn-group-justified">
+                                    <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-shopping-cart"></i>  ĐẶT CỌC</a>
+                                    <a href="#" class="btn btn-white btn-sm"> XÓA TẤT CẢ </a>
+                                </div>
                             </div>
+                            -->
                         </div>
-                        -->
                     </div>
                 </div>
             </div>
@@ -304,34 +305,6 @@
     <script src="{!! asset('oniasset/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js') !!}"></script>
     <script>
         $(document).ready(function(){
-            // Plugin display input quantity of product
-            $(".touchspin").TouchSpin({
-                min: 0,
-                max: 10000,
-                buttondown_class: 'btn btn-white',
-                buttonup_class: 'btn btn-white'
-            });
-            // jQuery update price fields when change input quantity
-            $(".touchspin").change(function() {
-                // Get value
-                item = '#shop-item-'+ $(this).data('shop-item-id');
-                shop = '#shop-'+ $(this).data('shop-id');
-                old_sub_total = $(item + ' .sub_total_vnd').text();
-                old_shop_total = $(shop + ' .shop_total_vnd').text();
-                qty = $(this).val();
-                price_vnd = $(item + ' .price_vnd').text();
-                price = $(item + ' .price').text();
-
-                // Action
-                shop_total = eval(dePrice(old_shop_total) - dePrice(old_sub_total));
-
-                // Set value
-                $(item + ' .sub_total_vnd').text(enPrice(eval(dePrice(price_vnd) * qty)));
-                $(item + ' .sub_total').text(eval(price*qty).toFixed(1));
-                $(shop + ' .shop_total_vnd').text(enPrice(eval( shop_total + (dePrice(price_vnd) * qty))));
-                $(shop + ' .shop_buying_fee').text(enPrice(eval((shop_total + (dePrice(price_vnd) * qty))/100).toFixed(2)));
-
-            });
 
         });
     </script>

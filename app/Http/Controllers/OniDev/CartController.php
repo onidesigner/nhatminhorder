@@ -157,7 +157,7 @@ class CartController extends Controller
                 $deposit_percent, $deposit_amount);
 
             if($result){
-                $redirect_url = url('deposit-success?orders=' . implode(',', $result));
+                $redirect_url = url('dat-coc-thanh-cong?orders=' . implode(',', $result));
 
                 return Response::json(['success' => true,
                     'redirect_url' => $redirect_url,
@@ -192,10 +192,11 @@ class CartController extends Controller
 
         $data = [
             'page_title' => 'Đặt cọc thành công',
+            'layout' => 'onilayouts.app',
             'orders' => $orders
         ];
 
-        return view('onidev/deposit_success', $data);
+        return view('onicustomer/deposit_success', $data);
     }
 
     /**
@@ -283,10 +284,6 @@ class CartController extends Controller
         if(!$customer || !$customer instanceof User){
             return redirect('404');
         }
-
-//        if($customer->isDisabled()){
-//            return redirect('403');
-//        }
 
         return view('onicustomer/cart', [
             'page_title' => 'Giỏ hàng',
@@ -445,6 +442,7 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'success',
+                'data' => $this->__getInitDataCart($customer),
                 'html' => $html,
                 'result' => $result
             ]);

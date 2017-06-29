@@ -112,9 +112,9 @@
                                     <div id="order-fee" class="tab-pane">
                                         <fieldset class="form-horizontal order-fee">
                                             @foreach($order_fee as $order_fee_item)
-                                                <div class="form-group">
-                                                    <label class="col-sm-3 control-label">{!! $order_fee_item['label'] !!}: </label>
-                                                    <div class="col-sm-9">
+                                                <div class="form-group col-sm-6 m-b-none">
+                                                    <label class="col-sm-7 control-label">{!! $order_fee_item['label'] !!}: </label>
+                                                    <div class="col-sm-5">
                                                         <p class="form-control-static">{{$order_fee_item['value']}} <sup>đ</sup></p>
                                                     </div>
                                                 </div>
@@ -123,6 +123,12 @@
                                     </div>
                                     <div id="order-history" class="tab-pane">
                                         <table class="table no-padding-leftright">
+                                            <thead>
+                                            <tr>
+                                                <th>Trạng thái</th>
+                                                <th>Thời gian</th>
+                                            </tr>
+                                            </thead>
                                             <tbody>
                                             <?php $count = 0; ?>
 
@@ -159,7 +165,6 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-
                                             @foreach($transactions as $transaction)
                                                 <?php
                                                 $user = App\User::find($transaction->user_id);
@@ -356,6 +361,14 @@
                 </div>
 
                 @if(count($packages) > 0)
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>
+                            Kiện hàng
+                        </h5>
+                    </div>
+                    <div class="ibox-content">
+
                     <div class="card">
                         <div class="card-body">
                             <table class="table no-padding-leftright">
@@ -415,6 +428,8 @@
                             </table>
                         </div>
                     </div>
+                    </div>
+                </div>
                 @endif
             </div>
             <div class="col-sm-12 m-b-md">
@@ -430,7 +445,7 @@
                             <form class="___form">
                                 <input type="hidden" name="action" value="cancel_order">
                                 <input type="hidden" name="method" value="post">
-                                <input type="hidden" name="url" value="{{ url('order/' .$order_id. '/action')  }}">
+                                <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token()  }}">
                                 <input type="hidden" name="response" value="customer/order_detail">
 
