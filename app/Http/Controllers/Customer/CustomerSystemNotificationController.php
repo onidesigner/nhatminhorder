@@ -30,6 +30,14 @@ class CustomerSystemNotificationController extends Controller
     public function index( Request $request ){
 
         $page = $request->get('page');
+        $status = $request->get('status');
+
+        $where = [];
+        if($status){
+            if($status == 'READ'){
+
+            }
+        }
 
         $per_page = 20;
 

@@ -24,12 +24,12 @@
                     <div role="tabpanel">
                         <h4><strong>Thông báo của bạn</strong></h4>
 
-                        <form method="get" action="{{ url('')}}" >
+                        <form method="get" action="{{ url('tat-ca-thong-bao')}}" >
                             <div class="form-group">
                                 <div class="row">
 
                                     <div class="col-sm-3">
-                                        <select class="selectpicker" name="status_complaint">
+                                        <select class="selectpicker" name="status">
                                             <option value="0">Trạng thái</option>
                                             <option value="READ">Đã đọc</option>
                                             <option value="UNREAD">Chưa đọc</option>
@@ -45,6 +45,7 @@
                             </div>
                         </form>
 
+                        <br>
 
                         <table class="table table-hover">
                             <tbody>
@@ -80,12 +81,14 @@
     @parent
 
     <link rel="stylesheet" href="{{ asset('bower_components/lightbox2/dist/css/lightbox.css')  }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
 @endsection
 
 @section('js_bottom')
     @parent
 
     <script src="{{ asset('bower_components/lightbox2/dist/js/lightbox.js')  }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script>
         $(document).ready(function(){
             $('.selectpicker').selectpicker('refresh');
