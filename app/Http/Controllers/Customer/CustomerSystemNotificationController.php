@@ -85,7 +85,7 @@ class CustomerSystemNotificationController extends Controller
 
         $pageSize = 10;
         $current_user = Auth::user();
-        $list_notification_all = 0;
+
 
 
         #count notify

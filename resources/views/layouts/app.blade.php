@@ -233,8 +233,8 @@
                            if(view == true){
 
                                $("._system_notify").after(response.notification);
-                               if(response.count_notify > 10){
-                                   
+                               if(response.notification_display > 10){
+
                                    $("._display_notify").append(
                                        '<li class="dropdown-footer _load_more">'+
                                        '<a>Xem thêm <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+
@@ -282,17 +282,6 @@
                                     '</li>'
                             );
                             // nếu đã load hết thì xóa đi
-
-                            {{--if( $("._change_status").length > 30){--}}
-                                {{--$("._load_more").remove();--}}
-
-                                {{--$("._display_notify").append(--}}
-                                        {{--'<li class="dropdown-footer">'+--}}
-                                        {{--'<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+--}}
-                                        {{--'</li>'--}}
-                                {{--);--}}
-                                // neeus gia tri nho hon 30 thi xoa di ko hien thi nua
-
                         if($("._change_status").length == data.notification_display){
                                 $("._load_more").remove();
                             }
