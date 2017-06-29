@@ -283,17 +283,17 @@
                             );
                             // nếu đã load hết thì xóa đi
 
-                            if( $("._change_status").length > 30){
-                                $("._load_more").remove();
+                            {{--if( $("._change_status").length > 30){--}}
+                                {{--$("._load_more").remove();--}}
 
-                                $("._display_notify").append(
-                                        '<li class="dropdown-footer">'+
-                                        '<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+
-                                        '</li>'
-                                );
+                                {{--$("._display_notify").append(--}}
+                                        {{--'<li class="dropdown-footer">'+--}}
+                                        {{--'<a href="{{ url('/tat-ca-thong-bao') }}" target="_blank">Xem tất cả <i class="fa fa-angle-right" aria-hidden="true"></i></a>'+--}}
+                                        {{--'</li>'--}}
+                                {{--);--}}
                                 // neeus gia tri nho hon 30 thi xoa di ko hien thi nua
-                            }else if($("._change_status").length == data.notification_display
-                                    && data.notification_display <= 30){
+
+                        if($("._change_status").length == data.notification_display){
                                 $("._load_more").remove();
                             }
                         })

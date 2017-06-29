@@ -29,9 +29,12 @@
                                 <div class="row">
 
                                     <div class="col-sm-3">
+
                                         <select class="selectpicker" name="status">
                                             <option value="0">Trạng thái</option>
-                                            <option value="READ">Đã đọc</option>
+                                            <option value="READ"
+                                            
+                                            >Đã đọc</option>
                                             <option value="UNREAD">Chưa đọc</option>
                                         </select>
 
