@@ -191,7 +191,7 @@
 @section('css_bottom')
     <link rel="stylesheet" href=" {{asset('css/jquery.scrollbar.css') }}">
     <link rel="stylesheet" href=" {{asset('css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href=" {{asset('css/jquery.custom-scrollbar.css') }}">
+
 
 @show
 
