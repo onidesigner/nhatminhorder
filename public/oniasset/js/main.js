@@ -14,7 +14,7 @@ function enPrice(x){
 
 
 $(document).ready(function() {
-// Open close right sidebar
+    // Open close right sidebar
     $('.right-sidebar-toggle').on('click', function () {
         $('#right-sidebar').toggleClass('sidebar-open');
     });
@@ -88,8 +88,6 @@ $(document).ready(function() {
                         $that.removeClass('disabled');
                     }
                 });
-            } else {
-                swal("Đã hủy", "Đã hủy bỏ thao tác xóa Item #" + itemID + ".", "error");
             }
         });
     });
@@ -141,8 +139,6 @@ $(document).ready(function() {
                         $that.removeClass('disabled');
                     }
                 });
-            } else {
-                swal("Đã hủy", "Đã hủy bỏ thao tác xóa Shop #" + shopID + ".", "error");
             }
         });
     });
@@ -151,12 +147,7 @@ $(document).ready(function() {
      * @author Onizuka Nghia
      * Change Quatity Item
      */
-    $('.__changeQty').TouchSpin({
-        min: 0,
-        max: 10000,
-        buttondown_class: 'btn btn-white',
-        buttonup_class: 'btn btn-white'
-    }).on('change', function () {
+    $('.__changeQty').on('change', function () {
 
         var $that = $(this);
 
@@ -222,6 +213,51 @@ $(document).ready(function() {
     });
 
 
+    /**
+     * @author Onizuka Nghia
+     * Cancel Order
+     */
+    $('.__cancelOrder').on('click', function () {
+
+        var $that = $(this);
+
+        var data_send = $that.parents('.___form').serializeObject();
+
+        swal({
+            title: "Hủy đơn hàng?",
+            text: "Sau khi hủy đơn hàng này, bạn không thể hoàn tác!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            cancelButtonText: "Hủy bỏ",
+            confirmButtonText: "Hủy đơn hàng",
+            closeOnConfirm: false
+        }, function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: data_send.url,
+                    method: data_send.method,
+                    data: data_send,
+                    success: function (response) {
+                        if (response.success) {
+                            $that.parents('.___form').remove();
+                            $('#order_status').text('Đã hủy');
+                            swal("Hủy thành công!", "Bạn đã xóa hủy đơn hàng thành công.", "success");
+                        } else {
+                            swal({
+                                title: "Thông báo",
+                                text: response.message
+                            })
+                        }
+                        $that.removeClass('disabled');
+                    },
+                    error: function(){
+                        $that.removeClass('disabled');
+                    }
+                });
+            }
+        });
+    });
 
 // Tooltips demo
     $('.tooltip-demo').tooltip({

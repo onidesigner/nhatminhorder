@@ -27,7 +27,6 @@
                 ->get();
             ?>
             <div class="sidebar-title">
-                <h3> <i class="fa fa-comments-o"></i> Chat về đơn hàng</h3>
                 <form class="___form" onsubmit="return false;">
                     <input type="hidden" name="action" value="comment">
                     <input type="hidden" name="method" value="post">
@@ -57,7 +56,7 @@
                         <div class="feed-element">
                             @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
                                 <div class="pull-left">
-                                    <img alt="image" class="img-circle" src="{{ asset('images/home/_logo.png')  }}">
+                                    <img alt="image" class="img-circle" src="{{ asset('images/default-avatar.png') }}">
                                 </div>
                             @endif
                             <div class="media-body ">
@@ -90,7 +89,6 @@
                 ->get();
             ?>
             <div class="sidebar-title">
-                <h3> <i class="fa fa-comments-o"></i> Chat nội bộ</h3>
                 <form class="___form" onsubmit="return false;">
                     <input type="hidden" name="action" value="comment">
                     <input type="hidden" name="method" value="post">
@@ -119,7 +117,7 @@
                             <div class="feed-element">
                                 @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
                                     <div class="pull-left">
-                                        <img alt="image" class="img-circle" src="{{ asset('images/home/_logo.png')  }}">
+                                        <img alt="image" class="img-circle" src="{{ asset('images/default-avatar.png') }}">
                                     </div>
                                 @endif
                                 <div class="media-body ">

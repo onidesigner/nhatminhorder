@@ -10,13 +10,29 @@
             <div class="ibox-content">
                 <div class="row">
                     <div class="col-lg-12">
+                        <div class="pull-right">
+                            @if($permission['can_change_order_cancel'])
+                                <form class="___form">
+                                    <input type="hidden" name="action" value="cancel_order">
+                                    <input type="hidden" name="method" value="post">
+                                    <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                    <input type="hidden" name="response" value="customer/order_detail">
+
+                                    <a href="javascript:void(0)" class="btn btn-warning __cancelOrder">
+                                        <i class="fa fa-ban" aria-hidden="true"></i> HỦY ĐƠN
+                                    </a>
+                                </form>
+                            @endif
+                        </div>
+
                         <div class="m-b-md">
                             <!--<a href="#" class="btn btn-white btn-xs pull-right">Sửa đơn hàng</a>-->
-                            <h2>Thông tin đơn hàng <strong>#{{$order->code}}</strong></h2>
+                            <h2>Đơn hàng <strong>#{{$order->code}}</strong></h2>
                         </div>
                         <dl class="dl-horizontal">
                             <dt>Trạng thái:</dt>
-                            <dd><span class="label label-primary">{{ App\Order::getStatusTitle($order->status) }}</span></dd>
+                            <dd><span id="order_status" class="label label-primary">{{ App\Order::getStatusTitle($order->status) }}</span></dd>
                         </dl>
                     </div>
                 </div>
@@ -24,11 +40,11 @@
                     <div class="col-lg-5">
                         <dl class="dl-horizontal">
                             <dt>Tỉ lệ đặt cọc (%):</dt>
-                            <dd>{{$order->deposit_percent}} (<span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)}} <sup>đ</sup></span>)</dd>
+                            <dd class="m-b-xs">{{$order->deposit_percent}} (<span class="text-danger">{{ App\Util::formatNumber($order->deposit_amount)}} <sup>đ</sup></span>)</dd>
                             <dt>Tỉ giá:</dt>
-                            <dd>{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></dd>
+                            <dd class="m-b-xs">{{ App\Util::formatNumber($order->exchange_rate) }} <sup>đ</sup></dd>
                             <dt>Phí VC nội địa TQ:</dt>
-                            <dd>¥{{ $order->domestic_shipping_fee  }}</dd>
+                            <dd class="m-b-xs">¥{{ $order->domestic_shipping_fee  }}</dd>
                             <dt>Kho phân phối:</dt>
                             <dd>{{$order->destination_warehouse}}</dd>
                         </dl>
@@ -286,47 +302,43 @@
                                             <dl class="small m-b-none">
                                                 <dt style="display: inline-block; margin-right: 10px;">Thuộc tính:</dt>
                                                 <dd style="display: inline-block;">{{$order_item->property}}</dd>
-
-                                                <dt>Ghi chú sản phẩm</dt>
-                                                <dd>
-                                                    <form class="___form" onsubmit="return false;">
-                                                        <input type="hidden" name="action" value="order_item_comment">
-                                                        <input type="hidden" name="method" value="post">
-                                                        <input type="hidden" name="item_id" value="{{$order_item->id}}">
-                                                        <input type="hidden" name="url" value="{{ url('don-hang/' . $order_id . '/hanh-dong')  }}">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                                        <input type="hidden" name="response" value="customer/order_detail">
-
-                                                        <input style="width: 100%; margin-bottom: 10px;"
-                                                               name="order_item_comment_message"
-                                                               class="form-control ___input-action"
-                                                               type="text"
-                                                               data-key-global="order-item-comment-{{$order_item->id}}"
-                                                               placeholder="Chat về sản phẩm...">
-
-                                                    </form>
-
-                                                    <ul style="margin: 0;padding: 0;list-style: none;font-size: 13px;">
-                                                        @if(!empty($order_item_comments[$order_item->id]))
-                                                            @foreach($order_item_comments[$order_item->id] as $order_item_comment)
-                                                                <li style="margin-bottom: 5px;
-                                                                @if(in_array($order_item_comment->type_context, [App\Comment::TYPE_CONTEXT_ACTIVITY, App\Comment::TYPE_CONTEXT_LOG]))
-                                                                        color: grey;
-                                                                @endif
-                                                                        ">
-                                                                    @if($order_item_comment->type_context != App\Comment::TYPE_CONTEXT_LOG)
-                                                                        <strong>{{$order_item_comment->user->name}}</strong>
-                                                                    @endif
-                                                                    {{$order_item_comment->message}}
-                                                                    <small>
-                                                                        {{ App\Util::formatDate($order_item_comment->created_at)  }}
-                                                                    </small>
-                                                                </li>
-                                                            @endforeach
-                                                        @endif
-                                                    </ul>
-                                                </dd>
                                             </dl>
+
+                                            <form class="___form m-t-sm" onsubmit="return false;">
+                                                <input type="hidden" name="action" value="order_item_comment">
+                                                <input type="hidden" name="method" value="post">
+                                                <input type="hidden" name="item_id" value="{{$order_item->id}}">
+                                                <input type="hidden" name="url" value="{{ url('don-hang/' . $order_id . '/hanh-dong')  }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
+                                                <input type="hidden" name="response" value="customer/order_detail">
+
+                                                <input style="width: 100%; margin-bottom: 10px;"
+                                                       name="order_item_comment_message"
+                                                       class="form-control input-sm ___input-action"
+                                                       type="text"
+                                                       data-key-global="order-item-comment-{{$order_item->id}}"
+                                                       placeholder="Chat về sản phẩm...">
+
+                                            </form>
+                                            <ul style="margin: 0;padding: 0;list-style: none;font-size: 13px;">
+                                                @if(!empty($order_item_comments[$order_item->id]))
+                                                    @foreach($order_item_comments[$order_item->id] as $order_item_comment)
+                                                        <li style="margin-bottom: 5px;
+                                                        @if(in_array($order_item_comment->type_context, [App\Comment::TYPE_CONTEXT_ACTIVITY, App\Comment::TYPE_CONTEXT_LOG]))
+                                                                color: grey;
+                                                        @endif
+                                                                ">
+                                                            @if($order_item_comment->type_context != App\Comment::TYPE_CONTEXT_LOG)
+                                                                <strong>{{$order_item_comment->user->name}}</strong>
+                                                            @endif
+                                                            {{$order_item_comment->message}}
+                                                            <small>
+                                                                {{ App\Util::formatDate($order_item_comment->created_at)  }}
+                                                            </small>
+                                                        </li>
+                                                    @endforeach
+                                                @endif
+                                            </ul>
                                         </td>
                                         <td width="100">
                                             <span class="price_vnd">{{ App\Util::formatNumber($order_item->getPriceCalculator() * $order->exchange_rate) }}</span><sup>đ</sup>
@@ -345,7 +357,7 @@
                                 @endforeach
                                 </tbody>
                                 <tfoot>
-                                    <th colspan="3">Tổng cộng tiền hàng</th>
+                                    <th colspan="3">Tổng cộng</th>
                                     <th class="text-center">{{ $total_order_quantity }}</th>
                                     <th class="text-right">
                                         <strong>
@@ -432,34 +444,6 @@
                 </div>
                 @endif
             </div>
-            <div class="col-sm-12 m-b-md">
-                <div class="dropup">
-                <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Hành động
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-
-                    @if($permission['can_change_order_cancel'])
-                        <li style="margin: 7px 0;">
-                            <form class="___form">
-                                <input type="hidden" name="action" value="cancel_order">
-                                <input type="hidden" name="method" value="post">
-                                <input type="hidden" name="url" value="{{ url('don-hang/' .$order_id. '/hanh-dong')  }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token()  }}">
-                                <input type="hidden" name="response" value="customer/order_detail">
-
-                                <a
-                                        style="display: inline-block;width: 100%;padding: 0 15px;"
-                                        href="javascript:void(0)"
-                                        class="___btn-action">HỦY ĐƠN</a>
-                            </form>
-                        </li>
-                    @endif
-
-                </ul>
-            </div>
-            </div>
         </div>
     </div>
 @endsection
@@ -488,7 +472,7 @@
     <script>
     $(document).ready(function() {
         // Initialize slimscroll for right sidebar
-        $('.sidebar-container').slimScroll({
+        $('#anchor-box-comment').slimScroll({
         height: '100%',
         railOpacity: 0.4,
         wheelStep: 10

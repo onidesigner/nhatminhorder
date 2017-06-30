@@ -6,6 +6,7 @@
 
 @section('content')
     <div class="wrapper wrapper-content">
+        @include('onipartials/__cart_step', ['status' => array(1,0,0,0)])
         <div class="row">
             <div class="col-md-9">
                 @if(!empty($data['shops']))
@@ -252,10 +253,11 @@
                 @endif
             </div>
             <div class="col-md-3">
-                <div class="cart_sidebar" data-spy="affix" data-offset-top="11" data-offset-bottom="64">
+                <!-- data-spy="affix" data-offset-top="11" data-offset-bottom="64" -->
+                <div class="cart_sidebar">
                     <div class="ibox">
                         <div class="ibox-title">
-                            <h5>Thông tin giỏ hàng hiện tại</h5>
+                            <h5>Thông tin giỏ hàng</h5>
                         </div>
                         <div class="ibox-content">
                             <span>Cửa hàng</span>
@@ -305,7 +307,12 @@
     <script src="{!! asset('oniasset/js/plugins/touchspin/jquery.bootstrap-touchspin.min.js') !!}"></script>
     <script>
         $(document).ready(function(){
-
+            $('.__changeQty').TouchSpin({
+                min: 0,
+                max: 10000,
+                buttondown_class: 'btn btn-white',
+                buttonup_class: 'btn btn-white'
+            });
         });
     </script>
 
