@@ -92,7 +92,7 @@
                         <div class="col-md-12">
                             <table class="table-simple">
                                 <tr>
-                                    <th> </th>
+                                    <th> Thông tin khiếu nại </th>
                                 </tr>
 
                                 <tr>
@@ -106,8 +106,13 @@
                                 <tr>
                                     <td>Nội dung</td>
                                     <td>
-                                        The .table-responsive class creates a responsive table.
+                                        {{ $data_complaint->description }}
                                     </td>
+                                </tr>
+                                <tr>
+                                    @foreach($data_complaint_file as $complaint_item)
+                                    <td><img src="{{ asset($complaint_item->path) }}" width="90px" height="90px"></td>
+                                        @endforeach
                                 </tr>
                             </table>
                         </div>

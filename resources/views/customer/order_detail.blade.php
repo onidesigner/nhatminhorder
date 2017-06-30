@@ -219,7 +219,6 @@
                                                 {{$transaction->transaction_code}}<br>
                                                 <small class="" style="color: grey">{{$transaction->transaction_note}}</small>
                                             </td>
-
                                             <td>
 
 
@@ -227,67 +226,23 @@
                                 {{ App\UserTransaction::$transaction_state[$transaction->state]  }}
                                     </span>
                                             </td>
-
-
                                             <td>
                                 <span class="text-danger">
                                     {{ App\Util::formatNumber($transaction->amount) }}<sup>đ</sup>
                                 </span>
                                             </td>
-
                                         </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
                             </div>
 
-
-                            <!--tab khieu nai tren don -->
+                            <!--tab khieu nai tren don , trang thais huy thi ko tao don hang-->
                             <div role="tabpanel" class="tab-pane" id="order-complaint">
                                 <a href="{{url('tao-khieu-nai',$order->id)}}"  class="btn btn-success"> Tạo khiếu nại</a>
-
-                                <table class="table">
-                                    <thead class="thead-default">
-                                    <tr>
-                                        <th>Tên KN</th>
-                                        <th>Trạng thái KN</th>
-                                        <th>Tiếp nhận</th>
-                                        <th>Hoàn thành</th>
-                                        <th>Từ Chối</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php $i = 1 ?>
-                                    @foreach($list_complaint as $complaint)
-                                    <tr>
-
-                                        <td>{{ $complaint->title }}</td>
-                                        <td>{{ $complaint->status }}</td>
-                                        @if($complaint->accept_time)
-                                        <td>{{ $complaint->accept_time }}</td>
-                                        @else
-                                            <td>---</td>
-                                        @endif
-                                        @if( $complaint->finish_time )
-                                        <td>{{ $complaint->finish_time }}</td>
-                                        @else
-                                            <td>---</td>
-                                        @endif
-                                        @if($complaint->reject_time)
-                                        <td>{{ $complaint->reject_time }}</td>
-                                        @else
-                                            <td>---</td>
-                                        @endif
-                                    </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
 

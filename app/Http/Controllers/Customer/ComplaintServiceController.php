@@ -111,84 +111,7 @@ class ComplaintServiceController extends Controller
      * ham tao khieu nai
      * tạo khiếu nại
      */
-    public function createComplaint()
-    {
 
-        $img = $_FILES['image'];
-        $order_code = $_POST['order_code'];
-        $title = $_POST['title_complaint'];
-        $comment = $_POST['comment'];
-
-
-        $order = Order::findOneByIdOrCode($order_code);
-
-        if($order instanceof  Order){
-            $order_id = $order->id;
-        }else{
-            return redirect('404');
-        }
-
-        if (!$order_code){
-            return redirect('tao-khieu-nai/'.$order_id)->with('error','Mã đơn hàng không tồn tại !');
-        }
-        if(!$title){
-            return redirect('tao-khieu-nai/'.$order_id)->with('error','Tên khiếu nại không được bỏ trống !');
-        }
-        if(!$comment){
-            return redirect('tao-khieu-nai/'.$order_id)->with('error','Bạn chưa mô tả lỗi sản phẩm !');
-        }
-
-
-
-        $complaint = new Complaints();
-        $complaint_data = [
-            'order_id' => $order_id,
-            'customer_id' => Auth::user()->id,
-            'title' => $title,
-            'comment' => $comment,
-            'status' => Complaints::STATUS_CREATE
-        ];
-        $complaint_id =  $complaint->createComplaint($complaint_data);
-
-        if(!$complaint_id){
-            return redirect('tao-khieu-nai/'.$order_id)->with('error','Tạo khiếu nại thất bại !');
-        }
-
-        $complaint_file = new ComplaintFiles();
-
-        if(!empty($img))
-        {
-            $img_desc = $this->reArrayFiles($img);
-            foreach($img_desc as $val)
-            {
-                $newname = date('YmdHis',time()).mt_rand().'.jpg';
-                move_uploaded_file($val['tmp_name'],'./uploads/'.$newname);
-                $path = '/uploads/'.$newname;
-                $complaint_data = [
-                    'name' => 'image',
-                    'path' => $path,
-                    'complaint_id' => $complaint_id,
-                ];
-                #validate upload ảnh
-                $expensions=["jpeg","jpg","png"];
-                $define_type = explode(".",$val['name']);
-                $file_ext = end($define_type);
-
-                if(in_array($file_ext,$expensions)=== false){
-                    return redirect('tao-khieu-nai/'.$order_id)->with('error','Không tồn tại định dạng ảnh !');
-                }
-
-                if($val['size'] > 2097152){
-                    return redirect('tao-khieu-nai/'.$order_id)->with('error','Kích thước ảnh quá lớn !');
-                }
-                #endregion validate upload ảnh
-                $complaint_file->createComplaintFile($complaint_data);
-            }
-        }
-        // nếu tạo thành công chuyển về trang chi tiết khiếu nại
-        return redirect('chi-tiet-khieu-nai/'.$complaint_id)->with('message','Tạo khiệu nại thành công !');
-
-    }
 
 
     /**
@@ -289,29 +212,7 @@ class ComplaintServiceController extends Controller
             ';
         }
     }
-
-    /**
-     * ham xử lý bên trong tạo khiếu nại
-     * @param $file
-     * @return array
-     */
-    private function reArrayFiles($file)
-    {
-        $file_ary = array();
-        $file_count = count($file['name']);
-        $file_key = array_keys($file);
-
-        for($i=0;$i<$file_count;$i++)
-        {
-            foreach($file_key as $val)
-            {
-                $file_ary[$i][$val] = $file[$val][$i];
-            }
-        }
-        return $file_ary;
-    }
-
-
+    
     /**
      * ham redirect sang chi tiet khieu nai
      * @param Request $request
