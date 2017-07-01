@@ -14,7 +14,7 @@
                                 [
                                     'urls' => [
                                         ['name' => 'Trang chủ', 'link' => url('home')],
-                                        ['name' => 'Đơn hàng', 'link' => url('don-hang')],
+                                        ['name' => 'Thông báo', ''],
 
                                     ]
                                 ]
@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <div role="tabpanel">
                         <h4><strong>Thông báo của bạn</strong></h4>
-
+                        <?php $status = request()->get('status'); ?>
                         <form method="get" action="{{ url('tat-ca-thong-bao')}}" >
                             <div class="form-group">
                                 <div class="row">
@@ -33,9 +33,11 @@
                                         <select class="selectpicker" name="status">
                                             <option value="0">Trạng thái</option>
                                             <option value="READ"
-                                            
+                                                <?php if($status == 'READ'){ echo "selected";} ?>
                                             >Đã đọc</option>
-                                            <option value="UNREAD">Chưa đọc</option>
+                                            <option value="UNREAD"
+                                            <?php if($status == 'UNREAD'){ echo "selected";} ?>
+                                            >Chưa đọc</option>
                                         </select>
 
                                     </div>
@@ -56,10 +58,16 @@
                                 <tr>
                                     <td>{{$item_notification->title}}</td>
                                     <td>{{$item_notification->notification_content}}</td>
-                                    <td>Đã đọc</td>
+                                    <td>
+                                        <?php if(in_array($item_notification->notify_status,[\App\SystemNotification::TYPE_VIEW,\App\SystemNotification::TYPE_READ])){ ?>
+                                            Chưa đọc
+                                        <?php }else{ ?>
+                                            Đã đọc
+                                        <?php } ?>
+                                    </td>
                                     <td>{{ App\Util::formatDate($item_notification->created_at) }}</td>
                                     <td>
-                                        <a href="{{ \App\Http\Controllers\Customer\CustomerSystemNotificationController::buidLink($item_notification) }}" target="_blank">
+                                        <a class="_change_notify_status" data-notify-id="{{$item_notification->id}}" href="{{ \App\Http\Controllers\Customer\CustomerSystemNotificationController::buidLink($item_notification) }}" target="_blank">
                                             Chi tiết
                                         </a>
                                     </td>
@@ -95,6 +103,23 @@
     <script>
         $(document).ready(function(){
             $('.selectpicker').selectpicker('refresh');
+
+            $(document).on('click','._change_notify_status',function () {
+                var notify_id = $(this).data('notify-id');
+                $.ajax({
+                    url: "{{ url('/change-status-follower') }}",
+                    type: 'GET',
+                    data: {
+                        follower_id : notify_id
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.type == 'success') {
+
+                        }
+                    }
+                });
+            });
         });
 
     </script>
