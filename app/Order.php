@@ -536,6 +536,28 @@ class Order extends Model
 
     /**
      * @author vanhs
+     * @desc cap nhat lai tong tien van chuyen da thanh toan tren don hang vao bang order_fee
+     * @param UserTransaction $transaction
+     * @return bool
+     */
+    public function onUpdateShippingChinaVietNam(UserTransaction $transaction){
+        if($transaction->object_type == UserTransaction::OBJECT_TYPE_ORDER
+            && $transaction->transaction_sub_type
+            == UserTransaction::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM){
+
+            $amount_vnd = UserTransaction::getOrderShippingAmountPaid($this->id);
+            $amount_vnd = abs($amount_vnd);
+            $amount = $amount_vnd / $this->exchange_rate;
+            $data_fee_insert = [];
+            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $amount ];
+            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $amount_vnd ];
+            OrderFee::createFee($this, $data_fee_insert);
+        }
+        return true;
+    }
+
+    /**
+     * @author vanhs
      * @desc Hien thi cac phi tren don
      * @return array
      */
@@ -943,7 +965,7 @@ class Order extends Model
                     - $customer_payment_amount_vnd;
                 $total_need_payment = 0 - abs($total_need_payment);
 
-                $message = sprintf("Thanh toán đơn hàng %s với số tiền %s",
+                $message = sprintf("Thanh toán đơn hàng %s,số tiền %s đ",
                     $this->code,
                     Util::formatNumber($total_need_payment));
 

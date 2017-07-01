@@ -423,17 +423,25 @@ class ScanController extends Controller
             'apply_time' => $order->deposited_at,
         ]);
         $order_shipping_need_payment = (float)$service->calculatorFee();//so tien van chuyen can thanh toan
-        $order_shipping_paid = abs(UserTransaction::getOrderShippingAmountPaid($order->id));//tien van chuyen da tra tren don hang
+        $order_shipping_paid = UserTransaction::getOrderShippingAmountPaid($order->id);//tien van chuyen da tra tren don hang
+        $order_shipping_paid = abs($order_shipping_paid);
 
         if($order_shipping_need_payment > $order_shipping_paid){//truy thu them tien vc
-            $money_charge = 0 - $order_shipping_need_payment - $order_shipping_paid;
+            $money_charge = $order_shipping_need_payment - $order_shipping_paid;
+
+            $money_charge = 0 - $money_charge;
+
+            $message = sprintf("Thanh toán tiền vận chuyển đơn hàng %s, số tiền %sđ",
+                $order->code,
+                Util::formatNumber($money_charge));
+
         }else if($order_shipping_need_payment < $order_shipping_paid){//tra lai tien vc
             $money_charge = $order_shipping_paid - $order_shipping_need_payment;
-        }
 
-        $message = sprintf("Thanh toán đơn hàng %s, số tiền %sđ",
-            $order->code,
-            Util::formatNumber($money_charge));
+            $message = sprintf("Trả lại tiền vận chuyển đơn hàng %s, số tiền %sđ",
+                $order->code,
+                Util::formatNumber($money_charge));
+        }
 
         Comment::createComment($create_user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
         Comment::createComment($create_user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);

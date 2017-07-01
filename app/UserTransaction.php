@@ -321,12 +321,6 @@ class UserTransaction extends Model
                     $money = $money_vnd / $object->exchange_rate;
 
                     switch ($this->transaction_sub_type){
-                        //---thanh toan phi vc quoc te
-                        case self::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_SHIPPING_CHINA_VIETNAM:
-
-                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee', 'money' => $money ];
-                            $data_fee_insert[] = [ 'name' => 'shipping_china_vietnam_fee_vnd', 'money' => $money_vnd ];
-                            break;
                         //---thanh toan phi dong go
                         case self::TRANSACTION_SUB_TYPE_ORDER_PAYMENT_WOOD_CRATING:
                             $data_fee_insert[] = [ 'name' => 'wood_crating', 'money' => $money, 'update_money' => true ];
@@ -381,6 +375,9 @@ class UserTransaction extends Model
             }
         }
 
+        if($object instanceof Order){
+            $object->onUpdateShippingChinaVietNam($this);
+        }
         return $saved;
     }
 

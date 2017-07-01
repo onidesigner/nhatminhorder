@@ -967,19 +967,18 @@ class OrderController extends Controller
         $user_transaction_amount = 0 - abs($deposit_amount_old - $deposit_amount_new);
 
         if(abs($user_transaction_amount) <> 0){
-            $text = 'truy thu';
+            $text = 'Truy thu';
 
             if($deposit_amount_old > $deposit_amount_new){
                 $user_transaction_amount = abs($deposit_amount_old - $deposit_amount_new);
-                $text = 'trả lại';
+                $text = 'Trả lại';
             }
 
             $money = Util::formatNumber(abs($deposit_amount_old - $deposit_amount_new));
-            $message = "Hệ thống tiến hành {$text} số tiền {$money} để đảm bảo tỉ lệ đặt cọc {$deposit_percent_new}%";
+            $message = "{$text} tiền đặt cọc đơn hàng, số tiền {$money} đ";
 
             Comment::createComment($user, $order, $message, Comment::TYPE_INTERNAL, Comment::TYPE_CONTEXT_LOG);
             Comment::createComment($user, $order, $message, Comment::TYPE_EXTERNAL, Comment::TYPE_CONTEXT_LOG);
-
 
             UserTransaction::createTransaction(
                 UserTransaction::TRANSACTION_TYPE_DEPOSIT_ADJUSTMENT,
