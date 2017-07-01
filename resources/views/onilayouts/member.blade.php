@@ -44,7 +44,7 @@
                             <div class="ibox-title">
                                 <h5>Thành viên #{{  $user->code }}</h5>
                                 <div class="ibox-tools">
-                                    <a href="{{ url('user/edit', $user_id) }}" class="collapse-link">
+                                    <a href="{{ url('nhan-vien/sua', $user_id) }}" class="collapse-link">
                                         <i class="fa fa-pencil-square"></i> Sửa thông tin
                                     </a>
                                 </div>

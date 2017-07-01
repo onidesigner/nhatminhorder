@@ -4,6 +4,8 @@
     {{$page_title}}
 @endsection
 
+@section('key_active', 'order')
+
 @section('content')
     <div class="wrapper wrapper-content orders-page">
         <div class="row">
@@ -23,7 +25,7 @@
                                     </li>
 
                                     @foreach($status_list as $status_list_item)
-                                        <?php   if($status_list_item['selected']) $selected='selected';
+                                        <?php if($status_list_item['selected']) $selected='selected';
                                         else $selected='';?>
                                         <li>
                                             <a href="{{ url('don-hang?status='.$status_list_item['key']) }}" class="{{$selected}}" data-status="{{ $status_list_item['key'] }}">
@@ -43,57 +45,82 @@
             <div class="col-sm-9 col-md-9 col-lg-9 order-box animated fadeInRight m-b-md">
                 <div class="order-box-header">
                     <div class="order-tools tooltip-demo">
-                        <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
-                            <div class="row">
-                                <!-- Ma don hang -->
+                        <div class="row">
+                            <!-- Ma don hang -->
+                            <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-code-orders">
                                 <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label" for="order_code">Mã đơn hàng</label>
-                                        <input type="text" class="form-control input-sm" placeholder="Nhập mã đơn hàng" id="order_code" name="order_code" value="{{  @$params['order_code'] }}">
-                                    </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="order_code">Mã đơn hàng</label>
+                                    <input type="text" class="form-control input-sm" placeholder="Nhập mã đơn hàng" id="order_code" name="order_code" value="{{  @$params['order_code'] }}">
                                 </div>
-                                <!-- Thoi gian -->
+                            </div>
+                            </form>
+                            <!-- Thoi gian -->
+                            <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-datetime-orders">
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label">Thời gian</label>
+
+                                        <input type="hidden" name="status_time" id="status_time" value="{{ @$params['status_time'] ? @$params['status_time'] : 'ALL' }}">
                                         <div class="input-daterange input-group" id="datepicker">
                                             <div class="input-group-btn dropdown">
-                                                <button id="status_time" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                                                    Tất cả <span class="caret"></span>
+                                                <button id="status_time_btn" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    @if(isset($params['status_time']) && $params['status_time'] != 'ALL')
+                                                        @foreach($status_list as $status_list_item)
+                                                            @if($params['status_time'] == $status_list_item['key'])
+                                                                {{ $status_list_item['val'] }}
+                                                                @break
+                                                            @endif
+                                                        @endforeach
+                                                    @else
+                                                        Trạng thái
+                                                    @endif
+                                                    <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a href="javascript:void(0)" data-status="ALL">Tất cả</a></li>
+                                                    <li><a href="javascript:void(0)" data-status="ALL">Trạng thái</a></li>
+
                                                     @foreach($status_list as $status_list_item)
-                                                    <li><a href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">{{ $status_list_item['val']  }}</a></li>
+
+                                                        @if(isset($params['status_time']) && $params['status_time'] == $status_list_item['key'])
+                                                            <li class="active">
+                                                        @else
+                                                            <li>
+                                                        @endif
+
+                                                            <a href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">{{ $status_list_item['val']  }}</a>
+                                                        </li>
                                                     @endforeach
                                                 </ul>
                                             </div>
-                                            <input type="hidden" name="status_time_input" value="">
                                             <input type="text" class="input-sm form-control" name="start" value="{{  @$params['start'] }}"/>
                                             <span class="input-group-addon">đến</span>
                                             <input type="text" class="input-sm form-control" name="end" value="{{  @$params['end'] }}" />
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Trang thai -->
+                            </form>
+                            <!-- Trang thai -->
+                            <form onchange="this.submit();" action="{{ url('don-hang')  }}" method="get" id="_form-orders">
                                 <div class="col-sm-12">
-                                    <div>
-                                        @foreach($status_list as $status_list_item)
-                                            @if($status_list_item['selected'])
-                                                <a class="btn btn-sm btn-danger m-b-xs _select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                                    <i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}
-                                                </a>
-                                            @else
-                                                <a class="btn btn-sm btn-primary m-b-xs _select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
-                                                    <span>{{ $status_list_item['val']  }}</span>
-                                                </a>
-                                            @endif
-                                        @endforeach
-                                        <input type="hidden" name="status" value="">
-                                    </div>
+                                <div>
+                                    @foreach($status_list as $status_list_item)
+                                        @if($status_list_item['selected'])
+                                            <a class="btn btn-sm btn-danger m-b-xs _select-order-status selected" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                                <i class="fa fa-times" aria-hidden="true"></i> {{ $status_list_item['val']  }}
+                                            </a>
+                                        @else
+                                            <a class="btn btn-sm btn-primary m-b-xs _select-order-status" href="javascript:void(0)" data-status="{{ $status_list_item['key'] }}">
+                                                <span>{{ $status_list_item['val']  }}</span>
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                    <input type="hidden" name="status" value="">
                                 </div>
                             </div>
-                        </form>
+                            </form>
+                        </div>
+
                     </div>
                 </div>
                 <div class="alert alert-warning">
@@ -101,7 +128,7 @@
                 </div>
                 <div class="order-box-content">
                     @if(count($orders))
-                        <table class="footable table table-stripped toggle-arrow-tiny table-hover table-order" data-page-size="15">
+                        <table class="footable table table-stripped toggle-arrow-tiny table-hover table-order">
                             <thead>
                             <tr>
                                 <th>Thông tin đơn hàng</th>
@@ -146,9 +173,9 @@
                                         </small>
                                     </td>
                                     <td>
-                                        <small id="_time_change_status_{{$order->id}}">
+                                        <small id="_time_change_status_{{$order->id}}" class="more" data-max-height="100">
                                             <?php
-                                            foreach(App\Order::$timeListOrderDetail as $k => $v){
+                                            foreach(array_reverse(App\Order::$timeListOrderDetail) as $k => $v){
                                             if(empty($order->$k)){
                                                 continue;
                                             }
@@ -199,7 +226,8 @@
             $("#datepicker .dropdown-menu li a").click(function(){
                 $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
                 $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-
+                $('#status_time').val($(this).data('status'));
+                $('#_form-datetime-orders').submit();
             });
         });
     </script>
@@ -208,7 +236,6 @@
     <script type="text/javascript" src="{{ asset('js/jquery.lazy.min.js') }}"></script>
     <script>
         $(function() {
-            $('.lazy').lazy();
 
             $(document).on('click', '._select-order-status', function(){
                 var selected = $(this).hasClass('selected');

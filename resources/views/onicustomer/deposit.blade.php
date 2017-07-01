@@ -6,8 +6,8 @@
 
 @section('content')
     <div class="wrapper wrapper-content">
+        @include('onipartials/__cart_step', ['status' => array(2,1,0,0)])
         <div class="row">
-
             @if(count($shops))
                 <div class="col-md-6">
                     <div class="ibox">

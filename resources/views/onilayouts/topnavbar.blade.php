@@ -8,22 +8,26 @@ if(Auth::check()){
                 'url' => url(''),
                 'icon' => 'fa fa-home',
                 'title' => 'Trang chủ',
+                'key_active' => '',
             ],
 
             [
                 'url' => url('home'),
                 'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
+                'key_active' => 'home',
             ],
             [
                 'url' => url('don-hang'),
                 'icon' => 'fa-cubes',
                 'title' => 'Đơn hàng',
+                'key_active' => 'don-hang',
             ],
             [
                 'url' => url('giao-dich'),
                 'icon' => 'fa-money',
                 'title' => 'Giao dịch',
+                'key_active' => 'giao-dich',
             ],
         ];
     }else{
@@ -32,16 +36,19 @@ if(Auth::check()){
                 'url' => url(''),
                 'icon' => 'fa fa-home',
                 'title' => 'Trang chủ',
+                'key_active' => '',
             ],
             [
                 'url' => url('home'),
                 'icon' => 'fa fa-tasks',
                 'title' => 'Bảng chung',
+                'key_active' => 'home',
             ],
             [
                 'url' => '#',
                 'icon' => 'fa-heartbeat',
                 'title' => 'Vận Hành',
+                'key_active' => '',
                 'children' => [
                     [
                         'url' => url(sprintf('order')),
@@ -90,6 +97,7 @@ if(Auth::check()){
                 'url' => '#',
                 'icon' => 'fa-user',
                 'title' => 'Nhân viên',
+                'key_active' => '',
                 'children' => [
                     [
                         'url' => url('user'),
@@ -102,6 +110,7 @@ if(Auth::check()){
                 'url' => '#',
                 'icon' => 'fa-money',
                 'title' => 'Tài chính',
+                'key_active' => '',
                 'children' => [
                     [
                         'url' => url('transactions'),
@@ -135,6 +144,7 @@ if(Auth::check()){
                 'url' => '#',
                 'icon' => 'fa-newspaper-o',
                 'title' => 'Tin tức',
+                'key_active' => '',
                 'children' => [
                     [
                         'url' => url('taxonomies'),
@@ -162,6 +172,7 @@ if(Auth::check()){
                 'url' => '#',
                 'icon' => 'fa-gear',
                 'title' => 'Hệ thống',
+                'key_active' => '',
                 'children' => [
 
                     [
@@ -202,7 +213,6 @@ if(Auth::check()){
 
     }
 }
-
 ?>
 
 <div class="row border-bottom white-bg">
@@ -230,7 +240,7 @@ if(Auth::check()){
                 }
                 ?>
 
-                <li>
+                <li class="{{ Request::segment(1) === $menu['key_active'] ? 'active' : null }}">
                     <a href="{{$menu['url']}}">{{$menu['title']}}</a>
                 </li>
                 <?php } else { ?>
@@ -258,12 +268,15 @@ if(Auth::check()){
                 <?php } ?>
             </ul>
             <ul class="nav navbar-top-links navbar-right">
+
+                @if(!Auth::user()->section == App\User::SECTION_CRANE)
                 <li>
                     <span class="m-r-sm text-muted">Tỉ giá: {{ number_format(App\Exchange::getExchange(), 0, ",", ".")  }} <sup>đ</sup></span>
                 </li>
                 <li>
                     <span class="m-r-sm text-muted">Số dư: <strong class="text-danger"><?php echo App\Util::formatNumber(Auth::user()->account_balance) ?> <sup>đ</sup></strong></span>
                 </li>
+                @endif
                 <li>
                     <a class="count-info" href="{{ url('gio-hang') }}">
                         <i class="fa fa-shopping-basket"></i>  <span class="label label-warning">{{ App\Cart::getCartTotalQuantityItem(Auth::user()->id)  }}</span>

@@ -63,6 +63,19 @@ class OrderController extends Controller
 
         $orders = $orders->where('user_id', Auth::user()->id);
 
+        if(!empty($params['status_time'])){
+            if ($params['status_time'] == 'ALL')
+                Order::$fieldTime['ALL'] = 'created_at';
+
+            $orders = $orders->where(Order::$fieldTime[$params['status_time']], '<>' , NULL);
+
+            if(!empty($params['start']))
+                $orders = $orders->where(Order::$fieldTime[$params['status_time']], '>=', date_format(date_create($params['start']), "Y-m-d") . ' 00:00:00');
+
+            if(!empty($params['end']))
+                $orders = $orders->where(Order::$fieldTime[$params['status_time']], '<=', date_format(date_create($params['end']), "Y-m-d") . ' 23:59:59');
+        }
+
         if(!empty($params['status'])){
             $orders = $orders->whereIn('status', explode('-', $params['status']));
         }
@@ -308,7 +321,7 @@ class OrderController extends Controller
 
             DB::commit();
 
-            $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'layouts/app_blank'));
+            $view = View::make($request->get('response'), $this->__getOrderInitData($order, $customer, 'onilayouts/app_blank'));
             $html = $view->render();
 
             return response()->json([

@@ -13,11 +13,11 @@
                     @foreach($data['shops'] as $shop)
 
 
-                        <div id="shop-{{$shop->shop_id}}" class="shop ibox">
+                        <div id="shop-{{$shop->shop_id}}" class="shop site_{{$shop->site}} ibox">
                             <div class="ibox-title">
                                 <span class="pull-right">(<strong class="shop_items_count">{{count($shop->items)}}</strong>) sản phẩm</span>
                                 <h5>
-                                    {!! App\Util::showSite($shop->site) !!}
+                                    <img src="{{ asset('images/site/'.$shop->site.'.png') }}" class="site-logo" title="Được đặt trên website {{$shop->site}}">
 
                                     @if($shop->shop_name)
                                         {{$shop->shop_name}}
@@ -216,7 +216,7 @@
 
                                         <!--___btn-action-->
                                         <a href="javascript:void(0)"
-                                           class="btn btn-danger __removeShop"
+                                           class="btn btn-link __removeShop"
                                            data-toggle="tooltip"
                                            data-shop-id="{{$shop->shop_id}}"
                                            title="Xoá shop">
@@ -226,7 +226,7 @@
                                     <!--/ button Xoa cua hang -->
 
                                     <!-- button dat coc -->
-                                    <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-primary">
+                                    <a href="{{ url('dat-coc?shop_id=' . $shop->shop_id)  }}" class="btn btn-danger">
                                         <i class="fa fa-shopping-cart"></i> Đặt cọc
                                     </a>
                                     <!--/ button dat coc -->
@@ -315,6 +315,4 @@
             });
         });
     </script>
-
-
 @endsection

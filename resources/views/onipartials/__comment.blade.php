@@ -53,7 +53,13 @@
                 <div class="feed-activity-list">
                 @if($comments_public)
                     @foreach($comments_public as $comment_public)
-                        <div class="feed-element">
+                        <?php
+                        if(in_array($comment_public->type_context, [App\Comment::TYPE_CONTEXT_ACTIVITY]))
+                            $cmt_class = "cmt_staff";
+                        else
+                            $cmt_class = "";
+                        ?>
+                        <div class="feed-element {{$cmt_class}}">
                             @if($comment_public->type_context != App\Comment::TYPE_CONTEXT_LOG)
                                 <div class="pull-left">
                                     <img alt="image" class="img-circle" src="{{ asset('images/default-avatar.png') }}">
@@ -67,7 +73,7 @@
                                     <strong>{{$user_comment->name}}</strong>
                                 @endif
                                 {{$comment_public->message}} <br>
-                                <small class="text-muted">{{ App\Util::formatDate($comment_public->created_at)  }}</small>
+                                <small class="text-muted timeago" datetime="{{$comment_public->created_at}}" title="{{$comment_public->created_at}}">{{ App\Util::formatDate($comment_public->created_at)  }}</small>
 
                             </div>
                         </div>
@@ -114,7 +120,13 @@
                 <div class="feed-activity-list">
                     @if($comments_private)
                         @foreach($comments_private as $comment_private)
-                            <div class="feed-element">
+                            <?php
+                            if(in_array($comment_private->type_context, [App\Comment::TYPE_CONTEXT_ACTIVITY, App\Comment::TYPE_CONTEXT_LOG]))
+                                $cmt_class = "cmt_staff";
+                            else
+                                $cmt_class = "";
+                            ?>
+                            <div class="feed-element {{$cmt_class}}">
                                 @if($comment_private->type_context != App\Comment::TYPE_CONTEXT_LOG)
                                     <div class="pull-left">
                                         <img alt="image" class="img-circle" src="{{ asset('images/default-avatar.png') }}">

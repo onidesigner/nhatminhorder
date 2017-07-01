@@ -12,8 +12,66 @@ function enPrice(x){
     return x;
 }
 
+// abc
+function viewMore(){
+    $('.more').each(function() {
 
-$(document).ready(function() {
+        var hs = $(this).data("max-height");  // Max height display
+        var moretext = 'Xem thêm <i class="fa fa-angle-double-down"></i>';
+        var lesstext = 'Thu gọn <i class="fa fa-angle-double-up"></i>';
+        var view_btn = '<a class="morelink _less">' + moretext + '</a></span>';
+        var content = $(this).height();
+
+        if(content > hs) {
+            $(this).css("height", hs);
+            $(this).addClass("collapse");
+            $(this).after(view_btn);
+        }
+
+        $(".morelink").click(function(){
+            if($(this).hasClass("_less")) {
+                $(this).removeClass("_less");
+                $(this).prev().css("height", "");
+                $(this).html(lesstext);
+            } else {
+                $(this).addClass("_less");
+                $(this).prev().css("height", hs);
+                $(this).html(moretext);
+            }
+        });
+    });
+}
+
+$(document).ready(function($) {
+    viewMore();
+
+    // Vietnamese
+    jQuery.timeago.settings.strings = {
+        prefixAgo: 'cách đây',
+        prefixFromNow: null,
+        suffixAgo: null,
+        suffixFromNow: "trước",
+        seconds: "chưa đến một phút",
+        minute: "khoảng một phút",
+        minutes: "%d phút",
+        hour: "khoảng một tiếng",
+        hours: "khoảng %d tiếng",
+        day: "một ngày",
+        days: "%d ngày",
+        month: "khoảng một tháng",
+        months: "%d tháng",
+        year: "khoảng một năm",
+        years: "%d năm",
+        wordSeparator: " ",
+        numbers: []
+    };
+
+    // Tooltips demo
+    $('.tooltip-demo').tooltip({
+        selector: "[data-toggle=tooltip]",
+        container: "body"
+    });
+
     // Open close right sidebar
     $('.right-sidebar-toggle').on('click', function () {
         $('#right-sidebar').toggleClass('sidebar-open');
@@ -91,7 +149,6 @@ $(document).ready(function() {
             }
         });
     });
-
 
     /**
      * @author Onizuka Nghia
@@ -212,7 +269,6 @@ $(document).ready(function() {
         });
     });
 
-
     /**
      * @author Onizuka Nghia
      * Cancel Order
@@ -257,11 +313,5 @@ $(document).ready(function() {
                 });
             }
         });
-    });
-
-// Tooltips demo
-    $('.tooltip-demo').tooltip({
-        selector: "[data-toggle=tooltip]",
-        container: "body"
     });
 });

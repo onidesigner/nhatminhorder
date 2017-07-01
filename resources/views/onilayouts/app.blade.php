@@ -51,11 +51,18 @@
 <script type="text/javascript" src="{!! asset('oniasset/js/app.js') !!}"></script>
 <script type="text/javascript" src="{{ asset('js/bootbox.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('oniasset/js/common.js')}}"></script>
+
+<script type="text/javascript" src="{!! asset('oniasset/js/plugins/timeago/jquery.timeago.js') !!}"></script>
 <script type="text/javascript" src="{!! asset('oniasset/js/plugins/sweetalert/sweetalert.min.js') !!}"></script>
 
 <script type="text/javascript" src="{!! asset('oniasset/js/main.js') !!}"></script>
 
 @section('footer-scripts')
+    <script type="text/javascript">
+        $(document).ready(function($) {
+            $(".timeago").timeago();
+        });
+    </script>
 @show
 
 </body>

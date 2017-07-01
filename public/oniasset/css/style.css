@@ -168,7 +168,7 @@ input::-webkit-inner-spin-button {
     margin-left: -3px;
 }
 
-#status_time{
+#status_time_btn{
     background-color: #eeeeee;
     margin-right: -2px;
 }
@@ -216,7 +216,27 @@ input::-webkit-inner-spin-button {
 }
 
 
+.cmt_staff{
+    color: #999;
+}
+.more{
+    overflow: hidden;
+    display: block;
+}
 
+.nav-tabs > li > a {
+    padding: 10px 20px 10px 25px!important;
+    border-radius: 0;
+    border-top-width: 2px;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{
+    border-top-width: 2px;
+}
+
+.top-navigation .nav.navbar-nav > li.active > a {
+    border-bottom: 3px solid;
+    padding-bottom: 12px;
+}
 
 .sidebar-container .sidebar-title{
     position: absolute;
@@ -225,7 +245,15 @@ input::-webkit-inner-spin-button {
 .sidebar-container .ibox-content{
     padding-top: 112px;
 }
-
+.feed-element, .feed-element .media {
+    margin-top: 8px;
+}
+.feed-element {
+    padding-bottom: 8px;
+}
+.feed-element > .pull-left {
+    margin-right: 7px;
+}
 
 .cart_sidebar.affix{
     position: fixed!important;
@@ -335,4 +363,30 @@ input::-webkit-inner-spin-button {
         animation-duration: 1s;
         -webkit-animation-fill-mode: both;
         animation-fill-mode: both;
+        -webkit-animation-iteration-count: infinite;
+        animation-iteration-count: infinite;
     }
+
+
+/*-- Color Site --*/
+.shop .ibox-title {
+    color: #ffffff;
+}
+.site_1688 .ibox-title{
+    background-color: #ff500b;
+    border-color: #e54809;
+}
+.site_tmall .ibox-title {
+    background-color: #ff0036;
+    border-color: #e22127;
+}
+.site_taobao .ibox-title {
+    background-color: #FF5000;
+    border-color: #e64800;
+}
+.shop .site-logo {
+    background: #fff;
+    padding: 2px;
+    border-radius: 3px;
+    margin-top: -2px;
+}
